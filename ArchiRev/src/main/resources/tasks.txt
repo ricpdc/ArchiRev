@@ -1,0 +1,15 @@
+-subir un fichero jar/war/ear para analizar
+-borrar proyecto
+
+-subir github
+-login/logout
+-mejorar consulta proyectos disponibles según usuario, etc.
+-modificar info de timestamp y usuarios a nivel de manager / dao abstracto, no cada vez
+-mostrar lista de sources
+-poner tipo al subir un fichero para crear diferentes tipos. 
+
+
+
+
+
+-diseñar fav icon

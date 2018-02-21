@@ -1,0 +1,71 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:tab title="Knowledge Source">
+
+		<p:panelGrid columns="2" width="100%">
+			<p:column colspan="2">
+				<p:panel id="sourceListPanel" widgetVar="sourceListPanel"
+					header="Source List" toggleable="true" toggleSpeed="500"
+					style="margin-bottom:10px">
+					<p:dataTable id="sourcesTable" widgetVar="sourcesTable"
+						value="#{sourcesController.sources}" var="source"
+						emptyMessage="No sources added" rows="5" paginator="true"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="5,10,15">
+						<f:facet name="header">
+				            Added knowledge sources
+				        </f:facet>
+						<p:column headerText="Type" sortBy="#{source.type}"
+							filterBy="#{source.type}" filterMatchMode="contains">
+							<h:outputText value="#{source.type}" />
+						</p:column>
+						
+					</p:dataTable>
+				</p:panel>
+			</p:column>
+
+			<p:column>
+				<p:panelGrid columns="2" width="100%">
+					<h:outputText value="Soruce concern:"></h:outputText>
+					<p:selectOneListbox value="#{sourcesController.sourceConcern}">
+						<f:selectItems value="#{sourcesController.sourceConcernOptions}"
+							var="soruceConcern" itemValue="#{sourceConcern}"
+							itemLabel="#{sourceConcern.label}" />
+					</p:selectOneListbox>
+
+					<h:outputText value="Soruce type:"></h:outputText>
+					<p:selectOneListbox id="sourceTypeList"
+						value="#{sourcesController.sourceType}"
+						filter="true" filterMatchMode="contains">
+						<f:selectItems value="#{sourcesController.sourceTypeOptions}"
+							var="sourceType" itemValue="#{sourceType}"
+							itemLabel="#{sourceType.label}" />
+					</p:selectOneListbox>
+				</p:panelGrid>
+			</p:column>
+			<p:column>
+				<p:panel id="uploadFilePanel" widgetVar="uploadFilePanel"
+					header="Web Applications" toggleable="true" toggleSpeed="500"
+					style="margin-bottom:20px">
+
+					<h:outputText value="Select web applications (*.ear/*.war/*.jar)" />
+
+					<p:fileUpload
+						fileUploadListener="#{sourcesController.handleWebAppFileUpload}"
+						mode="advanced" dragDropSupport="true" multiple="true"
+						update="mainForm:messages" sizeLimit="500000000" fileLimit="3"
+						allowTypes="/(\.|\/)(ear|war|jar)$/" />
+
+				</p:panel>
+			</p:column>
+
+		</p:panelGrid>
+
+
+	</p:tab>
+
+</ui:composition>

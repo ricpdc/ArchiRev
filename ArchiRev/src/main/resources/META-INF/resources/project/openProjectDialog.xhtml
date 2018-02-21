@@ -1,0 +1,44 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dialog header="Open Project" id="openProjectDialog"
+		widgetVar="openProjectDialog" modal="true" height="400" width="1200"
+		closable="true" closeOnEscape="true">
+		<p:dataTable id="projectsTable" widgetVar="projectsTable"
+			value="#{openProjectDialogController.projects}" var="project"
+			emptyMessage="No projects found" rows="5" paginator="true"
+			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+			rowsPerPageTemplate="5,10,15">
+			<f:facet name="header">
+	            Available projects
+	        </f:facet>
+			<p:column headerText="Name" sortBy="#{project.name}"
+				filterBy="#{project.name}" filterMatchMode="contains">
+				<h:outputText value="#{project.name}" />
+			</p:column>
+			<p:column headerText="Description" sortBy="#{project.description}"
+				filterBy="#{project.description}" filterMatchMode="contains">
+				<h:outputText value="#{project.description}" />
+			</p:column>
+			<p:column headerText="created" sortBy="#{project.createdAt}">
+				<h:outputText value="#{project.createdAt}" >
+					<f:convertDateTime pattern="dd/MM/yyyy (HH:mm:ss)" />
+				</h:outputText>
+			</p:column>
+			<p:column headerText="Last modified" sortBy="#{project.modifiedAt}">
+				<h:outputText value="#{project.modifiedAt}" >
+					<f:convertDateTime pattern="dd/MM/yyyy (HH:mm:ss)" />
+				</h:outputText>
+			</p:column>
+			<p:column style="width:38px;text-align: center">
+				<p:commandButton id="openProject"
+					icon="ui-icon-folder-open" title="Open"
+					action="#{openProjectDialogController.openProject(project)}"
+					update="mainForm" />
+			</p:column>
+		</p:dataTable>
+	</p:dialog>
+</ui:composition>

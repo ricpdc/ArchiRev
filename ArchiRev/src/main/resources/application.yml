@@ -1,0 +1,3 @@
+server:
+  context-path: /ArchiRev
+  port: 9090

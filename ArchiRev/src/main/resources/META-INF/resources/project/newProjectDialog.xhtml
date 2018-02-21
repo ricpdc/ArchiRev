@@ -1,0 +1,28 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dialog id="newProjectDialog" widgetVar="newProjectDialog"
+		header="New Project" modal="true" height="300" width="400"
+		closable="true" closeOnEscape="true">
+		<p:panelGrid columns="2">
+			<f:facet name="header">
+				<h:outputText value="New project" />
+			</f:facet>
+
+			<h:outputText value="Name:" />
+			<p:inputText value="#{newProjectDialogController.project.name}" />
+			<h:outputText value="Description:" />
+			<p:inputText
+				value="#{newProjectDialogController.project.description}" />
+		</p:panelGrid>
+		<p:commandButton id="btnSaveNewProject" icon="ui-icon-disk"
+			update="mainForm" style="float:right;margin-top:25px;" value="Save"
+			action="#{newProjectDialogController.onSave}" />
+
+		<p:remoteCommand name="updateMainTabs" update="mainForm"
+			oncomplete="alert('test')" />
+	</p:dialog>
+</ui:composition>

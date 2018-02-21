@@ -1,0 +1,40 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:toolbar id="toolbar">
+		<f:facet name="left">
+			<p:commandButton value="New" icon="ui-icon-document"
+				actionListener="#{newProjectDialogController.onOpen}" />
+
+			<p:commandButton value="Open" icon="ui-icon-folder-open"
+				actionListener="#{openProjectDialogController.onOpen}" />
+
+			<span class="ui-separator"> <span
+				class="ui-icon ui-icon-grip-dotted-vertical" />
+			</span>
+
+			<p:commandButton type="button" title="Save" icon="ui-icon-disk" />
+			<p:commandButton type="button" title="Delete" icon="ui-icon-trash" />
+			<p:commandButton type="button" title="Print" icon="ui-icon-print" />
+		</f:facet>
+
+		<f:facet name="right">
+			<p:menuButton value="Options">
+				<p:menuitem value="Save" actionListener="#{toolbarController.save}"
+					update="messages" icon="ui-icon-disk" />
+				<p:menuitem value="Update"
+					actionListener="#{toolbarController.update}"
+					update="mainForm:messages" icon="ui-icon-arrowrefresh-1-w" />
+				<p:menuitem value="Delete"
+					actionListener="#{toolbarController.delete}" ajax="false"
+					icon="ui-icon-close" />
+				<p:menuitem value="Homepage" url="/" icon="ui-icon-extlink" />
+			</p:menuButton>
+		</f:facet>
+	</p:toolbar>
+
+	<p:sticky target="toolbar" />
+</ui:composition>
