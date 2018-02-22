@@ -10,7 +10,9 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.component.UIOutput;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AjaxBehaviorEvent;
 
 import org.apache.commons.lang3.Validate;
 import org.primefaces.event.FileUploadEvent;
@@ -45,24 +47,28 @@ public class SourcesController extends AbstractController {
 
 	private SourceConcernEnum sourceConcern;
 	private SourceEnum sourceType;
-	
+
 	Map<SourceConcernEnum, Set<SourceEnum>> sourcesMap = Maps.newHashMap();
+
+	public SourcesController() {
+		super();
+	}
 
 	@PostConstruct
 	void init() {
 		super.init();
 
 		loadSourceTypes();
-		
+
 	}
 
 	private void loadSourceTypes() {
 		sourcesMap = Maps.newHashMap();
-		if(sourcesMap.isEmpty()) {
+		if (sourcesMap.isEmpty()) {
 			for (SourceConcernEnum concern : SourceConcernEnum.values()) {
 				Set<SourceEnum> types = Sets.newTreeSet();
 				for (SourceEnum type : SourceEnum.values()) {
-					if(type.getSourceConcern().equals(concern)) {
+					if (type.getSourceConcern().equals(concern)) {
 						types.add(type);
 					}
 				}
@@ -71,8 +77,15 @@ public class SourcesController extends AbstractController {
 		}
 	}
 
-	public SourcesController() {
-		super();
+	public void onSelectSourceConcern(final AjaxBehaviorEvent event) {
+		sourceType=null;
+		SourceConcernEnum concern = (SourceConcernEnum) ((UIOutput) event.getSource()).getValue();
+		LOGGER.info("Selected concern: " + concern);
+	}
+	
+	public void onSelectSourceType(final AjaxBehaviorEvent event) {
+		SourceEnum type = (SourceEnum) ((UIOutput) event.getSource()).getValue();
+		LOGGER.info("Selected type: " + type);
 	}
 
 	public void handleWebAppFileUpload(FileUploadEvent event) {
@@ -113,7 +126,7 @@ public class SourcesController extends AbstractController {
 	}
 
 	public Set<SourceEnum> getSourceTypeOptions() {
-		return sourceConcern!=null ? sourcesMap.get(sourceConcern) : Sets.newTreeSet();
+		return sourceConcern != null ? sourcesMap.get(sourceConcern) : Sets.newTreeSet();
 	}
 
 	public Set<SourceConcernEnum> getSourceConcernOptions() {
@@ -122,6 +135,10 @@ public class SourcesController extends AbstractController {
 
 	public SourceEnum getSourceType() {
 		return sourceType;
+	}
+	
+	public String getSelectFileMessage() {
+		return sourceType!=null ? "Select " + sourceType.getLabel() + " " + sourceType.getFormattedExtensions() : "";
 	}
 
 	public void setSourceType(SourceEnum sourceType) {

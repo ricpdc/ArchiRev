@@ -59,6 +59,13 @@
     <!-- <version>42.2.1</version> -->
 </dependency>
 
+<dependency>
+    <groupId>com.google.guava</groupId>
+    <artifactId>guava</artifactId>
+    <version>24.0-jre</version>
+</dependency>
+
+
 
 
 		<!-- HikariCP connection pool -->

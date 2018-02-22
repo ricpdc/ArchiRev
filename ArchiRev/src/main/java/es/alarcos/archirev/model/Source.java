@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import es.alarcos.archirev.model.enums.SourceConcernEnum;
 import es.alarcos.archirev.model.enums.SourceEnum;
 
 @Entity
@@ -18,16 +19,23 @@ public class Source extends AbstractEntity {
 	private static final long serialVersionUID = -3796066622416230524L;
 
 	@Enumerated(EnumType.ORDINAL)
+	@Column(name = "concern")
+	private SourceConcernEnum concern;
+
+	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "type")
 	private SourceEnum type;
 
 	@Column(name = "uploadpath")
 	private String uploadPath;
 
+	@Column(name = "file_extension")
+	private String fileExtension;
+
 	@Column(name = "file", length = 500000000)
 	private byte[] file;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "project_id")
 	private Project project;
 
@@ -65,6 +73,22 @@ public class Source extends AbstractEntity {
 
 	public void setProject(Project project) {
 		this.project = project;
+	}
+
+	public SourceConcernEnum getConcern() {
+		return concern;
+	}
+
+	public void setConcern(SourceConcernEnum concern) {
+		this.concern = concern;
+	}
+
+	public String getFileExtension() {
+		return fileExtension;
+	}
+
+	public void setFileExtension(String fileExtension) {
+		this.fileExtension = fileExtension;
 	}
 
 }

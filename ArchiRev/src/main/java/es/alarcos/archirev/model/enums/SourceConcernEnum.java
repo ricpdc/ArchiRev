@@ -2,7 +2,7 @@ package es.alarcos.archirev.model.enums;
 
 public enum SourceConcernEnum {
 	
-	APPLICATION(1, "Applications");
+	APPLICATION(1, "Applications"), SERVICE(2, "Services"), PROCESS(3, "Processes");
 	
 	private int id;
 	private String label;
