@@ -10,6 +10,7 @@
 		<p:dataTable id="projectsTable" widgetVar="projectsTable"
 			value="#{openProjectDialogController.projects}" var="project"
 			emptyMessage="No projects found" rows="5" paginator="true"
+			paginatorPosition="bottom"
 			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 			rowsPerPageTemplate="5,10,15">
 			<f:facet name="header">
@@ -24,18 +25,18 @@
 				<h:outputText value="#{project.description}" />
 			</p:column>
 			<p:column headerText="created" sortBy="#{project.createdAt}">
-				<h:outputText value="#{project.createdAt}" >
+				<h:outputText value="#{project.createdAt}">
 					<f:convertDateTime pattern="dd/MM/yyyy (HH:mm:ss)" />
 				</h:outputText>
 			</p:column>
 			<p:column headerText="Last modified" sortBy="#{project.modifiedAt}">
-				<h:outputText value="#{project.modifiedAt}" >
+				<h:outputText value="#{project.modifiedAt}">
 					<f:convertDateTime pattern="dd/MM/yyyy (HH:mm:ss)" />
 				</h:outputText>
 			</p:column>
 			<p:column style="width:38px;text-align: center">
-				<p:commandButton id="openProject"
-					icon="ui-icon-folder-open" title="Open"
+				<p:commandButton id="openProject" icon="ui-icon-folder-open"
+					title="Open"
 					action="#{openProjectDialogController.openProject(project)}"
 					update="mainForm" />
 			</p:column>

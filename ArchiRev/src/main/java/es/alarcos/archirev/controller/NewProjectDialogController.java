@@ -50,11 +50,7 @@ public class NewProjectDialogController extends AbstractDialogController {
 	}
 
 	public void onSave() {
-		Timestamp now = new Timestamp(new Date().getTime());
-		getProject().setCreatedAt(now);
-		getProject().setModifiedAt(now);
-		
-		projectDao.create(getProject());
+		projectDao.persist(getProject());
 		RequestContext context = RequestContext.getCurrentInstance();
 		context.execute("PF('newProjectDialog').hide()");
 		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "New project created", getProject().toString());

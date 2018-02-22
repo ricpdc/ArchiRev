@@ -14,7 +14,9 @@ import javax.faces.component.UIOutput;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.Validate;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
@@ -25,10 +27,10 @@ import org.springframework.stereotype.Controller;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import es.alarcos.archirev.model.Project;
 import es.alarcos.archirev.model.Source;
 import es.alarcos.archirev.model.enums.SourceConcernEnum;
 import es.alarcos.archirev.model.enums.SourceEnum;
-import es.alarcos.archirev.persistency.SourceDao;
 
 @ManagedBean(name = "sourcesController")
 @Controller
@@ -41,10 +43,7 @@ public class SourcesController extends AbstractController {
 
 	@Autowired
 	private SessionController sessionController;
-
-	@Autowired
-	private SourceDao sourceDao;
-
+	
 	private SourceConcernEnum sourceConcern;
 	private SourceEnum sourceType;
 
@@ -89,20 +88,38 @@ public class SourcesController extends AbstractController {
 	}
 
 	public void handleWebAppFileUpload(FileUploadEvent event) {
+		Validate.notNull(sourceConcern, "Source concern cannot be null");
+		Validate.notNull(sourceType, "Soruce type cannot be null");
+		
 		UploadedFile uploadedFile = event.getFile();
 		Validate.notNull(uploadedFile, "corrupt uploaded file");
+
 		Source source = new Source();
-		source.setType(SourceEnum.WEB_APP);
-		source.setUploadPath(uploadedFile.getFileName());
+		source.setConcern(sourceConcern);
+		source.setType(sourceType);
+		source.setName(uploadedFile.getFileName());
+		
+		String extension = FilenameUtils.getExtension(uploadedFile.getFileName());
+		Validate.isTrue(sourceType.getExtensions().contains(extension));
+		source.setFileExtension(extension);
+		
 		source.setFile(uploadedFile.getContents());
-		source.setProject(sessionController.getProject());
+		source.setProject(getProject());
 		Timestamp now = new Timestamp(new Date().getTime());
 		source.setCreatedAt(now);
 		source.setModifiedAt(now);
-		sourceDao.create(source);
+		
+		getProject().getSources().add(source);
+		sessionController.setProject(sessionController.getProjectDao().update(getProject()));
+
+		RequestContext.getCurrentInstance().update("mainForm:mainTabs:sourcesTable");
 
 		FacesMessage message = new FacesMessage("Succesful", uploadedFile.getFileName() + " is uploaded.");
 		FacesContext.getCurrentInstance().addMessage(null, message);
+	}
+
+	private Project getProject() {
+		return sessionController.getProject();
 	}
 
 	public SessionController getSessionController() {
@@ -113,16 +130,8 @@ public class SourcesController extends AbstractController {
 		this.sessionController = sessionController;
 	}
 
-	public SourceDao getSourceDao() {
-		return sourceDao;
-	}
-
-	public void setSourceDao(SourceDao sourceDao) {
-		this.sourceDao = sourceDao;
-	}
-
 	public List<Source> getSources() {
-		return sessionController.getProject().getSources();
+		return getProject().getSources();
 	}
 
 	public Set<SourceEnum> getSourceTypeOptions() {

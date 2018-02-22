@@ -7,7 +7,7 @@ import es.alarcos.archirev.model.Project;
 
 @Repository
 @Component
-public class ProjectDao extends AbstractJpaDAO<Project> {
+public class ProjectDao extends AbstractDao<Project> {
 
 	public ProjectDao() {
 		super();

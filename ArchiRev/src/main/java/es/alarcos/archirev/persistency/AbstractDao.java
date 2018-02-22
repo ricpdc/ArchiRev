@@ -1,6 +1,7 @@
 package es.alarcos.archirev.persistency;
 
-import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -9,9 +10,11 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.alarcos.archirev.model.AbstractEntity;
+
 @Service
 @Transactional
-public class AbstractJpaDAO<T extends Serializable> {
+public class AbstractDao<T extends AbstractEntity> {
 
 	private Class<T> clazz;
 
@@ -22,7 +25,7 @@ public class AbstractJpaDAO<T extends Serializable> {
 		this.clazz = clazzToSet;
 	}
 
-	public T findOne(long id) {
+	public T findById(Long id) {
 		return entityManager.find(clazz, id);
 	}
 
@@ -31,20 +34,38 @@ public class AbstractJpaDAO<T extends Serializable> {
 		return entityManager.createQuery("from " + clazz.getName()).getResultList();
 	}
 
-	public void create(T entity) {
+	public void persist(T entity) {
+		Timestamp now = new Timestamp(new Date().getTime());
+		entity.setCreatedAt(now);
+		entity.setModifiedAt(now);
 		entityManager.persist(entity);
 	}
 
 	public T update(T entity) {
+		Timestamp now = new Timestamp(new Date().getTime());
+		entity.setModifiedAt(now);
 		return entityManager.merge(entity);
 	}
+	
+	public void refresh(T entity) {
+		entityManager.refresh(entity);
+	}
 
-	public void delete(T entity) {
+	public T persistOrUpdate(T entity) {
+		if (entity.getId() == null) {
+			persist(entity);
+			return null;
+		} else {
+			return update(entity);
+		}
+	}
+
+	public void remove(T entity) {
 		entityManager.remove(entity);
 	}
 
-	public void deleteById(long entityId) {
-		T entity = findOne(entityId);
-		delete(entity);
+	public void removeById(Long entityId) {
+		T entity = findById(entityId);
+		remove(entity);
 	}
 }

@@ -4,71 +4,92 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 
-	<p:tab title="Knowledge Source">
+	<p:tab id="sourcesTab" title="Knowledge Sources">
+
+
+		<p:panel id="sourceListPanel" widgetVar="sourceListPanel"
+			header="Added knowledge sources list" toggleable="true"
+			toggleSpeed="500" style="margin-bottom:10px; width:100%" width="100%">
+			<p:dataTable id="sourcesTable" widgetVar="sourcesTable"
+				value="#{sourcesController.sources}" var="source"
+				emptyMessage="No sources added" rows="5" paginator="true"
+				paginatorPosition="bottom"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="5,10,15">
+				<p:column headerText="Concern" sortBy="#{source.concern.label}"
+					filterBy="#{source.concern.label}" filterMatchMode="contains">
+					<h:outputText value="#{source.concern.label}" />
+				</p:column>
+				<p:column headerText="Type" sortBy="#{source.type.label}"
+					filterBy="#{source.type.label}" filterMatchMode="contains">
+					<h:outputText value="#{source.type.label}" />
+				</p:column>
+				<p:column headerText="Name" sortBy="#{source.name}"
+					filterBy="#{source.name}" filterMatchMode="contains">
+					<h:outputText value="#{source.name}" />
+				</p:column>
+				<p:column headerText="Extension" sortBy="#{source.fileExtension}"
+					filterBy="#{source.fileExtension}" filterMatchMode="contains">
+					<h:outputText value="#{source.fileExtension}" />
+				</p:column>
+				<p:column headerText="Addition date" sortBy="#{source.modifiedAt}"
+					filterBy="#{source.modifiedAt}" filterMatchMode="contains">
+					<h:outputText value="#{source.modifiedAt}">
+						<f:convertDateTime pattern="dd/MM/yyyy (HH:mm:ss)" />
+					</h:outputText>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
 
 		<p:panelGrid style="width:100%; border: none;">
-			<p:row>
-				<p:column colspan="2" width="100%; border: none;">
-					<p:panel id="sourceListPanel" widgetVar="sourceListPanel"
-						header="Added knowledge sources list" toggleable="true"
-						toggleSpeed="500" style="margin-bottom:10px; width:100%"
-						width="100%">
-						<p:dataTable id="sourcesTable" widgetVar="sourcesTable"
-							value="#{sourcesController.sources}" var="source"
-							emptyMessage="No sources added" rows="5" paginator="true"
-							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-							rowsPerPageTemplate="5,10,15">
-							<p:column headerText="Concern" sortBy="#{source.concern}"
-								filterBy="#{source.type}" filterMatchMode="contains">
-								<h:outputText value="#{source.type}" />
-							</p:column>
-							<p:column headerText="Type" sortBy="#{source.type}"
-								filterBy="#{source.type}" filterMatchMode="contains">
-								<h:outputText value="#{source.type}" />
-							</p:column>
 
-						</p:dataTable>
+			<p:row>
+
+				<p:column style="vertical-align:top" width="50%">
+
+					<p:panel id="concernAndTypePanel" widgetVar="concernAndTypePanel"
+						toggleable="true" toggleSpeed="500"
+						style="margin-bottom:20px; width:100%">
+						<f:facet name="header">
+							<h:outputText value="Source Type" />
+						</f:facet>
+						<p:panelGrid columns="2" width="100%">
+							<h:outputText value="Soruce concern"></h:outputText>
+							<p:selectOneButton value="#{sourcesController.sourceConcern}">
+								<f:selectItems value="#{sourcesController.sourceConcernOptions}"
+									var="soruceConcern" itemValue="#{sourceConcern}"
+									itemLabel="#{sourceConcern.label}" />
+								<p:ajax event="change"
+									listener="#{sourcesController.onSelectSourceConcern}"
+									update="mainForm:mainTabs:sourceTypeList, mainForm:mainTabs:selectionHint, mainForm:mainTabs:uploadFilePanel" />
+							</p:selectOneButton>
+
+							<h:outputText style="vertical-align:top;" value="Soruce type"></h:outputText>
+							<p:selectOneListbox id="sourceTypeList"
+								value="#{sourcesController.sourceType}" filter="true"
+								filterMatchMode="contains">
+								<f:selectItems value="#{sourcesController.sourceTypeOptions}"
+									var="sourceType" itemValue="#{sourceType}"
+									itemLabel="#{sourceType.label}" />
+								<p:ajax event="change"
+									listener="#{sourcesController.onSelectSourceType}"
+									update="mainForm:mainTabs:selectionHint, mainForm:mainTabs:uploadFilePanel" />
+
+							</p:selectOneListbox>
+						</p:panelGrid>
 					</p:panel>
 				</p:column>
-			</p:row>
-
-			<p:row>
-
-				<p:column style="vertical-align:top">
-					<p:panelGrid columns="2" width="100%">
-						<h:outputText value="Soruce concern"></h:outputText>
-						<p:selectOneButton  value="#{sourcesController.sourceConcern}">
-							<f:selectItems value="#{sourcesController.sourceConcernOptions}"
-								var="soruceConcern" itemValue="#{sourceConcern}"
-								itemLabel="#{sourceConcern.label}" />
-							<p:ajax event="change"
-								listener="#{sourcesController.onSelectSourceConcern}"
-								update="mainForm:mainTabs:sourceTypeList, mainForm:mainTabs:selectionHint" />
-						</p:selectOneButton >
-
-						<h:outputText style="vertical-align:top;" value="Soruce type"></h:outputText>
-						<p:selectOneListbox id="sourceTypeList"
-							value="#{sourcesController.sourceType}" filter="true"
-							filterMatchMode="contains">
-							<f:selectItems value="#{sourcesController.sourceTypeOptions}"
-								var="sourceType" itemValue="#{sourceType}"
-								itemLabel="#{sourceType.label}" />
-							<p:ajax event="change"
-								listener="#{sourcesController.onSelectSourceType}"
-								update="mainForm:mainTabs:selectionHint" />
-
-						</p:selectOneListbox>
-					</p:panelGrid>
-				</p:column>
-				<p:column>
+				<p:column  width="50%">
 					<p:panel id="uploadFilePanel" widgetVar="uploadFilePanel"
 						toggleable="true" toggleSpeed="500"
 						style="margin-bottom:20px; width:100%">
 						<f:facet name="header">
-							<h:outputText id="selectionHint" value="#{sourcesController.selectFileMessage}" />
+							<h:outputText id="selectionHint"
+								value="#{sourcesController.selectFileMessage}" />
 						</f:facet>
 						<p:fileUpload
 							fileUploadListener="#{sourcesController.handleWebAppFileUpload}"
+							disabled="#{sourcesController.sourceType == null}"
 							mode="advanced" dragDropSupport="true" multiple="true"
 							update="mainForm:messages" sizeLimit="500000000" fileLimit="3"
 							allowTypes="/(\.|\/)(ear|war|jar)$/" />

@@ -7,7 +7,7 @@ import es.alarcos.archirev.model.Source;
 
 @Repository
 @Component
-public class SourceDao extends AbstractJpaDAO<Source> {
+public class SourceDao extends AbstractDao<Source> {
 
 	public SourceDao() {
 		super();

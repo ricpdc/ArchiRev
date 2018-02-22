@@ -25,9 +25,10 @@ public class Source extends AbstractEntity {
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "type")
 	private SourceEnum type;
+	
+	@Column(name = "name")
+	private String name;
 
-	@Column(name = "uploadpath")
-	private String uploadPath;
 
 	@Column(name = "file_extension")
 	private String fileExtension;
@@ -49,14 +50,6 @@ public class Source extends AbstractEntity {
 
 	public void setType(SourceEnum type) {
 		this.type = type;
-	}
-
-	public String getUploadPath() {
-		return uploadPath;
-	}
-
-	public void setUploadPath(String uploadPath) {
-		this.uploadPath = uploadPath;
 	}
 
 	public byte[] getFile() {
@@ -89,6 +82,14 @@ public class Source extends AbstractEntity {
 
 	public void setFileExtension(String fileExtension) {
 		this.fileExtension = fileExtension;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

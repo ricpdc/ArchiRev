@@ -5,9 +5,11 @@ import javax.faces.bean.SessionScoped;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.alarcos.archirev.model.Project;
+import es.alarcos.archirev.persistency.ProjectDao;
 
 @ManagedBean(name = "sessionController")
 @Component
@@ -18,6 +20,9 @@ public class SessionController extends AbstractController {
 
 	static Logger LOGGER = LoggerFactory.getLogger(NewProjectDialogController.class);
 
+	@Autowired
+	private ProjectDao projectDao;
+	
 	private Project project;
 
 	public SessionController() {
@@ -35,6 +40,18 @@ public class SessionController extends AbstractController {
 
 	public boolean isActiveProject() {
 		return project != null && project.getId() != null;
+	}
+
+	public void refreshProject() {
+		getProjectDao().refresh(project);
+	}
+
+	public ProjectDao getProjectDao() {
+		return projectDao;
+	}
+
+	public void setProjectDao(ProjectDao projectDao) {
+		this.projectDao = projectDao;
 	}
 
 }
