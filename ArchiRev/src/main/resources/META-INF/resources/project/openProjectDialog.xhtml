@@ -4,42 +4,58 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 
-	<p:dialog header="Open Project" id="openProjectDialog"
-		widgetVar="openProjectDialog" modal="true" height="400" width="1200"
+	<p:dialog header="Manage Project" id="openProjectDialog"
+		widgetVar="openProjectDialog" modal="true" height="360" width="1200"
 		closable="true" closeOnEscape="true">
-		<p:dataTable id="projectsTable" widgetVar="projectsTable"
-			value="#{openProjectDialogController.projects}" var="project"
-			emptyMessage="No projects found" rows="5" paginator="true"
-			paginatorPosition="bottom"
-			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-			rowsPerPageTemplate="5,10,15">
-			<f:facet name="header">
+		<p:outputPanel id="panelProjectList" style="paddign:0px;border:none;">
+			<p:dataTable id="projectsTable" widgetVar="projectsTable" sortBy="#{project.modifiedAt}" sortOrder="descending"
+				value="#{openProjectDialogController.projects}" var="project"
+				emptyMessage="No projects found" rows="5" paginator="true"
+				paginatorPosition="bottom"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="5,10,15">
+				<f:facet name="header">
 	            Available projects
 	        </f:facet>
-			<p:column headerText="Name" sortBy="#{project.name}"
-				filterBy="#{project.name}" filterMatchMode="contains">
-				<h:outputText value="#{project.name}" />
-			</p:column>
-			<p:column headerText="Description" sortBy="#{project.description}"
-				filterBy="#{project.description}" filterMatchMode="contains">
-				<h:outputText value="#{project.description}" />
-			</p:column>
-			<p:column headerText="created" sortBy="#{project.createdAt}">
-				<h:outputText value="#{project.createdAt}">
-					<f:convertDateTime pattern="dd/MM/yyyy (HH:mm:ss)" />
-				</h:outputText>
-			</p:column>
-			<p:column headerText="Last modified" sortBy="#{project.modifiedAt}">
-				<h:outputText value="#{project.modifiedAt}">
-					<f:convertDateTime pattern="dd/MM/yyyy (HH:mm:ss)" />
-				</h:outputText>
-			</p:column>
-			<p:column style="width:38px;text-align: center">
-				<p:commandButton id="openProject" icon="ui-icon-folder-open"
-					title="Open"
-					action="#{openProjectDialogController.openProject(project)}"
-					update="mainForm" />
-			</p:column>
-		</p:dataTable>
+				<p:column headerText="Name" sortBy="#{project.name}"
+					filterBy="#{project.name}" filterMatchMode="contains">
+					<h:outputText value="#{project.name}" />
+				</p:column>
+				<p:column headerText="Description" sortBy="#{project.description}"
+					filterBy="#{project.description}" filterMatchMode="contains">
+					<h:outputText value="#{project.description}" />
+				</p:column>
+				<p:column headerText="created" sortBy="#{project.createdAt}" width="180">
+					<h:outputText value="#{project.createdAt}">
+						<f:converter converterId="timestampConverter"/>
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Last modified" sortBy="#{project.modifiedAt}" width="180">
+					<h:outputText value="#{project.modifiedAt}">
+						<f:converter converterId="timestampConverter"/>
+					</h:outputText>
+				</p:column>
+				<p:column style="width:90px;text-align: center">
+					<p:commandButton id="openProject" icon="ui-icon-folder-open"
+						title="Open"
+						action="#{openProjectDialogController.openProject(project)}"
+						update="mainForm" />
+					<p:commandButton id="deleteProject" icon="ui-icon-trash"
+						title="Remove"
+						action="#{openProjectDialogController.removeProject(project)}"
+						update="mainForm:panelProjectList">
+						<p:confirm header="Confirmation" message="Are you sure?"
+							icon="ui-icon-alert" />
+					</p:commandButton>
+					<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+						<p:commandButton value="Yes" type="button"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check">
+						</p:commandButton>
+						<p:commandButton value="No" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:confirmDialog>
+				</p:column>
+			</p:dataTable>
+		</p:outputPanel>
 	</p:dialog>
 </ui:composition>

@@ -58,6 +58,16 @@ public class OpenProjectDialogController extends AbstractDialogController {
 		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Project loaded", getSessionController().getProject().toString());
 		FacesContext.getCurrentInstance().addMessage(null, message);
     }
+    
+    public void removeProject(final Project project) {
+    	if(getSessionController().getProject().equals(project)) {
+    		getSessionController().setProject(null);
+    	}    	
+    	projectDao.remove(project);
+    	projects.remove(project);
+    	FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Project deleted: ", project.toString());
+		FacesContext.getCurrentInstance().addMessage(null, message);
+    }
 
 	public List<Project> getProjects() {
 		return projects;

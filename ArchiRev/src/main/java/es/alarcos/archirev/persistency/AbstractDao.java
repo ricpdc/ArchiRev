@@ -61,7 +61,7 @@ public class AbstractDao<T extends AbstractEntity> {
 	}
 
 	public void remove(T entity) {
-		entityManager.remove(entity);
+		entityManager.remove(entityManager.contains(entity) ? entity : entityManager.merge(entity));
 	}
 
 	public void removeById(Long entityId) {

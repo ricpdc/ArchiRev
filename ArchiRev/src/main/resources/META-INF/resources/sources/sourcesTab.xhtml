@@ -17,11 +17,13 @@
 				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 				rowsPerPageTemplate="5,10,15">
 				<p:column headerText="Concern" sortBy="#{source.concern.label}"
-					filterBy="#{source.concern.label}" filterMatchMode="contains">
+					width="180" filterBy="#{source.concern.label}"
+					filterMatchMode="contains">
 					<h:outputText value="#{source.concern.label}" />
 				</p:column>
 				<p:column headerText="Type" sortBy="#{source.type.label}"
-					filterBy="#{source.type.label}" filterMatchMode="contains">
+					width="180" filterBy="#{source.type.label}"
+					filterMatchMode="contains">
 					<h:outputText value="#{source.type.label}" />
 				</p:column>
 				<p:column headerText="Name" sortBy="#{source.name}"
@@ -29,14 +31,31 @@
 					<h:outputText value="#{source.name}" />
 				</p:column>
 				<p:column headerText="Extension" sortBy="#{source.fileExtension}"
-					filterBy="#{source.fileExtension}" filterMatchMode="contains">
+					width="110" filterBy="#{source.fileExtension}"
+					filterMatchMode="contains">
 					<h:outputText value="#{source.fileExtension}" />
 				</p:column>
 				<p:column headerText="Addition date" sortBy="#{source.modifiedAt}"
-					filterBy="#{source.modifiedAt}" filterMatchMode="contains">
+					width="180" filterBy="#{source.modifiedAt}"
+					filterMatchMode="contains">
 					<h:outputText value="#{source.modifiedAt}">
-						<f:convertDateTime pattern="dd/MM/yyyy (HH:mm:ss)" />
+						<f:converter converterId="timestampConverter"/>
 					</h:outputText>
+				</p:column>
+				<p:column style="width:50px;text-align: center">
+					<p:commandButton id="deleteSource" icon="ui-icon-trash"
+						title="Remove" action="#{sourcesController.removeSource(source)}"
+						update="mainForm:mainTabs:sourcesTable">
+						<p:confirm header="Confirmation" message="Are you sure?"
+							icon="ui-icon-alert" />
+					</p:commandButton>
+					<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+						<p:commandButton value="Yes" type="button"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check">
+						</p:commandButton>
+						<p:commandButton value="No" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:confirmDialog>
 				</p:column>
 			</p:dataTable>
 		</p:panel>
@@ -45,7 +64,7 @@
 
 			<p:row>
 
-				<p:column style="vertical-align:top" width="50%">
+				<p:column style="vertical-align:top; width:40% !important">
 
 					<p:panel id="concernAndTypePanel" widgetVar="concernAndTypePanel"
 						toggleable="true" toggleSpeed="500"
@@ -74,12 +93,11 @@
 								<p:ajax event="change"
 									listener="#{sourcesController.onSelectSourceType}"
 									update="mainForm:mainTabs:selectionHint, mainForm:mainTabs:uploadFilePanel" />
-
 							</p:selectOneListbox>
 						</p:panelGrid>
 					</p:panel>
 				</p:column>
-				<p:column  width="50%">
+				<p:column sytle="width:55% !important">
 					<p:panel id="uploadFilePanel" widgetVar="uploadFilePanel"
 						toggleable="true" toggleSpeed="500"
 						style="margin-bottom:20px; width:100%">

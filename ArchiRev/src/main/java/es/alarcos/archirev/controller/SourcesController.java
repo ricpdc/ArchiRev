@@ -117,6 +117,11 @@ public class SourcesController extends AbstractController {
 		FacesMessage message = new FacesMessage("Succesful", uploadedFile.getFileName() + " is uploaded.");
 		FacesContext.getCurrentInstance().addMessage(null, message);
 	}
+	
+	public void removeSource(final Source source) {
+		getProject().getSources().remove(source);
+		sessionController.setProject(sessionController.getProjectDao().update(getProject()));
+    }
 
 	private Project getProject() {
 		return sessionController.getProject();
