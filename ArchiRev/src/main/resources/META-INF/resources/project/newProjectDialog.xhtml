@@ -5,12 +5,12 @@
 	xmlns:p="http://primefaces.org/ui">
 
 	<p:dialog id="newProjectDialog" widgetVar="newProjectDialog"
-		header="New Project" modal="true" height="300" width="400"
-		closable="true" closeOnEscape="true">
+		modal="true" height="300" width="400" closable="true"
+		closeOnEscape="true">
+		<f:facet name="header">
+			<h:outputText value="New project" />
+		</f:facet>
 		<p:panelGrid columns="2">
-			<f:facet name="header">
-				<h:outputText value="New project" />
-			</f:facet>
 
 			<h:outputText value="Name:" />
 			<p:inputText value="#{newProjectDialogController.project.name}" />

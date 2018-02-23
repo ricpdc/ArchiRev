@@ -87,7 +87,7 @@ public class SourcesController extends AbstractController {
 		LOGGER.info("Selected type: " + type);
 	}
 
-	public void handleWebAppFileUpload(FileUploadEvent event) {
+	public void addSource(FileUploadEvent event) {
 		Validate.notNull(sourceConcern, "Source concern cannot be null");
 		Validate.notNull(sourceType, "Soruce type cannot be null");
 		
@@ -105,12 +105,17 @@ public class SourcesController extends AbstractController {
 		
 		source.setFile(uploadedFile.getContents());
 		source.setProject(getProject());
-		Timestamp now = new Timestamp(new Date().getTime());
+		final Timestamp now = new Timestamp(new Date().getTime());
 		source.setCreatedAt(now);
 		source.setModifiedAt(now);
+		final String loggedUser = sessionController.getLoggedUser();
+		source.setCreatedBy(loggedUser);
+		source.setModifiedBy(loggedUser);
 		
 		getProject().getSources().add(source);
-		sessionController.setProject(sessionController.getProjectDao().update(getProject()));
+		getProject().setModifiedBy(loggedUser);
+		
+		sessionController.updateProject();
 
 		RequestContext.getCurrentInstance().update("mainForm:mainTabs:sourcesTable");
 
@@ -120,9 +125,9 @@ public class SourcesController extends AbstractController {
 	
 	public void removeSource(final Source source) {
 		getProject().getSources().remove(source);
-		sessionController.setProject(sessionController.getProjectDao().update(getProject()));
+		sessionController.updateProject();
     }
-
+	
 	private Project getProject() {
 		return sessionController.getProject();
 	}

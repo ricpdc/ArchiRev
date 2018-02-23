@@ -19,7 +19,7 @@ public class AbstractDao<T extends AbstractEntity> {
 	private Class<T> clazz;
 
 	@PersistenceContext
-	EntityManager entityManager;
+	protected EntityManager entityManager;
 
 	public final void setClazz(Class<T> clazzToSet) {
 		this.clazz = clazzToSet;

@@ -106,7 +106,7 @@
 								value="#{sourcesController.selectFileMessage}" />
 						</f:facet>
 						<p:fileUpload
-							fileUploadListener="#{sourcesController.handleWebAppFileUpload}"
+							fileUploadListener="#{sourcesController.addSource}"
 							disabled="#{sourcesController.sourceType == null}"
 							mode="advanced" dragDropSupport="true" multiple="true"
 							update="mainForm:messages" sizeLimit="500000000" fileLimit="3"

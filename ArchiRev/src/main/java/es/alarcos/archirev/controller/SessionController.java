@@ -2,11 +2,14 @@ package es.alarcos.archirev.controller;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.google.common.collect.Lists;
 
 import es.alarcos.archirev.model.Project;
 import es.alarcos.archirev.persistency.ProjectDao;
@@ -29,6 +32,25 @@ public class SessionController extends AbstractController {
 		super();
 		project = new Project();
 	}
+	
+	public void createEmptyProject() {
+		project = new Project();
+		project.setSources(Lists.newArrayList());
+		project.setCreatedBy(getLoggedUser());
+		project.setModifiedBy(getLoggedUser());
+	}
+	
+	public void updateProject() {
+		setProject(getProjectDao().update(getProject()));
+	}
+	
+	public boolean isActiveProject() {
+		return project != null && project.getId() != null;
+	}
+
+	public void refreshProject() {
+		getProjectDao().refresh(project);
+	}
 
 	public Project getProject() {
 		return project;
@@ -38,20 +60,17 @@ public class SessionController extends AbstractController {
 		this.project = project;
 	}
 
-	public boolean isActiveProject() {
-		return project != null && project.getId() != null;
-	}
-
-	public void refreshProject() {
-		getProjectDao().refresh(project);
-	}
-
 	public ProjectDao getProjectDao() {
 		return projectDao;
 	}
 
 	public void setProjectDao(ProjectDao projectDao) {
 		this.projectDao = projectDao;
+	}
+	
+	public String getLoggedUser() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		return facesContext.getExternalContext().getSessionMap().get("user").toString();
 	}
 
 }

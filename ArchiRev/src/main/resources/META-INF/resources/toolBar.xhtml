@@ -6,23 +6,28 @@
 
 	<p:toolbar id="toolbar">
 		<f:facet name="left">
-			<p:commandButton value="New project" icon="ui-icon-document"
+			<p:commandButton disabled="#{!userLoginController.loggedIn}" value="New project" icon="ui-icon-document"
 				actionListener="#{newProjectDialogController.onOpen}" />
 
-			<p:commandButton value="Manage projects" icon="ui-icon-folder-open"
+			<p:commandButton disabled="#{!userLoginController.loggedIn}" value="Manage projects" icon="ui-icon-folder-open"
 				actionListener="#{openProjectDialogController.onOpen}" />
 
 			<span class="ui-separator"> <span
 				class="ui-icon ui-icon-grip-dotted-vertical" />
 			</span>
 
-			<p:commandButton type="button" title="Save" icon="ui-icon-disk" />
-			<p:commandButton type="button" title="Delete" icon="ui-icon-trash" />
-			<p:commandButton type="button" title="Print" icon="ui-icon-print" />
+			<p:commandButton disabled="#{!userLoginController.loggedIn}" type="button" title="Save" icon="ui-icon-disk" />
+			<p:commandButton disabled="#{!userLoginController.loggedIn}" type="button" title="Delete" icon="ui-icon-trash" />
+			<p:commandButton disabled="#{!userLoginController.loggedIn}" type="button" title="Print" icon="ui-icon-print" />
 		</f:facet>
 
 		<f:facet name="right">
-			<p:menuButton value="Options">
+			<h:outputText value="Welcome, #{userLoginController.username}     " rendered="#{userLoginController.loggedIn}" style="" />
+			<p:commandButton id="loginDialogButton" rendered="#{userLoginController.loggedIn}" title="Logout" value="Logout" icon="ui-icon-person"
+				 action="#{userLoginController.logout}" update="mainForm:toolbar" />
+			<p:commandButton id="logoutDialogButton" rendered="#{!userLoginController.loggedIn}" title="Login" value="Login" icon="ui-icon-person"
+				 onclick="PF('loginDialog').show();" />
+			<p:menuButton  disabled="#{!userLoginController.loggedIn}" value="Options">
 				<p:menuitem value="Save" actionListener="#{toolbarController.save}"
 					update="messages" icon="ui-icon-disk" />
 				<p:menuitem value="Update"
