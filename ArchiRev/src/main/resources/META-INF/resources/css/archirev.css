@@ -1,5 +1,8 @@
-.ui-panelgrid td, .ui-panelgrid tr
-{
-    border-style: none !important;
-    vertical-align:top;
+.ui-panelgrid td, .ui-panelgrid tr {
+	border-style: none !important;
+	vertical-align: top;
+}
+
+tr.activeProjectRow>td {
+	background-color: rgba(0, 200, 0, 0.25);
 }

@@ -44,8 +44,7 @@ public class OpenProjectDialogController extends AbstractDialogController {
 	}
      
     public void onOpen() {
-    	// TODO change this query with sorting it by date, filtering by user, and so on
-    	projects = projectDao.findAll();
+    	projects = projectDao.findProjectsByUser(sessionController.getLoggedUser());
     	RequestContext context = RequestContext.getCurrentInstance();
     	context.update("mainForm:openProjectDialog");
     	context.execute("PF('openProjectDialog').show()");
@@ -67,6 +66,10 @@ public class OpenProjectDialogController extends AbstractDialogController {
     	projects.remove(project);
     	FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Project deleted: ", project.toString());
 		FacesContext.getCurrentInstance().addMessage(null, message);
+    }
+    
+    public boolean isOpenProject(final Project project) {
+    	return sessionController.getProject().getId().equals(project.getId());
     }
 
 	public List<Project> getProjects() {

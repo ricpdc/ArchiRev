@@ -6,11 +6,15 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "project")
+@NamedQueries({
+	@NamedQuery(name = "Project.findByUser", query = "SELECT p FROM Project p WHERE p.createdBy = :createdBy") })
 public class Project extends AbstractEntity {
 
 	private static final long serialVersionUID = 2570099621580899220L;
