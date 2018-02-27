@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -25,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import es.alarcos.archirev.model.Project;
 import es.alarcos.archirev.model.Source;
@@ -65,7 +65,7 @@ public class SourcesController extends AbstractController {
 		sourcesMap = Maps.newHashMap();
 		if (sourcesMap.isEmpty()) {
 			for (SourceConcernEnum concern : SourceConcernEnum.values()) {
-				Set<SourceEnum> types = Sets.newTreeSet();
+				Set<SourceEnum> types = new TreeSet<SourceEnum>();
 				for (SourceEnum type : SourceEnum.values()) {
 					if (type.getSourceConcern().equals(concern)) {
 						types.add(type);
@@ -145,7 +145,7 @@ public class SourcesController extends AbstractController {
 	}
 
 	public Set<SourceEnum> getSourceTypeOptions() {
-		return sourceConcern != null ? sourcesMap.get(sourceConcern) : Sets.newTreeSet();
+		return sourceConcern != null ? sourcesMap.get(sourceConcern) : new TreeSet<SourceEnum>();
 	}
 
 	public Set<SourceConcernEnum> getSourceConcernOptions() {
