@@ -12,6 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -29,24 +31,35 @@ import org.benf.cfr.reader.util.getopt.OptionsImpl;
 import org.benf.cfr.reader.util.output.Dumper;
 import org.benf.cfr.reader.util.output.ToStringDumper;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.zeroturnaround.zip.ZipUtil;
 
+import com.archimatetool.model.impl.ArchimateElement;
+import com.archimatetool.model.impl.ArchimateFactory;
+import com.archimatetool.model.impl.ArchimateRelationship;
+
+import es.alarcos.archirev.logic.ArchimateElementEnum;
 import the.bytecode.club.bytecodeviewer.DecompilerSettings;
 import the.bytecode.club.bytecodeviewer.decompilers.CFRDecompiler.Settings;
 import the.bytecode.club.bytecodeviewer.decompilers.Decompiler;
 
 class DecompilerTest {
 
+	static Logger LOGGER = LoggerFactory.getLogger(DecompilerTest.class);
+
 	private final Decompiler decompiler = Decompiler.CFR;
 	private final DecompilerSettings settings = new DecompilerSettings(decompiler);
 
-	private final String warPath = "C:\\Users\\Alarcos\\Downloads\\ArchiRev.war";
+	private final String warPath = ".\\src\\test\\resources\\ArchiRev.war";
 
 	@Test
 	void testDecompileCFRSingleDocument() {
 
-		final String inPath = "C:\\Users\\Alarcos\\Downloads\\SessionController.class";
-		final String outPath = "C:\\Users\\Alarcos\\Downloads\\SessionController.java";
+		final String inPath = ".\\src\\test\\resources\\SessionController.class";
+		final String outPath = ".\\src\\test\\resources\\SessionController.java";
 
 		try {
 			Path path = Paths.get(inPath);
@@ -108,6 +121,7 @@ class DecompilerTest {
 	}
 
 	@Test
+	@SuppressWarnings({ "rawtypes", "resource" })
 	public void testAnnotationParsing() {
 		try {
 			File zipFile = new File(warPath);
@@ -155,6 +169,90 @@ class DecompilerTest {
 			}
 
 		} catch (NoClassDefFoundError | ClassNotFoundException | MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	@SuppressWarnings({ "rawtypes", "resource" })
+	public void testAnnotationParsingAndMapGeneration() {
+		try {
+			// TODO Load this from a configuration json file
+			MultiValueMap<String, ArchimateElementEnum> mapping = new LinkedMultiValueMap<>();
+			mapping.add("ManagedBean", ArchimateElementEnum.APPLICATION);
+			mapping.add("Controller", ArchimateElementEnum.APPLICATION);
+			mapping.add("Service", ArchimateElementEnum.APPLICATION);
+			mapping.add("Service", ArchimateElementEnum.SERVICE);
+			mapping.add("Entity", ArchimateElementEnum.DATA_ENTITY);
+
+			MultiValueMap<Class, ArchimateElement> modelElements = new LinkedMultiValueMap<>();
+			MultiValueMap<Class, ArchimateRelationship> modelRelationships = new LinkedMultiValueMap<>();
+
+			File zipFile = new File(warPath);
+			File rootFolder = zipFile.getParentFile();
+			String inputBaseName = FilenameUtils.getBaseName(zipFile.getName());
+			File classFolder = new File(rootFolder + File.separator + inputBaseName + "_output_class");
+			if (!classFolder.exists()) {
+				classFolder.mkdir();
+			}
+			Path classFolderPath = Paths.get(classFolder.getAbsolutePath());
+
+			ZipUtil.unpack(zipFile, classFolder);
+
+			URLClassLoader classLoader = new URLClassLoader(
+					new URL[] { new URL("file:///" + classFolder.getAbsolutePath()) });
+
+			Iterator<File> it = FileUtils.iterateFiles(classFolder, new String[] { "class" }, true);
+			while (it.hasNext()) {
+				File file = (File) it.next();
+				Path classFilePath = Paths.get(file.getAbsolutePath());
+
+				Path relativeClassPath = classFolderPath.relativize(classFilePath);
+				String classQualifiedName = FilenameUtils.removeExtension(relativeClassPath.toString())
+						.replaceAll("\\\\", ".");
+				Class c = classLoader.loadClass(classQualifiedName);
+				for (Annotation annotation : c.getAnnotations()) {
+
+					String annotationSimpleName = annotation.annotationType().getSimpleName();
+					List<ArchimateElementEnum> elementList = mapping.get(annotationSimpleName);
+					if (elementList != null) {
+						for (ArchimateElementEnum archimateElementEnum : elementList) {
+							ArchimateElement elementToBeAdded = null;
+							switch (archimateElementEnum) {
+							case APPLICATION:
+								elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE
+										.createApplicationFunction();
+								break;
+							case SERVICE:
+								elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE
+										.createApplicationService();
+								break;
+							case DATA_ENTITY:
+								elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createDataObject();
+								break;
+							default:
+								break;
+							}
+							elementToBeAdded.setName(c.getSimpleName());
+							modelElements.add(c, elementToBeAdded);
+						}
+					}
+				}
+			}
+
+			for (Entry<Class, List<ArchimateElement>> entry : modelElements.entrySet()) {
+				Class clazz = entry.getKey();
+				LOGGER.info("");
+				LOGGER.info(clazz.getName());
+				for (ArchimateElement archimateElement : entry.getValue()) {
+					LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + ": " + archimateElement.getName());
+				}
+			}
+
+		} catch (NoClassDefFoundError | ClassNotFoundException |
+
+				MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
