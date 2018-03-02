@@ -46,9 +46,9 @@ import the.bytecode.club.bytecodeviewer.DecompilerSettings;
 import the.bytecode.club.bytecodeviewer.decompilers.CFRDecompiler.Settings;
 import the.bytecode.club.bytecodeviewer.decompilers.Decompiler;
 
-class DecompilerTest {
+class BusinessTest {
 
-	static Logger LOGGER = LoggerFactory.getLogger(DecompilerTest.class);
+	static Logger LOGGER = LoggerFactory.getLogger(BusinessTest.class);
 
 	private final Decompiler decompiler = Decompiler.CFR;
 	private final DecompilerSettings settings = new DecompilerSettings(decompiler);
