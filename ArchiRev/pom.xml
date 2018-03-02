@@ -3,8 +3,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ArchiRev</groupId>
 	<artifactId>ArchiRev</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<version>0.0.1</version>
+	<packaging>war</packaging>
+	<name>ArchiRev</name>
 
 	<parent>
 		<groupId>org.joinfaces</groupId>
@@ -15,6 +16,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<start-class>es.alarcos.archirev.ArchiRevApplicationWar</start-class>
 	</properties>
 
 	<dependencies>
@@ -39,7 +41,7 @@
 			<artifactId>org.eclipse.emf.ecore</artifactId>
 			<version>2.12.0</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.eclipse.emf</groupId>
 			<artifactId>org.eclipse.emf.common</artifactId>
@@ -59,6 +61,21 @@
 			<groupId>org.joinfaces</groupId>
 			<artifactId>jsf-spring-boot-starter</artifactId>
 		</dependency>
+
+		<!-- <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency> -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+	        <groupId>org.apache.tomcat.embed</groupId>
+	        <artifactId>tomcat-embed-jasper</artifactId>
+	        <scope>provided</scope>
+	    </dependency>  
 
 
 		<dependency>
@@ -116,6 +133,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<finalName>ArchiRev</finalName>
 	</build>
 
 </project>

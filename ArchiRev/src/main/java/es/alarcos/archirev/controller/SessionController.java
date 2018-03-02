@@ -1,5 +1,7 @@
 package es.alarcos.archirev.controller;
 
+import java.util.ArrayList;
+
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Component;
 import com.google.common.collect.Lists;
 
 import es.alarcos.archirev.model.Project;
+import es.alarcos.archirev.model.Source;
 import es.alarcos.archirev.persistency.ProjectDao;
 
 @ManagedBean(name = "sessionController")
@@ -35,7 +38,7 @@ public class SessionController extends AbstractController {
 	
 	public void createEmptyProject() {
 		project = new Project();
-		project.setSources(Lists.newArrayList());
+		project.setSources(new ArrayList<Source>());
 		project.setCreatedBy(getLoggedUser());
 		project.setModifiedBy(getLoggedUser());
 	}
