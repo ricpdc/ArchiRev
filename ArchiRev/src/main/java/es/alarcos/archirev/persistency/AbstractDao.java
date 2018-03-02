@@ -1,5 +1,6 @@
 package es.alarcos.archirev.persistency;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -14,7 +15,7 @@ import es.alarcos.archirev.model.AbstractEntity;
 
 @Service
 @Transactional
-public class AbstractDao<T extends AbstractEntity> {
+public class AbstractDao<T extends AbstractEntity> implements Serializable {
 
 	private Class<T> clazz;
 

@@ -14,6 +14,8 @@ import es.alarcos.archirev.model.User;
 @Component
 public class UserDao extends AbstractDao<User> {
 
+	private static final long serialVersionUID = -3142827589560074428L;
+
 	public UserDao() {
 		super();
 		setClazz(User.class);
