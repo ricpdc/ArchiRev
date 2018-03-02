@@ -36,7 +36,7 @@ public class TimestampConverter implements Converter {
 	@Override
 	public String getAsString(FacesContext context, UIComponent component, Object value) {
 		if (value != null && value instanceof Timestamp) {
-			return SDF.format(new Date(((Timestamp) value).getTime()));
+			return StringUtils.defaultString(SDF.format(new Date(((Timestamp) value).getTime())));
 		}
 		return "";
 	}
