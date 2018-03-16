@@ -419,7 +419,7 @@ class BusinessTest {
 		Object parent = graph.getDefaultParent();
 		graph.getModel().beginUpdate();
 
-		try {
+		try { 
 			Map<ArchimateElement, Object> nodes = new HashMap<>();
 		
 		    mxGraphics2DCanvas.putShape("applicationFunction", new ArchiMateApplicationFunctionShape());
