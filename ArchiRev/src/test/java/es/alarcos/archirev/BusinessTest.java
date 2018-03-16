@@ -426,7 +426,7 @@ class BusinessTest {
 		    Map<String, Object> style = new HashMap<String, Object>();
 			style.put(mxConstants.STYLE_SHAPE, "applicationFunction");
 			graph.getStylesheet().putCellStyle("applicationFunction", style);
-		    
+		     
 
 			for (Entry<JavaClass, List<ArchimateElement>> entry : modelElements.entrySet()) {
 				JavaClass javaClass = entry.getKey();
