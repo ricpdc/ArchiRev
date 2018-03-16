@@ -145,8 +145,31 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+			<plugin>
+
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>3.0.1</version>
+				<executions>
+					<execution>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>manifest</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<instructions>
+						<Bundle-Vendor>see https://github.com/jgraph/jgraphx)</Bundle-Vendor>
+					</instructions>
+				</configuration>
+			</plugin>
+
 		</plugins>
 		<finalName>ArchiRev</finalName>
+
+
 	</build>
 
 

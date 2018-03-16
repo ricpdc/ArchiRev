@@ -1,5 +1,6 @@
 package es.alarcos.archirev;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -15,6 +16,7 @@ import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +24,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import javax.imageio.ImageIO;
+import javax.swing.SwingConstants;
 
 import org.apache.bcel.classfile.AnnotationEntry;
 import org.apache.bcel.classfile.ClassParser;
@@ -52,8 +57,15 @@ import org.zeroturnaround.zip.ZipUtil;
 import com.archimatetool.model.impl.ArchimateElement;
 import com.archimatetool.model.impl.ArchimateFactory;
 import com.archimatetool.model.impl.ArchimateRelationship;
+import com.mxgraph.canvas.mxGraphics2DCanvas;
+import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
+import com.mxgraph.util.mxCellRenderer;
+import com.mxgraph.util.mxConstants;
+import com.mxgraph.view.mxGraph;
+import com.mxgraph.view.mxStylesheet;
 
 import es.alarcos.archirev.logic.ArchimateElementEnum;
+import es.alarcos.archirev.shape.ArchiMateApplicationFunctionShape;
 import guru.nidi.graphviz.attribute.Attributes;
 import guru.nidi.graphviz.attribute.Color;
 import guru.nidi.graphviz.attribute.Shape;
@@ -176,7 +188,7 @@ class BusinessTest {
 				String classQualifiedName = FilenameUtils.removeExtension(relativeClassPath.toString())
 						.replaceAll("\\\\", ".");
 				Class c = classLoader.loadClass(classQualifiedName);
-				
+
 				for (Annotation annotation : c.getAnnotations()) {
 
 					String annotationSimpleName = annotation.annotationType().getSimpleName();
@@ -346,27 +358,27 @@ class BusinessTest {
 				}
 			}
 
-			generateDiagram(modelElements, modelRelationships);
+			generateJgraphxDiagram(modelElements, modelRelationships);
 
 		} catch (NoClassDefFoundError | IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void generateDiagram(MultiValueMap<JavaClass, ArchimateElement> modelElements,
+	private void generateGraphvizDiagram(MultiValueMap<JavaClass, ArchimateElement> modelElements,
 			MultiValueMap<JavaClass, ArchimateRelationship> modelRelationships) {
-		
+
 		Graph g = Factory.graph("test").directed();
-		
-		
+
 		Map<ArchimateElement, Node> nodes = new HashMap<>();
-		
+
 		for (Entry<JavaClass, List<ArchimateElement>> entry : modelElements.entrySet()) {
 			JavaClass javaClass = entry.getKey();
 			LOGGER.info("");
 			LOGGER.info(javaClass.getClassName());
 			for (ArchimateElement archimateElement : entry.getValue()) {
-				Node node = Factory.node(archimateElement.getName()).with(Color.BLUE, Style.SOLID, Style.lineWidth(1)).with(Shape.RECTANGLE).with(Attributes.attr("size", "7.5,7.5"));
+				Node node = Factory.node(archimateElement.getName()).with(Color.BLUE, Style.SOLID, Style.lineWidth(1))
+						.with(Shape.RECTANGLE).with(Attributes.attr("size", "7.5,7.5"));
 				nodes.put(archimateElement, node);
 				LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + " (\"" + archimateElement.getName()
 						+ "\")");
@@ -378,21 +390,93 @@ class BusinessTest {
 			LOGGER.info("");
 			LOGGER.info(javaClass.getClassName());
 			for (ArchimateRelationship archimateRelationship : entry.getValue()) {
-				
+
 				Node node1 = nodes.get(archimateRelationship.getSource());
 				Node node2 = nodes.get(archimateRelationship.getTarget());
-				
-				g=g.with(node1.link(node2));
-				
+
+				g = g.with(node1.link(node2));
+
 				LOGGER.info("\t" + archimateRelationship.getSource().getClass().getSimpleName() + " (\""
 						+ archimateRelationship.getSource().getName() + "\") --> "
 						+ archimateRelationship.getTarget().getClass().getSimpleName() + " (\""
 						+ archimateRelationship.getTarget().getName() + "\")");
 			}
 		}
-		
+
 		try {
-			Graphviz.fromGraph(g).render(Format.PNG).toFile(new File("C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\target\\diagrams\\test1.png"));
+			File file = new File("C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\target\\diagrams\\test1.png");
+			Graphviz.fromGraph(g).render(Format.PNG).toFile(file);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void generateJgraphxDiagram(MultiValueMap<JavaClass, ArchimateElement> modelElements,
+			MultiValueMap<JavaClass, ArchimateRelationship> modelRelationships) {
+
+		mxGraph graph = new mxGraph();
+		Object parent = graph.getDefaultParent();
+		graph.getModel().beginUpdate();
+
+		try {
+			Map<ArchimateElement, Object> nodes = new HashMap<>();
+		
+		    mxGraphics2DCanvas.putShape("applicationFunction", new ArchiMateApplicationFunctionShape());
+		    Map<String, Object> style = new HashMap<String, Object>();
+			style.put(mxConstants.STYLE_SHAPE, "applicationFunction");
+			graph.getStylesheet().putCellStyle("applicationFunction", style);
+		    
+
+			for (Entry<JavaClass, List<ArchimateElement>> entry : modelElements.entrySet()) {
+				JavaClass javaClass = entry.getKey();
+				LOGGER.info("");
+				LOGGER.info(javaClass.getClassName());
+				for (ArchimateElement archimateElement : entry.getValue()) {
+					Object node = graph.insertVertex(parent, null, archimateElement.getName(), 0, 0,
+							archimateElement.getName().length() * 5 + 60, 40,
+							"applicationFunction");
+					
+					//"fontColor=000f84;shape=rectangle;strokeColor=000f84;fillColor=cce3ff"
+					nodes.put(archimateElement, node);
+					LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + " (\"" + archimateElement.getName()
+							+ "\")");
+				}
+			}
+			
+			
+
+			for (Entry<JavaClass, List<ArchimateRelationship>> entry : modelRelationships.entrySet()) {
+				JavaClass javaClass = entry.getKey();
+				LOGGER.info("");
+				LOGGER.info(javaClass.getClassName());
+				for (ArchimateRelationship archimateRelationship : entry.getValue()) {
+
+					Object node1 = nodes.get(archimateRelationship.getSource());
+					Object node2 = nodes.get(archimateRelationship.getTarget());
+
+					String simpleName = archimateRelationship.getClass().getSimpleName();
+					graph.insertEdge(parent, null, simpleName, node1, node2, "endArrow=open;");
+
+					LOGGER.info("\t" + archimateRelationship.getSource().getClass().getSimpleName() + " (\""
+							+ archimateRelationship.getSource().getName() + "\") --> "
+							+ archimateRelationship.getTarget().getClass().getSimpleName() + " (\""
+							+ archimateRelationship.getTarget().getName() + "\")");
+				}
+			}
+		} finally {
+			graph.getModel().endUpdate();
+		}
+
+		try {
+
+			mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
+			layout.setOrientation(SwingConstants.NORTH);
+			layout.execute(graph.getDefaultParent());
+
+			BufferedImage image = mxCellRenderer.createBufferedImage(graph, null, 1, java.awt.Color.WHITE, true, null);
+			File file = new File("C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\target\\diagrams\\testJgraphX.png");
+			ImageIO.write(image, "PNG", file);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
