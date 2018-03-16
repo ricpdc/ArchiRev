@@ -13,18 +13,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.apache.bcel.classfile.AnnotationEntry;
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.Constant;
-import org.apache.bcel.classfile.ConstantPool;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -53,6 +54,15 @@ import com.archimatetool.model.impl.ArchimateFactory;
 import com.archimatetool.model.impl.ArchimateRelationship;
 
 import es.alarcos.archirev.logic.ArchimateElementEnum;
+import guru.nidi.graphviz.attribute.Attributes;
+import guru.nidi.graphviz.attribute.Color;
+import guru.nidi.graphviz.attribute.Shape;
+import guru.nidi.graphviz.attribute.Style;
+import guru.nidi.graphviz.engine.Format;
+import guru.nidi.graphviz.engine.Graphviz;
+import guru.nidi.graphviz.model.Factory;
+import guru.nidi.graphviz.model.Graph;
+import guru.nidi.graphviz.model.Node;
 import the.bytecode.club.bytecodeviewer.DecompilerSettings;
 import the.bytecode.club.bytecodeviewer.decompilers.CFRDecompiler.Settings;
 import the.bytecode.club.bytecodeviewer.decompilers.Decompiler;
@@ -166,6 +176,7 @@ class BusinessTest {
 				String classQualifiedName = FilenameUtils.removeExtension(relativeClassPath.toString())
 						.replaceAll("\\\\", ".");
 				Class c = classLoader.loadClass(classQualifiedName);
+				
 				for (Annotation annotation : c.getAnnotations()) {
 
 					String annotationSimpleName = annotation.annotationType().getSimpleName();
@@ -249,40 +260,43 @@ class BusinessTest {
 				cp = new ClassParser(warPath, entry.getName());
 				JavaClass javaClass = cp.parse();
 
+				Set<ArchimateElementEnum> uniqueElements = new HashSet<>();
 				for (AnnotationEntry annotationEntry : javaClass.getAnnotationEntries()) {
 					String annotationType = annotationEntry.getAnnotationType();
-					//LOGGER.debug(String.format("[%s]: @%s", javaClass.getClassName(), annotationType));
-					String annotation = annotationType.substring(annotationType.lastIndexOf("/")+1, annotationType.length()-1);
+					// LOGGER.debug(String.format("[%s]: @%s", javaClass.getClassName(),
+					// annotationType));
+					String annotation = annotationType.substring(annotationType.lastIndexOf("/") + 1,
+							annotationType.length() - 1);
 					List<ArchimateElementEnum> elementList = mapping.get(annotation);
 					if (elementList != null) {
-						for (ArchimateElementEnum archimateElementEnum : elementList) {
-							ArchimateElement elementToBeAdded = null;
-							switch (archimateElementEnum) {
-							case APPLICATION:
-								elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE
-										.createApplicationFunction();
-								break;
-							case SERVICE:
-								elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE
-										.createApplicationService();
-								break;
-							case DATA_ENTITY:
-								elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createDataObject();
-								break;
-							default:
-								break;
-							}
-							elementToBeAdded.setName(javaClass.getClassName());
-							modelElements.add(javaClass, elementToBeAdded);
-							modelElementsByClassName.add(javaClass.getClassName(), elementToBeAdded);
-
-						}
+						uniqueElements.addAll(elementList);
 					}
 				}
+
+				for (ArchimateElementEnum archimateElementEnum : uniqueElements) {
+					ArchimateElement elementToBeAdded = null;
+					switch (archimateElementEnum) {
+					case APPLICATION:
+						elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createApplicationFunction();
+						break;
+					case SERVICE:
+						elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createApplicationService();
+						break;
+					case DATA_ENTITY:
+						elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createDataObject();
+						break;
+					default:
+						break;
+					}
+					elementToBeAdded
+							.setName(javaClass.getClassName().substring(javaClass.getClassName().lastIndexOf(".") + 1));
+					modelElements.add(javaClass, elementToBeAdded);
+					modelElementsByClassName.add(javaClass.getClassName(), elementToBeAdded);
+				}
 			}
-			
-			//TODO Check and prevent add duplicates
-			
+
+			// TODO Check and prevent adding duplicates
+
 			entries = (Enumeration<ZipEntry>) zipFile.entries();
 
 			while (entries.hasMoreElements()) {
@@ -306,21 +320,23 @@ class BusinessTest {
 						if (constant.getTag() == 7) {
 							String referencedClass = javaClass.getConstantPool().constantToString(constant);
 							if (modelElementsByClassName.containsKey(referencedClass)) {
-								//LOGGER.debug(String.format("[%s] --> %s", javaClass.getClassName(), referencedClass));
+								// LOGGER.debug(String.format("[%s] --> %s", javaClass.getClassName(),
+								// referencedClass));
 
 								List<ArchimateElement> sourceElements = modelElementsByClassName
 										.get(javaClass.getClassName());
-								List<ArchimateElement> targetElemetns = modelElementsByClassName
-										.get(referencedClass);
+								List<ArchimateElement> targetElemetns = modelElementsByClassName.get(referencedClass);
 
 								for (ArchimateElement source : sourceElements) {
 									for (ArchimateElement target : targetElemetns) {
-										ArchimateRelationship relationshipToBeAdded = (ArchimateRelationship) ArchimateFactory.eINSTANCE
-												.createAssociationRelationship();
-										relationshipToBeAdded.setSource(source);
-										relationshipToBeAdded.setName(source.getName() + "-to-" + target.getName());
-										relationshipToBeAdded.setTarget(target);
-										modelRelationships.add(javaClass, relationshipToBeAdded);
+										if (!source.equals(target)) {
+											ArchimateRelationship relationshipToBeAdded = (ArchimateRelationship) ArchimateFactory.eINSTANCE
+													.createAssociationRelationship();
+											relationshipToBeAdded.setSource(source);
+											relationshipToBeAdded.setName(source.getName() + "-to-" + target.getName());
+											relationshipToBeAdded.setTarget(target);
+											modelRelationships.add(javaClass, relationshipToBeAdded);
+										}
 									}
 								}
 							}
@@ -330,33 +346,58 @@ class BusinessTest {
 				}
 			}
 
-			for (Entry<JavaClass, List<ArchimateElement>> entry : modelElements.entrySet()) {
-				JavaClass javaClass = entry.getKey();
-				LOGGER.info("");
-				LOGGER.info(javaClass.getClassName());
-				for (ArchimateElement archimateElement : entry.getValue()) {
-					LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + ": " + archimateElement.getName());
-				}
-			}
-
-			for (Entry<JavaClass, List<ArchimateRelationship>> entry : modelRelationships.entrySet()) {
-				JavaClass javaClass = entry.getKey();
-				LOGGER.info("");
-				LOGGER.info(javaClass.getClassName());
-				for (ArchimateRelationship archimateRelationship : entry.getValue()) {
-					LOGGER.info("\t" + archimateRelationship.getSource().getClass().getSimpleName() + ": "
-							+ archimateRelationship.getSource().getName() + " --> "
-							+ archimateRelationship.getTarget().getClass().getSimpleName() + ": "
-							+ archimateRelationship.getTarget().getName());
-				}
-			}
+			generateDiagram(modelElements, modelRelationships);
 
 		} catch (NoClassDefFoundError | IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	
+	private void generateDiagram(MultiValueMap<JavaClass, ArchimateElement> modelElements,
+			MultiValueMap<JavaClass, ArchimateRelationship> modelRelationships) {
+		
+		Graph g = Factory.graph("test").directed();
+		
+		
+		Map<ArchimateElement, Node> nodes = new HashMap<>();
+		
+		for (Entry<JavaClass, List<ArchimateElement>> entry : modelElements.entrySet()) {
+			JavaClass javaClass = entry.getKey();
+			LOGGER.info("");
+			LOGGER.info(javaClass.getClassName());
+			for (ArchimateElement archimateElement : entry.getValue()) {
+				Node node = Factory.node(archimateElement.getName()).with(Color.BLUE, Style.SOLID, Style.lineWidth(1)).with(Shape.RECTANGLE).with(Attributes.attr("size", "7.5,7.5"));
+				nodes.put(archimateElement, node);
+				LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + " (\"" + archimateElement.getName()
+						+ "\")");
+			}
+		}
+
+		for (Entry<JavaClass, List<ArchimateRelationship>> entry : modelRelationships.entrySet()) {
+			JavaClass javaClass = entry.getKey();
+			LOGGER.info("");
+			LOGGER.info(javaClass.getClassName());
+			for (ArchimateRelationship archimateRelationship : entry.getValue()) {
+				
+				Node node1 = nodes.get(archimateRelationship.getSource());
+				Node node2 = nodes.get(archimateRelationship.getTarget());
+				
+				g=g.with(node1.link(node2));
+				
+				LOGGER.info("\t" + archimateRelationship.getSource().getClass().getSimpleName() + " (\""
+						+ archimateRelationship.getSource().getName() + "\") --> "
+						+ archimateRelationship.getTarget().getClass().getSimpleName() + " (\""
+						+ archimateRelationship.getTarget().getName() + "\")");
+			}
+		}
+		
+		try {
+			Graphviz.fromGraph(g).render(Format.PNG).toFile(new File("C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\target\\diagrams\\test1.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	private void extractAndDecompileJavaFromWar() {
 		try {
