@@ -23,12 +23,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import javax.imageio.ImageIO;
 import javax.swing.SwingConstants;
 
 import org.apache.bcel.classfile.AnnotationEntry;
+import org.apache.bcel.classfile.ClassFormatException;
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.Constant;
 import org.apache.bcel.classfile.JavaClass;
@@ -245,211 +247,193 @@ class BusinessTest {
 		mapping.add("Service", ArchimateElementEnum.SERVICE);
 		mapping.add("Entity", ArchimateElementEnum.DATA_ENTITY);
 
-		MultiValueMap<JavaClass, ArchimateElement> modelElements = new LinkedMultiValueMap<>();
 		MultiValueMap<String, ArchimateElement> modelElementsByClassName = new LinkedMultiValueMap<>();
-		MultiValueMap<JavaClass, ArchimateRelationship> modelRelationships = new LinkedMultiValueMap<>();
+		MultiValueMap<String, ArchimateRelationship> modelRelationshipsByClassName = new LinkedMultiValueMap<>();
 
 		try {
-			File warFile = new File(warPath);
+			modelElementsByClassName = computeModelElementsByClassName(warPath, mapping);
 
-			if (!warFile.exists()) {
-				LOGGER.error("War file " + warPath + " does not exist");
-			}
+			modelRelationshipsByClassName = computeModelRelationshipsByClassName(warPath, mapping,
+					modelElementsByClassName);
 
-			ZipFile zipFile = new ZipFile(warFile);
-
-			ClassParser cp;
-
-			Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zipFile.entries();
-			while (entries.hasMoreElements()) {
-				ZipEntry entry = entries.nextElement();
-				if (entry.isDirectory())
-					continue;
-
-				if (!entry.getName().endsWith(".class"))
-					continue;
-
-				cp = new ClassParser(warPath, entry.getName());
-				JavaClass javaClass = cp.parse();
-
-				Set<ArchimateElementEnum> uniqueElements = new HashSet<>();
-				for (AnnotationEntry annotationEntry : javaClass.getAnnotationEntries()) {
-					String annotationType = annotationEntry.getAnnotationType();
-					// LOGGER.debug(String.format("[%s]: @%s", javaClass.getClassName(),
-					// annotationType));
-					String annotation = annotationType.substring(annotationType.lastIndexOf("/") + 1,
-							annotationType.length() - 1);
-					List<ArchimateElementEnum> elementList = mapping.get(annotation);
-					if (elementList != null) {
-						uniqueElements.addAll(elementList);
-					}
-				}
-
-				for (ArchimateElementEnum archimateElementEnum : uniqueElements) {
-					ArchimateElement elementToBeAdded = null;
-					switch (archimateElementEnum) {
-					case APPLICATION:
-						elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createApplicationFunction();
-						break;
-					case SERVICE:
-						elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createApplicationService();
-						break;
-					case DATA_ENTITY:
-						elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createDataObject();
-						break;
-					default:
-						break;
-					}
-					elementToBeAdded
-							.setName(javaClass.getClassName().substring(javaClass.getClassName().lastIndexOf(".") + 1));
-					modelElements.add(javaClass, elementToBeAdded);
-					modelElementsByClassName.add(javaClass.getClassName(), elementToBeAdded);
-				}
-			}
-
-			// TODO Check and prevent adding duplicates
-
-			entries = (Enumeration<ZipEntry>) zipFile.entries();
-
-			while (entries.hasMoreElements()) {
-				ZipEntry entry = entries.nextElement();
-				if (entry.isDirectory())
-					continue;
-
-				if (!entry.getName().endsWith(".class"))
-					continue;
-
-				cp = new ClassParser(warPath, entry.getName());
-				JavaClass javaClass = cp.parse();
-
-				if (modelElementsByClassName.containsKey(javaClass.getClassName())) {
-
-					for (int i = 0; i < javaClass.getConstantPool().getLength(); i++) {
-						Constant constant = javaClass.getConstantPool().getConstant(i);
-						if (constant == null) {
-							continue;
-						}
-						if (constant.getTag() == 7) {
-							String referencedClass = javaClass.getConstantPool().constantToString(constant);
-							if (modelElementsByClassName.containsKey(referencedClass)) {
-								// LOGGER.debug(String.format("[%s] --> %s", javaClass.getClassName(),
-								// referencedClass));
-
-								List<ArchimateElement> sourceElements = modelElementsByClassName
-										.get(javaClass.getClassName());
-								List<ArchimateElement> targetElemetns = modelElementsByClassName.get(referencedClass);
-
-								for (ArchimateElement source : sourceElements) {
-									for (ArchimateElement target : targetElemetns) {
-										if (!source.equals(target)) {
-											ArchimateRelationship relationshipToBeAdded = (ArchimateRelationship) ArchimateFactory.eINSTANCE
-													.createAssociationRelationship();
-											relationshipToBeAdded.setSource(source);
-											relationshipToBeAdded.setName(source.getName() + "-to-" + target.getName());
-											relationshipToBeAdded.setTarget(target);
-											modelRelationships.add(javaClass, relationshipToBeAdded);
-										}
-									}
-								}
-							}
-
-						}
-					}
-				}
-			}
-
-			generateJgraphxDiagram(modelElements, modelRelationships);
+			generateJgraphxDiagram(modelElementsByClassName, modelRelationshipsByClassName);
 
 		} catch (NoClassDefFoundError | IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void generateGraphvizDiagram(MultiValueMap<JavaClass, ArchimateElement> modelElements,
-			MultiValueMap<JavaClass, ArchimateRelationship> modelRelationships) {
+	private MultiValueMap<String, ArchimateElement> computeModelElementsByClassName(String warPath,
+			MultiValueMap<String, ArchimateElementEnum> mapping) throws ZipException, IOException {
+		MultiValueMap<String, ArchimateElement> modelElementsByClassName = new LinkedMultiValueMap<>();
+		ZipFile zipFile = getZipFile(warPath);
+		ClassParser cp;
 
-		Graph g = Factory.graph("test").directed();
+		@SuppressWarnings("unchecked")
+		Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zipFile.entries();
+		while (entries.hasMoreElements()) {
+			ZipEntry entry = entries.nextElement();
+			if (entry.isDirectory())
+				continue;
 
-		Map<ArchimateElement, Node> nodes = new HashMap<>();
+			if (!entry.getName().endsWith(".class"))
+				continue;
 
-		for (Entry<JavaClass, List<ArchimateElement>> entry : modelElements.entrySet()) {
-			JavaClass javaClass = entry.getKey();
-			LOGGER.info("");
-			LOGGER.info(javaClass.getClassName());
-			for (ArchimateElement archimateElement : entry.getValue()) {
-				Node node = Factory.node(archimateElement.getName()).with(Color.BLUE, Style.SOLID, Style.lineWidth(1))
-						.with(Shape.RECTANGLE).with(Attributes.attr("size", "7.5,7.5"));
-				nodes.put(archimateElement, node);
-				LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + " (\"" + archimateElement.getName()
-						+ "\")");
+			cp = new ClassParser(warPath, entry.getName());
+			JavaClass javaClass = null;
+			try {
+				javaClass = cp.parse();
+			} catch (ClassFormatException | IOException e) {
+				LOGGER.error(entry.getName() + " cannot be parsed");
+				javaClass = null;
+				continue;
+			}
+
+			Set<ArchimateElementEnum> uniqueElements = new HashSet<>();
+			for (AnnotationEntry annotationEntry : javaClass.getAnnotationEntries()) {
+				String annotationType = annotationEntry.getAnnotationType();
+				// LOGGER.debug(String.format("[%s]: @%s", javaClass.getClassName(),
+				// annotationType));
+				String annotation = annotationType.substring(annotationType.lastIndexOf("/") + 1,
+						annotationType.length() - 1);
+				List<ArchimateElementEnum> elementList = mapping.get(annotation);
+				if (elementList != null) {
+					uniqueElements.addAll(elementList);
+				}
+			}
+
+			for (ArchimateElementEnum archimateElementEnum : uniqueElements) {
+				ArchimateElement elementToBeAdded = null;
+				switch (archimateElementEnum) {
+				case APPLICATION:
+					elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createApplicationFunction();
+					break;
+				case SERVICE:
+					elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createApplicationService();
+					break;
+				case DATA_ENTITY:
+					elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createDataObject();
+					break;
+				default:
+					break;
+				}
+				elementToBeAdded
+						.setName(javaClass.getClassName().substring(javaClass.getClassName().lastIndexOf(".") + 1));
+				modelElementsByClassName.add(javaClass.getClassName(), elementToBeAdded);
 			}
 		}
-
-		for (Entry<JavaClass, List<ArchimateRelationship>> entry : modelRelationships.entrySet()) {
-			JavaClass javaClass = entry.getKey();
-			LOGGER.info("");
-			LOGGER.info(javaClass.getClassName());
-			for (ArchimateRelationship archimateRelationship : entry.getValue()) {
-
-				Node node1 = nodes.get(archimateRelationship.getSource());
-				Node node2 = nodes.get(archimateRelationship.getTarget());
-
-				g = g.with(node1.link(node2));
-
-				LOGGER.info("\t" + archimateRelationship.getSource().getClass().getSimpleName() + " (\""
-						+ archimateRelationship.getSource().getName() + "\") --> "
-						+ archimateRelationship.getTarget().getClass().getSimpleName() + " (\""
-						+ archimateRelationship.getTarget().getName() + "\")");
-			}
-		}
-
-		try {
-			File file = new File("C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\target\\diagrams\\test1.png");
-			Graphviz.fromGraph(g).render(Format.PNG).toFile(file);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		return modelElementsByClassName;
 	}
 
-	private void generateJgraphxDiagram(MultiValueMap<JavaClass, ArchimateElement> modelElements,
-			MultiValueMap<JavaClass, ArchimateRelationship> modelRelationships) {
+	private MultiValueMap<String, ArchimateRelationship> computeModelRelationshipsByClassName(String warPath,
+			MultiValueMap<String, ArchimateElementEnum> mapping,
+			MultiValueMap<String, ArchimateElement> modelElementsByClassName) throws ZipException, IOException {
+		MultiValueMap<String, ArchimateRelationship> modelRelationshipsByClassName = new LinkedMultiValueMap<>();
+		ZipFile zipFile = getZipFile(warPath);
+		ClassParser cp;
+
+		@SuppressWarnings("unchecked")
+		Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zipFile.entries();
+		while (entries.hasMoreElements()) {
+			ZipEntry entry = entries.nextElement();
+			if (entry.isDirectory())
+				continue;
+
+			if (!entry.getName().endsWith(".class"))
+				continue;
+
+			cp = new ClassParser(warPath, entry.getName());
+			JavaClass javaClass = null;
+			try {
+				javaClass = cp.parse();
+			} catch (ClassFormatException | IOException e) {
+				LOGGER.error(entry.getName() + " cannot be parsed");
+				javaClass = null;
+				continue;
+			}
+
+			if (modelElementsByClassName.containsKey(javaClass.getClassName())) {
+
+				for (int i = 0; i < javaClass.getConstantPool().getLength(); i++) {
+					Constant constant = javaClass.getConstantPool().getConstant(i);
+					if (constant == null) {
+						continue;
+					}
+					if (constant.getTag() == 7) {
+						String referencedClass = javaClass.getConstantPool().constantToString(constant);
+						if (modelElementsByClassName.containsKey(referencedClass)) {
+							// LOGGER.debug(String.format("[%s] --> %s", javaClass.getClassName(),
+							// referencedClass));
+
+							List<ArchimateElement> sourceElements = modelElementsByClassName
+									.get(javaClass.getClassName());
+							List<ArchimateElement> targetElemetns = modelElementsByClassName.get(referencedClass);
+
+							for (ArchimateElement source : sourceElements) {
+								for (ArchimateElement target : targetElemetns) {
+									if (!source.equals(target)) {
+										ArchimateRelationship relationshipToBeAdded = (ArchimateRelationship) ArchimateFactory.eINSTANCE
+												.createAssociationRelationship();
+										relationshipToBeAdded.setSource(source);
+										relationshipToBeAdded.setName(source.getName() + "-to-" + target.getName());
+										relationshipToBeAdded.setTarget(target);
+										modelRelationshipsByClassName.add(javaClass.getClassName(),
+												relationshipToBeAdded);
+									}
+								}
+							}
+						}
+
+					}
+				}
+			}
+		}
+		return modelRelationshipsByClassName;
+	}
+
+	private ZipFile getZipFile(final String warPath) throws ZipException, IOException {
+		File warFile = new File(warPath);
+
+		if (!warFile.exists()) {
+			LOGGER.error("War file " + warPath + " does not exist");
+		}
+
+		ZipFile zipFile = new ZipFile(warFile);
+		return zipFile;
+	}
+
+	private void generateJgraphxDiagram(MultiValueMap<String, ArchimateElement> modelElementsByClassName,
+			MultiValueMap<String, ArchimateRelationship> modelRelationshipsByClassName) {
 
 		mxGraph graph = new mxGraph();
 		Object parent = graph.getDefaultParent();
 		graph.getModel().beginUpdate();
 
-		try { 
+		try {
 			Map<ArchimateElement, Object> nodes = new HashMap<>();
-		
-		    mxGraphics2DCanvas.putShape("applicationFunction", new ArchiMateApplicationFunctionShape());
-		    Map<String, Object> style = new HashMap<String, Object>();
+
+			mxGraphics2DCanvas.putShape("applicationFunction", new ArchiMateApplicationFunctionShape());
+			Map<String, Object> style = new HashMap<String, Object>();
 			style.put(mxConstants.STYLE_SHAPE, "applicationFunction");
 			graph.getStylesheet().putCellStyle("applicationFunction", style);
-		     
 
-			for (Entry<JavaClass, List<ArchimateElement>> entry : modelElements.entrySet()) {
-				JavaClass javaClass = entry.getKey();
+			for (Entry<String, List<ArchimateElement>> entry : modelElementsByClassName.entrySet()) {
 				LOGGER.info("");
-				LOGGER.info(javaClass.getClassName());
+				LOGGER.info(entry.getKey());
 				for (ArchimateElement archimateElement : entry.getValue()) {
 					Object node = graph.insertVertex(parent, null, archimateElement.getName(), 0, 0,
-							archimateElement.getName().length() * 5 + 60, 40,
-							"applicationFunction");
-					
-					//"fontColor=000f84;shape=rectangle;strokeColor=000f84;fillColor=cce3ff"
+							archimateElement.getName().length() * 5 + 60, 40, "applicationFunction");
+
+					// "fontColor=000f84;shape=rectangle;strokeColor=000f84;fillColor=cce3ff"
 					nodes.put(archimateElement, node);
 					LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + " (\"" + archimateElement.getName()
 							+ "\")");
 				}
 			}
-			
-			
 
-			for (Entry<JavaClass, List<ArchimateRelationship>> entry : modelRelationships.entrySet()) {
-				JavaClass javaClass = entry.getKey();
+			for (Entry<String, List<ArchimateRelationship>> entry : modelRelationshipsByClassName.entrySet()) {
 				LOGGER.info("");
-				LOGGER.info(javaClass.getClassName());
+				LOGGER.info(entry.getKey());
 				for (ArchimateRelationship archimateRelationship : entry.getValue()) {
 
 					Object node1 = nodes.get(archimateRelationship.getSource());
