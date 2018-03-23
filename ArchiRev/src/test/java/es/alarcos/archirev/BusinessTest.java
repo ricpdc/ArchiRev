@@ -16,7 +16,6 @@ import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -64,19 +63,11 @@ import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.util.mxCellRenderer;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
-import com.mxgraph.view.mxStylesheet;
 
 import es.alarcos.archirev.logic.ArchimateElementEnum;
 import es.alarcos.archirev.shape.ArchiMateApplicationFunctionShape;
-import guru.nidi.graphviz.attribute.Attributes;
-import guru.nidi.graphviz.attribute.Color;
-import guru.nidi.graphviz.attribute.Shape;
-import guru.nidi.graphviz.attribute.Style;
-import guru.nidi.graphviz.engine.Format;
-import guru.nidi.graphviz.engine.Graphviz;
-import guru.nidi.graphviz.model.Factory;
-import guru.nidi.graphviz.model.Graph;
-import guru.nidi.graphviz.model.Node;
+import es.alarcos.archirev.shape.ArchiMateApplicationServiceShape;
+import es.alarcos.archirev.shape.ShapeEnum;
 import the.bytecode.club.bytecodeviewer.DecompilerSettings;
 import the.bytecode.club.bytecodeviewer.decompilers.CFRDecompiler.Settings;
 import the.bytecode.club.bytecodeviewer.decompilers.Decompiler;
@@ -409,22 +400,17 @@ class BusinessTest {
 		Object parent = graph.getDefaultParent();
 		graph.getModel().beginUpdate();
 
+		loadShapeStyles(graph);
+
 		try {
 			Map<ArchimateElement, Object> nodes = new HashMap<>();
-
-			mxGraphics2DCanvas.putShape("applicationFunction", new ArchiMateApplicationFunctionShape());
-			Map<String, Object> style = new HashMap<String, Object>();
-			style.put(mxConstants.STYLE_SHAPE, "applicationFunction");
-			graph.getStylesheet().putCellStyle("applicationFunction", style);
-
 			for (Entry<String, List<ArchimateElement>> entry : modelElementsByClassName.entrySet()) {
 				LOGGER.info("");
 				LOGGER.info(entry.getKey());
 				for (ArchimateElement archimateElement : entry.getValue()) {
+					ShapeEnum shapeEnum = ShapeEnum.getByModelElement(archimateElement.getClass());
 					Object node = graph.insertVertex(parent, null, archimateElement.getName(), 0, 0,
-							archimateElement.getName().length() * 5 + 60, 40, "applicationFunction");
-
-					// "fontColor=000f84;shape=rectangle;strokeColor=000f84;fillColor=cce3ff"
+							archimateElement.getName().length() * 5 + 60, 40, shapeEnum.getShape().getSimpleName());
 					nodes.put(archimateElement, node);
 					LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + " (\"" + archimateElement.getName()
 							+ "\")");
@@ -464,6 +450,19 @@ class BusinessTest {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+
+	private void loadShapeStyles(mxGraph graph) {
+		for (ShapeEnum shapeEnum : ShapeEnum.values()) {
+			String shapeName = shapeEnum.getShape().getSimpleName();
+			mxGraphics2DCanvas.putShape(shapeName, shapeEnum.getShapeInstance());
+			Map<String, Object> style = new HashMap<String, Object>();
+			style.put(mxConstants.STYLE_SHAPE, shapeName);
+			style.put(mxConstants.STYLE_FILLCOLOR, shapeEnum.getFillColor());
+			style.put(mxConstants.STYLE_STROKECOLOR, shapeEnum.getStrokeColor());
+			style.put(mxConstants.STYLE_FONTCOLOR, shapeEnum.getFontColor());
+			graph.getStylesheet().putCellStyle(shapeName, style);
 		}
 	}
 
