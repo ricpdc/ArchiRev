@@ -426,7 +426,7 @@ class BusinessTest {
 					Object node2 = nodes.get(archimateRelationship.getTarget());
 
 					String simpleName = archimateRelationship.getClass().getSimpleName();
-					graph.insertEdge(parent, null, simpleName, node1, node2, "endArrow=open;");
+					graph.insertEdge(parent, null, simpleName, node1, node2, "endArrow=open;strokeColor=black;fontColor=gray");
 
 					LOGGER.info("\t" + archimateRelationship.getSource().getClass().getSimpleName() + " (\""
 							+ archimateRelationship.getSource().getName() + "\") --> "
@@ -462,6 +462,7 @@ class BusinessTest {
 			style.put(mxConstants.STYLE_FILLCOLOR, shapeEnum.getFillColor());
 			style.put(mxConstants.STYLE_STROKECOLOR, shapeEnum.getStrokeColor());
 			style.put(mxConstants.STYLE_FONTCOLOR, shapeEnum.getFontColor());
+			style.put(mxConstants.STYLE_ROUNDED, shapeEnum.getRounded());
 			graph.getStylesheet().putCellStyle(shapeName, style);
 		}
 	}

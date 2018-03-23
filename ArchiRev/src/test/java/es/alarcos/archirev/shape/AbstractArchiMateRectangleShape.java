@@ -24,6 +24,9 @@ public abstract class AbstractArchiMateRectangleShape extends mxRectangleShape {
 		Graphics2D g = canvas.getGraphics();
 		Image image = null;
 		
+		if(getCornerImagePath() == null) {
+			return;
+		}
 		try {
 			image = ImageIO.read(new File(getCornerImagePath()));
 		} catch (IOException e) {
