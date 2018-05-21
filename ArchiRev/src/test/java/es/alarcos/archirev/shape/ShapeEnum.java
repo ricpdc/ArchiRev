@@ -11,17 +11,20 @@ import com.archimatetool.model.impl.ApplicationService;
 import com.archimatetool.model.impl.ArchimateElement;
 import com.archimatetool.model.impl.BusinessObject;
 import com.archimatetool.model.impl.DataObject;
+import com.archimatetool.model.impl.ApplicationComponent;
 import com.mxgraph.shape.mxBasicShape;
 import com.mxgraph.shape.mxRectangleShape;
+import com.mxgraph.util.mxConstants;
 
 public enum ShapeEnum {
 
 	// @formatter:off
-	DEFAULT(ArchimateElement.class, mxRectangleShape.class, "cce3ff" , "000f84", "000f84", true), 
-	APPLICATION_FUNCTION(ApplicationFunction.class, ArchiMateApplicationFunctionShape.class, "cce3ff" , "000f84", "000f84", true),
-	APPLICATION_SERVICE(ApplicationService.class, ArchiMateApplicationServiceShape.class, "cce3ff" , "000f84", "000f84", true),
-	DATA_OBJECT(DataObject.class, ArchiMateDataObjectShape.class, "adfff8" , "000f84", "000f84"),
-	BUSINESS_OBJECT(BusinessObject.class, ArchiMateBusinessObjectShape.class, "yellow" , "000f84", "000f84");
+	DEFAULT(ArchimateElement.class, mxRectangleShape.class, "cce3ff" , "000f84", "000f84", true, mxConstants.ALIGN_MIDDLE), 
+	APPLICATION_FUNCTION(ApplicationFunction.class, ArchiMateApplicationFunctionShape.class, "cce3ff" , "000f84", "000f84", true, mxConstants.ALIGN_MIDDLE),
+	APPLICATION_SERVICE(ApplicationService.class, ArchiMateApplicationServiceShape.class, "cce3ff" , "000f84", "000f84", true, mxConstants.ALIGN_MIDDLE),
+	DATA_OBJECT(DataObject.class, ArchiMateDataObjectShape.class, "adfff8" , "000f84", "000f84", false, mxConstants.ALIGN_MIDDLE),
+	BUSINESS_OBJECT(BusinessObject.class, ArchiMateBusinessObjectShape.class, "yellow" , "000f84", "000f84", false, mxConstants.ALIGN_MIDDLE),
+	APPLICATION_COMPONENT(ApplicationComponent.class, ArchiMateApplicationComponentShape.class, "cce3ff" , "000f84", "000f84", false, mxConstants.ALIGN_TOP);
 	
 	
 	// @formatter:on
@@ -34,20 +37,22 @@ public enum ShapeEnum {
 	private String strokeColor;
 	private String fontColor;
 	private boolean rounded;
+	private String verticalAlign;
 
 	private ShapeEnum(final Class<? extends ArchimateElement> modelElement, final Class<? extends mxBasicShape> shape,
 			final String fillColor, final String strokeColor, final String fontColor) {
-		this(modelElement, shape, fillColor, strokeColor, fontColor, false);
+		this(modelElement, shape, fillColor, strokeColor, fontColor, false, mxConstants.ALIGN_MIDDLE);
 	}
 	
 	private ShapeEnum(final Class<? extends ArchimateElement> modelElement, final Class<? extends mxBasicShape> shape,
-			final String fillColor, final String strokeColor, final String fontColor, final boolean rounded) {
+			final String fillColor, final String strokeColor, final String fontColor, final boolean rounded, final String verticalAlign) {
 		this.modelElement = modelElement;
 		this.shape = shape;
 		this.fillColor = fillColor;
 		this.strokeColor = strokeColor;
 		this.fontColor = fontColor;
 		this.rounded = rounded;
+		this.verticalAlign = verticalAlign;
 	}
 
 	public static ShapeEnum getByModelElement(final Class<? extends ArchimateElement> modelElement) {
@@ -62,11 +67,10 @@ public enum ShapeEnum {
 	public mxBasicShape getShapeInstance() {
 		Constructor<? extends mxBasicShape> constructor;
 		try {
-			Class<?> c = Class.forName(shape.getCanonicalName());
 			constructor = shape.getConstructor();
 			return constructor.newInstance();
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
-				| IllegalArgumentException | InvocationTargetException | ClassNotFoundException e) {
+				| IllegalArgumentException | InvocationTargetException e) {
 			LOGGER.error("The instance for " + shape.getSimpleName() + " cannot be created");
 			return new mxRectangleShape();
 		}
@@ -115,5 +119,15 @@ public enum ShapeEnum {
 	public void setRounded(boolean rounded) {
 		this.rounded = rounded;
 	}
+
+	public String getVerticalAlign() {
+		return verticalAlign;
+	}
+
+	public void setVerticalAlign(String verticalAlign) {
+		this.verticalAlign = verticalAlign;
+	}
+	
+	
 
 }

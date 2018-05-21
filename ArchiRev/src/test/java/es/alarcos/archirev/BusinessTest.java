@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -35,6 +36,8 @@ import org.apache.bcel.classfile.Constant;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Triple;
 import org.benf.cfr.reader.entities.ClassFile;
 import org.benf.cfr.reader.relationship.MemberNameResolver;
 import org.benf.cfr.reader.state.ClassFileSourceImpl;
@@ -55,18 +58,23 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.zeroturnaround.zip.ZipUtil;
 
+import com.archimatetool.model.IArchimateConcept;
+import com.archimatetool.model.impl.ApplicationComponent;
 import com.archimatetool.model.impl.ArchimateElement;
 import com.archimatetool.model.impl.ArchimateFactory;
 import com.archimatetool.model.impl.ArchimateRelationship;
 import com.mxgraph.canvas.mxGraphics2DCanvas;
+import com.mxgraph.layout.mxCircleLayout;
+import com.mxgraph.layout.mxCompactTreeLayout;
+import com.mxgraph.layout.mxFastOrganicLayout;
+import com.mxgraph.layout.mxGraphLayout;
+import com.mxgraph.layout.mxOrganicLayout;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.util.mxCellRenderer;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
 
 import es.alarcos.archirev.logic.ArchimateElementEnum;
-import es.alarcos.archirev.shape.ArchiMateApplicationFunctionShape;
-import es.alarcos.archirev.shape.ArchiMateApplicationServiceShape;
 import es.alarcos.archirev.shape.ShapeEnum;
 import the.bytecode.club.bytecodeviewer.DecompilerSettings;
 import the.bytecode.club.bytecodeviewer.decompilers.CFRDecompiler.Settings;
@@ -211,14 +219,14 @@ class BusinessTest {
 				}
 			}
 
-			for (Entry<Class, List<ArchimateElement>> entry : modelElements.entrySet()) {
-				Class clazz = entry.getKey();
-				LOGGER.info("");
-				LOGGER.info(clazz.getName());
-				for (ArchimateElement archimateElement : entry.getValue()) {
-					LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + ": " + archimateElement.getName());
-				}
-			}
+//			for (Entry<Class, List<ArchimateElement>> entry : modelElements.entrySet()) {
+//				Class clazz = entry.getKey();
+//				LOGGER.info("");
+//				LOGGER.info(clazz.getName());
+//				for (ArchimateElement archimateElement : entry.getValue()) {
+//					LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + ": " + archimateElement.getName());
+//				}
+//			}
 
 		} catch (NoClassDefFoundError | ClassNotFoundException |
 
@@ -234,9 +242,13 @@ class BusinessTest {
 		MultiValueMap<String, ArchimateElementEnum> mapping = new LinkedMultiValueMap<>();
 		mapping.add("ManagedBean", ArchimateElementEnum.APPLICATION);
 		mapping.add("Controller", ArchimateElementEnum.APPLICATION);
+		mapping.add("Component", ArchimateElementEnum.APPLICATION);
 		mapping.add("Service", ArchimateElementEnum.APPLICATION);
-		mapping.add("Service", ArchimateElementEnum.SERVICE);
 		mapping.add("Entity", ArchimateElementEnum.DATA_ENTITY);
+		mapping.add("Table", ArchimateElementEnum.DATA_ENTITY);
+		mapping.add("MappedSuperclass", ArchimateElementEnum.DATA_ENTITY);
+		mapping.add("Repository", ArchimateElementEnum.COMPONENT);
+		mapping.add("SpringBootApplication", ArchimateElementEnum.COMPONENT);
 
 		MultiValueMap<String, ArchimateElement> modelElementsByClassName = new LinkedMultiValueMap<>();
 		MultiValueMap<String, ArchimateRelationship> modelRelationshipsByClassName = new LinkedMultiValueMap<>();
@@ -305,6 +317,9 @@ class BusinessTest {
 				case DATA_ENTITY:
 					elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createDataObject();
 					break;
+				case COMPONENT:
+					elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createApplicationComponent();
+					break;
 				default:
 					break;
 				}
@@ -322,6 +337,8 @@ class BusinessTest {
 		MultiValueMap<String, ArchimateRelationship> modelRelationshipsByClassName = new LinkedMultiValueMap<>();
 		ZipFile zipFile = getZipFile(warPath);
 		ClassParser cp;
+
+		Set<String> visitedRelationships = new HashSet<>();
 
 		@SuppressWarnings("unchecked")
 		Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zipFile.entries();
@@ -353,8 +370,7 @@ class BusinessTest {
 					if (constant.getTag() == 7) {
 						String referencedClass = javaClass.getConstantPool().constantToString(constant);
 						if (modelElementsByClassName.containsKey(referencedClass)) {
-							// LOGGER.debug(String.format("[%s] --> %s", javaClass.getClassName(),
-							// referencedClass));
+							//LOGGER.debug(String.format("[%s] --> %s", javaClass.getClassName(), referencedClass));
 
 							List<ArchimateElement> sourceElements = modelElementsByClassName
 									.get(javaClass.getClassName());
@@ -363,13 +379,24 @@ class BusinessTest {
 							for (ArchimateElement source : sourceElements) {
 								for (ArchimateElement target : targetElemetns) {
 									if (!source.equals(target)) {
-										ArchimateRelationship relationshipToBeAdded = (ArchimateRelationship) ArchimateFactory.eINSTANCE
-												.createAssociationRelationship();
+
+										ArchimateRelationship relationshipToBeAdded = getPrioritizedRelationshipType(
+												source, target);
+
 										relationshipToBeAdded.setSource(source);
-										relationshipToBeAdded.setName(source.getName() + "-to-" + target.getName());
 										relationshipToBeAdded.setTarget(target);
+										relationshipToBeAdded.setName(source.getName() + "-to-" + target.getName());
+										String relationshipId = source.getName() + "--("
+												+ relationshipToBeAdded.getClass().getSimpleName() + ")-->"
+												+ target.getName();
+										relationshipToBeAdded.setId(relationshipId);
+
+										if (visitedRelationships.contains(relationshipId)) {
+											continue;
+										}
 										modelRelationshipsByClassName.add(javaClass.getClassName(),
 												relationshipToBeAdded);
+										visitedRelationships.add(relationshipId);
 									}
 								}
 							}
@@ -380,6 +407,12 @@ class BusinessTest {
 			}
 		}
 		return modelRelationshipsByClassName;
+	}
+
+	private ArchimateRelationship getPrioritizedRelationshipType(ArchimateElement source, ArchimateElement target) {
+		ArchimateRelationship relationshipToBeAdded = (ArchimateRelationship) ArchimateFactory.eINSTANCE
+				.createAssociationRelationship();
+		return relationshipToBeAdded;
 	}
 
 	private ZipFile getZipFile(final String warPath) throws ZipException, IOException {
@@ -405,33 +438,63 @@ class BusinessTest {
 		try {
 			Map<ArchimateElement, Object> nodes = new HashMap<>();
 			for (Entry<String, List<ArchimateElement>> entry : modelElementsByClassName.entrySet()) {
-				LOGGER.info("");
-				LOGGER.info(entry.getKey());
+//				LOGGER.info("");
+//				LOGGER.info(entry.getKey());
+				entry.getValue()
+						.sort((o1, o2) -> o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName()));
+				parent = graph.getDefaultParent();
+
+				List<ArchimateElement> componentElments = entry.getValue().stream()
+						.filter(e -> e instanceof ApplicationComponent).collect(Collectors.toList());
+
+				ApplicationComponent component = componentElments.isEmpty() ? null
+						: (ApplicationComponent) componentElments.get(0);
+				Object componentNode = null;
+				if (component != null) {
+					ShapeEnum shapeEnum = ShapeEnum.getByModelElement(component.getClass());
+					componentNode = graph.insertVertex(parent, null, component.getName(), 0, 0,
+							component.getName().length() * 5 + 60 + 30, 40 + 35, shapeEnum.getShape().getSimpleName());
+					nodes.put(component, componentNode);
+					parent = componentNode;
+				}
+
 				for (ArchimateElement archimateElement : entry.getValue()) {
 					ShapeEnum shapeEnum = ShapeEnum.getByModelElement(archimateElement.getClass());
-					Object node = graph.insertVertex(parent, null, archimateElement.getName(), 0, 0,
+
+					if (archimateElement instanceof ApplicationComponent) {
+						continue;
+					}
+					Object node = graph.insertVertex(parent, null, archimateElement.getName(), 15, 20,
 							archimateElement.getName().length() * 5 + 60, 40, shapeEnum.getShape().getSimpleName());
-					nodes.put(archimateElement, node);
-					LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + " (\"" + archimateElement.getName()
-							+ "\")");
+
+					nodes.put(archimateElement, componentNode != null ? componentNode : node);
+
+//					LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + " (\"" + archimateElement.getName()
+//							+ "\")");
 				}
+
 			}
 
 			for (Entry<String, List<ArchimateRelationship>> entry : modelRelationshipsByClassName.entrySet()) {
 				LOGGER.info("");
 				LOGGER.info(entry.getKey());
+				Set<Triple<IArchimateConcept, IArchimateConcept, Class<ArchimateRelationship>>> visitedEdges = new HashSet<>();
 				for (ArchimateRelationship archimateRelationship : entry.getValue()) {
 
 					Object node1 = nodes.get(archimateRelationship.getSource());
 					Object node2 = nodes.get(archimateRelationship.getTarget());
 
 					String simpleName = archimateRelationship.getClass().getSimpleName();
-					graph.insertEdge(parent, null, simpleName, node1, node2, "endArrow=open;strokeColor=black;fontColor=gray");
+					graph.insertEdge(parent, null, simpleName, node1, node2,
+							"endArrow=open;strokeColor=black;fontColor=gray");
 
-					LOGGER.info("\t" + archimateRelationship.getSource().getClass().getSimpleName() + " (\""
-							+ archimateRelationship.getSource().getName() + "\") --> "
-							+ archimateRelationship.getTarget().getClass().getSimpleName() + " (\""
-							+ archimateRelationship.getTarget().getName() + "\")");
+					final ImmutableTriple<IArchimateConcept, IArchimateConcept, Class<ArchimateRelationship>> triple = new ImmutableTriple(
+							archimateRelationship.getSource(), archimateRelationship.getTarget(),
+							archimateRelationship.getClass());
+
+					
+
+					LOGGER.info("\t" + archimateRelationship.getId());
 				}
 			}
 		} finally {
@@ -440,8 +503,20 @@ class BusinessTest {
 
 		try {
 
-			mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
-			layout.setOrientation(SwingConstants.NORTH);
+			mxHierarchicalLayout hierarchicalLayout = new mxHierarchicalLayout(graph);
+			hierarchicalLayout.setOrientation(SwingConstants.VERTICAL);
+			// mxOrthogonalLayout orthogonalLayout = new mxOrthogonalLayout(graph);
+			mxCompactTreeLayout compactTreeLayout = new mxCompactTreeLayout(graph, false, true);
+			mxOrganicLayout organicLayout = new mxOrganicLayout(graph);
+			mxFastOrganicLayout fastOrganicLayout = new mxFastOrganicLayout(graph);
+			// mxEdgeLabelLayout edgeLabelLayout = new mxEdgeLabelLayout(graph);
+			mxCircleLayout circleLayout = new mxCircleLayout(graph, 100);
+			// mxPartitionLayout partitionLayout = new mxPartitionLayout(graph);
+			// mxParallelEdgeLayout parallelEdgeLayout = new mxParallelEdgeLayout(graph,
+			// 1000);
+			// mxStackLayout stackLayout = new mxStackLayout(graph, false, 1000);
+
+			mxGraphLayout layout = compactTreeLayout;
 			layout.execute(graph.getDefaultParent());
 
 			BufferedImage image = mxCellRenderer.createBufferedImage(graph, null, 1, java.awt.Color.WHITE, true, null);
@@ -463,6 +538,7 @@ class BusinessTest {
 			style.put(mxConstants.STYLE_STROKECOLOR, shapeEnum.getStrokeColor());
 			style.put(mxConstants.STYLE_FONTCOLOR, shapeEnum.getFontColor());
 			style.put(mxConstants.STYLE_ROUNDED, shapeEnum.getRounded());
+			style.put(mxConstants.STYLE_VERTICAL_ALIGN, shapeEnum.getVerticalAlign());
 			graph.getStylesheet().putCellStyle(shapeName, style);
 		}
 	}
