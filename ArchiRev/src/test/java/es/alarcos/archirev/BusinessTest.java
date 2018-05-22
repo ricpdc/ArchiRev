@@ -546,9 +546,11 @@ class BusinessTest {
 				LOGGER.info(entry.getKey());
 				Set<Triple<IArchimateConcept, IArchimateConcept, Class<ArchimateRelationship>>> visitedEdges = new HashSet<>();
 				for (ArchimateRelationship archimateRelationship : entry.getValue()) {
-
 					Object node1 = nodes.get(archimateRelationship.getSource());
 					Object node2 = nodes.get(archimateRelationship.getTarget());
+					if(node1.equals(node2)) {
+						continue;
+					}
 
 					String simpleName = archimateRelationship.getClass().getSimpleName();
 					graph.insertEdge(parent, null, simpleName, node1, node2,
@@ -577,7 +579,7 @@ class BusinessTest {
 			// mxStackLayout stackLayout = new mxStackLayout(graph, false, 1000);
 			
 			
-			ExtendedHierarchicalLayout extendedHierarchicalLayout = new ExtendedHierarchicalLayout(graph);
+			ExtendedHierarchicalLayout extendedHierarchicalLayout = new ExtendedHierarchicalLayout(graph, 75);
 
 			mxGraphLayout layout = extendedHierarchicalLayout;
 			layout.execute(graph.getDefaultParent());

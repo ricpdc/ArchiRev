@@ -7,7 +7,15 @@ import com.mxgraph.view.mxGraph;
 
 public class ExtendedHierarchicalLayout extends mxHierarchicalLayout {
 
+	private static int DEFAULT_SEPARATION = 50;
+	
+	private int separation;
+	
 	public ExtendedHierarchicalLayout(mxGraph graph) {
+		this(graph, DEFAULT_SEPARATION);
+	}
+	
+	public ExtendedHierarchicalLayout(mxGraph graph, int separation) {
 		super(graph);
 
 		/**
@@ -31,22 +39,22 @@ public class ExtendedHierarchicalLayout extends mxHierarchicalLayout {
 		/**
 		 * The spacing buffer added between cells on the same layer
 		 */
-		super.intraCellSpacing = 80.0;
+		super.intraCellSpacing = separation;
 
 		/**
 		 * The spacing buffer added between cell on adjacent layers
 		 */
-		super.interRankCellSpacing = 80.0;
+		super.interRankCellSpacing = separation;
 
 		/**
 		 * The spacing buffer between unconnected hierarchies
 		 */
-		super.interHierarchySpacing = 80.0;
+		super.interHierarchySpacing = separation;
 
 		/**
 		 * The distance between each parallel edge on each ranks for long edges
 		 */
-		super.parallelEdgeSpacing = 50.0;
+		super.parallelEdgeSpacing = separation;
 
 		/**
 		 * The position of the root node(s) relative to the laid out graph in. Default

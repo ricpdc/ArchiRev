@@ -22,8 +22,9 @@ public class ArchiMateApplicationComponentShape extends AbstractArchiMateRectang
 	public void paintShape(mxGraphics2DCanvas canvas, mxCellState state) {
 		super.paintShape(canvas, state);
 		Graphics2D g = canvas.getGraphics();
-		Rectangle rect1 = new Rectangle((int) (state.getX() - 5), (int) (state.getY() + 5), 12, 5);
-		Rectangle rect2 = new Rectangle((int) (state.getX() - 5), (int) (state.getY() + 15), 12, 5);
+		int sizeComponentIcon = 5;
+		Rectangle rect1 = new Rectangle((int) (state.getX() - (sizeComponentIcon*2)), (int) (state.getY() + (sizeComponentIcon)), (sizeComponentIcon*4), sizeComponentIcon);
+		Rectangle rect2 = new Rectangle((int) (state.getX() - (sizeComponentIcon*2)), (int) (state.getY() + (sizeComponentIcon*3)),  (sizeComponentIcon*4), sizeComponentIcon);
 
 		g.setColor(Color.decode("#" + (String) state.getStyle().get(mxConstants.STYLE_FILLCOLOR)));
 		g.setColor(Color.decode("#" + (String) state.getStyle().get(mxConstants.STYLE_FONTCOLOR)));
