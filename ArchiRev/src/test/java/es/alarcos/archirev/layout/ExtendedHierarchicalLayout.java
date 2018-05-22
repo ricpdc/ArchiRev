@@ -1,0 +1,91 @@
+package es.alarcos.archirev.layout;
+
+import javax.swing.SwingConstants;
+
+import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
+import com.mxgraph.view.mxGraph;
+
+public class ExtendedHierarchicalLayout extends mxHierarchicalLayout {
+
+	public ExtendedHierarchicalLayout(mxGraph graph) {
+		super(graph);
+
+		/**
+		 * Specifies if the parent should be resized after the layout so that it
+		 * contains all the child cells. Default is false. @See parentBorder.
+		 */
+		super.resizeParent = true;
+
+		/**
+		 * Specifies if the parnent should be moved if resizeParent is enabled. Default
+		 * is false. @See resizeParent.
+		 */
+		super.moveParent = true;
+
+		/**
+		 * The border to be added around the children if the parent is to be resized
+		 * using resizeParent. Default is 0. @See resizeParent.
+		 */
+		super.parentBorder = 0;
+
+		/**
+		 * The spacing buffer added between cells on the same layer
+		 */
+		super.intraCellSpacing = 80.0;
+
+		/**
+		 * The spacing buffer added between cell on adjacent layers
+		 */
+		super.interRankCellSpacing = 80.0;
+
+		/**
+		 * The spacing buffer between unconnected hierarchies
+		 */
+		super.interHierarchySpacing = 80.0;
+
+		/**
+		 * The distance between each parallel edge on each ranks for long edges
+		 */
+		super.parallelEdgeSpacing = 50.0;
+
+		/**
+		 * The position of the root node(s) relative to the laid out graph in. Default
+		 * is <code>SwingConstants.NORTH</code>, i.e. top-down.
+		 */
+		super.orientation = SwingConstants.NORTH;
+
+		/**
+		 * Specifies if the STYLE_NOEDGESTYLE flag should be set on edges that are
+		 * modified by the result. Default is true.
+		 */
+		super.disableEdgeStyle = true;
+
+		/**
+		 * Whether or not to perform local optimisations and iterate multiple times
+		 * through the algorithm
+		 */
+		super.fineTuning = true;
+
+		/**
+		 * Whether or not to promote edges that terminate on vertices with different but
+		 * common ancestry to appear connected to the highest siblings in the ancestry
+		 * chains
+		 */
+		super.promoteEdges = true;
+
+		/**
+		 * Whether or not to navigate edges whose terminal vertices have different
+		 * parents but are in the same ancestry chain
+		 */
+		super.traverseAncestors = false;
+
+	}
+
+	@SuppressWarnings("static-access")
+	@Override
+	public void execute(Object parent) {
+		// Execute the CompactTreeLayout
+		super.execute(parent);
+
+	}
+}

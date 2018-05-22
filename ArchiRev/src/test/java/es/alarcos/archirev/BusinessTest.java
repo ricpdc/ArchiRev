@@ -59,10 +59,20 @@ import org.springframework.util.MultiValueMap;
 import org.zeroturnaround.zip.ZipUtil;
 
 import com.archimatetool.model.IArchimateConcept;
+import com.archimatetool.model.impl.AccessRelationship;
+import com.archimatetool.model.impl.AggregationRelationship;
 import com.archimatetool.model.impl.ApplicationComponent;
+import com.archimatetool.model.impl.ApplicationFunction;
+import com.archimatetool.model.impl.ApplicationService;
 import com.archimatetool.model.impl.ArchimateElement;
 import com.archimatetool.model.impl.ArchimateFactory;
 import com.archimatetool.model.impl.ArchimateRelationship;
+import com.archimatetool.model.impl.CompositionRelationship;
+import com.archimatetool.model.impl.DataObject;
+import com.archimatetool.model.impl.RealizationRelationship;
+import com.archimatetool.model.impl.ServingRelationship;
+import com.archimatetool.model.impl.SpecializationRelationship;
+import com.archimatetool.model.impl.TriggeringRelationship;
 import com.mxgraph.canvas.mxGraphics2DCanvas;
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.layout.mxCompactTreeLayout;
@@ -74,6 +84,8 @@ import com.mxgraph.util.mxCellRenderer;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
 
+import es.alarcos.archirev.connector.ConnectorEnum;
+import es.alarcos.archirev.layout.ExtendedHierarchicalLayout;
 import es.alarcos.archirev.logic.ArchimateElementEnum;
 import es.alarcos.archirev.shape.ShapeEnum;
 import the.bytecode.club.bytecodeviewer.DecompilerSettings;
@@ -219,14 +231,15 @@ class BusinessTest {
 				}
 			}
 
-//			for (Entry<Class, List<ArchimateElement>> entry : modelElements.entrySet()) {
-//				Class clazz = entry.getKey();
-//				LOGGER.info("");
-//				LOGGER.info(clazz.getName());
-//				for (ArchimateElement archimateElement : entry.getValue()) {
-//					LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + ": " + archimateElement.getName());
-//				}
-//			}
+			// for (Entry<Class, List<ArchimateElement>> entry : modelElements.entrySet()) {
+			// Class clazz = entry.getKey();
+			// LOGGER.info("");
+			// LOGGER.info(clazz.getName());
+			// for (ArchimateElement archimateElement : entry.getValue()) {
+			// LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + ": " +
+			// archimateElement.getName());
+			// }
+			// }
 
 		} catch (NoClassDefFoundError | ClassNotFoundException |
 
@@ -370,7 +383,8 @@ class BusinessTest {
 					if (constant.getTag() == 7) {
 						String referencedClass = javaClass.getConstantPool().constantToString(constant);
 						if (modelElementsByClassName.containsKey(referencedClass)) {
-							//LOGGER.debug(String.format("[%s] --> %s", javaClass.getClassName(), referencedClass));
+							// LOGGER.debug(String.format("[%s] --> %s", javaClass.getClassName(),
+							// referencedClass));
 
 							List<ArchimateElement> sourceElements = modelElementsByClassName
 									.get(javaClass.getClassName());
@@ -380,8 +394,8 @@ class BusinessTest {
 								for (ArchimateElement target : targetElemetns) {
 									if (!source.equals(target)) {
 
-										ArchimateRelationship relationshipToBeAdded = getPrioritizedRelationshipType(
-												source, target);
+										ArchimateRelationship relationshipToBeAdded = getPrioritizedRelationship(source,
+												target);
 
 										relationshipToBeAdded.setSource(source);
 										relationshipToBeAdded.setTarget(target);
@@ -409,10 +423,61 @@ class BusinessTest {
 		return modelRelationshipsByClassName;
 	}
 
-	private ArchimateRelationship getPrioritizedRelationshipType(ArchimateElement source, ArchimateElement target) {
-		ArchimateRelationship relationshipToBeAdded = (ArchimateRelationship) ArchimateFactory.eINSTANCE
-				.createAssociationRelationship();
-		return relationshipToBeAdded;
+	private ArchimateRelationship getPrioritizedRelationship(ArchimateElement source, ArchimateElement target) {
+
+		// TODO Move this map to constants and allow parametrize this.
+		Map<Class<? extends ArchimateElement>, Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>>> mapPrioritizedRelationship = new HashMap<>();
+
+		Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>> applicationFunctionMap = new HashMap<>();
+		applicationFunctionMap.put(ApplicationFunction.class, TriggeringRelationship.class);
+		applicationFunctionMap.put(ApplicationComponent.class, ServingRelationship.class);
+		applicationFunctionMap.put(ApplicationService.class, RealizationRelationship.class);
+		applicationFunctionMap.put(DataObject.class, AccessRelationship.class);
+		mapPrioritizedRelationship.put(ApplicationFunction.class, applicationFunctionMap);
+
+		Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>> applicationComponentMap = new HashMap<>();
+		applicationComponentMap.put(ApplicationFunction.class, TriggeringRelationship.class);
+		applicationComponentMap.put(ApplicationComponent.class, ServingRelationship.class);
+		applicationComponentMap.put(ApplicationService.class, RealizationRelationship.class);
+		applicationComponentMap.put(DataObject.class, AccessRelationship.class);
+		mapPrioritizedRelationship.put(ApplicationComponent.class, applicationComponentMap);
+
+		Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>> applicationServiceMap = new HashMap<>();
+		applicationServiceMap.put(ApplicationFunction.class, AccessRelationship.class);
+		applicationServiceMap.put(ApplicationComponent.class, AccessRelationship.class);
+		applicationServiceMap.put(ApplicationService.class, TriggeringRelationship.class);
+		applicationServiceMap.put(DataObject.class, AccessRelationship.class);
+		mapPrioritizedRelationship.put(ApplicationService.class, applicationServiceMap);
+
+		Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>> dataObjectMap = new HashMap<>();
+		dataObjectMap.put(ApplicationFunction.class, AccessRelationship.class);
+		dataObjectMap.put(ApplicationComponent.class, AccessRelationship.class);
+		dataObjectMap.put(ApplicationService.class, AccessRelationship.class);
+		dataObjectMap.put(DataObject.class, CompositionRelationship.class);
+		mapPrioritizedRelationship.put(DataObject.class, dataObjectMap);
+
+		Class<? extends ArchimateRelationship> relationshipClass = mapPrioritizedRelationship.get(source.getClass())
+				.get(target.getClass());
+
+		if (relationshipClass.equals(AccessRelationship.class)) {
+			return (ArchimateRelationship) ArchimateFactory.eINSTANCE.createAccessRelationship();
+		} else if (relationshipClass.equals(AggregationRelationship.class)) {
+			return (ArchimateRelationship) ArchimateFactory.eINSTANCE.createAggregationRelationship();
+		} else if (relationshipClass.equals(CompositionRelationship.class)) {
+			return (ArchimateRelationship) ArchimateFactory.eINSTANCE.createCompositionRelationship();
+		} else if (relationshipClass.equals(RealizationRelationship.class)) {
+			return (ArchimateRelationship) ArchimateFactory.eINSTANCE.createRealizationRelationship();
+		} else if (relationshipClass.equals(ServingRelationship.class)) {
+			return (ArchimateRelationship) ArchimateFactory.eINSTANCE.createServingRelationship();
+		}
+		else if (relationshipClass.equals(SpecializationRelationship.class)) {
+			return (ArchimateRelationship) ArchimateFactory.eINSTANCE.createSpecializationRelationship();
+		} else if (relationshipClass.equals(TriggeringRelationship.class)) {
+			return (ArchimateRelationship) ArchimateFactory.eINSTANCE.createTriggeringRelationship();
+		} else {
+			// default
+			return (ArchimateRelationship) ArchimateFactory.eINSTANCE.createAccessRelationship();
+		}
 	}
 
 	private ZipFile getZipFile(final String warPath) throws ZipException, IOException {
@@ -438,8 +503,8 @@ class BusinessTest {
 		try {
 			Map<ArchimateElement, Object> nodes = new HashMap<>();
 			for (Entry<String, List<ArchimateElement>> entry : modelElementsByClassName.entrySet()) {
-//				LOGGER.info("");
-//				LOGGER.info(entry.getKey());
+				// LOGGER.info("");
+				// LOGGER.info(entry.getKey());
 				entry.getValue()
 						.sort((o1, o2) -> o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName()));
 				parent = graph.getDefaultParent();
@@ -469,8 +534,9 @@ class BusinessTest {
 
 					nodes.put(archimateElement, componentNode != null ? componentNode : node);
 
-//					LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + " (\"" + archimateElement.getName()
-//							+ "\")");
+					// LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + " (\"" +
+					// archimateElement.getName()
+					// + "\")");
 				}
 
 			}
@@ -486,13 +552,7 @@ class BusinessTest {
 
 					String simpleName = archimateRelationship.getClass().getSimpleName();
 					graph.insertEdge(parent, null, simpleName, node1, node2,
-							"endArrow=open;strokeColor=black;fontColor=gray");
-
-					final ImmutableTriple<IArchimateConcept, IArchimateConcept, Class<ArchimateRelationship>> triple = new ImmutableTriple(
-							archimateRelationship.getSource(), archimateRelationship.getTarget(),
-							archimateRelationship.getClass());
-
-					
+							archimateRelationship.getClass().getSimpleName());
 
 					LOGGER.info("\t" + archimateRelationship.getId());
 				}
@@ -515,8 +575,11 @@ class BusinessTest {
 			// mxParallelEdgeLayout parallelEdgeLayout = new mxParallelEdgeLayout(graph,
 			// 1000);
 			// mxStackLayout stackLayout = new mxStackLayout(graph, false, 1000);
+			
+			
+			ExtendedHierarchicalLayout extendedHierarchicalLayout = new ExtendedHierarchicalLayout(graph);
 
-			mxGraphLayout layout = compactTreeLayout;
+			mxGraphLayout layout = extendedHierarchicalLayout;
 			layout.execute(graph.getDefaultParent());
 
 			BufferedImage image = mxCellRenderer.createBufferedImage(graph, null, 1, java.awt.Color.WHITE, true, null);
@@ -540,6 +603,26 @@ class BusinessTest {
 			style.put(mxConstants.STYLE_ROUNDED, shapeEnum.getRounded());
 			style.put(mxConstants.STYLE_VERTICAL_ALIGN, shapeEnum.getVerticalAlign());
 			graph.getStylesheet().putCellStyle(shapeName, style);
+		}
+		for (ConnectorEnum connectorEnum : ConnectorEnum.values()) {
+			String connectorName = connectorEnum.getModelRelationship().getSimpleName();
+			mxGraphics2DCanvas.putShape(connectorName, connectorEnum.getConnectorShapeInstance());
+			Map<String, Object> style = new HashMap<String, Object>();
+			style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_CONNECTOR);
+	
+		    style.put(mxConstants.STYLE_ROUNDED, true);
+		    style.put(mxConstants.STYLE_NOLABEL, "1");
+			
+			style.put(mxConstants.STYLE_STROKECOLOR, connectorEnum.getStrokeColor());
+			style.put(mxConstants.STYLE_STARTARROW, connectorEnum.getStartArrow());
+			style.put(mxConstants.STYLE_ENDARROW, connectorEnum.getEndArrow());
+			style.put(mxConstants.STYLE_STARTFILL, connectorEnum.getStartFill());
+			style.put(mxConstants.STYLE_ENDFILL, connectorEnum.getEndFill());
+			style.put(mxConstants.STYLE_STARTSIZE, connectorEnum.getStartSize());
+			style.put(mxConstants.STYLE_ENDSIZE, connectorEnum.getEndSize());
+			style.put(mxConstants.STYLE_DASHED, connectorEnum.getDashed());
+			graph.getStylesheet().putCellStyle(connectorName, style);
+
 		}
 	}
 
