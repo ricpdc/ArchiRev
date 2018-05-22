@@ -36,6 +36,7 @@ import org.apache.bcel.classfile.Constant;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.benf.cfr.reader.entities.ClassFile;
@@ -336,12 +337,18 @@ class BusinessTest {
 				default:
 					break;
 				}
-				elementToBeAdded
-						.setName(javaClass.getClassName().substring(javaClass.getClassName().lastIndexOf(".") + 1));
+				String formattedName = getFormattedName(javaClass);
+				elementToBeAdded.setName(formattedName);
 				modelElementsByClassName.add(javaClass.getClassName(), elementToBeAdded);
 			}
 		}
 		return modelElementsByClassName;
+	}
+
+	private String getFormattedName(JavaClass javaClass) {
+		String simpleClassName = javaClass.getClassName().substring(javaClass.getClassName().lastIndexOf(".") + 1);
+		simpleClassName = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(simpleClassName), " ");
+		return simpleClassName;
 	}
 
 	private MultiValueMap<String, ArchimateRelationship> computeModelRelationshipsByClassName(String warPath,
