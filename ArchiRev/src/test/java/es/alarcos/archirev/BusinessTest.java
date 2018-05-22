@@ -13,6 +13,7 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -81,6 +82,7 @@ import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.layout.mxGraphLayout;
 import com.mxgraph.layout.mxOrganicLayout;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
+import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxCellRenderer;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
@@ -407,9 +409,10 @@ class BusinessTest {
 										relationshipToBeAdded.setSource(source);
 										relationshipToBeAdded.setTarget(target);
 										relationshipToBeAdded.setName(source.getName() + "-to-" + target.getName());
-										String relationshipId = source.getName() + "--("
-												+ relationshipToBeAdded.getClass().getSimpleName() + ")-->"
-												+ target.getName();
+										String relationshipId = source.getClass().getSimpleName() + "[\""
+												+ source.getName() + "\"]" + " --("
+												+ relationshipToBeAdded.getClass().getSimpleName() + ")--> "
+												+ target.getClass().getSimpleName() + "[\"" + target.getName() + "\"]";
 										relationshipToBeAdded.setId(relationshipId);
 
 										if (visitedRelationships.contains(relationshipId)) {
@@ -476,8 +479,7 @@ class BusinessTest {
 			return (ArchimateRelationship) ArchimateFactory.eINSTANCE.createRealizationRelationship();
 		} else if (relationshipClass.equals(ServingRelationship.class)) {
 			return (ArchimateRelationship) ArchimateFactory.eINSTANCE.createServingRelationship();
-		}
-		else if (relationshipClass.equals(SpecializationRelationship.class)) {
+		} else if (relationshipClass.equals(SpecializationRelationship.class)) {
 			return (ArchimateRelationship) ArchimateFactory.eINSTANCE.createSpecializationRelationship();
 		} else if (relationshipClass.equals(TriggeringRelationship.class)) {
 			return (ArchimateRelationship) ArchimateFactory.eINSTANCE.createTriggeringRelationship();
@@ -540,6 +542,7 @@ class BusinessTest {
 							archimateElement.getName().length() * 5 + 60, 40, shapeEnum.getShape().getSimpleName());
 
 					nodes.put(archimateElement, componentNode != null ? componentNode : node);
+					// nodes.put(archimateElement, node);
 
 					// LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + " (\"" +
 					// archimateElement.getName()
@@ -548,20 +551,29 @@ class BusinessTest {
 
 			}
 
+			parent = graph.getDefaultParent();
+			List<String> visitedEdges = new ArrayList<>();
 			for (Entry<String, List<ArchimateRelationship>> entry : modelRelationshipsByClassName.entrySet()) {
 				LOGGER.info("");
 				LOGGER.info(entry.getKey());
-				Set<Triple<IArchimateConcept, IArchimateConcept, Class<ArchimateRelationship>>> visitedEdges = new HashSet<>();
+
 				for (ArchimateRelationship archimateRelationship : entry.getValue()) {
-					Object node1 = nodes.get(archimateRelationship.getSource());
-					Object node2 = nodes.get(archimateRelationship.getTarget());
-					if(node1.equals(node2)) {
+
+					mxCell node1 = (mxCell) nodes.get(archimateRelationship.getSource());
+					mxCell node2 = (mxCell) nodes.get(archimateRelationship.getTarget());
+					String edgeId = node1.getValue() + "--" + archimateRelationship.getClass().getSimpleName() + "-->"
+							+ node2.getValue();
+
+					if (visitedEdges.contains(edgeId) || node1.equals(node2) || node1.getParent().equals(node2)
+							|| node2.getParent().equals(node1)) {
 						continue;
 					}
 
 					String simpleName = archimateRelationship.getClass().getSimpleName();
 					graph.insertEdge(parent, null, simpleName, node1, node2,
 							archimateRelationship.getClass().getSimpleName());
+
+					visitedEdges.add(edgeId);
 
 					LOGGER.info("\t" + archimateRelationship.getId());
 				}
@@ -584,8 +596,7 @@ class BusinessTest {
 			// mxParallelEdgeLayout parallelEdgeLayout = new mxParallelEdgeLayout(graph,
 			// 1000);
 			// mxStackLayout stackLayout = new mxStackLayout(graph, false, 1000);
-			
-			
+
 			ExtendedHierarchicalLayout extendedHierarchicalLayout = new ExtendedHierarchicalLayout(graph, 75);
 
 			mxGraphLayout layout = extendedHierarchicalLayout;
@@ -618,10 +629,10 @@ class BusinessTest {
 			mxGraphics2DCanvas.putShape(connectorName, connectorEnum.getConnectorShapeInstance());
 			Map<String, Object> style = new HashMap<String, Object>();
 			style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_CONNECTOR);
-	
-		    style.put(mxConstants.STYLE_ROUNDED, true);
-		    style.put(mxConstants.STYLE_NOLABEL, "1");
-			
+
+			style.put(mxConstants.STYLE_ROUNDED, true);
+			style.put(mxConstants.STYLE_NOLABEL, "1");
+
 			style.put(mxConstants.STYLE_STROKECOLOR, connectorEnum.getStrokeColor());
 			style.put(mxConstants.STYLE_STARTARROW, connectorEnum.getStartArrow());
 			style.put(mxConstants.STYLE_ENDARROW, connectorEnum.getEndArrow());
