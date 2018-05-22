@@ -97,6 +97,8 @@ import the.bytecode.club.bytecodeviewer.decompilers.Decompiler;
 
 class BusinessTest {
 
+	private static final String MAPPED_SUPERCLASS_ANNOTATION = "MappedSuperclass";
+
 	static Logger LOGGER = LoggerFactory.getLogger(BusinessTest.class);
 
 	private final Decompiler decompiler = Decompiler.CFR;
@@ -309,6 +311,7 @@ class BusinessTest {
 			}
 
 			Set<ArchimateElementEnum> uniqueElements = new HashSet<>();
+			boolean mappedSuperclass = false;
 			for (AnnotationEntry annotationEntry : javaClass.getAnnotationEntries()) {
 				String annotationType = annotationEntry.getAnnotationType();
 				// LOGGER.debug(String.format("[%s]: @%s", javaClass.getClassName(),
@@ -318,6 +321,9 @@ class BusinessTest {
 				List<ArchimateElementEnum> elementList = mapping.get(annotation);
 				if (elementList != null) {
 					uniqueElements.addAll(elementList);
+					if (!mappedSuperclass && MAPPED_SUPERCLASS_ANNOTATION.equals(annotation)) {
+						mappedSuperclass = true;
+					}
 				}
 			}
 
@@ -332,6 +338,9 @@ class BusinessTest {
 					break;
 				case DATA_ENTITY:
 					elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createDataObject();
+					if (mappedSuperclass) {
+						elementToBeAdded.setDocumentation(MAPPED_SUPERCLASS_ANNOTATION);
+					}
 					break;
 				case COMPONENT:
 					elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createApplicationComponent();
@@ -402,17 +411,28 @@ class BusinessTest {
 							for (ArchimateElement source : sourceElements) {
 								for (ArchimateElement target : targetElemetns) {
 									if (!source.equals(target)) {
+										ArchimateElement copySource = source;
+										ArchimateElement copyTarget = target;
 
 										ArchimateRelationship relationshipToBeAdded = getPrioritizedRelationship(source,
 												target);
 
-										relationshipToBeAdded.setSource(source);
-										relationshipToBeAdded.setTarget(target);
-										relationshipToBeAdded.setName(source.getName() + "-to-" + target.getName());
-										String relationshipId = source.getClass().getSimpleName() + "[\""
-												+ source.getName() + "\"]" + " --("
+										if (relationshipToBeAdded instanceof CompositionRelationship
+												&& MAPPED_SUPERCLASS_ANNOTATION.equals(target.getDocumentation())) {
+											copySource = target;
+											copyTarget = source;
+											relationshipToBeAdded = (ArchimateRelationship) ArchimateFactory.eINSTANCE.createSpecializationRelationship();
+										}
+
+										relationshipToBeAdded.setSource(copySource);
+										relationshipToBeAdded.setTarget(copyTarget);
+										relationshipToBeAdded
+												.setName(copySource.getName() + "-to-" + copyTarget.getName());
+										String relationshipId = copySource.getClass().getSimpleName() + "[\""
+												+ copySource.getName() + "\"]" + " --("
 												+ relationshipToBeAdded.getClass().getSimpleName() + ")--> "
-												+ target.getClass().getSimpleName() + "[\"" + target.getName() + "\"]";
+												+ copyTarget.getClass().getSimpleName() + "[\"" + copyTarget.getName()
+												+ "\"]";
 										relationshipToBeAdded.setId(relationshipId);
 
 										if (visitedRelationships.contains(relationshipId)) {
