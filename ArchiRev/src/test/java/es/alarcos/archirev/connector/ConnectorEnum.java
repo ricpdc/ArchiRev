@@ -50,7 +50,7 @@ public enum ConnectorEnum {
 			boolean startFill, boolean endFill, int startSize, int endSize, boolean dashed) {
 		this.modelRelationship = modelRelationship;
 		this.connectorShape = connectorShape;
-		this.strokeColor = "black";
+		this.strokeColor = "000000";
 		this.startArrow = startArrow;
 		this.endArrow = endArrow;
 		this.startFill = startFill;

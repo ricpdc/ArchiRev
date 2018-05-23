@@ -23,7 +23,7 @@ public enum ShapeEnum {
 	APPLICATION_FUNCTION(ApplicationFunction.class, ArchiMateApplicationFunctionShape.class, "cce3ff" , "000f84", "000f84", true, mxConstants.ALIGN_MIDDLE),
 	APPLICATION_SERVICE(ApplicationService.class, ArchiMateApplicationServiceShape.class, "cce3ff" , "000f84", "000f84", true, mxConstants.ALIGN_MIDDLE),
 	DATA_OBJECT(DataObject.class, ArchiMateDataObjectShape.class, "adfff8" , "000f84", "000f84", false, mxConstants.ALIGN_MIDDLE),
-	BUSINESS_OBJECT(BusinessObject.class, ArchiMateBusinessObjectShape.class, "yellow" , "000f84", "000f84", false, mxConstants.ALIGN_MIDDLE),
+	BUSINESS_OBJECT(BusinessObject.class, ArchiMateBusinessObjectShape.class, "ffff00" , "000f84", "000f84", false, mxConstants.ALIGN_MIDDLE),
 	APPLICATION_COMPONENT(ApplicationComponent.class, ArchiMateApplicationComponentShape.class, "cce3ff" , "000f84", "000f84", false, mxConstants.ALIGN_TOP);
 	
 	
