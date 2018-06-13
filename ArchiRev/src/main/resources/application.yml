@@ -1,3 +1,5 @@
 server:
   context-path: /ArchiRev
   port: 9090
+  tomcat:
+        additional-tld-skip-patterns: '*.jar'
