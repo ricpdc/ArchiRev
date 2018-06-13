@@ -27,6 +27,12 @@ public class Project extends AbstractEntity {
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "project", fetch=FetchType.EAGER)
 	private List<Source> sources;
+	
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "project", fetch=FetchType.LAZY)
+	private List<Extraction> extractions;
+	
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "project", fetch=FetchType.LAZY)
+	private List<Model> models;
 
 	public Project() {
 		super();
@@ -58,6 +64,22 @@ public class Project extends AbstractEntity {
 
 	public void setSources(List<Source> sources) {
 		this.sources = sources;
+	}
+
+	public List<Extraction> getExtractions() {
+		return extractions;
+	}
+
+	public void setExtractions(List<Extraction> extractions) {
+		this.extractions = extractions;
+	}
+
+	public List<Model> getModels() {
+		return models;
+	}
+
+	public void setModels(List<Model> models) {
+		this.models = models;
 	}
 
 }
