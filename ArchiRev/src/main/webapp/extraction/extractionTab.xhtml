@@ -7,7 +7,32 @@
 	<p:tab title="Extraction">
 		<h:panelGrid columns="2" cellpadding="10">
 			<h:outputText value="Extraction" />
+			<p:pickList id="sourcesPickList"
+				value="#{extractionController.sourcePickerList}" var="source"
+				effect="bounce" itemValue="#{source}"
+				itemLabel="#{source.displayName}" showCheckbox="true"
+				responsive="true" showSourceFilter="true" showTargetFilter="true"
+				filterMatchMode="contains">
+
+				<f:facet name="sourceCaption">Source Artifacts</f:facet>
+				<f:facet name="targetCaption">Selected artifacts</f:facet>
+
+				<p:ajax event="transfer"
+					listener="#{extractionController.onTransfer}" />
+
+				<p:column style="width:10%">
+					<h:outputText styleClass="ui-theme ui-theme-#{theme.name}" />
+				</p:column>
+
+				<p:column style="width:90%;">
+					<h:outputText value="#{theme.displayName}" />
+				</p:column>
+			</p:pickList>
 		</h:panelGrid>
 	</p:tab>
+
+
+
+
 
 </ui:composition>
