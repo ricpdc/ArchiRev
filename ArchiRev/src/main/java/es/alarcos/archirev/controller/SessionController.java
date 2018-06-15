@@ -2,16 +2,16 @@ package es.alarcos.archirev.controller;
 
 import java.util.ArrayList;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
+import org.primefaces.event.TabChangeEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import com.google.common.collect.Lists;
 
 import es.alarcos.archirev.model.Project;
 import es.alarcos.archirev.model.Source;
@@ -54,6 +54,11 @@ public class SessionController extends AbstractController {
 	public void refreshProject() {
 		getProjectDao().refresh(project);
 	}
+	
+	public void onTabChange(TabChangeEvent event) {
+        LOGGER.debug("Tab Changed", "Active Tab: " + event.getTab().getTitle());
+        //getProjectDao().refresh(project);
+    }
 
 	public Project getProject() {
 		return project;

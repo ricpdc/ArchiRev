@@ -100,7 +100,7 @@ public class Source extends AbstractEntity {
 	
 	@Transient
 	public String getDisplayName() {
-		return String.format("[%s] %s (*.%s)", type.getLabel(), name, fileExtension);
+		return String.format("%s [%s]", name, type.getLabel());
 	}
 
 }

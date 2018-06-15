@@ -50,7 +50,7 @@ public class ExtractionController extends AbstractController {
 	}
 	
 	private void loadSources() {
-		sourcePickerList = new DualListModel<Source>(getProject().getSources(), new ArrayList<Source>());
+		sourcePickerList = new DualListModel<Source>(new ArrayList<Source>(getProject().getSources()), new ArrayList<Source>());
 	}
 
 	public void onTransfer(TransferEvent event) {
@@ -75,6 +75,10 @@ public class ExtractionController extends AbstractController {
 
 	public DualListModel<Source> getSourcePickerList() {
 		return sourcePickerList;
+	}
+
+	public void setSourcePickerList(DualListModel<Source> sourcePickerList) {
+		this.sourcePickerList = sourcePickerList;
 	}
 
 	
