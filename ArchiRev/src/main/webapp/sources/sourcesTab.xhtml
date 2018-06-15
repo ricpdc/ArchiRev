@@ -7,58 +7,6 @@
 	<p:tab id="sourcesTab" title="Knowledge Sources">
 
 
-		<p:panel id="sourceListPanel" widgetVar="sourceListPanel"
-			header="Added knowledge sources list" toggleable="true"
-			toggleSpeed="500" style="margin-bottom:10px; width:100%" width="100%">
-			<p:dataTable id="sourcesTable" widgetVar="sourcesTable"
-				value="#{sourcesController.sources}" var="source"
-				emptyMessage="No sources added" rows="5" paginator="true"
-				paginatorPosition="bottom"
-				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-				rowsPerPageTemplate="5,10,15">
-				<p:column headerText="Concern" sortBy="#{source.concern.label}"
-					width="180" filterBy="#{source.concern.label}"
-					filterMatchMode="contains">
-					<h:outputText value="#{source.concern.label}" />
-				</p:column>
-				<p:column headerText="Type" sortBy="#{source.type.label}"
-					width="180" filterBy="#{source.type.label}"
-					filterMatchMode="contains">
-					<h:outputText value="#{source.type.label}" />
-				</p:column>
-				<p:column headerText="Name" sortBy="#{source.name}"
-					filterBy="#{source.name}" filterMatchMode="contains">
-					<h:outputText value="#{source.name}" />
-				</p:column>
-				<p:column headerText="Extension" sortBy="#{source.fileExtension}"
-					width="110" filterBy="#{source.fileExtension}"
-					filterMatchMode="contains">
-					<h:outputText value="#{source.fileExtension}" />
-				</p:column>
-				<p:column headerText="Addition date" sortBy="#{source.modifiedAt}"
-					width="180" filterBy="#{source.modifiedAt}"
-					filterMatchMode="contains">
-					<h:outputText value="#{source.modifiedAt}">
-						<f:converter converterId="timestampConverter"/>
-					</h:outputText>
-				</p:column>
-				<p:column style="width:50px;text-align: center">
-					<p:commandButton id="deleteSource" icon="ui-icon-trash"
-						title="Remove" action="#{sourcesController.removeSource(source)}"
-						update="mainForm:mainTabs:sourcesTable">
-						<p:confirm header="Confirmation" message="Are you sure?"
-							icon="ui-icon-alert" />
-					</p:commandButton>
-					<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-						<p:commandButton value="Yes" type="button"
-							styleClass="ui-confirmdialog-yes" icon="ui-icon-check">
-						</p:commandButton>
-						<p:commandButton value="No" type="button"
-							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-					</p:confirmDialog>
-				</p:column>
-			</p:dataTable>
-		</p:panel>
 
 		<p:panelGrid style="width:100%; border: none;">
 
@@ -105,8 +53,7 @@
 							<h:outputText id="selectionHint"
 								value="#{sourcesController.selectFileMessage}" />
 						</f:facet>
-						<p:fileUpload
-							fileUploadListener="#{sourcesController.addSource}"
+						<p:fileUpload fileUploadListener="#{sourcesController.addSource}"
 							disabled="#{sourcesController.sourceType == null}"
 							mode="advanced" dragDropSupport="true" multiple="true"
 							update="mainForm:messages" sizeLimit="500000000" fileLimit="3"
@@ -116,6 +63,60 @@
 			</p:row>
 
 		</p:panelGrid>
+		
+		
+		<p:panel id="sourceListPanel" widgetVar="sourceListPanel"
+			header="Added knowledge sources list" toggleable="true"
+			toggleSpeed="500" style="margin-bottom:10px; width:100%" width="100%">
+			<p:dataTable id="sourcesTable" widgetVar="sourcesTable"
+				value="#{sourcesController.sources}" var="source"
+				emptyMessage="No sources added" rows="5" paginator="true"
+				paginatorPosition="bottom"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+				rowsPerPageTemplate="5,10,15">
+				<p:column headerText="Concern" sortBy="#{source.concern.label}"
+					width="180" filterBy="#{source.concern.label}"
+					filterMatchMode="contains">
+					<h:outputText value="#{source.concern.label}" />
+				</p:column>
+				<p:column headerText="Type" sortBy="#{source.type.label}"
+					width="180" filterBy="#{source.type.label}"
+					filterMatchMode="contains">
+					<h:outputText value="#{source.type.label}" />
+				</p:column>
+				<p:column headerText="Name" sortBy="#{source.name}"
+					filterBy="#{source.name}" filterMatchMode="contains">
+					<h:outputText value="#{source.name}" />
+				</p:column>
+				<p:column headerText="Extension" sortBy="#{source.fileExtension}"
+					width="110" filterBy="#{source.fileExtension}"
+					filterMatchMode="contains">
+					<h:outputText value="#{source.fileExtension}" />
+				</p:column>
+				<p:column headerText="Addition date" sortBy="#{source.modifiedAt}"
+					width="180" filterBy="#{source.modifiedAt}"
+					filterMatchMode="contains">
+					<h:outputText value="#{source.modifiedAt}">
+						<f:converter converterId="timestampConverter" />
+					</h:outputText>
+				</p:column>
+				<p:column style="width:50px;text-align: center">
+					<p:commandButton id="deleteSource" icon="ui-icon-trash"
+						title="Remove" action="#{sourcesController.removeSource(source)}"
+						update="mainForm:mainTabs:sourcesTable">
+						<p:confirm header="Confirmation" message="Are you sure?"
+							icon="ui-icon-alert" />
+					</p:commandButton>
+					<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+						<p:commandButton value="Yes" type="button"
+							styleClass="ui-confirmdialog-yes" icon="ui-icon-check">
+						</p:commandButton>
+						<p:commandButton value="No" type="button"
+							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					</p:confirmDialog>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
 
 
 	</p:tab>
