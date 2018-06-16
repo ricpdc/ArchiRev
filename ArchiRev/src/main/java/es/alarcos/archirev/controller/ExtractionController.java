@@ -1,13 +1,19 @@
 package es.alarcos.archirev.controller;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
 import org.slf4j.Logger;
@@ -17,10 +23,12 @@ import org.springframework.stereotype.Controller;
 
 import com.google.common.collect.Maps;
 
+import es.alarcos.archirev.model.Extraction;
 import es.alarcos.archirev.model.Project;
 import es.alarcos.archirev.model.Source;
 import es.alarcos.archirev.model.enums.SourceConcernEnum;
 import es.alarcos.archirev.model.enums.SourceEnum;
+import es.alarcos.archirev.persistency.ExtractionDao;
 
 @ManagedBean(name = "extractionController")
 @Controller
@@ -34,8 +42,12 @@ public class ExtractionController extends AbstractController {
 	@Autowired
 	private SessionController sessionController;
 
+	@Autowired
+	private ExtractionDao extractionDao;
+
 	private DualListModel<Source> sourcePickerList;
-	
+
+	private String extractionName;
 
 	Map<SourceConcernEnum, Set<SourceEnum>> sourcesMap = Maps.newHashMap();
 
@@ -44,25 +56,83 @@ public class ExtractionController extends AbstractController {
 	}
 
 	@PostConstruct
-	void init() {
+	public void init() {
 		super.init();
-		loadSources();
+		reload();
 	}
-	
-	private void loadSources() {
-		sourcePickerList = new DualListModel<Source>(new ArrayList<Source>(getProject().getSources()), new ArrayList<Source>());
+
+	public void reload() {
+		if (getSessionController().isActiveProject()) {
+			sourcePickerList = new DualListModel<Source>(new ArrayList<Source>(getProject().getSources()),
+					new ArrayList<Source>());
+			setExtractionName("Extraction Job " + (getProject().getExtractions().size() + 1));
+		} else {
+			sourcePickerList = new DualListModel<Source>(new ArrayList<Source>(), new ArrayList<Source>());
+			setExtractionName("");
+		}
 	}
 
 	public void onTransfer(TransferEvent event) {
-        StringBuilder builder = new StringBuilder();
-        for(Object item : event.getItems()) {
-            builder.append(((Source) item).getName()).append(",");
-        }
-    } 
+		StringBuilder builder = new StringBuilder();
+		for (Object item : event.getItems()) {
+			builder.append(((Source) item).getName()).append(",");
+		}
+	}
 
+	public void addExtraction() {
+		Extraction extraction = new Extraction();
+		extraction.setName(getExtractionName());
+
+		extraction.setProject(getProject());
+		final Timestamp now = new Timestamp(new Date().getTime());
+		extraction.setCreatedAt(now);
+		extraction.setModifiedAt(now);
+		final String loggedUser = sessionController.getLoggedUser();
+		extraction.setCreatedBy(loggedUser);
+		extraction.setModifiedBy(loggedUser);
+		extraction.setSetup("dummy setup");
+		extraction.setSources(new HashSet<Source>(sourcePickerList.getTarget()));
+		
+//		extractionDao.persist(extraction);
+//		extraction.setSources(new HashSet<Source>(sourcePickerList.getTarget()));
+//		extraction = extractionDao.update(extraction);
+
+		getProject().getExtractions().add(extraction);
+		getProject().setModifiedBy(loggedUser);
+
+		sessionController.updateProject();
+		
+//		Extraction lastExtraction = extractionDao.findLastExtraction();
+//		for (Extraction e : getProject().getExtractions()) {
+//			if(e.getId().equals(lastExtraction.getId())) {
+//				e.setSources(new HashSet<Source>(sourcePickerList.getTarget()));
+//			}
+//		}
+//		sessionController.updateProject();
+		
+		reload();
+
+		RequestContext.getCurrentInstance().update("mainForm:mainTabs:extractionTable");
+
+		FacesMessage message = new FacesMessage("Succesful", extraction.getName() + " is added.");
+		FacesContext.getCurrentInstance().addMessage(null, message);
+	}
 	
+	public boolean hasSourceSelected() {
+		return !sourcePickerList.getTarget().isEmpty();
+	}
+
+	public void removeExtraction(final Extraction extraction) {
+		getProject().getExtractions().remove(extraction);
+		sessionController.updateProject();
+	}
+
 	public Project getProject() {
 		return sessionController.getProject();
+	}
+
+	public Set<Extraction> getExtractions() {
+		return getProject().getExtractions();
 	}
 
 	public SessionController getSessionController() {
@@ -74,6 +144,12 @@ public class ExtractionController extends AbstractController {
 	}
 
 	public DualListModel<Source> getSourcePickerList() {
+		if (getSessionController().isActiveProject()) {
+			sourcePickerList = new DualListModel<Source>(new ArrayList<Source>(getProject().getSources()),
+					new ArrayList<Source>());
+		} else {
+			sourcePickerList = new DualListModel<Source>(new ArrayList<Source>(), new ArrayList<Source>());
+		}
 		return sourcePickerList;
 	}
 
@@ -81,7 +157,16 @@ public class ExtractionController extends AbstractController {
 		this.sourcePickerList = sourcePickerList;
 	}
 
-	
+	public String getExtractionName() {
+		return extractionName;
+	}
 
+	public void setExtractionName(String extractionName) {
+		this.extractionName = extractionName;
+	}
+
+	public ExtractionDao getExtractionDao() {
+		return extractionDao;
+	}
 
 }

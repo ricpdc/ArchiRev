@@ -1,6 +1,6 @@
 package es.alarcos.archirev.model;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -25,14 +25,14 @@ public class Project extends AbstractEntity {
 	@Column(name = "description")
 	private String description;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "project", fetch=FetchType.EAGER)
-	private List<Source> sources;
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "project", fetch=FetchType.LAZY)
+	private Set<Source> sources;
 	
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "project", fetch=FetchType.LAZY)
-	private List<Extraction> extractions;
+	private Set<Extraction> extractions;
 	
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "project", fetch=FetchType.LAZY)
-	private List<Model> models;
+	private Set<Model> models;
 
 	public Project() {
 		super();
@@ -58,27 +58,27 @@ public class Project extends AbstractEntity {
 		return name + " (" + description + ")";
 	}
 
-	public List<Source> getSources() {
+	public Set<Source> getSources() {
 		return sources;
 	}
 
-	public void setSources(List<Source> sources) {
+	public void setSources(Set<Source> sources) {
 		this.sources = sources;
 	}
 
-	public List<Extraction> getExtractions() {
+	public Set<Extraction> getExtractions() {
 		return extractions;
 	}
 
-	public void setExtractions(List<Extraction> extractions) {
+	public void setExtractions(Set<Extraction> extractions) {
 		this.extractions = extractions;
 	}
 
-	public List<Model> getModels() {
+	public Set<Model> getModels() {
 		return models;
 	}
 
-	public void setModels(List<Model> models) {
+	public void setModels(Set<Model> models) {
 		this.models = models;
 	}
 

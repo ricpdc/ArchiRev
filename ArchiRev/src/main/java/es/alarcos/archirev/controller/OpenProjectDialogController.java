@@ -30,6 +30,9 @@ public class OpenProjectDialogController extends AbstractDialogController {
 	private SessionController sessionController;
 	
 	@Autowired
+	private ExtractionController extractionController;
+	
+	@Autowired
 	private ProjectDao projectDao;
 	
 	private List<Project> projects;
@@ -52,6 +55,7 @@ public class OpenProjectDialogController extends AbstractDialogController {
     
     public void openProject(final Project project) {
     	getSessionController().setProject(project);
+    	extractionController.reload();
 		RequestContext context = RequestContext.getCurrentInstance();
 		context.execute("PF('openProjectDialog').hide()");
 		FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Project loaded", getSessionController().getProject().toString());

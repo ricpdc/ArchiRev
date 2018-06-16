@@ -1,12 +1,12 @@
 package es.alarcos.archirev.controller;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.TabChangeEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,25 +28,27 @@ public class SessionController extends AbstractController {
 
 	@Autowired
 	private ProjectDao projectDao;
-	
+
 	private Project project;
+
+	private int activeTab;
 
 	public SessionController() {
 		super();
 		project = new Project();
 	}
-	
+
 	public void createEmptyProject() {
 		project = new Project();
-		project.setSources(new ArrayList<Source>());
+		project.setSources(new HashSet<Source>());
 		project.setCreatedBy(getLoggedUser());
 		project.setModifiedBy(getLoggedUser());
 	}
-	
+
 	public void updateProject() {
 		setProject(getProjectDao().update(getProject()));
 	}
-	
+
 	public boolean isActiveProject() {
 		return project != null && project.getId() != null;
 	}
@@ -54,11 +56,21 @@ public class SessionController extends AbstractController {
 	public void refreshProject() {
 		getProjectDao().refresh(project);
 	}
-	
+
 	public void onTabChange(TabChangeEvent event) {
-        LOGGER.debug("Tab Changed", "Active Tab: " + event.getTab().getTitle());
-        //getProjectDao().refresh(project);
-    }
+		LOGGER.debug("Tab Changed", "Active Tab: " + event.getTab().getTitle());
+		switch (activeTab) {
+		case 0:
+			break;
+		case 1:
+			break;
+		case 2:
+			break;
+		}
+		
+		RequestContext.getCurrentInstance().update("mainForm");
+	}
+	
 
 	public Project getProject() {
 		return project;
@@ -75,10 +87,18 @@ public class SessionController extends AbstractController {
 	public void setProjectDao(ProjectDao projectDao) {
 		this.projectDao = projectDao;
 	}
-	
+
 	public String getLoggedUser() {
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		return facesContext.getExternalContext().getSessionMap().get("user").toString();
+	}
+
+	public int getActiveTab() {
+		return activeTab;
+	}
+
+	public void setActiveTab(int activeTab) {
+		this.activeTab = activeTab;
 	}
 
 }

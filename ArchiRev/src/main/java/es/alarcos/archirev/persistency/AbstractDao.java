@@ -17,6 +17,8 @@ import es.alarcos.archirev.model.AbstractEntity;
 @Transactional
 public class AbstractDao<T extends AbstractEntity> implements Serializable {
 
+	private static final long serialVersionUID = 1812196413677495102L;
+
 	private Class<T> clazz;
 
 	@PersistenceContext

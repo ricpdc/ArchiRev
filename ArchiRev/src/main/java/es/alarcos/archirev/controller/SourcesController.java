@@ -2,7 +2,6 @@ package es.alarcos.archirev.controller;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -54,7 +53,7 @@ public class SourcesController extends AbstractController {
 	}
 
 	@PostConstruct
-	void init() {
+	public void init() {
 		super.init();
 
 		loadSourceTypes();
@@ -140,7 +139,7 @@ public class SourcesController extends AbstractController {
 		this.sessionController = sessionController;
 	}
 
-	public List<Source> getSources() {
+	public Set<Source> getSources() {
 		return getProject().getSources();
 	}
 

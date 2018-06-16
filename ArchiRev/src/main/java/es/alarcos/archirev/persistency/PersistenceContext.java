@@ -59,6 +59,8 @@ class PersistenceContext {
 		// If the value of this property is true, Hibernate will format the SQL
 		// that is written to the console.
 		jpaProperties.put("hibernate.format_sql", env.getRequiredProperty("hibernate.format_sql"));
+		
+		jpaProperties.put("hibernate.enable_lazy_load_no_trans", env.getRequiredProperty("hibernate.enable_lazy_load_no_trans"));
 
 		entityManagerFactoryBean.setJpaProperties(jpaProperties);
 

@@ -18,9 +18,9 @@
 
 		<ui:include src="toolBar.xhtml" />
 
-		<p:tabView id="mainTabs" widgetVar="mainTabs"
+		<p:tabView id="mainTabs" widgetVar="mainTabs" activeIndex="#{sessionController.activeTab}" cache="false"
 			rendered="#{sessionController.activeProject}">
-			 <p:ajax event="tabChange" listener="#{sessionController.onTabChange}" update="mainForm:mainTabs"/>
+			 <p:ajax event="tabChange" listener="#{sessionController.onTabChange}"/>
 			<ui:include src="sources/sourcesTab.xhtml" />
 			<ui:include src="extraction/extractionTab.xhtml" />
 			<ui:include src="eamodels/eamodelsTab.xhtml" />
