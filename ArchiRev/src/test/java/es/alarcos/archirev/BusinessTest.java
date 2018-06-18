@@ -100,10 +100,10 @@ import com.mxgraph.util.mxCellRenderer;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.view.mxGraph;
 
-import es.alarcos.archirev.connector.ConnectorEnum;
-import es.alarcos.archirev.layout.ExtendedHierarchicalLayout;
 import es.alarcos.archirev.logic.ArchimateElementEnum;
-import es.alarcos.archirev.shape.ShapeEnum;
+import es.alarcos.archirev.logic.connector.ConnectorEnum;
+import es.alarcos.archirev.logic.layout.ExtendedHierarchicalLayout;
+import es.alarcos.archirev.logic.shape.ShapeEnum;
 import the.bytecode.club.bytecodeviewer.DecompilerSettings;
 import the.bytecode.club.bytecodeviewer.decompilers.CFRDecompiler.Settings;
 import the.bytecode.club.bytecodeviewer.decompilers.Decompiler;
@@ -171,30 +171,30 @@ class BusinessTest {
 		mapPrioritizedRelationship.put(DataObject.class, dataObjectMap);
 	}
 
-	@Test
-	void testDecompileCFRSingleDocument() {
-
-		final String inPath = ".\\src\\test\\resources\\SessionController.class";
-		final String outPath = ".\\src\\test\\resources\\SessionController.java";
-
-		try {
-			Path path = Paths.get(inPath);
-			byte[] bytes = Files.readAllBytes(path);
-			Options options = new GetOptParser().parse(generateMainMethod(), OptionsImpl.getFactory());
-			ClassFileSourceImpl classFileSource = new ClassFileSourceImpl(options);
-			DCCommonState dcCommonState = new DCCommonState(options, classFileSource);
-			String contents = doClass(dcCommonState, bytes);
-			FileUtils.write(new File(outPath), contents, "UTF-8", false);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Test
-	void testDecompileCFRWarFile() {
-		extractAndDecompileJavaFromWar();
-
-	}
+//	@Test
+//	void testDecompileCFRSingleDocument() {
+//
+//		final String inPath = ".\\src\\test\\resources\\SessionController.class";
+//		final String outPath = ".\\src\\test\\resources\\SessionController.java";
+//
+//		try {
+//			Path path = Paths.get(inPath);
+//			byte[] bytes = Files.readAllBytes(path);
+//			Options options = new GetOptParser().parse(generateMainMethod(), OptionsImpl.getFactory());
+//			ClassFileSourceImpl classFileSource = new ClassFileSourceImpl(options);
+//			DCCommonState dcCommonState = new DCCommonState(options, classFileSource);
+//			String contents = doClass(dcCommonState, bytes);
+//			FileUtils.write(new File(outPath), contents, "UTF-8", false);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
+//
+//	@Test
+//	void testDecompileCFRWarFile() {
+//		extractAndDecompileJavaFromWar();
+//
+//	}
 
 	@Test
 	@SuppressWarnings({ "rawtypes", "resource" })
@@ -246,12 +246,12 @@ class BusinessTest {
 	public void testAnnotationParsingAndMapGeneration() {
 		try {
 			// TODO Load this from a configuration json file
-			MultiValueMap<String, ArchimateElementEnum> mapping = new LinkedMultiValueMap<>();
-			mapping.add("ManagedBean", ArchimateElementEnum.APPLICATION);
-			mapping.add("Controller", ArchimateElementEnum.APPLICATION);
-			mapping.add("Service", ArchimateElementEnum.APPLICATION);
-			mapping.add("Service", ArchimateElementEnum.SERVICE);
-			mapping.add("Entity", ArchimateElementEnum.DATA_ENTITY);
+//			MultiValueMap<String, ArchimateElementEnum> mapping = new LinkedMultiValueMap<>();
+//			mapping.add("ManagedBean", ArchimateElementEnum.APPLICATION);
+//			mapping.add("Controller", ArchimateElementEnum.APPLICATION);
+//			mapping.add("Service", ArchimateElementEnum.APPLICATION);
+//			mapping.add("Service", ArchimateElementEnum.SERVICE);
+//			mapping.add("Entity", ArchimateElementEnum.DATA_ENTITY);
 
 			MultiValueMap<Class, ArchimateElement> modelElements = new LinkedMultiValueMap<>();
 			MultiValueMap<Class, ArchimateRelationship> modelRelationships = new LinkedMultiValueMap<>();
@@ -1007,50 +1007,50 @@ class BusinessTest {
 		}
 	}
 
-	private void extractAndDecompileJavaFromWar() {
-		try {
-			File zipFile = new File(warPath);
-			File rootFolder = zipFile.getParentFile();
-			String inputBaseName = FilenameUtils.getBaseName(zipFile.getName());
-			File classFolder = new File(rootFolder + File.separator + inputBaseName + "_output_class");
-			if (!classFolder.exists()) {
-				classFolder.mkdir();
-			}
-
-			ZipUtil.unpack(zipFile, classFolder);
-
-			File javaFolder = new File(rootFolder + File.separator + inputBaseName + "_output_java");
-			if (!javaFolder.exists()) {
-				javaFolder.mkdir();
-			}
-
-			Options options = new GetOptParser().parse(generateMainMethod(), OptionsImpl.getFactory());
-			ClassFileSourceImpl classFileSource = new ClassFileSourceImpl(options);
-			DCCommonState dcCommonState = new DCCommonState(options, classFileSource);
-
-			Path classFolderPath = Paths.get(classFolder.getAbsolutePath());
-			Path javaFolderPath = Paths.get(javaFolder.getAbsolutePath());
-
-			Iterator<File> it = FileUtils.iterateFiles(classFolder, new String[] { "class" }, true);
-			while (it.hasNext()) {
-				File file = (File) it.next();
-				System.out.println(file);
-				Path classFilePath = Paths.get(file.getAbsolutePath());
-
-				Path relativeClassPath = classFolderPath.relativize(classFilePath);
-				Path relativeJavaPath = Paths
-						.get(FilenameUtils.removeExtension(relativeClassPath.toString()) + ".java");
-				Path outPath = javaFolderPath.resolve(relativeJavaPath);
-
-				byte[] bytes = Files.readAllBytes(classFilePath);
-				String contents = doClass(dcCommonState, bytes);
-
-				FileUtils.write(outPath.toFile(), contents, "UTF-8", false);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	private void extractAndDecompileJavaFromWar() {
+//		try {
+//			File zipFile = new File(warPath);
+//			File rootFolder = zipFile.getParentFile();
+//			String inputBaseName = FilenameUtils.getBaseName(zipFile.getName());
+//			File classFolder = new File(rootFolder + File.separator + inputBaseName + "_output_class");
+//			if (!classFolder.exists()) {
+//				classFolder.mkdir();
+//			}
+//
+//			ZipUtil.unpack(zipFile, classFolder);
+//
+//			File javaFolder = new File(rootFolder + File.separator + inputBaseName + "_output_java");
+//			if (!javaFolder.exists()) {
+//				javaFolder.mkdir();
+//			}
+//
+//			Options options = new GetOptParser().parse(generateMainMethod(), OptionsImpl.getFactory());
+//			ClassFileSourceImpl classFileSource = new ClassFileSourceImpl(options);
+//			DCCommonState dcCommonState = new DCCommonState(options, classFileSource);
+//
+//			Path classFolderPath = Paths.get(classFolder.getAbsolutePath());
+//			Path javaFolderPath = Paths.get(javaFolder.getAbsolutePath());
+//
+//			Iterator<File> it = FileUtils.iterateFiles(classFolder, new String[] { "class" }, true);
+//			while (it.hasNext()) {
+//				File file = (File) it.next();
+//				System.out.println(file);
+//				Path classFilePath = Paths.get(file.getAbsolutePath());
+//
+//				Path relativeClassPath = classFolderPath.relativize(classFilePath);
+//				Path relativeJavaPath = Paths
+//						.get(FilenameUtils.removeExtension(relativeClassPath.toString()) + ".java");
+//				Path outPath = javaFolderPath.resolve(relativeJavaPath);
+//
+//				byte[] bytes = Files.readAllBytes(classFilePath);
+//				String contents = doClass(dcCommonState, bytes);
+//
+//				FileUtils.write(outPath.toFile(), contents, "UTF-8", false);
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	private File extractClassesFromWar() {
 		File zipFile = new File(warPath);
@@ -1080,45 +1080,45 @@ class BusinessTest {
 		return result;
 	}
 
-	private String doClass(DCCommonState dcCommonState, byte[] content1) throws Exception {
-		Options options = dcCommonState.getOptions();
-		Dumper d = new ToStringDumper();
-		BaseByteData data = new BaseByteData(content1);
-		ClassFile var24 = new ClassFile(data, "", dcCommonState);
-		dcCommonState.configureWith(var24);
-
-		try {
-			var24 = dcCommonState.getClassFile(var24.getClassType());
-		} catch (CannotLoadClassException var18) {
-		}
-
-		if (options.getOption(OptionsImpl.DECOMPILE_INNER_CLASSES)) {
-			var24.loadInnerClasses(dcCommonState);
-		}
-
-		if (options.getOption(OptionsImpl.RENAME_MEMBERS)) {
-			MemberNameResolver.resolveNames(dcCommonState,
-					ListFactory.newList(dcCommonState.getClassCache().getLoadedTypes()));
-		}
-
-		var24.analyseTop(dcCommonState);
-		TypeUsageCollector var25 = new TypeUsageCollector(var24);
-		var24.collectTypeUsages(var25);
-		String var26 = options.getOption(OptionsImpl.METHODNAME);
-		if (var26 == null) {
-			var24.dump(d);
-		} else {
-			try {
-				for (org.benf.cfr.reader.entities.Method method : var24.getMethodByName(var26)) {
-					method.dump(d, true);
-				}
-			} catch (NoSuchMethodException var19) {
-				throw new IllegalArgumentException("No such method \'" + var26 + "\'.");
-			}
-		}
-		d.print("");
-		return d.toString();
-	}
+//	private String doClass(DCCommonState dcCommonState, byte[] content1) throws Exception {
+//		Options options = dcCommonState.getOptions();
+//		Dumper d = new ToStringDumper();
+//		BaseByteData data = new BaseByteData(content1);
+//		ClassFile var24 = new ClassFile(data, "", dcCommonState);
+//		dcCommonState.configureWith(var24);
+//
+//		try {
+//			var24 = dcCommonState.getClassFile(var24.getClassType());
+//		} catch (CannotLoadClassException var18) {
+//		}
+//
+//		if (options.getOption(OptionsImpl.DECOMPILE_INNER_CLASSES)) {
+//			var24.loadInnerClasses(dcCommonState);
+//		}
+//
+//		if (options.getOption(OptionsImpl.RENAME_MEMBERS)) {
+//			MemberNameResolver.resolveNames(dcCommonState,
+//					ListFactory.newList(dcCommonState.getClassCache().getLoadedTypes()));
+//		}
+//
+//		var24.analyseTop(dcCommonState);
+//		TypeUsageCollector var25 = new TypeUsageCollector(var24);
+//		var24.collectTypeUsages(var25);
+//		String var26 = options.getOption(OptionsImpl.METHODNAME);
+//		if (var26 == null) {
+//			var24.dump(d);
+//		} else {
+//			try {
+//				for (org.benf.cfr.reader.entities.Method method : var24.getMethodByName(var26)) {
+//					method.dump(d, true);
+//				}
+//			} catch (NoSuchMethodException var19) {
+//				throw new IllegalArgumentException("No such method \'" + var26 + "\'.");
+//			}
+//		}
+//		d.print("");
+//		return d.toString();
+//	}
 
 	private DecompilerSettings getSettings() {
 		return settings;

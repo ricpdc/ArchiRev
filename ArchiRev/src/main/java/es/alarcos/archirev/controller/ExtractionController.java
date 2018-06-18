@@ -23,7 +23,9 @@ import org.springframework.stereotype.Controller;
 
 import com.google.common.collect.Maps;
 
+import es.alarcos.archirev.logic.ExtractionService;
 import es.alarcos.archirev.model.Extraction;
+import es.alarcos.archirev.model.Model;
 import es.alarcos.archirev.model.Project;
 import es.alarcos.archirev.model.Source;
 import es.alarcos.archirev.model.enums.SourceConcernEnum;
@@ -44,6 +46,9 @@ public class ExtractionController extends AbstractController {
 
 	@Autowired
 	private ExtractionDao extractionDao;
+	
+	@Autowired
+	private ExtractionService extractionService;
 
 	private DualListModel<Source> sourcePickerList;
 
@@ -70,6 +75,7 @@ public class ExtractionController extends AbstractController {
 			sourcePickerList = new DualListModel<Source>(new ArrayList<Source>(), new ArrayList<Source>());
 			setExtractionName("");
 		}
+		RequestContext.getCurrentInstance().update("mainForm:mainTabs:extractionTable");
 	}
 
 	public void onTransfer(TransferEvent event) {
@@ -92,32 +98,49 @@ public class ExtractionController extends AbstractController {
 		extraction.setModifiedBy(loggedUser);
 		extraction.setSetup("dummy setup");
 		extraction.setSources(new HashSet<Source>(sourcePickerList.getTarget()));
-		
-//		extractionDao.persist(extraction);
-//		extraction.setSources(new HashSet<Source>(sourcePickerList.getTarget()));
-//		extraction = extractionDao.update(extraction);
 
 		getProject().getExtractions().add(extraction);
 		getProject().setModifiedBy(loggedUser);
 
 		sessionController.updateProject();
-		
-//		Extraction lastExtraction = extractionDao.findLastExtraction();
-//		for (Extraction e : getProject().getExtractions()) {
-//			if(e.getId().equals(lastExtraction.getId())) {
-//				e.setSources(new HashSet<Source>(sourcePickerList.getTarget()));
-//			}
-//		}
-//		sessionController.updateProject();
-		
-		reload();
 
-		RequestContext.getCurrentInstance().update("mainForm:mainTabs:extractionTable");
+		reload();
 
 		FacesMessage message = new FacesMessage("Succesful", extraction.getName() + " is added.");
 		FacesContext.getCurrentInstance().addMessage(null, message);
 	}
-	
+
+	public void startExtraction(Extraction extraction) {
+		Model model = new Model();
+		model.setExtraction(extraction);
+		model.setProject(getProject());
+		final Timestamp now = new Timestamp(new Date().getTime());
+		model.setCreatedAt(now);
+		model.setModifiedAt(now);
+		final String loggedUser = sessionController.getLoggedUser();
+		model.setCreatedBy(loggedUser);
+		model.setModifiedBy(loggedUser);
+				
+		extractionService.extractArchimateModel(model);
+		
+		getProject().getModels().add(model);
+		getProject().setModifiedBy(loggedUser);
+		
+		reload();
+
+		FacesMessage message = new FacesMessage(""+extraction.getName() + " has been completed.");
+		FacesContext.getCurrentInstance().addMessage(null, message);
+		
+	}
+
+	public void startAllExtractions() {
+		for (Extraction extraction : getProject().getExtractions()) {
+			if (extraction.getModel() != null) {
+				startExtraction(extraction);
+			}
+		}
+	}
+
 	public boolean hasSourceSelected() {
 		return !sourcePickerList.getTarget().isEmpty();
 	}

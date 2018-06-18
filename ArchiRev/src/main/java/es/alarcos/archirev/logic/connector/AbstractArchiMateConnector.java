@@ -1,4 +1,4 @@
-package es.alarcos.archirev.connector;
+package es.alarcos.archirev.logic.connector;
 
 import com.mxgraph.shape.mxConnectorShape;
 

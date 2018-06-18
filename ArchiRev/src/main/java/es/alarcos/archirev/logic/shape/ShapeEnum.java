@@ -1,4 +1,4 @@
-package es.alarcos.archirev.shape;
+package es.alarcos.archirev.logic.shape;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

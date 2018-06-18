@@ -1,4 +1,4 @@
-package es.alarcos.archirev.layout;
+package es.alarcos.archirev.logic.layout;
 
 import javax.swing.SwingConstants;
 
@@ -8,8 +8,6 @@ import com.mxgraph.view.mxGraph;
 public class ExtendedHierarchicalLayout extends mxHierarchicalLayout {
 
 	private static int DEFAULT_SEPARATION = 50;
-	
-	private int separation;
 	
 	public ExtendedHierarchicalLayout(mxGraph graph) {
 		this(graph, DEFAULT_SEPARATION);
@@ -74,13 +72,7 @@ public class ExtendedHierarchicalLayout extends mxHierarchicalLayout {
 		 */
 		super.fineTuning = true;
 
-		/**
-		 * Whether or not to promote edges that terminate on vertices with different but
-		 * common ancestry to appear connected to the highest siblings in the ancestry
-		 * chains
-		 */
-		super.promoteEdges = true;
-
+		
 		/**
 		 * Whether or not to navigate edges whose terminal vertices have different
 		 * parents but are in the same ancestry chain
@@ -89,7 +81,7 @@ public class ExtendedHierarchicalLayout extends mxHierarchicalLayout {
 
 	}
 
-	@SuppressWarnings("static-access")
+	
 	@Override
 	public void execute(Object parent) {
 		// Execute the CompactTreeLayout

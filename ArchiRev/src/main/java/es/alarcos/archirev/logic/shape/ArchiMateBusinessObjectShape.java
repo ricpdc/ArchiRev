@@ -1,4 +1,4 @@
-package es.alarcos.archirev.shape;
+package es.alarcos.archirev.logic.shape;
 
 public class ArchiMateBusinessObjectShape extends AbstractArchiMateRectangleShape {
 

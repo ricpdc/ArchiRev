@@ -1,4 +1,4 @@
-package es.alarcos.archirev.connector;
+package es.alarcos.archirev.logic.connector;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

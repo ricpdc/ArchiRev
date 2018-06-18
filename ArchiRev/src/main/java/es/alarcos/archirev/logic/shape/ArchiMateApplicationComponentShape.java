@@ -1,4 +1,4 @@
-package es.alarcos.archirev.shape;
+package es.alarcos.archirev.logic.shape;
 
 import java.awt.Color;
 import java.awt.FontMetrics;

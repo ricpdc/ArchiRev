@@ -1,4 +1,4 @@
-package es.alarcos.archirev.shape;
+package es.alarcos.archirev.logic.shape;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
