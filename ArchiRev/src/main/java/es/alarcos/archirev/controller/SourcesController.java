@@ -17,7 +17,6 @@ import javax.faces.event.AjaxBehaviorEvent;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.Validate;
 import org.primefaces.context.RequestContext;
-import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +44,10 @@ public class SourcesController extends AbstractController {
 	
 	private SourceConcernEnum sourceConcern;
 	private SourceEnum sourceType;
-
+	
+	private UploadedFile uploadedFile;
+	 
+    
 	Map<SourceConcernEnum, Set<SourceEnum>> sourcesMap = Maps.newHashMap();
 
 	public SourcesController() {
@@ -86,12 +88,16 @@ public class SourcesController extends AbstractController {
 		LOGGER.info("Selected type: " + type);
 	}
 
-	public void addSource(FileUploadEvent event) {
+	public void addSource() {
+		if(uploadedFile == null) {
+			return;
+		}
+		
 		Validate.notNull(sourceConcern, "Source concern cannot be null");
 		Validate.notNull(sourceType, "Soruce type cannot be null");
 		
-		UploadedFile uploadedFile = event.getFile();
-		Validate.notNull(uploadedFile, "corrupt uploaded file");
+		
+		Validate.notNull(uploadedFile, "select a correct file");
 
 		Source source = new Source();
 		source.setConcern(sourceConcern);
@@ -99,7 +105,7 @@ public class SourcesController extends AbstractController {
 		source.setName(uploadedFile.getFileName());
 		
 		String extension = FilenameUtils.getExtension(uploadedFile.getFileName());
-		Validate.isTrue(sourceType.getExtensions().contains(extension));
+		//Validate.isTrue(sourceType.getExtensions().contains(extension));
 		source.setFileExtension(extension);
 		
 		source.setFile(uploadedFile.getContents());
@@ -120,6 +126,8 @@ public class SourcesController extends AbstractController {
 
 		FacesMessage message = new FacesMessage("Succesful", uploadedFile.getFileName() + " is uploaded.");
 		FacesContext.getCurrentInstance().addMessage(null, message);
+		
+		uploadedFile = null;
 	}
 	
 	public void removeSource(final Source source) {
@@ -169,6 +177,14 @@ public class SourcesController extends AbstractController {
 
 	public void setSourceConcern(SourceConcernEnum sourceConcern) {
 		this.sourceConcern = sourceConcern;
+	}
+
+	public UploadedFile getUploadedFile() {
+		return uploadedFile;
+	}
+
+	public void setUploadedFile(UploadedFile uploadedFile) {
+		this.uploadedFile = uploadedFile;
 	}
 
 }

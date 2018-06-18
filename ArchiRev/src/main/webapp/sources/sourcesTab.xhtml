@@ -53,11 +53,10 @@
 							<h:outputText id="selectionHint"
 								value="#{sourcesController.selectFileMessage}" />
 						</f:facet>
-						<p:fileUpload fileUploadListener="#{sourcesController.addSource}"
-							disabled="#{sourcesController.sourceType == null}"
-							mode="advanced" dragDropSupport="true" multiple="true"
-							update="mainForm:messages" sizeLimit="500000000" fileLimit="3"
-							allowTypes="/(\.|\/)(ear|war|jar)$/" />
+						<p:fileUpload value="#{sourcesController.uploadedFile}" mode="simple" skinSimple="true"/>
+ 						<p:separator/>
+    					<p:commandButton value="Upload" ajax="false" actionListener="#{sourcesController.addSource}" />
+						
 					</p:panel>
 				</p:column>
 			</p:row>

@@ -1,6 +1,7 @@
 package es.alarcos.archirev.config;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.primefaces.webapp.filter.FileUploadFilter;
 import org.springframework.boot.web.support.ErrorPageFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,5 +35,22 @@ public class MyWebMvcConfig {
         filterRegistrationBean.setEnabled(false);
         return filterRegistrationBean;
     }
+    
+    
+    @Bean
+    public FilterRegistrationBean someFilterRegistration() {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setFilter(new FileUploadFilter());
+        registration.addUrlPatterns("/url/*");
+        registration.addInitParameter("thresholdSize", "50000000000");
+        registration.addInitParameter("uploadDirectory", "/tmp/fileUpload");
+        registration.setName("PrimeFaces FileUpload Filter");
+        //registration.setOrder(1);
+        return registration;
+    } 
+    
+  
+
+    
 
 }
