@@ -251,6 +251,7 @@ public class ExtractionService implements Serializable {
 						.sort((o1, o2) -> o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName()));
 				parent = graph.getDefaultParent();
 
+				//TODO hacer primero, stream a 1.7, para poder analizar.
 				List<ArchimateElement> componentElments = entry.getValue().stream()
 						.filter(e -> e instanceof ApplicationComponent).collect(Collectors.toList());
 
