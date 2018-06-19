@@ -31,6 +31,7 @@ import es.alarcos.archirev.model.Source;
 import es.alarcos.archirev.model.enums.SourceConcernEnum;
 import es.alarcos.archirev.model.enums.SourceEnum;
 import es.alarcos.archirev.persistency.ExtractionDao;
+import es.alarcos.archirev.persistency.ModelDao;
 
 @ManagedBean(name = "extractionController")
 @Controller
@@ -46,6 +47,9 @@ public class ExtractionController extends AbstractController {
 
 	@Autowired
 	private ExtractionDao extractionDao;
+	
+	@Autowired
+	private ModelDao modelDao;
 	
 	@Autowired
 	private ExtractionService extractionService;
@@ -123,6 +127,10 @@ public class ExtractionController extends AbstractController {
 				
 		extractionService.extractArchimateModel(model);
 		
+		//TODO Fix persistency of models together project update.
+		modelDao.persist(model);
+		
+		extraction.setModel(model);
 		getProject().getModels().add(model);
 		getProject().setModifiedBy(loggedUser);
 		

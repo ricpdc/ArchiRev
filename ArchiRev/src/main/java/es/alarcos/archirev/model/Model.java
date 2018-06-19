@@ -13,24 +13,23 @@ import javax.persistence.Table;
 @Table(name = "model")
 public class Model extends AbstractEntity {
 
-
 	private static final long serialVersionUID = -7476543110947979418L;
 
 	@Column(name = "name")
 	private String name;
 
 	@OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "extraction_id")
-    private Extraction extraction;
-		
+	@JoinColumn(name = "extraction_id")
+	private Extraction extraction;
+
 	@Lob
-	@Column(name = "image")
+	@Column(name = "image", nullable = true)
 	private byte[] image;
-	
+
 	@Lob
-	@Column(name = "exported_file")
-	private byte[] exported_file;
-	
+	@Column(name = "exported_file", nullable = true)
+	private byte[] exportedFile;
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "project_id")
 	private Project project;
@@ -59,12 +58,12 @@ public class Model extends AbstractEntity {
 		this.image = image;
 	}
 
-	public byte[] getExported_file() {
-		return exported_file;
+	public byte[] getExportedFile() {
+		return exportedFile;
 	}
 
-	public void setExported_file(byte[] exported_file) {
-		this.exported_file = exported_file;
+	public void setExportedFile(byte[] exported_file) {
+		this.exportedFile = exported_file;
 	}
 
 	public Project getProject() {
@@ -74,6 +73,5 @@ public class Model extends AbstractEntity {
 	public void setProject(Project project) {
 		this.project = project;
 	}
-	
 
 }
