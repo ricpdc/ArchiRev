@@ -1,5 +1,9 @@
 package es.alarcos.archirev.model;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -34,8 +38,8 @@ public class Source extends AbstractEntity {
 	@Column(name = "file_extension")
 	private String fileExtension;
 
-	@Column(name = "file", length = 500000000)
-	private byte[] file;
+	@Column(name = "file_path")
+	private String filePath;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "project_id")
@@ -54,13 +58,6 @@ public class Source extends AbstractEntity {
 		this.type = type;
 	}
 
-	public byte[] getFile() {
-		return file;
-	}
-
-	public void setFile(byte[] file) {
-		this.file = file;
-	}
 
 	public Project getProject() {
 		return project;
@@ -76,6 +73,14 @@ public class Source extends AbstractEntity {
 
 	public void setConcern(SourceConcernEnum concern) {
 		this.concern = concern;
+	}
+	
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
 	}
 
 	public String getFileExtension() {
@@ -98,5 +103,16 @@ public class Source extends AbstractEntity {
 	public String getDisplayName() {
 		return String.format("%s [%s]", name, type.getLabel());
 	}
+	
+	@Transient
+	public byte[] getFile() {
+		try {
+			return Files.readAllBytes(Paths.get(getFilePath()));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 
 }

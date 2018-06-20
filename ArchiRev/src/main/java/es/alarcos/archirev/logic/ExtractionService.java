@@ -5,10 +5,12 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -33,8 +36,10 @@ import org.apache.bcel.classfile.ClassFormatException;
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.Constant;
 import org.apache.bcel.classfile.JavaClass;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -80,7 +85,7 @@ public class ExtractionService implements Serializable {
 	private static final long serialVersionUID = -4392305100176250199L;
 
 	static Logger LOGGER = LoggerFactory.getLogger(ExtractionService.class);
-	
+
 	private static final String MAPPED_SUPERCLASS_ANNOTATION = "MappedSuperclass";
 
 	// TODO Load this from a configuration json file
@@ -134,11 +139,13 @@ public class ExtractionService implements Serializable {
 
 	public void extractArchimateModel(Model model) {
 		Set<Source> sources = model.getExtraction().getSources();
-		Validate.isTrue(sources!=null && !sources.isEmpty(), "There is no source as input");
-		//TODO Integrate different sources into single one model
+		Validate.isTrue(sources != null && !sources.isEmpty(), "There is no source as input");
+		// TODO Integrate different sources into single one model
 		File imageFile = null;
+		String modelName = model.getExtraction().getName();
 		for (Source source : sources) {
-			switch(source.getType()) {
+			modelName+=("_"+source.getName());
+			switch (source.getType()) {
 			case WEB_APP:
 				imageFile = extractArchimateModelForWebApp(model, source);
 				break;
@@ -147,15 +154,10 @@ public class ExtractionService implements Serializable {
 			default:
 			}
 		}
-		if(imageFile!=null) {
-			byte[] imageBytes;
-			try {
-				imageBytes = Files.readAllBytes(imageFile.toPath());
-				model.setImage(imageBytes);
-				model.setExportedFile(null);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		model.setName(modelName);
+		if (imageFile != null) {
+			model.setImagePath(imageFile.getAbsolutePath());
+			model.setExportedPath(null);
 		}
 	}
 
@@ -168,7 +170,7 @@ public class ExtractionService implements Serializable {
 			modelElementsByClassName = computeModelElementsByClassName(source, mapping);
 			modelRelationshipsByClassName = computeModelRelationshipsByClassName(source, mapping,
 					modelElementsByClassName);
-			return generateJgraphxDiagram(modelElementsByClassName, modelRelationshipsByClassName);
+			return generateJgraphxDiagram(model, modelElementsByClassName, modelRelationshipsByClassName);
 		} catch (NoClassDefFoundError | IOException e) {
 			e.printStackTrace();
 		}
@@ -179,12 +181,12 @@ public class ExtractionService implements Serializable {
 	private MultiValueMap<String, ArchimateElement> computeModelElementsByClassName(Source warSource,
 			MultiValueMap<String, ArchimateElementEnum> mapping) throws ZipException, IOException {
 		MultiValueMap<String, ArchimateElement> modelElementsByClassName = new LinkedMultiValueMap<>();
-		
+
 		File tempWarFile = File.createTempFile("warFile", ".tmp", null);
 		FileOutputStream fos = new FileOutputStream(tempWarFile);
 		fos.write(warSource.getFile());
 		fos.close();
-		
+
 		ZipFile zipFile = getZipFile(tempWarFile);
 		ClassParser cp;
 
@@ -253,8 +255,8 @@ public class ExtractionService implements Serializable {
 		}
 		return modelElementsByClassName;
 	}
-	
-	private File generateJgraphxDiagram(MultiValueMap<String, ArchimateElement> modelElementsByClassName,
+
+	private File generateJgraphxDiagram(Model model, MultiValueMap<String, ArchimateElement> modelElementsByClassName,
 			MultiValueMap<String, ArchimateRelationship> modelRelationshipsByClassName) {
 
 		mxGraph graph = new mxGraph();
@@ -268,24 +270,24 @@ public class ExtractionService implements Serializable {
 			for (Entry<String, List<ArchimateElement>> entry : modelElementsByClassName.entrySet()) {
 				// LOGGER.info("");
 				// LOGGER.info(entry.getKey());
-				
+
 				Collections.sort(entry.getValue(), new Comparator<ArchimateElement>() {
-			        @Override
-			        public int compare(ArchimateElement o1, ArchimateElement o2) {
-			            return o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName());
-			        }
-			    });
-				
+					@Override
+					public int compare(ArchimateElement o1, ArchimateElement o2) {
+						return o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName());
+					}
+				});
+
 				parent = graph.getDefaultParent();
 
-				//TODO hacer primero, stream a 1.7, para poder analizar.
+				// TODO hacer primero, stream a 1.7, para poder analizar.
 				List<ArchimateElement> componentElments = new ArrayList<>();
 				for (ArchimateElement element : entry.getValue()) {
-					if(element instanceof ApplicationComponent) {
-						componentElments.add(element);	
+					if (element instanceof ApplicationComponent) {
+						componentElments.add(element);
 					}
 				}
-				
+
 				ApplicationComponent component = componentElments.isEmpty() ? null
 						: (ApplicationComponent) componentElments.get(0);
 				Object componentNode = null;
@@ -368,7 +370,7 @@ public class ExtractionService implements Serializable {
 			layout.execute(graph.getDefaultParent());
 
 			BufferedImage image = mxCellRenderer.createBufferedImage(graph, null, 1, java.awt.Color.WHITE, true, null);
-			File file = File.createTempFile("diagramFile", ".png", null);
+			File file = new File(model.getImagePath());
 			ImageIO.write(image, "PNG", file);
 			File localFile = new File("C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\target\\diagrams\\testJgraphX.png");
 			ImageIO.write(image, "PNG", localFile);
@@ -383,13 +385,13 @@ public class ExtractionService implements Serializable {
 		ZipFile zipFile = new ZipFile(file);
 		return zipFile;
 	}
-	
+
 	private String getFormattedName(JavaClass javaClass) {
 		String simpleClassName = javaClass.getClassName().substring(javaClass.getClassName().lastIndexOf(".") + 1);
 		simpleClassName = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(simpleClassName), " ");
 		return simpleClassName;
 	}
-	
+
 	private void loadShapeStyles(mxGraph graph) {
 		for (ShapeEnum shapeEnum : ShapeEnum.values()) {
 			String shapeName = shapeEnum.getShape().getSimpleName();
@@ -424,18 +426,17 @@ public class ExtractionService implements Serializable {
 
 		}
 	}
-	
+
 	private MultiValueMap<String, ArchimateRelationship> computeModelRelationshipsByClassName(Source warSource,
 			MultiValueMap<String, ArchimateElementEnum> mapping,
 			MultiValueMap<String, ArchimateElement> modelElementsByClassName) throws ZipException, IOException {
 		MultiValueMap<String, ArchimateRelationship> modelRelationshipsByClassName = new LinkedMultiValueMap<>();
-		
-		
+
 		File tempWarFile = File.createTempFile("warFile", ".tmp", null);
 		FileOutputStream fos = new FileOutputStream(tempWarFile);
 		fos.write(warSource.getFile());
 		fos.close();
-		
+
 		ZipFile zipFile = getZipFile(tempWarFile);
 		ClassParser cp;
 
@@ -523,19 +524,19 @@ public class ExtractionService implements Serializable {
 		}
 		return modelRelationshipsByClassName;
 	}
-	
+
 	private ArchimateRelationship getPrioritizedRelationship(ArchimateElement source, ArchimateElement target) {
 		ArchimateRelationship DEFAULT = (ArchimateRelationship) ArchimateFactory.eINSTANCE.createAccessRelationship();
-		Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>> relationshipSoruceClass = mapPrioritizedRelationship.get(source.getClass());
-		if(relationshipSoruceClass==null) {
+		Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>> relationshipSoruceClass = mapPrioritizedRelationship
+				.get(source.getClass());
+		if (relationshipSoruceClass == null) {
 			return DEFAULT;
 		}
 		Class<? extends ArchimateRelationship> relationshipClass = relationshipSoruceClass.get(target.getClass());
 
-		if(relationshipClass==null) {
+		if (relationshipClass == null) {
 			return DEFAULT;
-		}
-		else if (relationshipClass.equals(AccessRelationship.class)) {
+		} else if (relationshipClass.equals(AccessRelationship.class)) {
 			return DEFAULT;
 		} else if (relationshipClass.equals(AggregationRelationship.class)) {
 			return (ArchimateRelationship) ArchimateFactory.eINSTANCE.createAggregationRelationship();

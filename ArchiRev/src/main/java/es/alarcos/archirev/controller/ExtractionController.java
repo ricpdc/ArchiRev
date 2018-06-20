@@ -1,11 +1,17 @@
 package es.alarcos.archirev.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -47,10 +53,10 @@ public class ExtractionController extends AbstractController {
 
 	@Autowired
 	private ExtractionDao extractionDao;
-	
+
 	@Autowired
 	private ModelDao modelDao;
-	
+
 	@Autowired
 	private ExtractionService extractionService;
 
@@ -115,30 +121,57 @@ public class ExtractionController extends AbstractController {
 	}
 
 	public void startExtraction(Extraction extraction) {
-		Model model = new Model();
-		model.setExtraction(extraction);
-		model.setProject(getProject());
 		final Timestamp now = new Timestamp(new Date().getTime());
-		model.setCreatedAt(now);
-		model.setModifiedAt(now);
 		final String loggedUser = sessionController.getLoggedUser();
-		model.setCreatedBy(loggedUser);
-		model.setModifiedBy(loggedUser);
+		Model model = null;
+		if(extraction.getModel()==null) {
+			model = new Model();
+			model.setExtraction(extraction);
+			model.setProject(getProject());
+			model.setCreatedAt(now);
+			model.setCreatedBy(loggedUser);
+			model.setModifiedAt(now);
+			model.setModifiedBy(loggedUser);
+			extraction.setModel(model);
+			getProject().getModels().add(model);
+		}
+		else {
+			model = extraction.getModel();
+			model.setModifiedAt(now);
+			model.setModifiedBy(loggedUser);	
+		}
+		
+		model.setImagePath(createImageFile(extraction));
 				
 		extractionService.extractArchimateModel(model);
 		
-		//TODO Fix persistency of models together project update.
-		modelDao.persist(model);
-		
-		extraction.setModel(model);
-		getProject().getModels().add(model);
+		getProject().setModifiedAt(now);
 		getProject().setModifiedBy(loggedUser);
+		
+		sessionController.updateProject();
 		
 		reload();
 
 		FacesMessage message = new FacesMessage(""+extraction.getName() + " has been completed.");
 		FacesContext.getCurrentInstance().addMessage(null, message);
 		
+	}
+
+	private String createImageFile(final Extraction extraction) {
+		File folder = new File(getSessionController().getProperty("location.diagram"));
+		if (!folder.exists()) {
+			folder.mkdir();
+		}
+		Path filePath = null;
+		try {
+			filePath = Files.createFile(Paths.get(folder.getAbsolutePath() + File.separator + "p_"
+					+ getProject().getId() + "_e_" + extraction.getId() + "_" + UUID.randomUUID() + ".png"));
+
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			return null;
+		}
+		return filePath.toString();
 	}
 
 	public void startAllExtractions() {

@@ -11,6 +11,7 @@ import org.primefaces.event.TabChangeEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import es.alarcos.archirev.model.Project;
@@ -28,6 +29,9 @@ public class SessionController extends AbstractController {
 
 	@Autowired
 	private ProjectDao projectDao;
+	
+	@Autowired
+	private Environment env;
 
 	private Project project;
 
@@ -99,6 +103,18 @@ public class SessionController extends AbstractController {
 
 	public void setActiveTab(int activeTab) {
 		this.activeTab = activeTab;
+	}
+
+	public Environment getEnv() {
+		return env;
+	}
+
+	public void setEnv(Environment env) {
+		this.env = env;
+	}
+	
+	public String getProperty(String key) {
+		return env.getProperty(key);
 	}
 
 }

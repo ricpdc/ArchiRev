@@ -4,7 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -22,13 +21,11 @@ public class Model extends AbstractEntity {
 	@JoinColumn(name = "extraction_id")
 	private Extraction extraction;
 
-	@Lob
-	@Column(name = "image", nullable = true)
-	private byte[] image;
+	@Column(name = "image_path", nullable = true)
+	private String imagePath;
 
-	@Lob
-	@Column(name = "exported_file", nullable = true)
-	private byte[] exportedFile;
+	@Column(name = "exported_path", nullable = true)
+	private String exportedPath;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "project_id")
@@ -50,28 +47,28 @@ public class Model extends AbstractEntity {
 		this.extraction = extraction;
 	}
 
-	public byte[] getImage() {
-		return image;
-	}
-
-	public void setImage(byte[] image) {
-		this.image = image;
-	}
-
-	public byte[] getExportedFile() {
-		return exportedFile;
-	}
-
-	public void setExportedFile(byte[] exported_file) {
-		this.exportedFile = exported_file;
-	}
-
 	public Project getProject() {
 		return project;
 	}
 
 	public void setProject(Project project) {
 		this.project = project;
+	}
+
+	public String getImagePath() {
+		return imagePath;
+	}
+
+	public void setImagePath(String imagePath) {
+		this.imagePath = imagePath;
+	}
+
+	public String getExportedPath() {
+		return exportedPath;
+	}
+
+	public void setExportedPath(String exportedPath) {
+		this.exportedPath = exportedPath;
 	}
 
 }

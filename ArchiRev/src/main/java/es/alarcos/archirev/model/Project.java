@@ -1,5 +1,6 @@
 package es.alarcos.archirev.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -25,14 +26,14 @@ public class Project extends AbstractEntity {
 	@Column(name = "description")
 	private String description;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "project", fetch=FetchType.LAZY)
-	private Set<Source> sources;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "project", orphanRemoval = true, fetch=FetchType.LAZY)
+	private Set<Source> sources = new HashSet<>();
 	
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "project", fetch=FetchType.LAZY)
-	private Set<Extraction> extractions;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "project", orphanRemoval = true, fetch=FetchType.LAZY)
+	private Set<Extraction> extractions = new HashSet<>();
 	
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "project", fetch=FetchType.LAZY)
-	private Set<Model> models;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "project", orphanRemoval = true, fetch=FetchType.LAZY)
+	private Set<Model> models = new HashSet<>();
 
 	public Project() {
 		super();

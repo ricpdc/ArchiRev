@@ -1,10 +1,18 @@
 package es.alarcos.archirev.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -22,6 +30,7 @@ import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.expression.EnvironmentAccessor;
 import org.springframework.stereotype.Controller;
 
 import com.google.common.collect.Maps;
@@ -102,7 +111,11 @@ public class SourcesController extends AbstractController {
 		Validate.isTrue(sourceType.getExtensions().contains(extension));
 		source.setFileExtension(extension);
 		
-		source.setFile(uploadedFile.getContents());
+		String filePath = saveFileInServer(uploadedFile);
+		
+		source.setFilePath(filePath);
+		
+		
 		source.setProject(getProject());
 		final Timestamp now = new Timestamp(new Date().getTime());
 		source.setCreatedAt(now);
@@ -112,14 +125,40 @@ public class SourcesController extends AbstractController {
 		source.setModifiedBy(loggedUser);
 		
 		getProject().getSources().add(source);
+		getProject().setModifiedAt(now);
 		getProject().setModifiedBy(loggedUser);
 		
 		sessionController.updateProject();
+		
+		
+		// Now store it in DB.
 
 		RequestContext.getCurrentInstance().update("mainForm:mainTabs:sourcesTable");
 
 		FacesMessage message = new FacesMessage("Succesful", uploadedFile.getFileName() + " is uploaded.");
 		FacesContext.getCurrentInstance().addMessage(null, message);
+	}
+	
+	private String saveFileInServer(final UploadedFile uploadedFile) {
+		File folder = new File(getSessionController().getProperty("location.upload"));
+		String fileName = FilenameUtils.getBaseName(uploadedFile.getFileName());
+		String fileExtension = FilenameUtils.getExtension(uploadedFile.getFileName());
+
+		if (!folder.exists()) {
+			folder.mkdir();
+		}
+
+		Path filePath = null;
+		try (InputStream input = uploadedFile.getInputstream()) {
+			filePath = Files.createFile(Paths.get(folder.getAbsolutePath() + File.separator + "p_"
+					+ getProject().getId() + "_" + fileName + "_" + UUID.randomUUID() + "." + fileExtension));
+			Files.copy(input, filePath, StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			return null;
+		}
+
+		return filePath.toString();
 	}
 	
 	public void removeSource(final Source source) {
