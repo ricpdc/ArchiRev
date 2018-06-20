@@ -1,3 +1,5 @@
 /target/
 /src/test/resources/ArchiRev_output_class
 /src/test/resources/ArchiRev_output_java
+/diagrams/
+/uploads/
