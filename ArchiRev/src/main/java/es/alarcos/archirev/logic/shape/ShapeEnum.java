@@ -6,12 +6,12 @@ import java.lang.reflect.InvocationTargetException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.archimatetool.model.impl.ApplicationComponent;
 import com.archimatetool.model.impl.ApplicationFunction;
 import com.archimatetool.model.impl.ApplicationService;
 import com.archimatetool.model.impl.ArchimateElement;
 import com.archimatetool.model.impl.BusinessObject;
 import com.archimatetool.model.impl.DataObject;
-import com.archimatetool.model.impl.ApplicationComponent;
 import com.mxgraph.shape.mxBasicShape;
 import com.mxgraph.shape.mxRectangleShape;
 import com.mxgraph.util.mxConstants;

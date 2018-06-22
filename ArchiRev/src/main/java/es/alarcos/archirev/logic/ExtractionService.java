@@ -1,16 +1,10 @@
 package es.alarcos.archirev.logic;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,25 +15,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import javax.imageio.ImageIO;
 import javax.inject.Singleton;
-import javax.swing.SwingConstants;
 
 import org.apache.bcel.classfile.AnnotationEntry;
 import org.apache.bcel.classfile.ClassFormatException;
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.Constant;
 import org.apache.bcel.classfile.JavaClass;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -61,12 +50,7 @@ import com.archimatetool.model.impl.ServingRelationship;
 import com.archimatetool.model.impl.SpecializationRelationship;
 import com.archimatetool.model.impl.TriggeringRelationship;
 import com.mxgraph.canvas.mxGraphics2DCanvas;
-import com.mxgraph.layout.mxCircleLayout;
-import com.mxgraph.layout.mxCompactTreeLayout;
-import com.mxgraph.layout.mxFastOrganicLayout;
 import com.mxgraph.layout.mxGraphLayout;
-import com.mxgraph.layout.mxOrganicLayout;
-import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.util.mxCellRenderer;
 import com.mxgraph.util.mxConstants;
@@ -162,7 +146,6 @@ public class ExtractionService implements Serializable {
 	}
 
 	private File extractArchimateModelForWebApp(Model model, Source source) {
-		byte[] inputFile = source.getFile();
 
 		MultiValueMap<String, ArchimateElement> modelElementsByClassName = new LinkedMultiValueMap<>();
 		MultiValueMap<String, ArchimateRelationship> modelRelationshipsByClassName = new LinkedMultiValueMap<>();
@@ -350,20 +333,6 @@ public class ExtractionService implements Serializable {
 		}
 
 		try {
-
-			mxHierarchicalLayout hierarchicalLayout = new mxHierarchicalLayout(graph);
-			hierarchicalLayout.setOrientation(SwingConstants.VERTICAL);
-			// mxOrthogonalLayout orthogonalLayout = new mxOrthogonalLayout(graph);
-			mxCompactTreeLayout compactTreeLayout = new mxCompactTreeLayout(graph, false, true);
-			mxOrganicLayout organicLayout = new mxOrganicLayout(graph);
-			mxFastOrganicLayout fastOrganicLayout = new mxFastOrganicLayout(graph);
-			// mxEdgeLabelLayout edgeLabelLayout = new mxEdgeLabelLayout(graph);
-			mxCircleLayout circleLayout = new mxCircleLayout(graph, 100);
-			// mxPartitionLayout partitionLayout = new mxPartitionLayout(graph);
-			// mxParallelEdgeLayout parallelEdgeLayout = new mxParallelEdgeLayout(graph,
-			// 1000);
-			// mxStackLayout stackLayout = new mxStackLayout(graph, false, 1000);
-
 			ExtendedHierarchicalLayout extendedHierarchicalLayout = new ExtendedHierarchicalLayout(graph, 75);
 
 			mxGraphLayout layout = extendedHierarchicalLayout;
