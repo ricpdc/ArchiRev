@@ -5,9 +5,44 @@
 	xmlns:p="http://primefaces.org/ui">
 
 	<p:tab title="EA Models">
-		<h:panelGrid columns="2" cellpadding="10">
-			<h:outputText value="EA Models" />
-		</h:panelGrid>
-	</p:tab>
 
+		<p:panel id="eaModelsPanel" widgetVar="eaModelsPanel"
+			header="EA Models" toggleable="true" toggleSpeed="500"
+			style="margin-bottom:10px; width:100%" width="100%">
+
+			<p:panelGrid style="width:100%; border: none;">
+				<p:row>
+					<p:column style="vertical-align:top; width:20% !important">
+						<p:dataList value="#{modelsController.project.models}" var="model"
+							type="definition">
+							<f:facet name="header">
+								<h:outputText value="Extracted ArchiMate Models" />
+							</f:facet>
+							<p:commandLink update="mainForm:mainTabs:modelDiagramPanel">
+								<p:outputLabel value="#{model.name}" />
+								<f:setPropertyActionListener value="#{model}"
+									target="#{modelsController.selectedModel}" />
+							</p:commandLink>
+							<f:facet name="description">
+								<p:outputLabel value="#{model.createdAt}" />
+								<!-- <p:graphicImage name="demo/images/car/#{car.brand}.gif" /> -->
+							</f:facet>
+						</p:dataList>
+					</p:column>
+					<p:column id="modelDiagramPanel"
+						style="vertical-align:top; width:80% !important">
+						<p:commandButton value="export" />
+						<p:separator />
+						<p:graphicImage value="#{modelsController.selectedDiagram}"
+							title="Archimate Diagram for #{modelsController.selectedModel.name}"
+							width="100%" cache="false" stream="false" />
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+
+
+
+		</p:panel>
+
+	</p:tab>
 </ui:composition>

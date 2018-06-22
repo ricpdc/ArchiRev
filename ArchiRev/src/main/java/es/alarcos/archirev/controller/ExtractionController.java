@@ -54,6 +54,7 @@ public class ExtractionController extends AbstractController {
 	@Autowired
 	private ExtractionDao extractionDao;
 
+	@SuppressWarnings("unused")
 	@Autowired
 	private ModelDao modelDao;
 

@@ -1,5 +1,8 @@
 package es.alarcos.archirev.model;
 
+import java.io.File;
+import java.io.IOException;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -7,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "model")
@@ -69,6 +73,18 @@ public class Model extends AbstractEntity {
 
 	public void setExportedPath(String exportedPath) {
 		this.exportedPath = exportedPath;
+	}
+
+	@Transient
+	public String getSanitizedImagePath() {
+		try {
+			if (imagePath != null) {
+				return new File(imagePath).getCanonicalPath();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

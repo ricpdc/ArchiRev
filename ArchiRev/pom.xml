@@ -146,7 +146,7 @@
 			<version>24.0-jre</version>
 		</dependency>
 
-				
+
 
 		<!-- https://mvnrepository.com/artifact/guru.nidi/graphviz-java -->
 		<!-- <dependency> <groupId>guru.nidi</groupId> <artifactId>graphviz-java</artifactId> 
@@ -155,7 +155,7 @@
 
 		<!-- Look and feel -->
 
-		
+
 
 		<dependency>
 			<groupId>org.webjars</groupId>
