@@ -11,7 +11,11 @@ tr.activeProjectRow>td {
 	background-color: rgba(0, 200, 0, 0.25) !important;
 }
  */
-dt>a[class*='activeDiagram'],
-dd>label[class*='activeDiagram'] {
+dt>a[class*='activeDiagram'] {
 	background-color: rgba(0, 200, 0, 0.25) !important;
+}
+
+
+dd label[class*='ui-widget'] {
+	font-size: small !important;
 }
