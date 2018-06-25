@@ -61,6 +61,8 @@ class PersistenceContext {
 		jpaProperties.put("hibernate.format_sql", env.getRequiredProperty("hibernate.format_sql"));
 		
 		jpaProperties.put("hibernate.enable_lazy_load_no_trans", env.getRequiredProperty("hibernate.enable_lazy_load_no_trans"));
+		
+		jpaProperties.put("hibernate.event.merge.entity_copy_observer", env.getRequiredProperty("hibernate.event.merge.entity_copy_observer"));
 
 		entityManagerFactoryBean.setJpaProperties(jpaProperties);
 
