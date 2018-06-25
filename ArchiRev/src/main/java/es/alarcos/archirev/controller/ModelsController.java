@@ -4,11 +4,18 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultStreamedContent;
@@ -18,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import es.alarcos.archirev.logic.ExtractionService;
 import es.alarcos.archirev.model.Extraction;
 import es.alarcos.archirev.model.Model;
 import es.alarcos.archirev.model.Project;
@@ -33,8 +41,13 @@ public class ModelsController extends AbstractController {
 
 	@Autowired
 	private SessionController sessionController;
-	
+
+	@Autowired
+	private ExtractionService extractionService;
+
 	private Model selectedModel;
+	
+	private StreamedContent exportedFile;
 
 	public ModelsController() {
 		super();
@@ -47,17 +60,17 @@ public class ModelsController extends AbstractController {
 	}
 
 	public void reload() {
-		if(!getProject().getModels().isEmpty()) {
+		if (!getProject().getModels().isEmpty()) {
 			selectedModel = getProject().getModels().iterator().next();
 		}
 		RequestContext.getCurrentInstance().update("mainForm:mainTabs:eaModelsPanel");
 	}
-	
+
 	public StreamedContent getSelectedDiagram() {
-		byte[] imageBytes=null;
-        if(selectedModel==null) {
-        	return null;
-        }
+		byte[] imageBytes = null;
+		if (selectedModel == null) {
+			return null;
+		}
 		try {
 			imageBytes = Files.readAllBytes(new File(selectedModel.getSanitizedImagePath()).toPath());
 			return new DefaultStreamedContent(new ByteArrayInputStream(imageBytes), "image/png");
@@ -65,8 +78,52 @@ public class ModelsController extends AbstractController {
 			LOGGER.error("Error rendering the model diagram");
 		}
 		return null;
-    }
+	}
+
+	public void exportModel() {
+		if(selectedModel.getExportedPath()==null) {
+			final Timestamp now = new Timestamp(new Date().getTime());
+			final String loggedUser = sessionController.getLoggedUser();
+			selectedModel.setModifiedAt(now);
+			selectedModel.setModifiedBy(loggedUser);
 	
+			selectedModel.setExportedPath(createExportedFile(selectedModel));
+	
+			extractionService.exportArchimateModel(selectedModel);
+	
+			getProject().setModifiedAt(now);
+			getProject().setModifiedBy(loggedUser);
+	
+			sessionController.updateProject();
+		}
+		
+		byte[] xmlFileBytes= null;
+		if (selectedModel == null) {
+			exportedFile = null;
+		}
+		try {
+			xmlFileBytes = Files.readAllBytes(new File(selectedModel.getSanitizedExportedPath()).toPath());
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+		}
+		exportedFile = new DefaultStreamedContent(new ByteArrayInputStream(xmlFileBytes), "text/xml", selectedModel.getName()+".xml");
+	}
+
+	private String createExportedFile(final Model model) {
+		File folder = new File(getSessionController().getProperty("location.export"));
+		if (!folder.exists()) {
+			folder.mkdir();
+		}
+		Path filePath = null;
+		try {
+			filePath = Files.createFile(Paths.get(folder.getAbsolutePath() + File.separator + "p_"
+					+ getProject().getId() + "_e_" + model.getId() + "_" + UUID.randomUUID() + ".xml"));
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			return null;
+		}
+		return filePath.toString();
+	}
 
 	public Project getProject() {
 		return sessionController.getProject();
@@ -90,6 +147,14 @@ public class ModelsController extends AbstractController {
 
 	public void setSelectedModel(Model selectedModel) {
 		this.selectedModel = selectedModel;
+	}
+
+	public StreamedContent getExportedFile() {
+		return exportedFile;
+	}
+
+	public void setExportedFile(StreamedContent exportedFile) {
+		this.exportedFile = exportedFile;
 	}
 
 }

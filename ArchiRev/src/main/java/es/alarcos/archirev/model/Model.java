@@ -86,5 +86,17 @@ public class Model extends AbstractEntity {
 		}
 		return null;
 	}
+	
+	@Transient
+	public String getSanitizedExportedPath() {
+		try {
+			if (exportedPath != null) {
+				return new File(exportedPath).getCanonicalPath();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 }

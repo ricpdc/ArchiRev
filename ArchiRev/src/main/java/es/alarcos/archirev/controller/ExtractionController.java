@@ -139,7 +139,7 @@ public class ExtractionController extends AbstractController {
 		else {
 			model = extraction.getModel();
 			model.setModifiedAt(now);
-			model.setModifiedBy(loggedUser);	
+			model.setModifiedBy(loggedUser);
 		}
 		
 		model.setImagePath(createImageFile(extraction));

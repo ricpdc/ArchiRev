@@ -32,7 +32,9 @@
 					</p:column>
 					<p:column id="modelDiagramPanel"
 						style="vertical-align:top; width:80% !important">
-						<p:commandButton value="export" />
+						<p:commandButton id="exportModelButton" value="export" ajax="false" actionListener="#{modelsController.exportModel()}" >
+							<p:fileDownload value="#{modelsController.exportedFile}" />
+						</p:commandButton>
 						<p:separator id="diagramSeparator" />
 						<p:scrollPanel id="diagramScrollPanel" mode="native"
 							style="width:800px;height:600px">
