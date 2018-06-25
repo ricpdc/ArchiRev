@@ -22,7 +22,7 @@
 
 		<p:tabView id="mainTabs" widgetVar="mainTabs" activeIndex="#{sessionController.activeTab}" cache="false"
 			rendered="#{sessionController.activeProject}">
-			 <p:ajax event="tabChange" listener="#{sessionController.onTabChange}"/>
+			 <p:ajax event="tabChange" listener="#{sessionController.onTabChange}" oncomplete="resizeDiagram()"/>
 			<ui:include src="sources/sourcesTab.xhtml" />
 			<ui:include src="extraction/extractionTab.xhtml" />
 			<ui:include src="eamodels/eamodelsTab.xhtml" />
