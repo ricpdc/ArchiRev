@@ -27,7 +27,7 @@
 				 action="#{sessionController.logout}" update="mainForm:toolbar" />
 			<p:commandButton id="logoutDialogButton" rendered="#{!userLoginController.loggedIn}" title="Login" value="Login" icon="ui-icon-person"
 				 onclick="PF('loginDialog').show();" />
-			<p:menuButton  disabled="#{!userLoginController.loggedIn}" value="Options">
+			<p:menuButton  disabled="#{!userLoginController.loggedIn}" value="Options" rendered="false">
 				<p:menuitem value="Save" actionListener="#{toolbarController.save}"
 					update="messages" icon="ui-icon-disk" />
 				<p:menuitem value="Update"
