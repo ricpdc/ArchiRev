@@ -22,8 +22,8 @@
 							</f:facet>
 							<p:commandLink update="mainForm:mainTabs:eaModelsPanel"
 								oncomplete="resizeDiagram()"
-								styleClass="#{modelsController.selectedModel == model?'activeDiagram':''}">
-								<p:outputLabel value="#{model.name}" />
+								styleClass="fa fa-diamond #{modelsController.selectedModel == model?'activeDiagram':''}">
+								<p:outputLabel value=" #{model.name}"/>
 								<f:setPropertyActionListener value="#{model}"
 									target="#{modelsController.selectedModel}" />
 							</p:commandLink>
@@ -35,7 +35,7 @@
 					</p:column>
 					<p:column id="modelDiagramPanel"
 						style="vertical-align:top; width:80% !important">
-						<p:commandButton id="exportModelButton" value="export"
+						<p:commandButton id="exportModelButton" value="export" icon="ui-icon-arrowreturnthick-1-n"
 							actionListener="#{modelsController.exportModel()}"
 							onclick="PF('blockUI').show()" 
 							oncomplete="document.getElementById('mainForm:mainTabs:downloadExportedFileButton').click();PF('blockUI').hide()"/>
