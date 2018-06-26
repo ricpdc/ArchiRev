@@ -2,7 +2,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
 
 	<p:tab title="Extraction">
 
@@ -26,12 +27,15 @@
 					listener="#{extractionController.onTransfer}" />
 
 			</p:pickList>
-
+			<br />
+			<p:commandButton id="setupDialogOpenBtn" value="Edit Setup"
+				icon="ui-icon-script"
+				actionListener="#{extractionController.openSetupDialog}" />
+			<p:separator />
 			<p:inputText value="#{extractionController.extractionName}"></p:inputText>
 			<p:commandButton value="Add"
 				action="#{extractionController.addExtraction}"
 				update="mainForm:messages, mainForm:mainTabs:extractionTable">
-
 			</p:commandButton>
 		</p:panel>
 
@@ -43,37 +47,39 @@
 				emptyMessage="No extraction jobs added" rows="5" paginator="true"
 				paginatorPosition="bottom"
 				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-				rowsPerPageTemplate="5,10,15"
-				lazy="true"
+				rowsPerPageTemplate="5,10,15" lazy="true"
 				sortBy="#{extraction.name}">
 				<p:column headerText="Name" sortBy="#{extraction.name}" width="180"
 					filterBy="#{extraction.name}" filterMatchMode="contains">
 					<h:outputText value="#{extraction.name}" />
 				</p:column>
-				<p:column headerText="Setup" sortBy="#{extraction.setup}" width="180"
-					filterBy="#{extraction.setup}" filterMatchMode="contains">
+				<p:column headerText="Setup" sortBy="#{extraction.setup}"
+					width="180" filterBy="#{extraction.setup}"
+					filterMatchMode="contains">
 					<h:outputText value="#{extraction.setup}" />
 				</p:column>
-				<p:column headerText="Sources" sortBy="#{extraction.displaySources}" width="250"
-					filterBy="#{extraction.displaySources}" filterMatchMode="contains">
+				<p:column headerText="Sources" sortBy="#{extraction.displaySources}"
+					width="250" filterBy="#{extraction.displaySources}"
+					filterMatchMode="contains">
 					<h:outputText value="#{extraction.displaySources}" />
 				</p:column>
-				<p:column headerText="Modified at"
-					sortBy="#{extraction.modifiedAt}" width="110"
-					filterBy="#{extraction.modifiedAt}" filterMatchMode="contains">
+				<p:column headerText="Modified at" sortBy="#{extraction.modifiedAt}"
+					width="110" filterBy="#{extraction.modifiedAt}"
+					filterMatchMode="contains">
 					<h:outputText value="#{extraction.modifiedAt}">
 						<f:converter converterId="timestampConverter" />
 					</h:outputText>
 				</p:column>
 				<p:column style="width:60px;text-align: center">
-					<p:outputLabel styleClass="#{extraction.model==null? 'fa fa-file-o' : 'fa fa-file-text'}" style="font-size: 1em; color: #3c667c; padding-right:10px"/>
-					
+					<p:outputLabel
+						styleClass="#{extraction.model==null? 'fa fa-file-o' : 'fa fa-file-text'}"
+						style="font-size: 1em; color: #3c667c; padding-right:10px" />
+
 					<p:commandButton id="startExtraction" icon="ui-icon-gear"
 						title="Start Extraction"
 						action="#{extractionController.startExtraction(extraction)}"
 						update="mainForm:mainTabs:extractionTable"
-						onclick="PF('blockUI').show()" 
-						oncomplete="PF('blockUI').hide()">						
+						onclick="PF('blockUI').show()" oncomplete="PF('blockUI').hide()">
 					</p:commandButton>
 					<p:commandButton id="deleteExtraction" icon="ui-icon-trash"
 						title="Remove"
@@ -91,17 +97,15 @@
 					</p:confirmDialog>
 				</p:column>
 			</p:dataTable>
-			<p:panel style="border:none; text-align:right; padding-top:20px; padding-right: 0px;" >
-			<p:commandButton id="startExtractionall" icon="ui-icon-gear"
-						value="Start all pending extractions" title="Start All Extraction"
-						action="#{extractionController.startAllExtractions()}"
-						onclick="PF('blockUI').show()" 
-						oncomplete="PF('blockUI').hide()" />
+			<p:panel
+				style="border:none; text-align:right; padding-top:20px; padding-right: 0px;">
+				<p:commandButton id="startExtractionall" icon="ui-icon-gear"
+					value="Start all pending extractions" title="Start All Extraction"
+					action="#{extractionController.startAllExtractions()}"
+					onclick="PF('blockUI').show()" oncomplete="PF('blockUI').hide()" />
 			</p:panel>
-			
 		</p:panel>
 	</p:tab>
-
 
 
 </ui:composition>

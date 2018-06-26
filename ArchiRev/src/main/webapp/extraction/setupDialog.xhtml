@@ -1,0 +1,22 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<p:dialog id="extractionSetupDialog" widgetVar="extractionSetupDialog"
+		closable="false" closeOnEscape="false"
+		header="Extraction Setup Editing" modal="true" width="1000"
+		height="360">
+		<pe:codeMirror id="codeMirror" mode="yaml" theme="eclipse" 
+			value="#{extractionController.setupText}" keyMap="default"
+			lineNumbers="true" matchBrackets="true" />
+		<p:separator />
+		<p:commandButton id="setupDiscardButton" value="Cancel"
+			style="float:right"
+			actionListener="#{extractionController.discardSetup()}" />
+		<p:commandButton id="setupSaveButton" value="Save" style="float:right"
+			actionListener="#{extractionController.saveSetup()}" />
+	</p:dialog>
+</ui:composition>

@@ -146,6 +146,10 @@
 			<version>24.0-jre</version>
 		</dependency>
 
+	<dependency>
+        <groupId>org.primefaces.extensions</groupId>
+        <artifactId>primefaces-extensions</artifactId>
+    </dependency>
 
 
 		<!-- https://mvnrepository.com/artifact/guru.nidi/graphviz-java -->

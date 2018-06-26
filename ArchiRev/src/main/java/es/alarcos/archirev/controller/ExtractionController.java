@@ -47,6 +47,8 @@ public class ExtractionController extends AbstractController {
 	private static final long serialVersionUID = -1637522119751630382L;
 
 	static Logger LOGGER = LoggerFactory.getLogger(ExtractionController.class);
+	
+	private static final String DEFAULT_SETUP = "test!!!";
 
 	@Autowired
 	private SessionController sessionController;
@@ -64,6 +66,9 @@ public class ExtractionController extends AbstractController {
 	private DualListModel<Source> sourcePickerList;
 
 	private String extractionName;
+	
+	private String setupText;	
+	private String setupTextBackup;
 
 	Map<SourceConcernEnum, Set<SourceEnum>> sourcesMap = Maps.newHashMap();
 
@@ -86,6 +91,7 @@ public class ExtractionController extends AbstractController {
 			sourcePickerList = new DualListModel<Source>(new ArrayList<Source>(), new ArrayList<Source>());
 			setExtractionName("");
 		}
+		setupText = DEFAULT_SETUP;
 		RequestContext.getCurrentInstance().update("mainForm:mainTabs:extractionTable");
 	}
 
@@ -94,6 +100,26 @@ public class ExtractionController extends AbstractController {
 		for (Object item : event.getItems()) {
 			builder.append(((Source) item).getName()).append(",");
 		}
+	}
+	
+	public void openSetupDialog() {
+		setupTextBackup = setupText;
+		RequestContext context = RequestContext.getCurrentInstance();
+    	context.update("mainForm:extractionSetupDialog");
+    	context.execute("PF('extractionSetupDialog').show()");
+	}
+	
+	public void saveSetup() {
+		RequestContext context = RequestContext.getCurrentInstance();
+		context.update("mainForm:extractionSetupDialog");
+		context.execute("PF('extractionSetupDialog').hide()");
+	}
+	
+	public void discardSetup() {
+		setupText = setupTextBackup;
+		RequestContext context = RequestContext.getCurrentInstance();
+		context.update("mainForm:extractionSetupDialog");
+		context.execute("PF('extractionSetupDialog').hide()");
 	}
 
 	public void addExtraction() {
@@ -107,7 +133,7 @@ public class ExtractionController extends AbstractController {
 		final String loggedUser = sessionController.getLoggedUser();
 		extraction.setCreatedBy(loggedUser);
 		extraction.setModifiedBy(loggedUser);
-		extraction.setSetup("dummy setup");
+		extraction.setSetup(setupText);
 		extraction.setSources(new HashSet<Source>(sourcePickerList.getTarget()));
 
 		getProject().getExtractions().add(extraction);
@@ -232,6 +258,22 @@ public class ExtractionController extends AbstractController {
 
 	public ExtractionDao getExtractionDao() {
 		return extractionDao;
+	}
+
+	public String getSetupTextBackup() {
+		return setupTextBackup;
+	}
+
+	public void setSetupTextBackup(String setupTextBackup) {
+		this.setupTextBackup = setupTextBackup;
+	}
+
+	public String getSetupText() {
+		return setupText;
+	}
+
+	public void setSetupText(String setupText) {
+		this.setupText = setupText;
 	}
 
 }
