@@ -16,6 +16,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.security.auth.message.callback.PrivateKeyCallback.Request;
 
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultStreamedContent;
@@ -81,7 +82,7 @@ public class ModelsController extends AbstractController {
 	}
 
 	public void exportModel() {
-		if(selectedModel.getExportedPath()==null) {
+		//if(selectedModel.getExportedPath()==null) {
 			final Timestamp now = new Timestamp(new Date().getTime());
 			final String loggedUser = sessionController.getLoggedUser();
 			selectedModel.setModifiedAt(now);
@@ -95,7 +96,11 @@ public class ModelsController extends AbstractController {
 			getProject().setModifiedBy(loggedUser);
 	
 			sessionController.updateProject();
-		}
+			
+			RequestContext currentInstance = RequestContext.getCurrentInstance();
+			
+			
+		//}
 		
 		byte[] xmlFileBytes= null;
 		if (selectedModel == null) {

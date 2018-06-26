@@ -24,7 +24,7 @@
 		<f:facet name="right">
 			<h:outputText value="Welcome, #{userLoginController.username}     " rendered="#{userLoginController.loggedIn}" style="" />
 			<p:commandButton id="loginDialogButton" rendered="#{userLoginController.loggedIn}" title="Logout" value="Logout" icon="ui-icon-person"
-				 action="#{userLoginController.logout}" update="mainForm:toolbar" />
+				 action="#{sessionController.logout}" update="mainForm:toolbar" />
 			<p:commandButton id="logoutDialogButton" rendered="#{!userLoginController.loggedIn}" title="Login" value="Login" icon="ui-icon-person"
 				 onclick="PF('loginDialog').show();" />
 			<p:menuButton  disabled="#{!userLoginController.loggedIn}" value="Options">

@@ -42,7 +42,7 @@ public class UserLoginController {
 		this.password = password;
 	}
 
-	public void login(ActionEvent event) {
+	public void login() {
 		FacesMessage message = null;
 		setLoggedIn(false);
 		if(StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {

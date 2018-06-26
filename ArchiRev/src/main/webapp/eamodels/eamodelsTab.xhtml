@@ -6,6 +6,8 @@
 
 	<p:tab title="EA Models">
 
+		
+
 		<p:panel id="eaModelsPanel" widgetVar="eaModelsPanel"
 			header="EA Models" toggleable="true" toggleSpeed="500"
 			style="margin-bottom:10px; width:100%" width="100%">
@@ -13,28 +15,34 @@
 			<p:panelGrid style="width:100%; border: none;">
 				<p:row>
 					<p:column style="vertical-align:top; width:20% !important">
-						<p:dataList value="#{modelsController.project.models}"  var="model" 
-							type="definition" >
+						<p:dataList value="#{modelsController.project.models}" var="model"
+							type="definition">
 							<f:facet name="header">
 								<h:outputText value="Extracted ArchiMate Models" />
 							</f:facet>
-							<p:commandLink update="mainForm:mainTabs:eaModelsPanel" oncomplete="resizeDiagram()"
+							<p:commandLink update="mainForm:mainTabs:eaModelsPanel"
+								oncomplete="resizeDiagram()"
 								styleClass="#{modelsController.selectedModel == model?'activeDiagram':''}">
 								<p:outputLabel value="#{model.name}" />
 								<f:setPropertyActionListener value="#{model}"
 									target="#{modelsController.selectedModel}" />
 							</p:commandLink>
 							<f:facet name="description">
-								<p:outputLabel value="#{model.createdAt}" 
-									styleClass="#{modelsController.selectedModel == model?'activeDiagram':''}"/>
+								<p:outputLabel value="#{model.createdAt}"
+									styleClass="#{modelsController.selectedModel == model?'activeDiagram':''}" />
 							</f:facet>
 						</p:dataList>
 					</p:column>
 					<p:column id="modelDiagramPanel"
 						style="vertical-align:top; width:80% !important">
-						<p:commandButton id="exportModelButton" value="export" ajax="false" actionListener="#{modelsController.exportModel()}" >
+						<p:commandButton id="exportModelButton" value="export"
+							actionListener="#{modelsController.exportModel()}"
+							onclick="PF('blockUI').show()" 
+							oncomplete="document.getElementById('mainForm:mainTabs:downloadExportedFileButton').click();PF('blockUI').hide()"/>
+						<p:commandButton id="downloadExportedFileButton" style="display: none"  ajax="false">
 							<p:fileDownload value="#{modelsController.exportedFile}" />
 						</p:commandButton>
+						
 						<p:separator id="diagramSeparator" />
 						<p:scrollPanel id="diagramScrollPanel" mode="native"
 							style="width:800px;height:600px">

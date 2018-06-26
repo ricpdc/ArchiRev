@@ -77,7 +77,7 @@ public class OpenProjectDialogController extends AbstractDialogController {
     }
     
     public boolean isOpenProject(final Project project) {
-    	return project.getId().equals(sessionController.getProject().getId());
+    	return sessionController.getProject()!=null && project.getId().equals(sessionController.getProject().getId());
     }
 
 	public List<Project> getProjects() {

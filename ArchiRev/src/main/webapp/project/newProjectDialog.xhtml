@@ -20,7 +20,8 @@
 		</p:panelGrid>
 		<p:commandButton id="btnSaveNewProject" icon="ui-icon-disk"
 			update="mainForm" style="float:right;margin-top:25px;" value="Save"
-			action="#{newProjectDialogController.onSave}" />
+			action="#{newProjectDialogController.onSave}"
+			onclick="PF('blockUI').show()" oncomplete="PF('blockUI').hide()" />
 
 		<p:remoteCommand name="updateMainTabs" update="mainForm"
 			oncomplete="alert('test')" />

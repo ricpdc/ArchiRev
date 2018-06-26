@@ -71,7 +71,9 @@
 					<p:commandButton id="startExtraction" icon="ui-icon-gear"
 						title="Start Extraction"
 						action="#{extractionController.startExtraction(extraction)}"
-						update="mainForm:mainTabs:extractionTable">						
+						update="mainForm:mainTabs:extractionTable"
+						onclick="PF('blockUI').show()" 
+						oncomplete="PF('blockUI').hide()">						
 					</p:commandButton>
 					<p:commandButton id="deleteExtraction" icon="ui-icon-trash"
 						title="Remove"
@@ -92,7 +94,9 @@
 			<p:panel style="border:none; text-align:right; padding-top:20px; padding-right: 0px;" >
 			<p:commandButton id="startExtractionall" icon="ui-icon-gear"
 						value="Start all pending extractions" title="Start All Extraction"
-						action="#{extractionController.startAllExtractions()}" />
+						action="#{extractionController.startAllExtractions()}"
+						onclick="PF('blockUI').show()" 
+						oncomplete="PF('blockUI').hide()" />
 			</p:panel>
 			
 		</p:panel>

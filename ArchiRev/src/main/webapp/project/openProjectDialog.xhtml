@@ -43,7 +43,9 @@
 					<p:commandButton id="openProject" icon="ui-icon-folder-open"
 						title="Open"
 						action="#{openProjectDialogController.openProject(project)}"
-						update="mainForm" />
+						update="mainForm"
+						onclick="PF('blockUI').show()" 
+						oncomplete="PF('blockUI').hide()" />
 					<p:commandButton id="deleteProject" icon="ui-icon-trash"
 						title="Remove" disabled="#{openProjectDialogController.isOpenProject(project)}"
 						action="#{openProjectDialogController.removeProject(project)}"

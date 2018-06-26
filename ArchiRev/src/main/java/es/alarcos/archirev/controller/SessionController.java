@@ -1,10 +1,14 @@
 package es.alarcos.archirev.controller;
 
+import java.io.IOException;
 import java.util.HashSet;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpServletRequest;
 
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.TabChangeEvent;
@@ -29,9 +33,12 @@ public class SessionController extends AbstractController {
 
 	@Autowired
 	private ProjectDao projectDao;
-	
+
 	@Autowired
 	private Environment env;
+
+	@Autowired
+	private UserLoginController userLoginController;
 
 	private Project project;
 
@@ -71,10 +78,28 @@ public class SessionController extends AbstractController {
 		case 2:
 			break;
 		}
-		
+
 		RequestContext.getCurrentInstance().update("mainForm");
 	}
-	
+
+	public void login(ActionEvent event) {
+		userLoginController.login();
+	}
+
+	public void logout() throws IOException {
+		project = null;
+		userLoginController.logout();
+		refreshPage();
+	}
+
+	private void refreshPage() throws IOException {
+		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+	    ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
+	}
+
+	public boolean isLoggedIn() {
+		return userLoginController.isLoggedIn();
+	}
 
 	public Project getProject() {
 		return project;
@@ -112,7 +137,7 @@ public class SessionController extends AbstractController {
 	public void setEnv(Environment env) {
 		this.env = env;
 	}
-	
+
 	public String getProperty(String key) {
 		return env.getProperty(key);
 	}

@@ -12,17 +12,25 @@
 	<link rel="stylesheet" type="text/css" href="css/archirev.css" />
 	<script rel="text/javascript" src="js/archirev.js" />
 	<link rel="icon" type="image/png" href="images/fav.png" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
 </h:head>
 <h:body>
+
+	<p:blockUI widgetVar="blockUI" block="mainForm">
+		<img src="images/loading_icon.gif" />
+	</p:blockUI>
+
 	<h:form id="mainForm">
 		<p:growl id="messages" showDetail="true" />
 
 		<ui:include src="toolBar.xhtml" />
 
-		<p:tabView id="mainTabs" widgetVar="mainTabs" activeIndex="#{sessionController.activeTab}" cache="false"
+		<p:tabView id="mainTabs" widgetVar="mainTabs"
+			activeIndex="#{sessionController.activeTab}" cache="false"
 			rendered="#{sessionController.activeProject}">
-			 <p:ajax event="tabChange" listener="#{sessionController.onTabChange}" oncomplete="resizeDiagram()"/>
+			<p:ajax event="tabChange" listener="#{sessionController.onTabChange}"
+				oncomplete="resizeDiagram()" />
 			<ui:include src="sources/sourcesTab.xhtml" />
 			<ui:include src="extraction/extractionTab.xhtml" />
 			<ui:include src="eamodels/eamodelsTab.xhtml" />
