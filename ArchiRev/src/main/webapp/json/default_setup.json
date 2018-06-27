@@ -1,0 +1,33 @@
+[{"name":"mapping","pairs":[
+	{"annotation":"ManagedBean","element":"APPLICATION"},
+	{"annotation":"Controller","element":"APPLICATION"},
+	{"annotation":"Component","element":"APPLICATION"},
+	{"annotation":"Service","element":"APPLICATION"},
+	{"annotation":"Entity","element":"DATA_ENTITY"},
+	{"annotation":"Table","element":"DATA_ENTITY"},
+	{"annotation":"MappedSuperclass","element":"DATA_ENTITY"},
+	{"annotation":"Repository","element":"COMPONENT"},
+	{"annotation":"SpringBootApplication","element":"COMPONENT"}
+	]},
+{"name":"prioritization","tuples":[
+	{"from":"ApplicationFunction","targets": [
+		{"to":"ApplicationFunction","relationship":"TriggeringRelationship"},
+		{"to":"ApplicationComponent","relationship":"ServingRelationship"},
+		{"to":"ApplicationService","relationship":"RealizationRelationship"},
+		{"to":"DataObject","relationship":"AccessRelationship"}]},
+	{"from":"ApplicationComponent","targets": [
+		{"to":"ApplicationFunction","relationship":"TriggeringRelationship"},
+		{"to":"ApplicationComponent","relationship":"ServingRelationship"},
+		{"to":"ApplicationService","relationship":"RealizationRelationship"},
+		{"to":"DataObject","relationship":"AccessRelationship"}]},
+	{"from":"ApplicationService","targets": [
+		{"to":"ApplicationFunction","relationship":"AccessRelationship"},
+		{"to":"ApplicationComponent","relationship":"AccessRelationship"},
+		{"to":"ApplicationService","relationship":"TriggeringRelationship"},
+		{"to":"DataObject","relationship":"AccessRelationship"}]},
+	{"from":"DataObject","targets": [
+		{"to":"ApplicationFunction","relationship":"AccessRelationship"},
+		{"to":"ApplicationComponent","relationship":"AccessRelationship"},
+		{"to":"ApplicationService","relationship":"AccessRelationship"},
+		{"to":"DataObject","relationship":"CompositionRelationship"}]}
+]}]

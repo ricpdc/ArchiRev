@@ -2,6 +2,7 @@ package es.alarcos.archirev.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,7 +18,9 @@ import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.TransferEvent;
@@ -48,7 +51,7 @@ public class ExtractionController extends AbstractController {
 
 	static Logger LOGGER = LoggerFactory.getLogger(ExtractionController.class);
 	
-	private static final String DEFAULT_SETUP = "test!!!";
+	private static final String DEFAULT_SETUP_PATH = "/json/default_setup.json";
 
 	@Autowired
 	private SessionController sessionController;
@@ -91,8 +94,23 @@ public class ExtractionController extends AbstractController {
 			sourcePickerList = new DualListModel<Source>(new ArrayList<Source>(), new ArrayList<Source>());
 			setExtractionName("");
 		}
-		setupText = DEFAULT_SETUP;
+		loadDefaultSetup();
+		
 		RequestContext.getCurrentInstance().update("mainForm:mainTabs:extractionTable");
+	}
+
+	private void loadDefaultSetup() {
+		ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+		String relativeWebPath = DEFAULT_SETUP_PATH;
+		ServletContext servletContext = (ServletContext) externalContext.getContext();
+		String absoluteDiskPath = servletContext.getRealPath(relativeWebPath);
+		try {
+			File file = new File(absoluteDiskPath);
+			byte[] encoded = Files.readAllBytes(Paths.get(absoluteDiskPath));
+			setupText = new String(encoded, StandardCharsets.UTF_8);
+		} catch (IOException e) {
+			LOGGER.error("Error loading default setup for model extraction");
+		}
 	}
 
 	public void onTransfer(TransferEvent event) {
@@ -110,13 +128,21 @@ public class ExtractionController extends AbstractController {
 	}
 	
 	public void saveSetup() {
-		RequestContext context = RequestContext.getCurrentInstance();
-		context.update("mainForm:extractionSetupDialog");
-		context.execute("PF('extractionSetupDialog').hide()");
+		closeSetupDialog();
 	}
-	
+
 	public void discardSetup() {
 		setupText = setupTextBackup;
+		closeSetupDialog();
+	}
+	
+	public void resetSetup() {
+		loadDefaultSetup();
+		RequestContext context = RequestContext.getCurrentInstance();
+		context.update("mainForm:codeMirror");
+	}
+	
+	private void closeSetupDialog() {
 		RequestContext context = RequestContext.getCurrentInstance();
 		context.update("mainForm:extractionSetupDialog");
 		context.execute("PF('extractionSetupDialog').hide()");

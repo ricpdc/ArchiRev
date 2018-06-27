@@ -6,8 +6,6 @@
 
 	<p:tab title="EA Models">
 
-		
-
 		<p:panel id="eaModelsPanel" widgetVar="eaModelsPanel"
 			header="EA Models" toggleable="true" toggleSpeed="500"
 			style="margin-bottom:10px; width:100%" width="100%">
@@ -15,7 +13,7 @@
 			<p:panelGrid style="width:100%; border: none;">
 				<p:row>
 					<p:column style="vertical-align:top; width:20% !important">
-						<p:dataList value="#{modelsController.project.models}" var="model"
+						<p:dataList value="#{modelsController.project.models}" var="model" style="height:100%"
 							type="definition">
 							<f:facet name="header">
 								<h:outputText value="Extracted ArchiMate Models" />

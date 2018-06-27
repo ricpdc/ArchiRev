@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -55,17 +56,19 @@ import org.xml.sax.SAXException;
 import com.archimatetool.model.impl.AccessRelationship;
 import com.archimatetool.model.impl.AggregationRelationship;
 import com.archimatetool.model.impl.ApplicationComponent;
-import com.archimatetool.model.impl.ApplicationFunction;
-import com.archimatetool.model.impl.ApplicationService;
 import com.archimatetool.model.impl.ArchimateElement;
 import com.archimatetool.model.impl.ArchimateFactory;
 import com.archimatetool.model.impl.ArchimateRelationship;
 import com.archimatetool.model.impl.CompositionRelationship;
-import com.archimatetool.model.impl.DataObject;
 import com.archimatetool.model.impl.RealizationRelationship;
 import com.archimatetool.model.impl.ServingRelationship;
 import com.archimatetool.model.impl.SpecializationRelationship;
 import com.archimatetool.model.impl.TriggeringRelationship;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 import com.mxgraph.canvas.mxGraphics2DCanvas;
 import com.mxgraph.layout.mxGraphLayout;
 import com.mxgraph.model.mxCell;
@@ -96,50 +99,23 @@ public class ExtractionService implements Serializable {
 	private static final String NS_ELEMENTS = "http://purl.org/dc/elements/1.1/";
 	private static final String NS_XSI = "http://www.w3.org/2001/XMLSchema-instance";
 
-	// TODO Load this from a configuration json file
-	private static final MultiValueMap<String, ArchimateElementEnum> mapping = new LinkedMultiValueMap<>();
-	static {
-		mapping.add("ManagedBean", ArchimateElementEnum.APPLICATION);
-		mapping.add("Controller", ArchimateElementEnum.APPLICATION);
-		mapping.add("Component", ArchimateElementEnum.APPLICATION);
-		mapping.add("Service", ArchimateElementEnum.APPLICATION);
-		mapping.add("Entity", ArchimateElementEnum.DATA_ENTITY);
-		mapping.add("Table", ArchimateElementEnum.DATA_ENTITY);
-		mapping.add("MappedSuperclass", ArchimateElementEnum.DATA_ENTITY);
-		mapping.add("Repository", ArchimateElementEnum.COMPONENT);
-		mapping.add("SpringBootApplication", ArchimateElementEnum.COMPONENT);
-	}
+	private static final String JSON_NAME = "name";
+	private static final String JSON_MAPPING = "mapping";
+	private static final String JSON_PAIRS = "pairs";
+	private static final String JSON_ANNOTATION = "annotation";
+	private static final String JSON_ELEMENT = "element";
+	private static final String JSON_PRIORITIZATION = "prioritization";
+	private static final String JSON_TUPLES = "tuples";
+	private static final String JSON_TARGETS = "targets";
+	private static final String JSON_FROM = "from";
+	private static final String JSON_TO = "to";
+	private static final String JSON_RELATIONSHIP = "relationship";
 
-	// TODO Move this map to constants and allow parametrize this.
-	private static final Map<Class<? extends ArchimateElement>, Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>>> mapPrioritizedRelationship = new HashMap<>();
-	static {
-		Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>> applicationFunctionMap = new HashMap<>();
-		applicationFunctionMap.put(ApplicationFunction.class, TriggeringRelationship.class);
-		applicationFunctionMap.put(ApplicationComponent.class, ServingRelationship.class);
-		applicationFunctionMap.put(ApplicationService.class, RealizationRelationship.class);
-		applicationFunctionMap.put(DataObject.class, AccessRelationship.class);
-		mapPrioritizedRelationship.put(ApplicationFunction.class, applicationFunctionMap);
+	private static final String SETUP_CLASS_ROOT = "com.archimatetool.model.impl.";
 
-		Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>> applicationComponentMap = new HashMap<>();
-		applicationComponentMap.put(ApplicationFunction.class, TriggeringRelationship.class);
-		applicationComponentMap.put(ApplicationComponent.class, ServingRelationship.class);
-		applicationComponentMap.put(ApplicationService.class, RealizationRelationship.class);
-		applicationComponentMap.put(DataObject.class, AccessRelationship.class);
-		mapPrioritizedRelationship.put(ApplicationComponent.class, applicationComponentMap);
+	private MultiValueMap<String, ArchimateElementEnum> mapping = new LinkedMultiValueMap<>();
 
-		Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>> applicationServiceMap = new HashMap<>();
-		applicationServiceMap.put(ApplicationFunction.class, AccessRelationship.class);
-		applicationServiceMap.put(ApplicationComponent.class, AccessRelationship.class);
-		applicationServiceMap.put(ApplicationService.class, TriggeringRelationship.class);
-		applicationServiceMap.put(DataObject.class, AccessRelationship.class);
-		mapPrioritizedRelationship.put(ApplicationService.class, applicationServiceMap);
-
-		Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>> dataObjectMap = new HashMap<>();
-		dataObjectMap.put(ApplicationFunction.class, AccessRelationship.class);
-		dataObjectMap.put(ApplicationComponent.class, AccessRelationship.class);
-		dataObjectMap.put(ApplicationService.class, AccessRelationship.class);
-		dataObjectMap.put(DataObject.class, CompositionRelationship.class);
-	}
+	private Map<Class<? extends ArchimateElement>, Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>>> mapPrioritizedRelationship = new HashMap<>();
 
 	public ExtractionService() {
 
@@ -151,6 +127,8 @@ public class ExtractionService implements Serializable {
 		// TODO Integrate different sources into single one model
 		File imageFile = null;
 		String modelName = model.getExtraction().getName();
+		loadSetup(model);
+
 		for (Source source : sources) {
 			modelName += ("_" + source.getName());
 			switch (source.getType()) {
@@ -166,6 +144,71 @@ public class ExtractionService implements Serializable {
 		if (imageFile != null) {
 			model.setImagePath(imageFile.getAbsolutePath());
 			model.setExportedPath(null);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void loadSetup(Model model) {
+		String setup = model.getExtraction().getSetup();
+		JsonParser parser = new JsonParser();
+
+		JsonReader jsonReader = new JsonReader(new StringReader(setup));
+		jsonReader.setLenient(true);
+
+		try {
+			JsonElement root = parser.parse(jsonReader);
+			Validate.isTrue(root.isJsonArray());
+			JsonArray objects = root.getAsJsonArray();
+			Validate.isTrue(objects.get(0).isJsonObject());
+
+			// load mapping object
+			JsonObject mappingObject = objects.get(0).getAsJsonObject();
+			Validate.isTrue(JSON_MAPPING.equals(mappingObject.get(JSON_NAME).getAsString()));
+			Validate.isTrue(mappingObject.get(JSON_PAIRS).isJsonArray());
+			JsonArray mappingPairs = mappingObject.get(JSON_PAIRS).getAsJsonArray();
+			mapping = new LinkedMultiValueMap<>();
+			for (int i = 0; i < mappingPairs.size(); i++) {
+				Validate.isTrue(mappingPairs.get(i).isJsonObject());
+				JsonObject pair = mappingPairs.get(i).getAsJsonObject();
+				String annotation = pair.get(JSON_ANNOTATION).getAsString();
+				String element = pair.get(JSON_ELEMENT).getAsString();
+				mapping.add(annotation, ArchimateElementEnum.valueOf(element));
+			}
+
+			// load prioritization object
+			JsonObject prioritzationObject = objects.get(1).getAsJsonObject();
+			Validate.isTrue(JSON_PRIORITIZATION.equals(prioritzationObject.get(JSON_NAME).getAsString()));
+			Validate.isTrue(prioritzationObject.get(JSON_TUPLES).isJsonArray());
+			JsonArray prioritizationTuples = prioritzationObject.get(JSON_TUPLES).getAsJsonArray();
+			mapPrioritizedRelationship = new HashMap<>();
+
+			for (int i = 0; i < prioritizationTuples.size(); i++) {
+				Validate.isTrue(prioritizationTuples.get(i).isJsonObject());
+				JsonObject tuple = prioritizationTuples.get(i).getAsJsonObject();
+				String from = tuple.get(JSON_FROM).getAsString();
+
+				Validate.isTrue(tuple.get(JSON_TARGETS).isJsonArray());
+				JsonArray targets = tuple.get(JSON_TARGETS).getAsJsonArray();
+
+				try {
+					Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>> tupleMap = new HashMap<>();
+					for (int j = 0; j < targets.size(); j++) {
+						Validate.isTrue(targets.get(j).isJsonObject());
+						JsonObject target = targets.get(j).getAsJsonObject();
+						String to = target.get(JSON_TO).getAsString();
+						String relationship = target.get(JSON_RELATIONSHIP).getAsString();
+						tupleMap.put((Class<? extends ArchimateElement>) Class.forName(SETUP_CLASS_ROOT + to),
+								(Class<? extends ArchimateRelationship>) Class
+										.forName(SETUP_CLASS_ROOT + relationship));
+					}
+					mapPrioritizedRelationship
+							.put((Class<? extends ArchimateElement>) Class.forName(SETUP_CLASS_ROOT + from), tupleMap);
+				} catch (ClassNotFoundException e) {
+					LOGGER.warn("Extraction setup is not valid" + e.getMessage());
+				}
+			}
+		} catch (Exception ex) {
+			LOGGER.error("Extraction setup is not valid" + ex.getMessage());
 		}
 	}
 
@@ -494,12 +537,11 @@ public class ExtractionService implements Serializable {
 
 			graph.getModel().endUpdate();
 
-			 ExtendedHierarchicalLayout extendedHierarchicalLayout = new
-			 ExtendedHierarchicalLayout(graph, 75);
-			
-			 mxGraphLayout layout = extendedHierarchicalLayout;
-			 layout.execute(graph.getDefaultParent());
-			
+			ExtendedHierarchicalLayout extendedHierarchicalLayout = new ExtendedHierarchicalLayout(graph, 75);
+
+			mxGraphLayout layout = extendedHierarchicalLayout;
+			layout.execute(graph.getDefaultParent());
+
 			// BufferedImage image = mxCellRenderer.createBufferedImage(graph, null, 1,
 			// java.awt.Color.WHITE, true, null);
 			// File file = new

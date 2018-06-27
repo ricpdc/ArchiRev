@@ -13,6 +13,9 @@
 			value="#{extractionController.setupText}" keyMap="default"
 			lineNumbers="true" matchBrackets="true" />
 		<p:separator />
+		<p:commandButton id="setupResetButton" value="Reset"
+			style="float:right"
+			actionListener="#{extractionController.resetSetup()}" />
 		<p:commandButton id="setupDiscardButton" value="Cancel"
 			style="float:right"
 			actionListener="#{extractionController.discardSetup()}" />
