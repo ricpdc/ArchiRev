@@ -2,12 +2,16 @@ package es.alarcos.archirev.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -20,7 +24,7 @@ public class Model extends AbstractEntity {
 
 	@Column(name = "name")
 	private String name;
-
+	
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "extraction_id")
 	private Extraction extraction;
@@ -34,6 +38,9 @@ public class Model extends AbstractEntity {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "project_id")
 	private Project project;
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "model", orphanRemoval = true, fetch=FetchType.LAZY)
+	private Set<Metric> metrics = new HashSet<>();
 
 	public String getName() {
 		return name;
@@ -97,6 +104,18 @@ public class Model extends AbstractEntity {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public Set<Metric> getMetrics() {
+		return metrics;
+	}
+
+	public void setMetrics(Set<Metric> metrics) {
+		this.metrics = metrics;
+	}
+	
+	public void addMetric(Metric metric) {
+		metrics.add(metric);
 	}
 
 }

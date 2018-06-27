@@ -40,7 +40,9 @@
 						<p:commandButton id="downloadExportedFileButton" style="display: none"  ajax="false">
 							<p:fileDownload value="#{modelsController.exportedFile}" />
 						</p:commandButton>
-						
+						<p:commandButton id="metricsButton" value="metrics" icon="ui-icon-calculator"
+							actionListener="#{modelsController.openMetricsDialog()}"/>
+							
 						<p:separator id="diagramSeparator" />
 						<p:scrollPanel id="diagramScrollPanel" mode="native"
 							style="width:800px;height:600px">

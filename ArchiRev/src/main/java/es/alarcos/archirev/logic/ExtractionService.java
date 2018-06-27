@@ -79,6 +79,7 @@ import com.mxgraph.view.mxGraph;
 import es.alarcos.archirev.logic.connector.ConnectorEnum;
 import es.alarcos.archirev.logic.layout.ExtendedHierarchicalLayout;
 import es.alarcos.archirev.logic.shape.ShapeEnum;
+import es.alarcos.archirev.model.Metric;
 import es.alarcos.archirev.model.Model;
 import es.alarcos.archirev.model.Source;
 
@@ -423,6 +424,9 @@ public class ExtractionService implements Serializable {
 		}
 
 		try {
+			
+			computeMetrics(model, graph);
+			
 			ExtendedHierarchicalLayout extendedHierarchicalLayout = new ExtendedHierarchicalLayout(graph, 75);
 
 			mxGraphLayout layout = extendedHierarchicalLayout;
@@ -441,6 +445,37 @@ public class ExtractionService implements Serializable {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private void computeMetrics(Model model, mxGraph graph) {
+		Set<Metric> metrics = new HashSet<Metric>();
+		
+		//TODO compute metrics from graph.
+		
+		model.addMetric(new Metric(model, "metric1", "1"));
+		model.addMetric(new Metric(model, "metric2", "2"));
+		model.addMetric(new Metric(model, "metric1", "1"));
+		model.addMetric(new Metric(model, "metric2", "2"));
+		model.addMetric(new Metric(model, "metric1", "1"));
+		model.addMetric(new Metric(model, "metric2", "2"));
+		model.addMetric(new Metric(model, "metric1", "1"));
+		model.addMetric(new Metric(model, "metric2", "2"));
+		model.addMetric(new Metric(model, "metric1", "1"));
+		model.addMetric(new Metric(model, "metric2", "2"));
+		model.addMetric(new Metric(model, "metric1", "1"));
+		model.addMetric(new Metric(model, "metric2", "2"));
+		model.addMetric(new Metric(model, "metric1", "1"));
+		model.addMetric(new Metric(model, "metric2", "2"));
+		model.addMetric(new Metric(model, "metric1", "1"));
+		model.addMetric(new Metric(model, "metric2", "2"));
+		model.addMetric(new Metric(model, "metric1", "1"));
+		model.addMetric(new Metric(model, "metric2", "2"));
+		model.addMetric(new Metric(model, "metric1", "1"));
+		model.addMetric(new Metric(model, "metric2", "2"));
+		model.addMetric(new Metric(model, "metric1", "1"));
+		model.addMetric(new Metric(model, "metric2", "2"));
+		model.addMetric(new Metric(model, "metric1", "1"));
+		model.addMetric(new Metric(model, "metric2", "2"));
 	}
 
 	private File exportOpenExchangeFormat(Model model, MultiValueMap<String, ArchimateElement> modelElementsByClassName,

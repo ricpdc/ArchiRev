@@ -17,8 +17,8 @@
 				rowsPerPageTemplate="5,10,15"
 				rowStyleClass="#{openProjectDialogController.isOpenProject(project)?'activeProjectRow':''}">
 				<f:facet name="header">
-	            Available projects
-	        </f:facet>
+		            Available projects
+		        </f:facet>
 				<p:column headerText="Name" sortBy="#{project.name}"
 					filterBy="#{project.name}" filterMatchMode="contains">
 					<h:outputText value="#{project.name}" />

@@ -82,7 +82,7 @@ public class ModelsController extends AbstractController {
 	}
 
 	public void exportModel() {
-		//if(selectedModel.getExportedPath()==null) {
+		if(selectedModel.getExportedPath()==null) {
 			final Timestamp now = new Timestamp(new Date().getTime());
 			final String loggedUser = sessionController.getLoggedUser();
 			selectedModel.setModifiedAt(now);
@@ -98,9 +98,7 @@ public class ModelsController extends AbstractController {
 			sessionController.updateProject();
 			
 			RequestContext currentInstance = RequestContext.getCurrentInstance();
-			
-			
-		//}
+		}
 		
 		byte[] xmlFileBytes= null;
 		if (selectedModel == null) {
@@ -113,6 +111,14 @@ public class ModelsController extends AbstractController {
 		}
 		exportedFile = new DefaultStreamedContent(new ByteArrayInputStream(xmlFileBytes), "text/xml", selectedModel.getName()+".xml");
 	}
+	
+	public void openMetricsDialog() {
+		RequestContext context = RequestContext.getCurrentInstance();
+    	context.update("mainForm:metricsDialog");
+    	context.execute("PF('metricsDialog').show()");
+	}
+	
+	
 
 	private String createExportedFile(final Model model) {
 		File folder = new File(getSessionController().getProperty("location.export"));

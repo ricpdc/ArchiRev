@@ -1,0 +1,29 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<p:dialog id="metricsDialog" widgetVar="metricsDialog" closable="true"
+		closeOnEscape="true" header="Metrics" modal="true" width="600"
+		height="600" resizable="false">
+
+		<p:scrollPanel style="border:none;">
+
+			<p:dataTable id="metricsTable" widgetVar="metricsTable"
+				value="#{modelsController.selectedModel.metrics}" var="metric"
+				emptyMessage="No metrics computed">
+				<p:column headerText="Name" sortBy="#{metric.name}"
+					filterBy="#{metric.name}" filterMatchMode="contains">
+					<h:outputText value="#{metric.name}" />
+				</p:column>
+				<p:column headerText="Value" sortBy="#{metric.value}"
+					filterBy="#{metric.value}" filterMatchMode="contains">
+					<h:outputText value="#{metric.value}" />
+				</p:column>
+			</p:dataTable>
+		</p:scrollPanel>
+
+	</p:dialog>
+</ui:composition>
