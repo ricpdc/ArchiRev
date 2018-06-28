@@ -59,6 +59,15 @@ public enum ConnectorEnum {
 		this.endSize = endSize;
 		this.dashed = dashed;
 	}
+	
+	public static ConnectorEnum getEnumByName(String name) {
+		for (ConnectorEnum connectorEnum : values()) {
+			if(connectorEnum.getModelRelationship().getSimpleName().equals(name)) {
+				return connectorEnum;
+			}
+		}
+		return DEFAULT;
+	}
 
 	public static ConnectorEnum getByModelRelationship(final Class<? extends ArchimateRelationship> modelRelationship) {
 		for (ConnectorEnum shapeEnum : values()) {

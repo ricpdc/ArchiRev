@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -424,9 +425,9 @@ public class ExtractionService implements Serializable {
 		}
 
 		try {
-			
+
 			computeMetrics(model, graph);
-			
+
 			ExtendedHierarchicalLayout extendedHierarchicalLayout = new ExtendedHierarchicalLayout(graph, 75);
 
 			mxGraphLayout layout = extendedHierarchicalLayout;
@@ -448,34 +449,80 @@ public class ExtractionService implements Serializable {
 	}
 
 	private void computeMetrics(Model model, mxGraph graph) {
-		Set<Metric> metrics = new HashSet<Metric>();
-		
-		//TODO compute metrics from graph.
-		
-		model.addMetric(new Metric(model, "metric1", "1"));
-		model.addMetric(new Metric(model, "metric2", "2"));
-		model.addMetric(new Metric(model, "metric1", "1"));
-		model.addMetric(new Metric(model, "metric2", "2"));
-		model.addMetric(new Metric(model, "metric1", "1"));
-		model.addMetric(new Metric(model, "metric2", "2"));
-		model.addMetric(new Metric(model, "metric1", "1"));
-		model.addMetric(new Metric(model, "metric2", "2"));
-		model.addMetric(new Metric(model, "metric1", "1"));
-		model.addMetric(new Metric(model, "metric2", "2"));
-		model.addMetric(new Metric(model, "metric1", "1"));
-		model.addMetric(new Metric(model, "metric2", "2"));
-		model.addMetric(new Metric(model, "metric1", "1"));
-		model.addMetric(new Metric(model, "metric2", "2"));
-		model.addMetric(new Metric(model, "metric1", "1"));
-		model.addMetric(new Metric(model, "metric2", "2"));
-		model.addMetric(new Metric(model, "metric1", "1"));
-		model.addMetric(new Metric(model, "metric2", "2"));
-		model.addMetric(new Metric(model, "metric1", "1"));
-		model.addMetric(new Metric(model, "metric2", "2"));
-		model.addMetric(new Metric(model, "metric1", "1"));
-		model.addMetric(new Metric(model, "metric2", "2"));
-		model.addMetric(new Metric(model, "metric1", "1"));
-		model.addMetric(new Metric(model, "metric2", "2"));
+		model.getMetrics().clear();
+		DecimalFormat df = new DecimalFormat("###.###");
+
+		// TODO compute further metrics from graph.
+		Object[] edges = graph.getChildEdges(graph.getDefaultParent());
+		Object[] vertices = graph.getChildVertices(graph.getDefaultParent());
+		int numEdges = edges.length;
+		int numVertices = vertices.length;
+
+		double connectivity = (double) numEdges / (double) numVertices;
+		double density = (double) numEdges / ((double) (numVertices * (numVertices - 1)) / 2.0);
+
+		// Separability is the cut(articulation) vertex divided into total number of
+		// vertices
+
+		int numAccess = 0;
+		int numAggregation = 0;
+		int numComposition = 0;
+		int numRealization = 0;
+		int numServing = 0;
+		int numSpecialization = 0;
+		int numTriggering = 0;
+
+		for (Object e : edges) {
+			mxCell edge = (mxCell) e;
+			edge.getValue();
+			ConnectorEnum edgeType = ConnectorEnum.getEnumByName(edge.getValue().toString());
+			switch (edgeType) {
+			case ACCESS:
+				numAccess++;
+				break;
+			case AGGREGATION:
+				numAggregation++;
+				break;
+			case COMPOSITION:
+				numComposition++;
+				break;
+			case REALIZATION:
+				numRealization++;
+				break;
+			case SERVING:
+				numServing++;
+				break;
+			case SPECIALIZATION:
+				numSpecialization++;
+				break;
+			case TRIGGERING:
+				numTriggering++;
+				break;
+			case DEFAULT:
+			default:
+			}
+		}
+
+		model.addMetric(new Metric(model, "#Nodes", String.valueOf(numVertices)));
+		model.addMetric(new Metric(model, "#Edges", String.valueOf(numEdges)));
+		model.addMetric(new Metric(model, "Connectivity", df.format(connectivity)));
+		model.addMetric(new Metric(model, "Density", df.format(density)));
+
+		model.addMetric(new Metric(model, "#" + ConnectorEnum.ACCESS.getModelRelationship().getSimpleName(),
+				String.valueOf(numAccess)));
+		model.addMetric(new Metric(model, "#" + ConnectorEnum.AGGREGATION.getModelRelationship().getSimpleName(),
+				String.valueOf(numAggregation)));
+		model.addMetric(new Metric(model, "#" + ConnectorEnum.COMPOSITION.getModelRelationship().getSimpleName(),
+				String.valueOf(numComposition)));
+		model.addMetric(new Metric(model, "#" + ConnectorEnum.REALIZATION.getModelRelationship().getSimpleName(),
+				String.valueOf(numRealization)));
+		model.addMetric(new Metric(model, "#" + ConnectorEnum.SERVING.getModelRelationship().getSimpleName(),
+				String.valueOf(numServing)));
+		model.addMetric(new Metric(model, "#" + ConnectorEnum.SPECIALIZATION.getModelRelationship().getSimpleName(),
+				String.valueOf(numSpecialization)));
+		model.addMetric(new Metric(model, "#" + ConnectorEnum.TRIGGERING.getModelRelationship().getSimpleName(),
+				String.valueOf(numTriggering)));
+
 	}
 
 	private File exportOpenExchangeFormat(Model model, MultiValueMap<String, ArchimateElement> modelElementsByClassName,

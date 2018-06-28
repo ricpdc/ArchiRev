@@ -2,8 +2,8 @@ package es.alarcos.archirev.model;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -40,7 +40,7 @@ public class Model extends AbstractEntity {
 	private Project project;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "model", orphanRemoval = true, fetch=FetchType.LAZY)
-	private Set<Metric> metrics = new HashSet<>();
+	private Set<Metric> metrics = new TreeSet<>();
 
 	public String getName() {
 		return name;
