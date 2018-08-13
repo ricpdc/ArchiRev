@@ -30,6 +30,7 @@ public class ArchiRevApplicationWar extends SpringBootServletInitializer {
 			public void onStartup(ServletContext servletContext) throws ServletException {
 				servletContext.setInitParameter("primefaces.FONT_AWESOME", Boolean.TRUE.toString());
 				servletContext.setInitParameter("primefaces.THEME", "bootstrap");
+				servletContext.setInitParameter("javax.faces.STATE_SAVING_METHOD", "server");
 			}
 		};
 	}

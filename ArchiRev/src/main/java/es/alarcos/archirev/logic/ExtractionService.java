@@ -290,8 +290,7 @@ public class ExtractionService implements Serializable {
 			boolean mappedSuperclass = false;
 			for (AnnotationEntry annotationEntry : javaClass.getAnnotationEntries()) {
 				String annotationType = annotationEntry.getAnnotationType();
-				// LOGGER.debug(String.format("[%s]: @%s", javaClass.getClassName(),
-				// annotationType));
+				
 				String annotation = annotationType.substring(annotationType.lastIndexOf("/") + 1,
 						annotationType.length() - 1);
 				List<ArchimateElementEnum> elementList = mapping.get(annotation);
@@ -300,6 +299,9 @@ public class ExtractionService implements Serializable {
 					if (!mappedSuperclass && MAPPED_SUPERCLASS_ANNOTATION.equals(annotation)) {
 						mappedSuperclass = true;
 					}
+				}
+				else {
+					 LOGGER.debug(String.format("Not mapped annotation \"%s\" in class %s", annotationType, javaClass.getClassName()));	
 				}
 			}
 
@@ -433,13 +435,15 @@ public class ExtractionService implements Serializable {
 			mxGraphLayout layout = extendedHierarchicalLayout;
 			layout.execute(graph.getDefaultParent());
 
-			BufferedImage image = mxCellRenderer.createBufferedImage(graph, null, 1, java.awt.Color.WHITE, true, null);
 			File file = new File(model.getImagePath());
-			ImageIO.write(image, "PNG", file);
+			BufferedImage image = mxCellRenderer.createBufferedImage(graph, null, 1, java.awt.Color.WHITE, true, null);
+			if(image!=null) {
+				ImageIO.write(image, "PNG", file);
 
-			// TODO remove this local test
-			File localFile = new File("C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\target\\diagrams\\testJgraphX.png");
-			ImageIO.write(image, "PNG", localFile);
+				// TODO remove this local test
+				File localFile = new File("C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\target\\diagrams\\testJgraphX.png");
+				ImageIO.write(image, "PNG", localFile);
+			}
 
 			return file;
 		} catch (IOException e) {

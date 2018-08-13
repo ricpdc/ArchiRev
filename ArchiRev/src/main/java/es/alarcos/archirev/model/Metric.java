@@ -1,5 +1,7 @@
 package es.alarcos.archirev.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,14 +11,14 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "metric")
-public class Metric extends AbstractEntity {
+public class Metric extends AbstractEntity implements Serializable, Comparable<Metric> {
 
 	private static final long serialVersionUID = 4652729570226202557L;
 
 	public Metric() {
-		
+
 	}
-	
+
 	public Metric(Model model, String name, String value) {
 		this.model = model;
 		this.name = name;
@@ -55,6 +57,14 @@ public class Metric extends AbstractEntity {
 
 	public void setModel(Model model) {
 		this.model = model;
+	}
+
+	@Override
+	public int compareTo(Metric o) {
+		if (o == null) {
+			return 1;
+		}
+		return this.name.compareTo(o.getName());
 	}
 
 }
