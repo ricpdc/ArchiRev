@@ -27,13 +27,9 @@
 			<version>3.0.0</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.benf</groupId>
-			<artifactId>org.benf.cfr</artifactId>
-			<version>0.130</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/resources/lib/cfr_0_130.jar</systemPath>
-		</dependency>
+		<!-- <dependency> <groupId>org.benf</groupId> <artifactId>org.benf.cfr</artifactId> 
+			<version>0.130</version> <scope>system</scope> <systemPath>${project.basedir}/src/main/resources/lib/cfr_0_130.jar</systemPath> 
+			</dependency> -->
 
 		<dependency>
 			<groupId>com.archimatetool</groupId>
@@ -146,10 +142,10 @@
 			<version>24.0-jre</version>
 		</dependency>
 
-	<dependency>
-        <groupId>org.primefaces.extensions</groupId>
-        <artifactId>primefaces-extensions</artifactId>
-    </dependency>
+		<dependency>
+			<groupId>org.primefaces.extensions</groupId>
+			<artifactId>primefaces-extensions</artifactId>
+		</dependency>
 
 
 		<!-- https://mvnrepository.com/artifact/guru.nidi/graphviz-java -->
@@ -187,6 +183,20 @@
 			<artifactId>jdom2</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4</artifactId>
+			<version>4.7.1</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4-runtime</artifactId>
+			<version>4.7.1</version>
+		</dependency>
+
+
 
 	</dependencies>
 
@@ -215,6 +225,23 @@
 						<Bundle-Vendor>see https://github.com/jgraph/jgraphx)</Bundle-Vendor>
 						<Automatic-Module-Name>com.mxgraph.jgraphx</Automatic-Module-Name>
 					</instructions>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr4-maven-plugin</artifactId>
+				<version>4.5</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>antlr4</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<outputDirectory>${project.build.directory}/../src/main/java/es/alarcos/archirev/parser</outputDirectory>
+					<visitor>true</visitor>
 				</configuration>
 			</plugin>
 
