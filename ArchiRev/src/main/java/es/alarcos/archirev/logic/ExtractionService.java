@@ -280,6 +280,8 @@ public class ExtractionService implements Serializable {
 			JavaClass javaClass = null;
 			try {
 				javaClass = cp.parse();
+				LOGGER.debug("Entry: " + entry.getName());
+				//LOGGER.debug("javaClass: " + javaClass);
 			} catch (ClassFormatException | IOException e) {
 				LOGGER.error(entry.getName() + " cannot be parsed");
 				javaClass = null;
@@ -328,7 +330,18 @@ public class ExtractionService implements Serializable {
 				}
 				String formattedName = getFormattedName(javaClass);
 				elementToBeAdded.setName(formattedName);
-				modelElementsByClassName.add(javaClass.getClassName(), elementToBeAdded);
+				boolean existent=false;
+				List<ArchimateElement> archimateElements = modelElementsByClassName.get(javaClass.getClassName());
+				for (int i = 0; archimateElements!=null && i < archimateElements.size(); i++) {
+					if(archimateElements.get(i).getClass().equals(elementToBeAdded.getClass())) {
+						existent=true;
+						break;
+					}
+					
+				}
+				if(!existent) {
+					modelElementsByClassName.add(javaClass.getClassName(), elementToBeAdded);
+				}
 			}
 		}
 		return modelElementsByClassName;
