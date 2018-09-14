@@ -31,7 +31,7 @@ public class Extraction extends AbstractEntity {
 	@Column(name = "setup")
 	private String setup;
 
-	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.PERSIST })
+	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinTable(name = "extraction_source", joinColumns = {
 			@JoinColumn(name = "extraction_id", nullable = true) }, inverseJoinColumns = {
 					@JoinColumn(name = "source_id") })

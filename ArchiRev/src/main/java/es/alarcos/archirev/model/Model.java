@@ -25,7 +25,7 @@ public class Model extends AbstractEntity {
 	@Column(name = "name")
 	private String name;
 	
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "extraction_id")
 	private Extraction extraction;
 
