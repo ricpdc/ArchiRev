@@ -2,6 +2,7 @@
 	{"annotation":"ManagedBean","element":"APPLICATION"},
 	{"annotation":"Controller","element":"APPLICATION"},
 	{"annotation":"Component","element":"APPLICATION"},
+	{"annotation":"Named","element":"APPLICATION"},
 	{"annotation":"Service","element":"APPLICATION"},
 	{"annotation":"Entity","element":"DATA_ENTITY"},
 	{"annotation":"Table","element":"DATA_ENTITY"},
