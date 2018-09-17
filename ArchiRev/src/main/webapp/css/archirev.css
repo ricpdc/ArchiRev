@@ -19,3 +19,11 @@ dt>a[class*='activeDiagram'] {
 dd label[class*='ui-widget'] {
 	font-size: small !important;
 }
+
+.blockUIclass,
+#blockUIid {
+	background-color: transparent !important;
+	border: none !important;
+	webkit-box-shadow: none !important;
+	box-shadow: none !important;
+}
