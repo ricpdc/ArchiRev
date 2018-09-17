@@ -596,7 +596,7 @@ public class ExtractionService implements Serializable {
 				ApplicationComponent component = componentElments.isEmpty() ? null
 						: (ApplicationComponent) componentElments.get(0);
 				Object componentNode = null;
-				if (component != null) {
+				if (component != null && !model.getView().equals(ModelViewEnum.INFORMATION_STRUCTURE)) {
 					ShapeEnum shapeEnum = ShapeEnum.getByModelElement(component.getClass());
 					componentNode = graph.insertVertex(parent, null, component.getName(), 0, 0,
 							component.getName().length() * 5 + 60 + 30, 40 + 35, shapeEnum.getShape().getSimpleName());
@@ -610,10 +610,13 @@ public class ExtractionService implements Serializable {
 					if (archimateElement instanceof ApplicationComponent) {
 						continue;
 					}
-					Object node = graph.insertVertex(parent, null, archimateElement.getName(), 15, 20,
-							archimateElement.getName().length() * 5 + 60, 40, shapeEnum.getShape().getSimpleName());
-
-					nodes.put(archimateElement, componentNode != null ? componentNode : node);
+					
+					if(filterInForView(model.getView(), archimateElement)) {
+						Object node = graph.insertVertex(parent, null, archimateElement.getName(), 15, 20,
+								archimateElement.getName().length() * 5 + 60, 40, shapeEnum.getShape().getSimpleName());
+	
+						nodes.put(archimateElement, componentNode != null ? componentNode : node);
+					}
 
 					// LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + " (\"" +
 					// archimateElement.getName()
@@ -634,22 +637,24 @@ public class ExtractionService implements Serializable {
 
 					mxCell node1 = (mxCell) nodes.get(archimateRelationship.getSource());
 					mxCell node2 = (mxCell) nodes.get(archimateRelationship.getTarget());
-					String edgeId = node1.getValue() + "--" + archimateRelationship.getClass().getSimpleName() + "-->"
-							+ node2.getValue();
-
-					if (visitedEdges.contains(edgeId) || node1.equals(node2) || node1.getParent().equals(node2)
-							|| node2.getParent().equals(node1)) {
-						continue;
+					if(node1!=null && node2!=null) {
+						String edgeId = node1.getValue() + "--" + archimateRelationship.getClass().getSimpleName() + "-->"
+								+ node2.getValue();
+	
+						if (visitedEdges.contains(edgeId) || node1.equals(node2) || node1.getParent().equals(node2)
+								|| node2.getParent().equals(node1)) {
+							continue;
+						}
+	
+						String simpleName = archimateRelationship.getClass().getSimpleName();
+						Object edge = graph.insertEdge(parent, null, simpleName, node1, node2,
+								archimateRelationship.getClass().getSimpleName());
+	
+						visitedEdges.add(edgeId);
+						edges.put(archimateRelationship, edge);
+	
+						LOGGER.info("\t" + archimateRelationship.getId());
 					}
-
-					String simpleName = archimateRelationship.getClass().getSimpleName();
-					Object edge = graph.insertEdge(parent, null, simpleName, node1, node2,
-							archimateRelationship.getClass().getSimpleName());
-
-					visitedEdges.add(edgeId);
-					edges.put(archimateRelationship, edge);
-
-					LOGGER.info("\t" + archimateRelationship.getId());
 				}
 			}
 
