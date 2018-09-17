@@ -8,13 +8,16 @@ import java.util.TreeSet;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import es.alarcos.archirev.model.enums.ModelViewEnum;
 
 @Entity
 @Table(name = "model")
@@ -25,7 +28,11 @@ public class Model extends AbstractEntity {
 	@Column(name = "name")
 	private String name;
 	
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@Enumerated(EnumType.STRING)
+	@Column(name = "view")
+	private ModelViewEnum view;
+	
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "extraction_id")
 	private Extraction extraction;
 
@@ -116,6 +123,14 @@ public class Model extends AbstractEntity {
 	
 	public void addMetric(Metric metric) {
 		metrics.add(metric);
+	}
+
+	public ModelViewEnum getView() {
+		return view;
+	}
+
+	public void setView(ModelViewEnum view) {
+		this.view = view;
 	}
 
 }

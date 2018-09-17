@@ -72,7 +72,7 @@
 				</p:column>
 				<p:column style="width:60px;text-align: center">
 					<p:outputLabel
-						styleClass="#{extraction.model==null? 'fa fa-file-o' : 'fa fa-file-text'}"
+						styleClass="#{(extraction.models==null or extraction.models.isEmpty())? 'fa fa-file-o' : 'fa fa-file-text'}"
 						style="font-size: 1em; color: #3c667c; padding-right:10px" />
 
 					<p:commandButton id="startExtraction" icon="ui-icon-gear"

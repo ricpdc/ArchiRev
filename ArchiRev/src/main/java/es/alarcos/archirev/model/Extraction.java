@@ -1,5 +1,6 @@
 package es.alarcos.archirev.model;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -13,7 +14,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -37,9 +38,9 @@ public class Extraction extends AbstractEntity {
 					@JoinColumn(name = "source_id") })
 	private Set<Source> sources;
 
-	@OneToOne(mappedBy = "extraction", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
-	private Model model;
-
+	@OneToMany(mappedBy = "extraction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<Model> models = new HashSet<>();
+	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "project_id")
 	private Project project;
@@ -72,12 +73,16 @@ public class Extraction extends AbstractEntity {
 		this.sources = sources;
 	}
 
-	public Model getModel() {
-		return model;
+	public Set<Model> getModels() {
+		return models;
 	}
 
-	public void setModel(Model model) {
-		this.model = model;
+	public void setModels(Set<Model> models) {
+		this.models = models;
+	}
+	
+	public void addModel(Model model) {
+		getModels().add(model);
 	}
 
 	public Project getProject() {

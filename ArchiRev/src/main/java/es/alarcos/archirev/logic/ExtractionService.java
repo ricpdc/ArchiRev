@@ -57,10 +57,12 @@ import org.xml.sax.SAXException;
 import com.archimatetool.model.impl.AccessRelationship;
 import com.archimatetool.model.impl.AggregationRelationship;
 import com.archimatetool.model.impl.ApplicationComponent;
+import com.archimatetool.model.impl.ArchimateConcept;
 import com.archimatetool.model.impl.ArchimateElement;
 import com.archimatetool.model.impl.ArchimateFactory;
 import com.archimatetool.model.impl.ArchimateRelationship;
 import com.archimatetool.model.impl.CompositionRelationship;
+import com.archimatetool.model.impl.DataObject;
 import com.archimatetool.model.impl.RealizationRelationship;
 import com.archimatetool.model.impl.ServingRelationship;
 import com.archimatetool.model.impl.SpecializationRelationship;
@@ -83,6 +85,7 @@ import es.alarcos.archirev.logic.shape.ShapeEnum;
 import es.alarcos.archirev.model.Metric;
 import es.alarcos.archirev.model.Model;
 import es.alarcos.archirev.model.Source;
+import es.alarcos.archirev.model.enums.ModelViewEnum;
 
 @Singleton
 @Service
@@ -132,7 +135,7 @@ public class ExtractionService implements Serializable {
 		loadSetup(model);
 
 		for (Source source : sources) {
-			modelName += ("_" + source.getName());
+			modelName += ("_" + source.getName() + "_" + model.getView().getLabel());
 			switch (source.getType()) {
 			case WEB_APP:
 				imageFile = extractArchimateModelForWebApp(model, source, false);
@@ -381,7 +384,7 @@ public class ExtractionService implements Serializable {
 				ApplicationComponent component = componentElments.isEmpty() ? null
 						: (ApplicationComponent) componentElments.get(0);
 				Object componentNode = null;
-				if (component != null) {
+				if (component != null && !model.getView().equals(ModelViewEnum.INFORMATION_STRUCTURE)) {
 					ShapeEnum shapeEnum = ShapeEnum.getByModelElement(component.getClass());
 					componentNode = graph.insertVertex(parent, null, component.getName(), 0, 0,
 							component.getName().length() * 5 + 60 + 30, 40 + 35, shapeEnum.getShape().getSimpleName());
@@ -395,10 +398,12 @@ public class ExtractionService implements Serializable {
 					if (archimateElement instanceof ApplicationComponent) {
 						continue;
 					}
-					Object node = graph.insertVertex(parent, null, archimateElement.getName(), 15, 20,
-							archimateElement.getName().length() * 5 + 60, 40, shapeEnum.getShape().getSimpleName());
 
-					nodes.put(archimateElement, componentNode != null ? componentNode : node);
+					if(filterInForView(model.getView(), archimateElement)) {
+						Object node = graph.insertVertex(parent, null, archimateElement.getName(), 15, 20,
+								archimateElement.getName().length() * 5 + 60, 40, shapeEnum.getShape().getSimpleName());
+						nodes.put(archimateElement, componentNode != null ? componentNode : node);
+					}
 					// nodes.put(archimateElement, node);
 
 					// LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + " (\"" +
@@ -418,21 +423,23 @@ public class ExtractionService implements Serializable {
 
 					mxCell node1 = (mxCell) nodes.get(archimateRelationship.getSource());
 					mxCell node2 = (mxCell) nodes.get(archimateRelationship.getTarget());
-					String edgeId = node1.getValue() + "--" + archimateRelationship.getClass().getSimpleName() + "-->"
-							+ node2.getValue();
-
-					if (visitedEdges.contains(edgeId) || node1.equals(node2) || node1.getParent().equals(node2)
-							|| node2.getParent().equals(node1)) {
-						continue;
+					if(node1!=null && node2!=null) {
+						String edgeId = node1.getValue() + "--" + archimateRelationship.getClass().getSimpleName() + "-->"
+								+ node2.getValue();
+	
+						if (visitedEdges.contains(edgeId) || node1.equals(node2) || node1.getParent().equals(node2)
+								|| node2.getParent().equals(node1)) {
+							continue;
+						}
+	
+						String simpleName = archimateRelationship.getClass().getSimpleName();
+						graph.insertEdge(parent, null, simpleName, node1, node2,
+								archimateRelationship.getClass().getSimpleName());
+	
+						visitedEdges.add(edgeId);
+	
+						LOGGER.info("\t" + archimateRelationship.getId());
 					}
-
-					String simpleName = archimateRelationship.getClass().getSimpleName();
-					graph.insertEdge(parent, null, simpleName, node1, node2,
-							archimateRelationship.getClass().getSimpleName());
-
-					visitedEdges.add(edgeId);
-
-					LOGGER.info("\t" + archimateRelationship.getId());
 				}
 			}
 		} finally {
@@ -463,6 +470,18 @@ public class ExtractionService implements Serializable {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private boolean filterInForView(ModelViewEnum modelViewEnum, ArchimateConcept archimateElement) {
+		boolean filterInForView=false;
+		if (modelViewEnum.equals(ModelViewEnum.APPLICATION_BEHAVIOUR)) {
+			filterInForView=true;
+		} else if (modelViewEnum.equals(ModelViewEnum.APPLICATION_STRUCTURE)) {
+			filterInForView=true;
+		} else if (modelViewEnum.equals(ModelViewEnum.INFORMATION_STRUCTURE)) {
+			filterInForView = archimateElement instanceof DataObject;
+		}
+		return filterInForView;
 	}
 
 	private void computeMetrics(Model model, mxGraph graph) {

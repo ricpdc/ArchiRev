@@ -37,6 +37,7 @@ import es.alarcos.archirev.model.Extraction;
 import es.alarcos.archirev.model.Model;
 import es.alarcos.archirev.model.Project;
 import es.alarcos.archirev.model.Source;
+import es.alarcos.archirev.model.enums.ModelViewEnum;
 import es.alarcos.archirev.model.enums.SourceConcernEnum;
 import es.alarcos.archirev.model.enums.SourceEnum;
 import es.alarcos.archirev.persistency.ExtractionDao;
@@ -176,27 +177,31 @@ public class ExtractionController extends AbstractController {
 	public void startExtraction(Extraction extraction) {
 		final Timestamp now = new Timestamp(new Date().getTime());
 		final String loggedUser = sessionController.getLoggedUser();
-		Model model = null;
-		if(extraction.getModel()==null) {
-			model = new Model();
-			model.setExtraction(extraction);
-			model.setProject(getProject());
-			model.setCreatedAt(now);
-			model.setCreatedBy(loggedUser);
-			model.setModifiedAt(now);
-			model.setModifiedBy(loggedUser);
-			extraction.setModel(model);
-			getProject().getModels().add(model);
+		if(extraction.getModels().isEmpty()) {
+			for (ModelViewEnum view : ModelViewEnum.values()) {
+				Model model = new Model();
+				model.setView(view);
+				model.setExtraction(extraction);
+				model.setProject(getProject());
+				model.setCreatedAt(now);
+				model.setCreatedBy(loggedUser);
+				model.setModifiedAt(now);
+				model.setModifiedBy(loggedUser);
+				model.setImagePath(createImageFile(extraction));
+				extraction.addModel(model);
+				getProject().getModels().add(model);
+			}
 		}
 		else {
-			model = extraction.getModel();
-			model.setModifiedAt(now);
-			model.setModifiedBy(loggedUser);
+			for (Model model : extraction.getModels()) {
+				model.setModifiedAt(now);
+				model.setModifiedBy(loggedUser);
+			}
 		}
 		
-		model.setImagePath(createImageFile(extraction));
-				
-		extractionService.extractArchimateModel(model);
+		for (Model model : extraction.getModels()) {
+			extractionService.extractArchimateModel(model);
+		}
 		
 		getProject().setModifiedAt(now);
 		getProject().setModifiedBy(loggedUser);
@@ -229,7 +234,7 @@ public class ExtractionController extends AbstractController {
 
 	public void startAllExtractions() {
 		for (Extraction extraction : getProject().getExtractions()) {
-			if (extraction.getModel() != null) {
+			if (extraction.getModels() == null || extraction.getModels().isEmpty()) {
 				startExtraction(extraction);
 			}
 		}
