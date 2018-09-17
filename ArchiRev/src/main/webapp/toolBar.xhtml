@@ -6,10 +6,10 @@
 
 	<p:toolbar id="toolbar">
 		<f:facet name="left">
-			<p:commandButton disabled="#{!userLoginController.loggedIn}" value="New project" icon="ui-icon-document"
+			<p:commandButton id="newProjectButtonId" disabled="#{!userLoginController.loggedIn}" value="New project" icon="ui-icon-document"
 				actionListener="#{newProjectDialogController.onOpen}" />
 
-			<p:commandButton disabled="#{!userLoginController.loggedIn}" value="Manage projects" icon="ui-icon-folder-open"
+			<p:commandButton id="openProjectButtonId" disabled="#{!userLoginController.loggedIn}" value="Manage projects" icon="ui-icon-folder-open"
 				actionListener="#{openProjectDialogController.onOpen}" />
 
 			<span class="ui-separator"> <span
@@ -23,9 +23,9 @@
 
 		<f:facet name="right">
 			<h:outputText value="Welcome, #{userLoginController.username}     " rendered="#{userLoginController.loggedIn}" style="" />
-			<p:commandButton id="loginDialogButton" rendered="#{userLoginController.loggedIn}" title="Logout" value="Logout" icon="ui-icon-person"
+			<p:commandButton id="logoutDialogButton" rendered="#{userLoginController.loggedIn}" title="Logout" value="Logout" icon="ui-icon-person"
 				 action="#{sessionController.logout}" update="mainForm:toolbar" />
-			<p:commandButton id="logoutDialogButton" rendered="#{!userLoginController.loggedIn}" title="Login" value="Login" icon="ui-icon-person"
+			<p:commandButton id="loginDialogButton" rendered="#{!userLoginController.loggedIn}" title="Login" value="Login" icon="ui-icon-person"
 				 onclick="PF('loginDialog').show();" />
 			<p:menuButton  disabled="#{!userLoginController.loggedIn}" value="Options" rendered="false">
 				<p:menuitem value="Save" actionListener="#{toolbarController.save}"

@@ -5,7 +5,7 @@
 	xmlns:p="http://primefaces.org/ui">
 
 	<p:dialog id="loginDialog" widgetVar="loginDialog" header="Login" resizable="false">
-        <h:panelGrid columns="2" cellpadding="5">
+        <h:panelGrid columns="2" cellpadding="5" onkeypress="if (event.keyCode == 13) { document.getElementById('mainForm:performLoginButtonId').click(); return false; }">
             <h:outputLabel for="username" value="Username:" />
             <p:inputText id="username" value="#{userLoginController.username}" required="true" label="username" />
  
@@ -16,7 +16,10 @@
 				<p:commandButton id="performLoginButtonId" value="Login" update="mainForm:messages, mainForm:toolbar"
 					actionListener="#{sessionController.login}"
 					oncomplete="handleLoginRequest(xhr, status, args)" />
-			</f:facet>  
+				
+			</f:facet> 
+			
+			 
         </h:panelGrid>
     </p:dialog>
  
