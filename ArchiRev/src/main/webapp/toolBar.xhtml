@@ -6,6 +6,10 @@
 
 	<p:toolbar id="toolbar">
 		<f:facet name="left">
+			<p:graphicImage value="images/fav.png" height="28px"/>
+			<span class="ui-separator"> <span
+				class="ui-icon ui-icon-grip-dotted-vertical" />
+			</span>
 			<p:commandButton id="newProjectButtonId" disabled="#{!userLoginController.loggedIn}" value="New project" icon="ui-icon-document"
 				actionListener="#{newProjectDialogController.onOpen}" />
 
