@@ -945,11 +945,13 @@ public class ExtractionService implements Serializable {
 		Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zipFile.entries();
 		while (entries.hasMoreElements()) {
 			ZipEntry entry = entries.nextElement();
-			if (entry.isDirectory())
+			if (entry.isDirectory()) {
 				continue;
+			}
 
-			if (!entry.getName().endsWith(".class"))
+			if (!entry.getName().endsWith(".class")) {
 				continue;
+			}
 
 			cp = new ClassParser(tempWarFile.getAbsolutePath(), entry.getName());
 			JavaClass javaClass = null;
