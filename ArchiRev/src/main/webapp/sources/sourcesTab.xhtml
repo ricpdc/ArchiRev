@@ -2,7 +2,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
 
 	<p:tab id="sourcesTab" title="Knowledge Sources">
 
@@ -63,8 +64,8 @@
 			</p:row>
 
 		</p:panelGrid>
-		
-		
+
+
 		<p:panel id="sourceListPanel" widgetVar="sourceListPanel"
 			header="Added knowledge sources list" toggleable="true"
 			toggleSpeed="500" style="margin-bottom:10px; width:100%" width="100%">
@@ -74,6 +75,14 @@
 				paginatorPosition="bottom"
 				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 				rowsPerPageTemplate="5,10,15">
+
+				<p:ajax event="rowToggle"
+					listener="#{sourcesController.onRowToggle}"
+					update="treeTableExpansion" />
+
+				<p:column style="width:16px">
+					<p:rowToggler />
+				</p:column>
 				<p:column headerText="Concern" sortBy="#{source.concern.label}"
 					width="180" filterBy="#{source.concern.label}"
 					filterMatchMode="contains">
@@ -115,8 +124,47 @@
 							styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 					</p:confirmDialog>
 				</p:column>
+
+				<p:rowExpansion id="expansionId">
+					<p:treeTable id="treeTableExpansion"
+						value="#{sourcesController.sourceRoot}" var="node">
+						<f:facet name="header">
+				            Document Viewer
+				        </f:facet>
+
+						<p:column headerText="">
+							<h:outputText value="#{node.name}" />
+						</p:column>
+						<p:column style="width:24px">
+							<p:commandLink
+								update="mainForm:mainTabs:documentViewerDialogId, mainForm:mainTabs:codeMirror"
+								rendered="#{not node.directory}"
+								oncomplete="PF('documentDialog').show()" title="View Detail"
+								actionListener="#{sourcesController.selectNode(node)}"
+								styleClass="ui-icon ui-icon-search" />
+						</p:column>
+
+					</p:treeTable>
+
+
+				</p:rowExpansion>
+
 			</p:dataTable>
 		</p:panel>
+
+		<p:dialog id="documentViewerDialogId" header="Document Detail"
+			showEffect="fade" widgetVar="documentDialog" modal="true"
+			closable="true" closeOnEscape="true" width="1000" height="370"
+			resizable="false">
+			<f:facet name="header">
+				Document Viewer: #{not empty sourcesController.selectedNode? sourcesController.selectedNode.name : ''}
+			</f:facet>
+			<p:outputPanel id="documentPanel">
+				<pe:codeMirror id="codeMirror" mode="#{sourcesController.documentTextType}" theme="eclipse" readonly="true"
+					value="#{sourcesController.documentText}" keyMap="default"
+					lineNumbers="true" matchBrackets="true" />
+			</p:outputPanel>
+		</p:dialog>
 
 
 	</p:tab>

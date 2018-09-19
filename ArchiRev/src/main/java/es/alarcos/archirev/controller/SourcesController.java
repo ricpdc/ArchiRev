@@ -1,6 +1,7 @@
 package es.alarcos.archirev.controller;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -9,10 +10,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -22,10 +27,18 @@ import javax.faces.component.UIOutput;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 
+import org.apache.bcel.classfile.ClassFormatException;
+import org.apache.bcel.classfile.ClassParser;
+import org.apache.bcel.classfile.JavaClass;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.ToggleEvent;
+import org.primefaces.model.DefaultTreeNode;
+import org.primefaces.model.TreeNode;
 import org.primefaces.model.UploadedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,9 +63,17 @@ public class SourcesController extends AbstractController {
 
 	@Autowired
 	private SessionController sessionController;
-	
+
 	private SourceConcernEnum sourceConcern;
 	private SourceEnum sourceType;
+
+	private Source selectedSource;
+	private ZipFile zipFile;
+	private TreeNode sourceRoot;
+	private ZipEntry selectedNode;
+	private String documentText;
+	private String documentTextType;
+	private Hashtable<String, TreeNode> directories = new Hashtable<>();
 
 	Map<SourceConcernEnum, Set<SourceEnum>> sourcesMap = Maps.newHashMap();
 
@@ -84,11 +105,11 @@ public class SourcesController extends AbstractController {
 	}
 
 	public void onSelectSourceConcern(final AjaxBehaviorEvent event) {
-		sourceType=null;
+		sourceType = null;
 		SourceConcernEnum concern = (SourceConcernEnum) ((UIOutput) event.getSource()).getValue();
 		LOGGER.info("Selected concern: " + concern);
 	}
-	
+
 	public void onSelectSourceType(final AjaxBehaviorEvent event) {
 		SourceEnum type = (SourceEnum) ((UIOutput) event.getSource()).getValue();
 		LOGGER.info("Selected type: " + type);
@@ -97,7 +118,7 @@ public class SourcesController extends AbstractController {
 	public void addSource(FileUploadEvent event) {
 		Validate.notNull(sourceConcern, "Source concern cannot be null");
 		Validate.notNull(sourceType, "Source type cannot be null");
-		
+
 		UploadedFile uploadedFile = event.getFile();
 		Validate.notNull(uploadedFile, "corrupt uploaded file");
 
@@ -105,16 +126,15 @@ public class SourcesController extends AbstractController {
 		source.setConcern(sourceConcern);
 		source.setType(sourceType);
 		source.setName(uploadedFile.getFileName());
-		
+
 		String extension = FilenameUtils.getExtension(uploadedFile.getFileName());
 		Validate.isTrue(sourceType.getExtensions().contains(extension));
 		source.setFileExtension(extension);
-		
+
 		String filePath = saveFileInServer(uploadedFile);
-		
+
 		source.setFilePath(filePath);
-		
-		
+
 		source.setProject(getProject());
 		final Timestamp now = new Timestamp(new Date().getTime());
 		source.setCreatedAt(now);
@@ -122,14 +142,13 @@ public class SourcesController extends AbstractController {
 		final String loggedUser = sessionController.getLoggedUser();
 		source.setCreatedBy(loggedUser);
 		source.setModifiedBy(loggedUser);
-		
+
 		getProject().getSources().add(source);
 		getProject().setModifiedAt(now);
 		getProject().setModifiedBy(loggedUser);
-		
+
 		sessionController.updateProject();
-		
-		
+
 		// Now store it in DB.
 
 		RequestContext.getCurrentInstance().update("mainForm:mainTabs:sourcesTable");
@@ -137,7 +156,7 @@ public class SourcesController extends AbstractController {
 		FacesMessage message = new FacesMessage("Succesful", uploadedFile.getFileName() + " is uploaded.");
 		FacesContext.getCurrentInstance().addMessage(null, message);
 	}
-	
+
 	private String saveFileInServer(final UploadedFile uploadedFile) {
 		File folder = new File(getSessionController().getProperty("location.upload"));
 		String fileName = FilenameUtils.getBaseName(uploadedFile.getFileName());
@@ -159,12 +178,124 @@ public class SourcesController extends AbstractController {
 
 		return filePath.toString();
 	}
-	
+
+	public void onRowToggle(ToggleEvent event) {
+		selectedSource = (Source) event.getData();
+		LOGGER.info("Source expanded: " + selectedSource);
+		computeSourceRoot();
+	}
+
+	@SuppressWarnings({ "resource", "unchecked" })
+	private void computeSourceRoot() {
+		sourceRoot = new DefaultTreeNode(new ZipEntry(selectedSource.getName()), null);
+		try {
+
+			File tempWarFile = File.createTempFile("warFile", ".tmp", null);
+			FileOutputStream fos = new FileOutputStream(tempWarFile);
+			fos.write(selectedSource.getFile());
+			fos.close();
+			zipFile = new ZipFile(tempWarFile);
+
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			return;
+		}
+
+		directories = new Hashtable<String, TreeNode>();
+		Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zipFile.entries();
+		while (entries.hasMoreElements()) {
+			ZipEntry entry = entries.nextElement();
+			if (entry.isDirectory()) {
+				directories.put(entry.getName(), new DefaultTreeNode(entry, getParentDirectory(entry)));
+			}
+		}
+
+		entries = (Enumeration<ZipEntry>) zipFile.entries();
+		while (entries.hasMoreElements()) {
+			ZipEntry entry = entries.nextElement();
+			if (!entry.isDirectory()) {
+				new DefaultTreeNode(entry, getParentDirectory(entry));
+			}
+		}
+
+	}
+
+	private TreeNode getParentDirectory(ZipEntry entry) {
+		String entryName = entry.getName();
+		String parentName = new File(entryName).getParent();
+		if (parentName == null) {
+			return sourceRoot;
+		}
+		parentName = parentName.replaceAll("\\\\", "/") + "/";
+		if (directories.get(parentName) == null) {
+			return sourceRoot;
+		}
+		return directories.get(parentName);
+	}
+
+	public void selectNode(ZipEntry node) {
+		LOGGER.info(node.getName() + " selected!");
+		selectedNode = node;
+		computeDocumentText();
+		RequestContext.getCurrentInstance().update("mainForm:mainTabs:documentViewerDialogId");
+		RequestContext.getCurrentInstance().update("mainForm:mainTabs:codeMirror");
+	}
+
+	private void computeDocumentText() {
+		documentText = StringUtils.EMPTY;
+		if (selectedNode == null || zipFile == null) {
+			return;
+		}
+		try {
+			documentText = IOUtils.toString(zipFile.getInputStream(selectedNode));
+			String extension = FilenameUtils.getExtension(selectedNode.getName());
+			switch (extension) {
+			case "class":
+				documentText = decompile(selectedNode);
+				documentTextType = "groovy";
+				break;
+			case "java":
+				documentTextType = "javascript";
+				break;
+			case "xhtml":
+				documentTextType = "htmlmixed";
+			case "xml":
+				documentTextType = "xml";
+				break;
+			default:
+				documentTextType = "htmlmixed";
+			}
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			e.printStackTrace();
+			return;
+		}
+	}
+
+	private String decompile(ZipEntry entry) {
+		
+		if (entry.isDirectory() || !entry.getName().endsWith(".class")) {
+			return "It is not a valid class file";
+		}
+
+		ClassParser cp = new ClassParser(selectedSource.getFilePath(), entry.getName());
+		JavaClass javaClass = null;
+		try {
+			javaClass = cp.parse();
+		} catch (ClassFormatException | IOException e) {
+			LOGGER.error(entry.getName() + " cannot be parsed");
+			javaClass = null;
+			return "Error parsing file!";
+		}
+		
+		return javaClass.toString();
+	}
+
 	public void removeSource(final Source source) {
 		getProject().getSources().remove(source);
 		sessionController.updateProject();
-    }
-	
+	}
+
 	private Project getProject() {
 		return sessionController.getProject();
 	}
@@ -192,9 +323,9 @@ public class SourcesController extends AbstractController {
 	public SourceEnum getSourceType() {
 		return sourceType;
 	}
-	
+
 	public String getSelectFileMessage() {
-		return sourceType!=null ? "Select " + sourceType.getLabel() + " " + sourceType.getFormattedExtensions() : "";
+		return sourceType != null ? "Select " + sourceType.getLabel() + " " + sourceType.getFormattedExtensions() : "";
 	}
 
 	public void setSourceType(SourceEnum sourceType) {
@@ -207,6 +338,46 @@ public class SourcesController extends AbstractController {
 
 	public void setSourceConcern(SourceConcernEnum sourceConcern) {
 		this.sourceConcern = sourceConcern;
+	}
+
+	public TreeNode getSourceRoot() {
+		return sourceRoot;
+	}
+
+	public void setSourceRoot(TreeNode sourceRoot) {
+		this.sourceRoot = sourceRoot;
+	}
+
+	public ZipEntry getSelectedNode() {
+		return selectedNode;
+	}
+
+	public void setSelectedNode(ZipEntry selectedNode) {
+		this.selectedNode = selectedNode;
+	}
+
+	public String getDocumentText() {
+		return documentText;
+	}
+
+	public void setDocumentText(String documentText) {
+		this.documentText = documentText;
+	}
+
+	public String getDocumentTextType() {
+		return documentTextType;
+	}
+
+	public void setDocumentTextType(String documentTextType) {
+		this.documentTextType = documentTextType;
+	}
+
+	public Source getSelectedSource() {
+		return selectedSource;
+	}
+
+	public void setSelectedSource(Source selectedSource) {
+		this.selectedSource = selectedSource;
 	}
 
 }
