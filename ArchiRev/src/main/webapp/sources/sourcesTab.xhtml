@@ -21,17 +21,17 @@
 							<h:outputText value="Source Type" />
 						</f:facet>
 						<p:panelGrid columns="2" width="100%">
-							<h:outputText value="Soruce concern"></h:outputText>
+							<h:outputText value="Source concern"></h:outputText>
 							<p:selectOneButton value="#{sourcesController.sourceConcern}">
 								<f:selectItems value="#{sourcesController.sourceConcernOptions}"
-									var="soruceConcern" itemValue="#{sourceConcern}"
+									var="sourceConcern" itemValue="#{sourceConcern}"
 									itemLabel="#{sourceConcern.label}" />
 								<p:ajax event="change"
 									listener="#{sourcesController.onSelectSourceConcern}"
 									update="mainForm:mainTabs:sourceTypeList, mainForm:mainTabs:selectionHint, mainForm:mainTabs:uploadFilePanel" />
 							</p:selectOneButton>
 
-							<h:outputText style="vertical-align:top;" value="Soruce type"></h:outputText>
+							<h:outputText style="vertical-align:top;" value="Source type"></h:outputText>
 							<p:selectOneListbox id="sourceTypeList"
 								value="#{sourcesController.sourceType}" filter="true"
 								filterMatchMode="contains">

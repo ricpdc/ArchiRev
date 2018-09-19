@@ -1026,12 +1026,12 @@ public class ExtractionService implements Serializable {
 
 	private ArchimateRelationship getPrioritizedRelationship(ArchimateElement source, ArchimateElement target) {
 		ArchimateRelationship DEFAULT = (ArchimateRelationship) ArchimateFactory.eINSTANCE.createAccessRelationship();
-		Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>> relationshipSoruceClass = mapPrioritizedRelationship
+		Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>> relationshipSourceClass = mapPrioritizedRelationship
 				.get(source.getClass());
-		if (relationshipSoruceClass == null) {
+		if (relationshipSourceClass == null) {
 			return DEFAULT;
 		}
-		Class<? extends ArchimateRelationship> relationshipClass = relationshipSoruceClass.get(target.getClass());
+		Class<? extends ArchimateRelationship> relationshipClass = relationshipSourceClass.get(target.getClass());
 
 		if (relationshipClass == null) {
 			return DEFAULT;

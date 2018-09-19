@@ -96,7 +96,7 @@ public class SourcesController extends AbstractController {
 
 	public void addSource(FileUploadEvent event) {
 		Validate.notNull(sourceConcern, "Source concern cannot be null");
-		Validate.notNull(sourceType, "Soruce type cannot be null");
+		Validate.notNull(sourceType, "Source type cannot be null");
 		
 		UploadedFile uploadedFile = event.getFile();
 		Validate.notNull(uploadedFile, "corrupt uploaded file");
