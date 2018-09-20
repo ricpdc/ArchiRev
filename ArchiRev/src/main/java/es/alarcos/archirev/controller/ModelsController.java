@@ -45,6 +45,7 @@ public class ModelsController extends AbstractController {
 	private ExtractionService extractionService;
 
 	private Model selectedModel;
+	private View selectedView;
 	
 	private StreamedContent exportedFile;
 
@@ -71,9 +72,10 @@ public class ModelsController extends AbstractController {
 			return null;
 		}
 		try {
-			//TODO add diferent views that can be selectable
-			View defaultView = selectedModel.getDefaultView();
-			imageBytes = Files.readAllBytes(new File(defaultView.getSanitizedImagePath()).toPath());
+			if(selectedView==null) {
+				selectedView=selectedModel.getDefaultView();
+			}
+			imageBytes = Files.readAllBytes(new File(selectedView.getSanitizedImagePath()).toPath());
 			return new DefaultStreamedContent(new ByteArrayInputStream(imageBytes), "image/png");
 		} catch (IOException e) {
 			LOGGER.error("Error rendering the model diagram");
@@ -164,6 +166,14 @@ public class ModelsController extends AbstractController {
 
 	public void setExportedFile(StreamedContent exportedFile) {
 		this.exportedFile = exportedFile;
+	}
+
+	public View getSelectedView() {
+		return selectedView;
+	}
+
+	public void setSelectedView(View selectedView) {
+		this.selectedView = selectedView;
 	}
 
 }

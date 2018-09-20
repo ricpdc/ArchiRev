@@ -25,7 +25,7 @@
 
 						<p:ajax event="rowToggle" update="modelExpansion" />
 						<p:ajax event="rowSelect"
-							update="mainForm:mainTabs:eaModelsPanel, mainForm:mainTabs:elementsTabs"
+							update="mainForm:mainTabs:diagramVisualizationPanel, mainForm:mainTabs:elementsTabs"
 							oncomplete="resizeDiagram()" />
 
 						<p:column style="width:16px">
@@ -37,7 +37,21 @@
 						</p:column>
 
 						<p:rowExpansion id="modelExpansion">
-							<p:outputLabel value="views" />
+							<p:dataTable id="modelViewsTableId" widgetVar="modelViewsTable" style="width:100% !important"
+								value="#{modelsController.selectedModel.views}" var="modelView"
+								selection="#{modelsController.selectedView}"
+								selectionMode="single" rowKey="#{modelView.id}"
+								scrollable="true" scrollHeight="300">
+								<p:ajax event="rowSelect"
+									update="mainForm:mainTabs:diagramVisualizationPanel"
+									oncomplete="resizeDiagram()" />
+								<p:column style="width: 50% !important" headerText="Type">
+									<h:outputText value=" #{modelView.type}" />
+								</p:column>
+								<p:column headerText="View">
+									<h:outputText value=" #{modelView.name}" />
+								</p:column>
+							</p:dataTable>
 						</p:rowExpansion>
 					</p:dataTable>
 
@@ -72,7 +86,7 @@
 
 				</p:outputPanel>
 
-				<p:outputPanel>
+				<p:outputPanel id="diagramVisualizationPanel">
 					<p:commandButton id="exportModelButton" value="export"
 						icon="ui-icon-arrowreturnthick-1-n"
 						actionListener="#{modelsController.exportModel()}"
