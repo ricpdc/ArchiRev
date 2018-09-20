@@ -10,49 +10,91 @@
 			header="EA Models" toggleable="true" toggleSpeed="500"
 			style="margin-bottom:10px; width:100%" width="100%">
 
-			<p:panelGrid style="width:100%; border: none;">
-				<p:row>
-					<p:column style="vertical-align:top; width:20% !important">
-						<p:dataList value="#{modelsController.project.models}" var="model" style="height:100%"
-							type="definition">
-							<f:facet name="header">
-								<h:outputText value="Extracted ArchiMate Models" />
-							</f:facet>
-							<p:commandLink update="mainForm:mainTabs:eaModelsPanel"
-								oncomplete="resizeDiagram()"
-								styleClass="fa fa-diamond #{modelsController.selectedModel == model?'activeDiagram':''}">
-								<p:outputLabel value=" #{model.name}"/>
-								<f:setPropertyActionListener value="#{model}"
-									target="#{modelsController.selectedModel}" />
-							</p:commandLink>
-							<f:facet name="description">
-								<p:outputLabel value="#{model.createdAt}"
-									styleClass="#{modelsController.selectedModel == model?'activeDiagram':''}" />
-							</f:facet>
-						</p:dataList>
-					</p:column>
-					<p:column id="modelDiagramPanel"
-						style="vertical-align:top; width:80% !important">
-						<p:commandButton id="exportModelButton" value="export" icon="ui-icon-arrowreturnthick-1-n"
-							actionListener="#{modelsController.exportModel()}"
-							onclick="PF('blockUI').show()" 
-							oncomplete="document.getElementById('mainForm:mainTabs:downloadExportedFileButton').click();PF('blockUI').hide()"/>
-						<p:commandButton id="downloadExportedFileButton" style="display: none"  ajax="false">
-							<p:fileDownload value="#{modelsController.exportedFile}" />
-						</p:commandButton>
-						<p:commandButton id="metricsButton" value="metrics" icon="ui-icon-calculator"
-							actionListener="#{modelsController.openMetricsDialog()}"/>
-							
-						<p:separator id="diagramSeparator" />
-						<p:scrollPanel id="diagramScrollPanel" mode="native"
-							style="width:800px;height:600px">
-							<p:graphicImage id="diagramImage"
-								value="#{modelsController.selectedDiagram}"
-								title="Archimate Diagram for #{modelsController.selectedModel.name}"
-								cache="false" stream="false" />
-						</p:scrollPanel>
-					</p:column>
-				</p:row>
+			<p:panelGrid style="width:100%; border: none;" columns="2"
+				columnClasses="modelsLeft, modelsRight">
+
+				<p:outputPanel>
+
+					<p:dataTable id="modelsTableId" widgetVar="modelsTable"
+						value="#{modelsController.project.models}" var="model"
+						selection="#{modelsController.selectedModel}"
+						selectionMode="single" rowKey="#{model.id}" scrollable="true"
+						scrollHeight="200">
+						emptyMessage="No models extracted" rows="5"
+						rowStyleClass="#{modelsController.selectedModel == model?'activeDiagram':''}">
+
+						<p:ajax event="rowToggle" update="modelExpansion" />
+						<p:ajax event="rowSelect"
+							update="mainForm:mainTabs:eaModelsPanel, mainForm:mainTabs:elementsTabs"
+							oncomplete="resizeDiagram()" />
+
+						<p:column style="width:16px">
+							<p:rowToggler />
+						</p:column>
+
+						<p:column headerText="Extracted ArchiMate Models">
+							<h:outputText value=" #{model.name}" />
+						</p:column>
+
+						<p:rowExpansion id="modelExpansion">
+							<p:outputLabel value="views" />
+						</p:rowExpansion>
+					</p:dataTable>
+
+					<p:tabView id="elementsTabs" style="padding:0px !important">
+						<p:tab title="Elements" style="padding:0px !important">
+							<p:dataTable id="modelElementsTableId"
+								widgetVar="modelElementsTable"
+								value="#{modelsController.selectedModel.elements}" var="element"
+								scrollable="true" scrollHeight="300">
+								<p:column style="width: 30px !important" headerText="Type">
+									<h:outputText value=" #{element.type}" />
+								</p:column>
+								<p:column headerText="Element">
+									<h:outputText value=" #{element.name}" />
+								</p:column>
+							</p:dataTable>
+						</p:tab>
+						<p:tab title="Relationships" style="padding:0px !important">
+							<p:dataTable id="modelRelationshipTableId"
+								widgetVar="modelRelationshipTable"
+								value="#{modelsController.selectedModel.relationships}"
+								var="rel" scrollable="true" scrollHeight="300">
+								<p:column style="width: 30px !important" headerText="Type">
+									<h:outputText value=" #{rel.type}" />
+								</p:column>
+								<p:column headerText="Relationship">
+									<h:outputText value=" #{rel.name}" />
+								</p:column>
+							</p:dataTable>
+						</p:tab>
+					</p:tabView>
+
+				</p:outputPanel>
+
+				<p:outputPanel>
+					<p:commandButton id="exportModelButton" value="export"
+						icon="ui-icon-arrowreturnthick-1-n"
+						actionListener="#{modelsController.exportModel()}"
+						onclick="PF('blockUI').show()"
+						oncomplete="document.getElementById('mainForm:mainTabs:downloadExportedFileButton').click();PF('blockUI').hide()" />
+					<p:commandButton id="downloadExportedFileButton"
+						style="display: none" ajax="false">
+						<p:fileDownload value="#{modelsController.exportedFile}" />
+					</p:commandButton>
+					<p:commandButton id="metricsButton" value="metrics"
+						icon="ui-icon-calculator"
+						actionListener="#{modelsController.openMetricsDialog()}" />
+
+					<p:separator id="diagramSeparator" />
+					<p:scrollPanel id="diagramScrollPanel" mode="native"
+						style="width:800px;height:600px">
+						<p:graphicImage id="diagramImage"
+							value="#{modelsController.selectedDiagram}"
+							title="Archimate Diagram for #{modelsController.selectedModel.name}"
+							cache="false" stream="false" />
+					</p:scrollPanel>
+				</p:outputPanel>
 			</p:panelGrid>
 
 

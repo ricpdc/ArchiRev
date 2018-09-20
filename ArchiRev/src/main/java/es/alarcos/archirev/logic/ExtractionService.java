@@ -517,7 +517,7 @@ public class ExtractionService implements Serializable {
 					Object node = graph.insertVertex(parent, null, archimateElement.getName(), 15, 20,
 							archimateElement.getName().length() * 5 + 60, 40, shapeEnum.getShape().getSimpleName());
 					nodes.put(archimateElement, componentNode != null ? componentNode : node);
-					elements.add(new Element(model, archimateElement.getDocumentation(),
+					elements.add(new Element(model, archimateElement.getName(), archimateElement.getDocumentation(),
 							archimateElement.getClass().getSimpleName()));
 					// nodes.put(archimateElement, node);
 
@@ -550,7 +550,7 @@ public class ExtractionService implements Serializable {
 						String simpleName = archimateRelationship.getClass().getSimpleName();
 						graph.insertEdge(parent, null, simpleName, node1, node2,
 								archimateRelationship.getClass().getSimpleName());
-						elements.add(new Element(model, archimateRelationship.getDocumentation(),
+						relationships.add(new Relationship(model, archimateRelationship.getName(), archimateRelationship.getDocumentation(),
 								archimateRelationship.getClass().getSimpleName()));
 						visitedEdges.add(edgeId);
 

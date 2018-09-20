@@ -11,7 +11,7 @@ tr.activeProjectRow>td {
 	background-color: rgba(0, 200, 0, 0.25) !important;
 }
  */
-dt>a[class*='activeDiagram'] {
+tr[class*='activeDiagram'] td {
 	background-color: rgba(0, 200, 0, 0.25) !important;
 }
 
@@ -26,4 +26,14 @@ dd label[class*='ui-widget'] {
 	border: none !important;
 	webkit-box-shadow: none !important;
 	box-shadow: none !important;
+}
+
+.modelsLeft {
+	width: 25% !important;
+	vertical-align: top;
+}
+
+.modelsRight {
+	width: 75% !important;
+	vertical-align: top;
 }

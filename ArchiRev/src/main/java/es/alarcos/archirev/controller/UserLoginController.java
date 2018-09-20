@@ -3,7 +3,6 @@ package es.alarcos.archirev.controller;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang3.StringUtils;
 import org.primefaces.context.RequestContext;

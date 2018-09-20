@@ -19,8 +19,9 @@ public class Element extends AbstractEntity implements Serializable {
 
 	}
 
-	public Element(Model model, String documentation, String type) {
+	public Element(Model model, String name, String documentation, String type) {
 		this.model = model;
+		this.name = name;
 		this.documentation = documentation;
 		this.type = type;
 	}

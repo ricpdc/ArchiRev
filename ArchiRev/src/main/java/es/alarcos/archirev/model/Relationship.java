@@ -19,8 +19,9 @@ public class Relationship extends AbstractEntity implements Serializable {
 
 	}
 
-	public Relationship(Model model, String documentation, String type) {
+	public Relationship(Model model, String name, String documentation, String type) {
 		this.model = model;
+		this.name = name;
 		this.documentation = documentation;
 		this.type = type;
 	}
