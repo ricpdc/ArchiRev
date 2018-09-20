@@ -15,36 +15,25 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "project")
 @NamedQueries({
-	@NamedQuery(name = "Project.findByUser", query = "SELECT p FROM Project p WHERE p.createdBy = :createdBy") })
+		@NamedQuery(name = "Project.findByUser", query = "SELECT p FROM Project p WHERE p.createdBy = :createdBy") })
 public class Project extends AbstractEntity {
 
 	private static final long serialVersionUID = 2570099621580899220L;
 
-	@Column(name = "name")
-	private String name;
-
 	@Column(name = "description")
 	private String description;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "project", orphanRemoval = true, fetch=FetchType.LAZY)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "project", orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<Source> sources = new HashSet<>();
-	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "project", orphanRemoval = true, fetch=FetchType.LAZY)
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "project", orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<Extraction> extractions = new HashSet<>();
-	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "project", orphanRemoval = true, fetch=FetchType.LAZY)
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "project", orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<Model> models = new HashSet<>();
 
 	public Project() {
 		super();
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public String getDescription() {

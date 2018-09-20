@@ -1,6 +1,5 @@
 package es.alarcos.archirev.model;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -14,7 +13,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -26,9 +25,6 @@ public class Extraction extends AbstractEntity {
 
 	private static final long serialVersionUID = -8699651777914138510L;
 
-	@Column(name = "name")
-	private String name;
-
 	@Column(name = "setup")
 	private String setup;
 
@@ -38,8 +34,9 @@ public class Extraction extends AbstractEntity {
 					@JoinColumn(name = "source_id") })
 	private Set<Source> sources;
 
-	@OneToMany(mappedBy = "extraction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Set<Model> models = new HashSet<>();
+	
+	@OneToOne(mappedBy = "extraction", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
+	private Model model;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "project_id")
@@ -47,14 +44,6 @@ public class Extraction extends AbstractEntity {
 
 	public Extraction() {
 		super();
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public String getSetup() {
@@ -73,16 +62,12 @@ public class Extraction extends AbstractEntity {
 		this.sources = sources;
 	}
 
-	public Set<Model> getModels() {
-		return models;
+	public Model getModel() {
+		return model;
 	}
 
-	public void setModels(Set<Model> models) {
-		this.models = models;
-	}
-	
-	public void addModel(Model model) {
-		getModels().add(model);
+	public void setModel(Model model) {
+		this.model = model;
 	}
 
 	public Project getProject() {

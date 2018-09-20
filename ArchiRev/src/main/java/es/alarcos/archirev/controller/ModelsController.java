@@ -12,11 +12,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
-import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
-import javax.security.auth.message.callback.PrivateKeyCallback.Request;
 
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.DefaultStreamedContent;
@@ -30,6 +27,7 @@ import es.alarcos.archirev.logic.ExtractionService;
 import es.alarcos.archirev.model.Extraction;
 import es.alarcos.archirev.model.Model;
 import es.alarcos.archirev.model.Project;
+import es.alarcos.archirev.model.View;
 
 @ManagedBean(name = "modelsController")
 @Controller
@@ -69,11 +67,13 @@ public class ModelsController extends AbstractController {
 
 	public StreamedContent getSelectedDiagram() {
 		byte[] imageBytes = null;
-		if (selectedModel == null) {
+		if (selectedModel == null || selectedModel.getDefaultView() == null) {
 			return null;
 		}
 		try {
-			imageBytes = Files.readAllBytes(new File(selectedModel.getSanitizedImagePath()).toPath());
+			//TODO add diferent views that can be selectable
+			View defaultView = selectedModel.getDefaultView();
+			imageBytes = Files.readAllBytes(new File(defaultView.getSanitizedImagePath()).toPath());
 			return new DefaultStreamedContent(new ByteArrayInputStream(imageBytes), "image/png");
 		} catch (IOException e) {
 			LOGGER.error("Error rendering the model diagram");
@@ -96,8 +96,6 @@ public class ModelsController extends AbstractController {
 			getProject().setModifiedBy(loggedUser);
 	
 			sessionController.updateProject();
-			
-			RequestContext currentInstance = RequestContext.getCurrentInstance();
 		}
 		
 		byte[] xmlFileBytes= null;

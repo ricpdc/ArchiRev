@@ -47,7 +47,7 @@ public class UserLoginController {
 		setLoggedIn(false);
 		if(StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
 			User findUser = getUserDao().getUserByUsername(username);
-			if(password.equals(findUser.getUserPassword())) {
+			if(password.equals(findUser.getPassword())) {
 				setLoggedIn(true);
 			}
 			else {

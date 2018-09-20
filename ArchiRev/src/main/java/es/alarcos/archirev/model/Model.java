@@ -8,16 +8,13 @@ import java.util.TreeSet;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import es.alarcos.archirev.model.enums.ModelViewEnum;
 
 @Entity
 @Table(name = "model")
@@ -25,38 +22,33 @@ public class Model extends AbstractEntity {
 
 	private static final long serialVersionUID = -7476543110947979418L;
 
-	@Column(name = "name")
-	private String name;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "view")
-	private ModelViewEnum view;
-	
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "extraction_id")
 	private Extraction extraction;
-
-	@Column(name = "image_path", nullable = true)
-	private String imagePath;
-
-	@Column(name = "exported_path", nullable = true)
-	private String exportedPath;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "project_id")
 	private Project project;
-	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "model", orphanRemoval = true, fetch=FetchType.LAZY)
+
+	@Column(name = "exported_path", nullable = true)
+	private String exportedPath;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "model", orphanRemoval = true, fetch = FetchType.LAZY)
+	private Set<View> views = new TreeSet<>();
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "model", orphanRemoval = true, fetch = FetchType.LAZY)
+	private Set<Element> elements = new TreeSet<>();
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "model", orphanRemoval = true, fetch = FetchType.LAZY)
+	private Set<Relationship> relationships = new TreeSet<>();
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "model", orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<Metric> metrics = new TreeSet<>();
 
-	public String getName() {
-		return name;
-	}
+	@Transient
+	private String rootDiagramPath;
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
+	
 	public Extraction getExtraction() {
 		return extraction;
 	}
@@ -73,12 +65,28 @@ public class Model extends AbstractEntity {
 		this.project = project;
 	}
 
-	public String getImagePath() {
-		return imagePath;
+	public Set<View> getViews() {
+		return views;
 	}
 
-	public void setImagePath(String imagePath) {
-		this.imagePath = imagePath;
+	public void setViews(Set<View> views) {
+		this.views = views;
+	}
+
+	public Set<Element> getElements() {
+		return elements;
+	}
+
+	public void setElements(Set<Element> elements) {
+		this.elements = elements;
+	}
+
+	public Set<Relationship> getRelationships() {
+		return relationships;
+	}
+
+	public void setRelationships(Set<Relationship> relationships) {
+		this.relationships = relationships;
 	}
 
 	public String getExportedPath() {
@@ -89,18 +97,6 @@ public class Model extends AbstractEntity {
 		this.exportedPath = exportedPath;
 	}
 
-	@Transient
-	public String getSanitizedImagePath() {
-		try {
-			if (imagePath != null) {
-				return new File(imagePath).getCanonicalPath();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
 	@Transient
 	public String getSanitizedExportedPath() {
 		try {
@@ -113,6 +109,14 @@ public class Model extends AbstractEntity {
 		return null;
 	}
 
+	public String getRootDiagramPath() {
+		return rootDiagramPath;
+	}
+
+	public void setRootDiagramPath(String rootDiagramPath) {
+		this.rootDiagramPath = rootDiagramPath;
+	}
+
 	public Set<Metric> getMetrics() {
 		return metrics;
 	}
@@ -120,17 +124,16 @@ public class Model extends AbstractEntity {
 	public void setMetrics(Set<Metric> metrics) {
 		this.metrics = metrics;
 	}
-	
+
 	public void addMetric(Metric metric) {
 		metrics.add(metric);
 	}
-
-	public ModelViewEnum getView() {
-		return view;
-	}
-
-	public void setView(ModelViewEnum view) {
-		this.view = view;
+	
+	public View getDefaultView() {
+		if(getViews()!=null && !getViews().isEmpty()) {
+			return getViews().iterator().next();
+		}
+		return null;
 	}
 
 }

@@ -11,7 +11,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "metric")
-public class Metric extends AbstractEntity implements Serializable, Comparable<Metric> {
+public class Metric extends AbstractEntity implements Serializable {
 
 	private static final long serialVersionUID = 4652729570226202557L;
 
@@ -21,12 +21,9 @@ public class Metric extends AbstractEntity implements Serializable, Comparable<M
 
 	public Metric(Model model, String name, String value) {
 		this.model = model;
-		this.name = name;
+		this.setName(name);
 		this.value = value;
 	}
-
-	@Column(name = "name")
-	private String name;
 
 	@Column(name = "value")
 	private String value;
@@ -34,14 +31,6 @@ public class Metric extends AbstractEntity implements Serializable, Comparable<M
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "model_id")
 	private Model model;
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 
 	public String getValue() {
 		return value;
@@ -57,14 +46,6 @@ public class Metric extends AbstractEntity implements Serializable, Comparable<M
 
 	public void setModel(Model model) {
 		this.model = model;
-	}
-
-	@Override
-	public int compareTo(Metric o) {
-		if (o == null) {
-			return 1;
-		}
-		return this.name.compareTo(o.getName());
 	}
 
 }

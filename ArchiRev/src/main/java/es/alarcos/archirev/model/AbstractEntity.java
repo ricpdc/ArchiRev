@@ -11,27 +11,30 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
 @MappedSuperclass
-public abstract class AbstractEntity implements Serializable {
+public abstract class AbstractEntity implements Serializable, Comparable<AbstractEntity> {
 
 	private static final long serialVersionUID = -1728118424063172773L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="id")
+	@Column(name = "id")
 	protected Long id;
-	
-	@Column(name="createdat")
+
+	@Column(name = "createdat")
 	protected Timestamp createdAt;
-	
-	@Column(name="modifiedat")
+
+	@Column(name = "modifiedat")
 	protected Timestamp modifiedAt;
-	
-	@Column(name="createdby")
+
+	@Column(name = "createdby")
 	protected String createdBy;
-	
-	@Column(name="modifiedby")
+
+	@Column(name = "modifiedby")
 	protected String modifiedBy;
-	
+
+	@Column(name = "name")
+	protected String name;
+
 	@Version
 	protected Long version;
 
@@ -83,14 +86,29 @@ public abstract class AbstractEntity implements Serializable {
 		this.version = version;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	@Override
 	public String toString() {
 		return String.format(
-				"AbstractEntity [id=%s, createdAt=%s, modifiedAt=%s, createdBy=%s, modifiedBy=%s, version=%s]", id,
-				createdAt, modifiedAt, createdBy, modifiedBy, version);
+				"AbstractEntity [id=%s, iname=%s, createdAt=%s, modifiedAt=%s, createdBy=%s, modifiedBy=%s, version=%s]",
+				id, name, createdAt, modifiedAt, createdBy, modifiedBy, version);
 	}
 
-	
-	
-	
+	@Override
+	public int compareTo(AbstractEntity o) {
+		if (o == null || o.getName() == null) {
+			return 1;
+		} else if (getName() == null) {
+			return -1;
+		}
+		return getName().compareTo(o.getName());
+	}
+
 }

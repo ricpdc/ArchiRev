@@ -9,35 +9,37 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "archirev_users")
 @NamedQueries({
-		@NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username") })
+		@NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.name = :username") })
 public class User extends AbstractEntity {
 
 	private static final long serialVersionUID = 3143558875585472176L;
 
-	@Column(name = "username")
-	private String username;
+	@Column(name = "name")
+	private String name;
 
-	@Column(name = "userpassword")
-	private String userPassword;
+	@Column(name = "password")
+	private String password;
 
 	public User() {
 		super();
 	}
 
-	public String getUsername() {
-		return username;
+	public String getName() {
+		return name;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public String getUserPassword() {
-		return userPassword;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setUserPassword(String userPassword) {
-		this.userPassword = userPassword;
+	public void setPassword(String password) {
+		this.password = password;
 	}
+
+	
 
 }

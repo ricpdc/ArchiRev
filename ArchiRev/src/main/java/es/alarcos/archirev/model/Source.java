@@ -31,10 +31,6 @@ public class Source extends AbstractEntity {
 	@Column(name = "type")
 	private SourceEnum type;
 	
-	@Column(name = "name")
-	private String name;
-
-
 	@Column(name = "file_extension")
 	private String fileExtension;
 
@@ -91,14 +87,6 @@ public class Source extends AbstractEntity {
 		this.fileExtension = fileExtension;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-	
 	@Transient
 	public String getDisplayName() {
 		return String.format("%s [%s]", name, type.getLabel());
