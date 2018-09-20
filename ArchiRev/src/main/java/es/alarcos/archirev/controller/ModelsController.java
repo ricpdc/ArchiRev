@@ -24,15 +24,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import es.alarcos.archirev.logic.ExtractionService;
+import es.alarcos.archirev.logic.IconService;
+import es.alarcos.archirev.model.Element;
 import es.alarcos.archirev.model.Extraction;
 import es.alarcos.archirev.model.Model;
 import es.alarcos.archirev.model.Project;
+import es.alarcos.archirev.model.Relationship;
 import es.alarcos.archirev.model.View;
 
 @ManagedBean(name = "modelsController")
 @Controller
 @ViewScoped
 public class ModelsController extends AbstractController {
+
+	private static final String IMAGES_FAV_PNG = "images/fav.png";
 
 	private static final long serialVersionUID = 1220451072138440791L;
 
@@ -44,9 +49,12 @@ public class ModelsController extends AbstractController {
 	@Autowired
 	private ExtractionService extractionService;
 
+	@Autowired
+	private IconService iconService;
+
 	private Model selectedModel;
 	private View selectedView;
-	
+
 	private StreamedContent exportedFile;
 
 	public ModelsController() {
@@ -72,8 +80,8 @@ public class ModelsController extends AbstractController {
 			return null;
 		}
 		try {
-			if(selectedView==null) {
-				selectedView=selectedModel.getDefaultView();
+			if (selectedView == null) {
+				selectedView = selectedModel.getDefaultView();
 			}
 			imageBytes = Files.readAllBytes(new File(selectedView.getSanitizedImagePath()).toPath());
 			return new DefaultStreamedContent(new ByteArrayInputStream(imageBytes), "image/png");
@@ -84,23 +92,23 @@ public class ModelsController extends AbstractController {
 	}
 
 	public void exportModel() {
-		if(selectedModel.getExportedPath()==null) {
+		if (selectedModel.getExportedPath() == null) {
 			final Timestamp now = new Timestamp(new Date().getTime());
 			final String loggedUser = sessionController.getLoggedUser();
 			selectedModel.setModifiedAt(now);
 			selectedModel.setModifiedBy(loggedUser);
-	
+
 			selectedModel.setExportedPath(createExportedFile(selectedModel));
-	
+
 			extractionService.exportArchimateModel(selectedModel);
-	
+
 			getProject().setModifiedAt(now);
 			getProject().setModifiedBy(loggedUser);
-	
+
 			sessionController.updateProject();
 		}
-		
-		byte[] xmlFileBytes= null;
+
+		byte[] xmlFileBytes = null;
 		if (selectedModel == null) {
 			exportedFile = null;
 		}
@@ -109,16 +117,15 @@ public class ModelsController extends AbstractController {
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
 		}
-		exportedFile = new DefaultStreamedContent(new ByteArrayInputStream(xmlFileBytes), "text/xml", selectedModel.getName()+".xml");
+		exportedFile = new DefaultStreamedContent(new ByteArrayInputStream(xmlFileBytes), "text/xml",
+				selectedModel.getName() + ".xml");
 	}
-	
+
 	public void openMetricsDialog() {
 		RequestContext context = RequestContext.getCurrentInstance();
-    	context.update("mainForm:metricsDialog");
-    	context.execute("PF('metricsDialog').show()");
+		context.update("mainForm:metricsDialog");
+		context.execute("PF('metricsDialog').show()");
 	}
-	
-	
 
 	private String createExportedFile(final Model model) {
 		File folder = new File(getSessionController().getProperty("location.export"));
@@ -134,6 +141,22 @@ public class ModelsController extends AbstractController {
 			return null;
 		}
 		return filePath.toString();
+	}
+
+	public String getElementIconPath(Element element) {
+		if (element == null) {
+			return IMAGES_FAV_PNG;
+		}
+		String icon = IconService.getIcon(element.getType());
+		return icon != null ? icon : IMAGES_FAV_PNG;
+	}
+
+	public String getRelationshipIconPath(Relationship relationship) {
+		if (relationship == null) {
+			return IMAGES_FAV_PNG;
+		}
+		String icon = IconService.getIcon(relationship.getType());
+		return icon != null ? icon : IMAGES_FAV_PNG;
 	}
 
 	public Project getProject() {

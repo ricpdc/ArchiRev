@@ -62,7 +62,7 @@
 								value="#{modelsController.selectedModel.elements}" var="element"
 								scrollable="true" scrollHeight="300">
 								<p:column style="width: 30px !important" headerText="Type">
-									<h:outputText value=" #{element.type}" />
+									<p:graphicImage value="#{modelsController.getElementIconPath(element)}" style="width: 16px !important" />
 								</p:column>
 								<p:column headerText="Element">
 									<h:outputText value=" #{element.name}" />
@@ -75,7 +75,7 @@
 								value="#{modelsController.selectedModel.relationships}"
 								var="rel" scrollable="true" scrollHeight="300">
 								<p:column style="width: 30px !important" headerText="Type">
-									<h:outputText value=" #{rel.type}" />
+									<p:graphicImage value="#{modelsController.getRelationshipIconPath(rel)}" style="width: 16px !important" />
 								</p:column>
 								<p:column headerText="Relationship">
 									<h:outputText value=" #{rel.name}" />
