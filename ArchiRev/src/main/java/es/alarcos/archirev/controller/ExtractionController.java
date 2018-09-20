@@ -6,8 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,6 +36,7 @@ import es.alarcos.archirev.model.Extraction;
 import es.alarcos.archirev.model.Model;
 import es.alarcos.archirev.model.Project;
 import es.alarcos.archirev.model.Source;
+import es.alarcos.archirev.model.enums.ModelViewEnum;
 import es.alarcos.archirev.model.enums.SourceConcernEnum;
 import es.alarcos.archirev.model.enums.SourceEnum;
 import es.alarcos.archirev.persistency.ExtractionDao;
@@ -47,7 +50,7 @@ public class ExtractionController extends AbstractController {
 	private static final long serialVersionUID = -1637522119751630382L;
 
 	static Logger LOGGER = LoggerFactory.getLogger(ExtractionController.class);
-	
+
 	private static final String DEFAULT_SETUP_PATH = "/json/default_setup.json";
 
 	@Autowired
@@ -66,9 +69,12 @@ public class ExtractionController extends AbstractController {
 	private DualListModel<Source> sourcePickerList;
 
 	private String extractionName;
-	
-	private String setupText;	
+
+	private String setupText;
 	private String setupTextBackup;
+
+	private List<ModelViewEnum> possibleViews = new ArrayList<>();
+	private List<ModelViewEnum> selectedViews = new ArrayList<>();
 
 	Map<SourceConcernEnum, Set<SourceEnum>> sourcesMap = Maps.newHashMap();
 
@@ -91,9 +97,15 @@ public class ExtractionController extends AbstractController {
 			sourcePickerList = new DualListModel<Source>(new ArrayList<Source>(), new ArrayList<Source>());
 			setExtractionName("");
 		}
+		loadPossibleViews();
 		loadDefaultSetup();
-		
+
 		RequestContext.getCurrentInstance().update("mainForm:mainTabs:extractionTable");
+	}
+
+	private void loadPossibleViews() {
+		possibleViews = Arrays.asList(ModelViewEnum.values());
+		selectedViews.add(possibleViews.get(0));
 	}
 
 	private void loadDefaultSetup() {
@@ -115,14 +127,21 @@ public class ExtractionController extends AbstractController {
 			builder.append(((Source) item).getName()).append(",");
 		}
 	}
-	
+
 	public void openSetupDialog() {
 		setupTextBackup = setupText;
 		RequestContext context = RequestContext.getCurrentInstance();
-    	context.update("mainForm:extractionSetupDialog");
-    	context.execute("PF('extractionSetupDialog').show()");
+		context.update("mainForm:extractionSetupDialog");
+		context.execute("PF('extractionSetupDialog').show()");
 	}
-	
+
+	public void openViewDialog() {
+		setupTextBackup = setupText;
+		RequestContext context = RequestContext.getCurrentInstance();
+		context.update("mainForm:extractionViewDialog");
+		context.execute("PF('extractionViewDialog').show()");
+	}
+
 	public void saveSetup() {
 		closeSetupDialog();
 	}
@@ -131,13 +150,13 @@ public class ExtractionController extends AbstractController {
 		setupText = setupTextBackup;
 		closeSetupDialog();
 	}
-	
+
 	public void resetSetup() {
 		loadDefaultSetup();
 		RequestContext context = RequestContext.getCurrentInstance();
 		context.update("mainForm:codeMirror");
 	}
-	
+
 	private void closeSetupDialog() {
 		RequestContext context = RequestContext.getCurrentInstance();
 		context.update("mainForm:extractionSetupDialog");
@@ -157,6 +176,7 @@ public class ExtractionController extends AbstractController {
 		extraction.setModifiedBy(loggedUser);
 		extraction.setSetup(setupText);
 		extraction.setSources(new HashSet<Source>(sourcePickerList.getTarget()));
+		extraction.getSelectedViews().addAll(selectedViews);
 
 		getProject().getExtractions().add(extraction);
 		getProject().setModifiedBy(loggedUser);
@@ -173,7 +193,7 @@ public class ExtractionController extends AbstractController {
 		final Timestamp now = new Timestamp(new Date().getTime());
 		final String loggedUser = sessionController.getLoggedUser();
 		Model model = null;
-		if(extraction.getModel()==null) {
+		if (extraction.getModel() == null) {
 			model = new Model();
 			model.setExtraction(extraction);
 			model.setProject(getProject());
@@ -183,29 +203,27 @@ public class ExtractionController extends AbstractController {
 			model.setModifiedBy(loggedUser);
 			extraction.setModel(model);
 			getProject().getModels().add(model);
-		}
-		else {
+		} else {
 			model = extraction.getModel();
 			model.setModifiedAt(now);
 			model.setModifiedBy(loggedUser);
 		}
-		
+
 		model.setRootDiagramPath(getSessionController().getProperty("location.diagram"));
-				
+
 		extractionService.extractArchimateModel(model);
-		
+
 		getProject().setModifiedAt(now);
 		getProject().setModifiedBy(loggedUser);
-		
+
 		sessionController.updateProject();
-		
+
 		reload();
 
-		FacesMessage message = new FacesMessage(""+extraction.getName() + " has been completed.");
+		FacesMessage message = new FacesMessage("" + extraction.getName() + " has been completed.");
 		FacesContext.getCurrentInstance().addMessage(null, message);
-		
-	}
 
+	}
 
 	public void startAllExtractions() {
 		for (Extraction extraction : getProject().getExtractions()) {
@@ -281,5 +299,23 @@ public class ExtractionController extends AbstractController {
 	public void setSetupText(String setupText) {
 		this.setupText = setupText;
 	}
+
+	public List<ModelViewEnum> getPossibleViews() {
+		return possibleViews;
+	}
+
+	public void setPossibleViews(List<ModelViewEnum> possibleViews) {
+		this.possibleViews = possibleViews;
+	}
+
+	public List<ModelViewEnum> getSelectedViews() {
+		return selectedViews;
+	}
+
+	public void setSelectedViews(List<ModelViewEnum> selectedViews) {
+		this.selectedViews = selectedViews;
+	}
+
+	
 
 }

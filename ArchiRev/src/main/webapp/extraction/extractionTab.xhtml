@@ -31,6 +31,9 @@
 			<p:commandButton id="setupDialogOpenBtn" value="Edit Setup"
 				icon="ui-icon-script"
 				actionListener="#{extractionController.openSetupDialog}" />
+			<p:commandButton id="ViewSelectionDialogOpenBtn" value="View Selection"
+				icon="ui-icon-script"
+				actionListener="#{extractionController.openViewDialog}" />
 			<p:separator />
 			<p:inputText value="#{extractionController.extractionName}"></p:inputText>
 			<p:commandButton value="Add"
@@ -59,9 +62,14 @@
 					<h:outputText value="#{extraction.setup}" />
 				</p:column> -->
 				<p:column headerText="Sources" sortBy="#{extraction.displaySources}"
-					width="250" filterBy="#{extraction.displaySources}"
+					width="150" filterBy="#{extraction.displaySources}"
 					filterMatchMode="contains">
 					<h:outputText value="#{extraction.displaySources}" />
+				</p:column>
+				<p:column headerText="Views" sortBy="#{extraction.displayViews}"
+					width="250" filterBy="#{extraction.displayViews}"
+					filterMatchMode="contains">
+					<h:outputText value="#{extraction.displayViews}" />
 				</p:column>
 				<p:column headerText="Modified at" sortBy="#{extraction.modifiedAt}"
 					width="110" filterBy="#{extraction.modifiedAt}"

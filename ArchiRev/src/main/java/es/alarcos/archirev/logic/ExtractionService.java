@@ -127,6 +127,9 @@ public class ExtractionService implements Serializable {
 	private static final String SETUP_CLASS_ROOT = "com.archimatetool.model.impl.";
 
 	private MultiValueMap<String, ArchimateElementEnum> mapping = new LinkedMultiValueMap<>();
+	
+	private MultiValueMap<String, ArchimateElement> modelElementsByClassName = new LinkedMultiValueMap<>();
+	private MultiValueMap<String, ArchimateRelationship> modelRelationshipsByClassName = new LinkedMultiValueMap<>();
 
 	private Map<Class<? extends ArchimateElement>, Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>>> mapPrioritizedRelationship = new HashMap<>();
 
@@ -141,7 +144,8 @@ public class ExtractionService implements Serializable {
 		File imageFile = null;
 		String modelName = model.getExtraction().getName();
 		loadSetup(model);
-
+		model.getViews().clear();
+		
 		for (Source source : sources) {
 			modelName += ("_" + source.getName());
 			switch (source.getType()) {
@@ -154,9 +158,11 @@ public class ExtractionService implements Serializable {
 			}
 		}
 		model.setName(modelName);
-		if (imageFile != null) {
-			// model.setImagePath(imageFile.getAbsolutePath());
-			model.setExportedPath(null);
+		for (ModelViewEnum viewType : model.getExtraction().getSelectedViews()) {
+			if(viewType.equals(ModelViewEnum.ALL)) {
+				continue;
+			}
+			generateModelView(viewType, model, modelElementsByClassName, modelRelationshipsByClassName);
 		}
 	}
 
@@ -247,16 +253,14 @@ public class ExtractionService implements Serializable {
 
 	private File extractArchimateModelForWebApp(Model model, Source source, boolean export) {
 
-		MultiValueMap<String, ArchimateElement> modelElementsByClassName = new LinkedMultiValueMap<>();
-		MultiValueMap<String, ArchimateRelationship> modelRelationshipsByClassName = new LinkedMultiValueMap<>();
+		modelElementsByClassName = new LinkedMultiValueMap<>();
+		modelRelationshipsByClassName = new LinkedMultiValueMap<>();
 		try {
 			modelElementsByClassName = computeModelElementsByClassName(source, mapping);
 			modelRelationshipsByClassName = computeModelRelationshipsByClassName(source, mapping,
 					modelElementsByClassName);
 			if (!export) {
 				return generateModelAndDefaultView(model, modelElementsByClassName, modelRelationshipsByClassName);
-				// TODO generate other selected views
-
 			} else {
 				return exportOpenExchangeFormat(model, modelElementsByClassName, modelRelationshipsByClassName);
 			}
@@ -550,7 +554,8 @@ public class ExtractionService implements Serializable {
 						String simpleName = archimateRelationship.getClass().getSimpleName();
 						graph.insertEdge(parent, null, simpleName, node1, node2,
 								archimateRelationship.getClass().getSimpleName());
-						relationships.add(new Relationship(model, archimateRelationship.getName(), archimateRelationship.getDocumentation(),
+						relationships.add(new Relationship(model, archimateRelationship.getName(),
+								archimateRelationship.getDocumentation(),
 								archimateRelationship.getClass().getSimpleName()));
 						visitedEdges.add(edgeId);
 
@@ -584,9 +589,122 @@ public class ExtractionService implements Serializable {
 				ImageIO.write(image, "PNG", file);
 
 				// TODO remove this local test
-				File localFile = new File(
-						"C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\target\\diagrams\\testJgraphX.png");
-				ImageIO.write(image, "PNG", localFile);
+				// File localFile = new File(
+				// "C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\target\\diagrams\\testJgraphX.png");
+				// ImageIO.write(image, "PNG", localFile);
+			}
+
+			return file;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private File generateModelView(final ModelViewEnum viewType, final Model model,
+			MultiValueMap<String, ArchimateElement> modelElementsByClassName,
+			MultiValueMap<String, ArchimateRelationship> modelRelationshipsByClassName) {
+
+		mxGraph graph = new mxGraph();
+		Object parent = graph.getDefaultParent();
+		graph.getModel().beginUpdate();
+
+		loadShapeStyles(graph);
+
+		try {
+			Map<ArchimateElement, Object> nodes = new HashMap<>();
+
+			for (Entry<String, List<ArchimateElement>> entry : modelElementsByClassName.entrySet()) {
+
+				Collections.sort(entry.getValue(), new Comparator<ArchimateElement>() {
+					@Override
+					public int compare(ArchimateElement o1, ArchimateElement o2) {
+						return o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName());
+					}
+				});
+
+				parent = graph.getDefaultParent();
+
+				
+				List<ArchimateElement> componentElments = new ArrayList<>();
+				for (ArchimateElement element : entry.getValue()) {
+					if (element instanceof ApplicationComponent) {
+						componentElments.add(element);
+					}
+				}
+
+				ApplicationComponent component = componentElments.isEmpty() ? null
+						: (ApplicationComponent) componentElments.get(0);
+				Object componentNode = null;
+				if (component != null) {
+					ShapeEnum shapeEnum = ShapeEnum.getByModelElement(component.getClass());
+					if(filterInForView(viewType, component)){
+						componentNode = graph.insertVertex(parent, null, component.getName(), 0, 0,
+							component.getName().length() * 5 + 60 + 30, 40 + 35, shapeEnum.getShape().getSimpleName());
+						nodes.put(component, componentNode);
+						parent = componentNode;
+					}
+				}
+
+				for (ArchimateElement archimateElement : entry.getValue()) {
+					ShapeEnum shapeEnum = ShapeEnum.getByModelElement(archimateElement.getClass());
+
+					if (archimateElement instanceof ApplicationComponent) {
+						continue;
+					}
+					
+					if(filterInForView(viewType, archimateElement)){
+
+						Object node = graph.insertVertex(parent, null, archimateElement.getName(), 15, 20,
+								archimateElement.getName().length() * 5 + 60, 40, shapeEnum.getShape().getSimpleName());
+						nodes.put(archimateElement, componentNode != null ? componentNode : node);
+					}
+				}
+			}
+
+			parent = graph.getDefaultParent();
+			List<String> visitedEdges = new ArrayList<>();
+			for (Entry<String, List<ArchimateRelationship>> entry : modelRelationshipsByClassName.entrySet()) {
+				LOGGER.info("");
+				LOGGER.info(entry.getKey());
+
+				for (ArchimateRelationship archimateRelationship : entry.getValue()) {
+
+					mxCell node1 = (mxCell) nodes.get(archimateRelationship.getSource());
+					mxCell node2 = (mxCell) nodes.get(archimateRelationship.getTarget());
+					if (node1 != null && node2 != null) {
+						String edgeId = node1.getValue() + "--" + archimateRelationship.getClass().getSimpleName()
+								+ "-->" + node2.getValue();
+
+						if (visitedEdges.contains(edgeId) || node1.equals(node2) || node1.getParent().equals(node2)
+								|| node2.getParent().equals(node1)) {
+							continue;
+						}
+
+						String simpleName = archimateRelationship.getClass().getSimpleName();
+						graph.insertEdge(parent, null, simpleName, node1, node2,
+								archimateRelationship.getClass().getSimpleName());
+
+						visitedEdges.add(edgeId);
+					}
+				}
+			}
+
+		} finally {
+			graph.getModel().endUpdate();
+		}
+
+		try {
+			ExtendedHierarchicalLayout extendedHierarchicalLayout = new ExtendedHierarchicalLayout(graph, 75);
+
+			mxGraphLayout layout = extendedHierarchicalLayout;
+			layout.execute(graph.getDefaultParent());
+
+			View view = getView(viewType, model);
+			File file = new File(view.getImagePath());
+			BufferedImage image = mxCellRenderer.createBufferedImage(graph, null, 1, java.awt.Color.WHITE, true, null);
+			if (image != null) {
+				ImageIO.write(image, "PNG", file);
 			}
 
 			return file;
@@ -598,11 +716,12 @@ public class ExtractionService implements Serializable {
 
 	private View getDefaultView(Model model) {
 		final Timestamp now = new Timestamp(new Date().getTime());
+		ModelViewEnum defaultType = ModelViewEnum.ALL;
 		View defaultView = null;
 		if (model.getViews() == null || model.getViews().isEmpty()) {
 			defaultView = new View();
 			defaultView.setModel(model);
-			defaultView.setType(ModelViewEnum.ALL);
+			defaultView.setType(defaultType);
 			defaultView.setCreatedAt(now);
 			defaultView.setCreatedBy(model.getModifiedBy());
 			defaultView.setModifiedAt(now);
@@ -613,8 +732,23 @@ public class ExtractionService implements Serializable {
 			model.setModifiedAt(now);
 			model.setModifiedBy(model.getModifiedBy());
 		}
-		defaultView.setImagePath(createImageFile(model));
+		defaultView.setImagePath(createImageFile(model, defaultType));
 		return defaultView;
+	}
+
+	private View getView(ModelViewEnum viewType, Model model) {
+		final Timestamp now = new Timestamp(new Date().getTime());
+
+		View view = new View();
+		view.setModel(model);
+		view.setType(viewType);
+		view.setCreatedAt(now);
+		view.setCreatedBy(model.getModifiedBy());
+		view.setModifiedAt(now);
+		view.setModifiedBy(model.getModifiedBy());
+		model.getViews().add(view);
+		view.setImagePath(createImageFile(model, viewType));
+		return view;
 	}
 
 	private boolean filterInForView(ModelViewEnum modelViewEnum, ArchimateConcept archimateElement) {
@@ -1101,16 +1235,16 @@ public class ExtractionService implements Serializable {
 		}
 	}
 
-	private String createImageFile(final Model model) {
+	private String createImageFile(final Model model, final ModelViewEnum type) {
 		File folder = new File(model.getRootDiagramPath());
 		if (!folder.exists()) {
 			folder.mkdir();
 		}
 		Path filePath = null;
 		try {
-			filePath = Files
-					.createFile(Paths.get(folder.getAbsolutePath() + File.separator + "p_" + model.getProject().getId()
-							+ "_e_" + model.getExtraction().getId() + "_" + UUID.randomUUID() + ".png"));
+			filePath = Files.createFile(Paths.get(folder.getAbsolutePath() + File.separator + "p_"
+					+ model.getProject().getId() + "_e_" + model.getExtraction().getId() + "_" + type.getLabel() + "_"
+					+ UUID.randomUUID() + ".png"));
 
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());

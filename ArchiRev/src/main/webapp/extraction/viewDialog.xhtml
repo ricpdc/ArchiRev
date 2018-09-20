@@ -1,0 +1,35 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<p:dialog id="extractionViewDialog" widgetVar="extractionViewDialog"
+		closable="true" closeOnEscape="true"
+		header="Extraction View Selection" modal="true" width="1000"
+		height="360">
+
+		<p:dataTable id="checkboxDT" var="modelView"
+			value="#{extractionController.possibleViews}"
+			selection="#{extractionController.selectedViews}"
+			rowKey="#{modelView.id}" style="margin-bottom:0">
+			<f:facet name="header">
+	            Checkbox
+	        </f:facet>
+			<p:column selectionMode="multiple"
+				style="width:16px;text-align:center" />
+			<p:column headerText="Predefined View">
+				<h:outputText value="#{modelView.label}" />
+			</p:column>
+			<p:column headerText="Description">
+				<h:outputText value="#{modelView.description}" />
+			</p:column>
+		</p:dataTable>
+
+		<p:separator />
+
+		<p:commandButton id="viewOkButton" value="Ok" style="float:right"
+			oncomplete="PF('extractionViewDialog').hide()" />
+	</p:dialog>
+</ui:composition>

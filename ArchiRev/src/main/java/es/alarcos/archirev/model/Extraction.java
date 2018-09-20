@@ -1,11 +1,16 @@
 package es.alarcos.archirev.model;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -16,6 +21,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import es.alarcos.archirev.model.enums.ModelViewEnum;
 
 @Entity
 @Table(name = "extraction")
@@ -41,6 +48,12 @@ public class Extraction extends AbstractEntity {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "project_id")
 	private Project project;
+	
+	@ElementCollection(targetClass=ModelViewEnum.class)
+    @Enumerated(EnumType.ORDINAL)
+    @CollectionTable(name="extraction_selected_views")
+	@Column(name="selected_views")
+	private Set<ModelViewEnum> selectedViews = new HashSet<>();
 
 	public Extraction() {
 		super();
@@ -92,6 +105,30 @@ public class Extraction extends AbstractEntity {
 		}
 
 		return displaySources;
+	}
+	
+	@Transient
+	public String getDisplayViews() {
+		String displayViews = "";
+		if (!selectedViews.isEmpty()) {
+			Iterator<ModelViewEnum> iterator = selectedViews.iterator();
+			displayViews = iterator.next().getLabel();
+			iterator.hasNext();
+
+			for (; iterator.hasNext();) {
+				displayViews += (", " + iterator.next().getLabel());
+			}
+		}
+
+		return displayViews;
+	}
+
+	public Set<ModelViewEnum> getSelectedViews() {
+		return selectedViews;
+	}
+
+	public void setSelectedViews(Set<ModelViewEnum> selectedViews) {
+		this.selectedViews = selectedViews;
 	}
 
 }
