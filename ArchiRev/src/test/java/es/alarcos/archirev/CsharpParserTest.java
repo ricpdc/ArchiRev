@@ -15,10 +15,10 @@ import org.junit.jupiter.api.Test;
 
 import es.alarcos.archirev.parser.csharp.CSharpLexer;
 import es.alarcos.archirev.parser.csharp.CSharpParser;
-import es.alarcos.archirev.parser.csharp.CSharpParser.AttributeContext;
-import es.alarcos.archirev.parser.csharp.CSharpParser.Class_definitionContext;
 import es.alarcos.archirev.parser.csharp.CSharpParser.Compilation_unitContext;
 import es.alarcos.archirev.parser.csharp.CSharpParser.Type_declarationContext;
+
+
 
 @SuppressWarnings("deprecation")
 class CsharpParserTest {

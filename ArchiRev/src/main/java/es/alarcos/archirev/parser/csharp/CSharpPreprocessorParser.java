@@ -1,5 +1,6 @@
-// Generated from csharp\CSharpPreprocessorParser.g4 by ANTLR 4.5
 package es.alarcos.archirev.parser.csharp;
+
+// Generated from CSharpPreprocessorParser.g4 by ANTLR 4.5
 import java.util.Stack;
 import java.util.HashSet;
 import org.antlr.v4.runtime.atn.*;

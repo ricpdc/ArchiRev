@@ -240,8 +240,15 @@
 					</execution>
 				</executions>
 				<configuration>
-					<outputDirectory>${project.build.directory}/../src/main/java/es/alarcos/archirev/parser</outputDirectory>
+					<sourceDirectory>${project.build.directory}/../src/main/antlr4/csharp</sourceDirectory>
+					<includes>
+						<include>CSharpLexer.g4</include>
+						<include>CSharpPreprocessorParser.g4</include>
+						<include>CSharpParser.g4</include>
+					</includes>
+					<outputDirectory>${project.build.directory}/../src/main/java/es/alarcos/archirev/parser/csharp</outputDirectory>
 					<visitor>true</visitor>
+					<listener>true</listener>
 				</configuration>
 			</plugin>
 
