@@ -149,7 +149,7 @@ public class ExtractionService implements Serializable {
 		for (Source source : sources) {
 			modelName += ("_" + source.getName());
 			switch (source.getType()) {
-			case WEB_APP:
+			case JAVA_WEB_APP:
 				imageFile = extractArchimateModelForWebApp(model, source, false);
 				break;
 			case JPA:
@@ -238,7 +238,7 @@ public class ExtractionService implements Serializable {
 		File exportXmlFile = null;
 		for (Source source : sources) {
 			switch (source.getType()) {
-			case WEB_APP:
+			case JAVA_WEB_APP:
 				exportXmlFile = extractArchimateModelForWebApp(model, source, true);
 				break;
 			case JPA:

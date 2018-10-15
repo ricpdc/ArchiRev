@@ -7,14 +7,11 @@
 
 	<p:tab id="sourcesTab" title="Knowledge Sources">
 
-
-
 		<p:panelGrid style="width:100%; border: none;">
 
 			<p:row>
 
 				<p:column style="vertical-align:top; width:40% !important">
-
 					<p:panel id="concernAndTypePanel" widgetVar="concernAndTypePanel"
 						toggleable="true" toggleSpeed="500"
 						style="margin-bottom:20px; width:100%">
@@ -58,7 +55,7 @@
 							disabled="#{sourcesController.sourceType == null}"
 							mode="advanced" dragDropSupport="true" multiple="true"
 							update="mainForm:messages" sizeLimit="500000000" fileLimit="3"
-							allowTypes="/(\.|\/)(ear|war|jar)$/" />
+							allowTypes="#{sourcesController.allowTypes}" />
 					</p:panel>
 				</p:column>
 			</p:row>

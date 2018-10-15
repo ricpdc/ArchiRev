@@ -9,8 +9,9 @@ import org.springframework.util.CollectionUtils;
 
 public enum SourceEnum {
 
-	WEB_APP(1, SourceConcernEnum.APPLICATION, "Web application", Arrays.asList("ear", "war", "jar")), JPA(1,
-			SourceConcernEnum.APPLICATION, "JPA config");
+	JAVA_WEB_APP(0, SourceConcernEnum.APPLICATION, "Java Web application", Arrays.asList("ear", "war", "jar")),
+	CSHARP_APP(1, SourceConcernEnum.APPLICATION, "C# application", Arrays.asList("zip", "rar", "7z")),
+	JPA(2, SourceConcernEnum.APPLICATION, "JPA config");
 
 	private int id;
 	private SourceConcernEnum sourceConcern;

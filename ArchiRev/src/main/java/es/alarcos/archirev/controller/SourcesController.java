@@ -66,6 +66,7 @@ public class SourcesController extends AbstractController {
 
 	private SourceConcernEnum sourceConcern;
 	private SourceEnum sourceType;
+	private String allowTypes="/(\\.|\\/)(zip|rar|7z)$/";
 
 	private Source selectedSource;
 	private ZipFile zipFile;
@@ -76,6 +77,7 @@ public class SourcesController extends AbstractController {
 	private Hashtable<String, TreeNode> directories = new Hashtable<>();
 
 	Map<SourceConcernEnum, Set<SourceEnum>> sourcesMap = Maps.newHashMap();
+
 
 	public SourcesController() {
 		super();
@@ -113,6 +115,7 @@ public class SourcesController extends AbstractController {
 	public void onSelectSourceType(final AjaxBehaviorEvent event) {
 		SourceEnum type = (SourceEnum) ((UIOutput) event.getSource()).getValue();
 		LOGGER.info("Selected type: " + type);
+		allowTypes = "/(\\.|\\/)("+StringUtils.join(type.getExtensions(), "|")+")$/";
 	}
 
 	public void addSource(FileUploadEvent event) {
@@ -295,6 +298,10 @@ public class SourcesController extends AbstractController {
 		getProject().getSources().remove(source);
 		sessionController.updateProject();
 	}
+	
+	public String getAllowTypes() {
+		return allowTypes;
+	}
 
 	private Project getProject() {
 		return sessionController.getProject();
@@ -378,6 +385,10 @@ public class SourcesController extends AbstractController {
 
 	public void setSelectedSource(Source selectedSource) {
 		this.selectedSource = selectedSource;
+	}
+
+	public void setAllowTypes(String allowTypes) {
+		this.allowTypes = allowTypes;
 	}
 
 }
