@@ -1,0 +1,178 @@
+package es.alarcos.archirev.logic;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
+import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
+
+import org.apache.bcel.classfile.JavaClass;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
+import com.archimatetool.model.impl.AccessRelationship;
+import com.archimatetool.model.impl.AggregationRelationship;
+import com.archimatetool.model.impl.ArchimateElement;
+import com.archimatetool.model.impl.ArchimateFactory;
+import com.archimatetool.model.impl.ArchimateRelationship;
+import com.archimatetool.model.impl.CompositionRelationship;
+import com.archimatetool.model.impl.RealizationRelationship;
+import com.archimatetool.model.impl.ServingRelationship;
+import com.archimatetool.model.impl.SpecializationRelationship;
+import com.archimatetool.model.impl.TriggeringRelationship;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
+
+import es.alarcos.archirev.model.Source;
+
+public abstract class AbstractSourceCodeParser implements Serializable {
+
+	private static final long serialVersionUID = -714549315038788426L;
+
+	private static Logger LOGGER = LoggerFactory.getLogger(AbstractSourceCodeParser.class);
+
+	protected static final String MAPPED_SUPERCLASS_ANNOTATION = "MappedSuperclass";
+
+	private static final String JSON_NAME = "name";
+	private static final String JSON_MAPPING = "mapping";
+	private static final String JSON_PAIRS = "pairs";
+	private static final String JSON_ANNOTATION = "annotation";
+	private static final String JSON_ELEMENT = "element";
+	private static final String JSON_PRIORITIZATION = "prioritization";
+	private static final String JSON_TUPLES = "tuples";
+	private static final String JSON_TARGETS = "targets";
+	private static final String JSON_FROM = "from";
+	private static final String JSON_TO = "to";
+	private static final String JSON_RELATIONSHIP = "relationship";
+
+	private static final String SETUP_CLASS_ROOT = "com.archimatetool.model.impl.";
+
+	private Map<Class<? extends ArchimateElement>, Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>>> mapPrioritizedRelationship = new HashMap<>();
+
+	protected MultiValueMap<String, ArchimateElementEnum> mapping = new LinkedMultiValueMap<>();
+
+	public AbstractSourceCodeParser(final String setup) {
+		loadSetup(setup);
+	}
+
+	public abstract MultiValueMap<String, ArchimateElement> computeModelElementsByClassName(Source warSource)
+			throws ZipException, IOException;
+
+	public abstract MultiValueMap<String, ArchimateRelationship> computeModelRelationshipsByClassName(Source warSource,
+			MultiValueMap<String, ArchimateElement> modelElementsByClassName) throws ZipException, IOException;
+
+	protected ZipFile getZipFile(final File file) throws ZipException, IOException {
+		ZipFile zipFile = new ZipFile(file);
+		return zipFile;
+	}
+
+	protected String getFormattedName(JavaClass javaClass) {
+		String simpleClassName = javaClass.getClassName().substring(javaClass.getClassName().lastIndexOf(".") + 1);
+		simpleClassName = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(simpleClassName), " ");
+		return simpleClassName;
+	}
+
+	protected ArchimateRelationship getPrioritizedRelationship(ArchimateElement source, ArchimateElement target) {
+		ArchimateRelationship DEFAULT = (ArchimateRelationship) ArchimateFactory.eINSTANCE.createAccessRelationship();
+		Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>> relationshipSourceClass = mapPrioritizedRelationship
+				.get(source.getClass());
+		if (relationshipSourceClass == null) {
+			return DEFAULT;
+		}
+		Class<? extends ArchimateRelationship> relationshipClass = relationshipSourceClass.get(target.getClass());
+
+		if (relationshipClass == null) {
+			return DEFAULT;
+		} else if (relationshipClass.equals(AccessRelationship.class)) {
+			return DEFAULT;
+		} else if (relationshipClass.equals(AggregationRelationship.class)) {
+			return (ArchimateRelationship) ArchimateFactory.eINSTANCE.createAggregationRelationship();
+		} else if (relationshipClass.equals(CompositionRelationship.class)) {
+			return (ArchimateRelationship) ArchimateFactory.eINSTANCE.createCompositionRelationship();
+		} else if (relationshipClass.equals(RealizationRelationship.class)) {
+			return (ArchimateRelationship) ArchimateFactory.eINSTANCE.createRealizationRelationship();
+		} else if (relationshipClass.equals(ServingRelationship.class)) {
+			return (ArchimateRelationship) ArchimateFactory.eINSTANCE.createServingRelationship();
+		} else if (relationshipClass.equals(SpecializationRelationship.class)) {
+			return (ArchimateRelationship) ArchimateFactory.eINSTANCE.createSpecializationRelationship();
+		} else if (relationshipClass.equals(TriggeringRelationship.class)) {
+			return (ArchimateRelationship) ArchimateFactory.eINSTANCE.createTriggeringRelationship();
+		} else {
+			return DEFAULT;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void loadSetup(final String setup) {
+		JsonParser parser = new JsonParser();
+
+		JsonReader jsonReader = new JsonReader(new StringReader(setup));
+		jsonReader.setLenient(true);
+
+		try {
+			JsonElement root = parser.parse(jsonReader);
+			Validate.isTrue(root.isJsonArray());
+			JsonArray objects = root.getAsJsonArray();
+			Validate.isTrue(objects.get(0).isJsonObject());
+
+			// load mapping object
+			JsonObject mappingObject = objects.get(0).getAsJsonObject();
+			Validate.isTrue(JSON_MAPPING.equals(mappingObject.get(JSON_NAME).getAsString()));
+			Validate.isTrue(mappingObject.get(JSON_PAIRS).isJsonArray());
+			JsonArray mappingPairs = mappingObject.get(JSON_PAIRS).getAsJsonArray();
+			mapping = new LinkedMultiValueMap<>();
+			for (int i = 0; i < mappingPairs.size(); i++) {
+				Validate.isTrue(mappingPairs.get(i).isJsonObject());
+				JsonObject pair = mappingPairs.get(i).getAsJsonObject();
+				String annotation = pair.get(JSON_ANNOTATION).getAsString();
+				String element = pair.get(JSON_ELEMENT).getAsString();
+				mapping.add(annotation, ArchimateElementEnum.valueOf(element));
+			}
+
+			// load prioritization object
+			JsonObject prioritzationObject = objects.get(1).getAsJsonObject();
+			Validate.isTrue(JSON_PRIORITIZATION.equals(prioritzationObject.get(JSON_NAME).getAsString()));
+			Validate.isTrue(prioritzationObject.get(JSON_TUPLES).isJsonArray());
+			JsonArray prioritizationTuples = prioritzationObject.get(JSON_TUPLES).getAsJsonArray();
+			mapPrioritizedRelationship = new HashMap<>();
+
+			for (int i = 0; i < prioritizationTuples.size(); i++) {
+				Validate.isTrue(prioritizationTuples.get(i).isJsonObject());
+				JsonObject tuple = prioritizationTuples.get(i).getAsJsonObject();
+				String from = tuple.get(JSON_FROM).getAsString();
+
+				Validate.isTrue(tuple.get(JSON_TARGETS).isJsonArray());
+				JsonArray targets = tuple.get(JSON_TARGETS).getAsJsonArray();
+
+				try {
+					Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>> tupleMap = new HashMap<>();
+					for (int j = 0; j < targets.size(); j++) {
+						Validate.isTrue(targets.get(j).isJsonObject());
+						JsonObject target = targets.get(j).getAsJsonObject();
+						String to = target.get(JSON_TO).getAsString();
+						String relationship = target.get(JSON_RELATIONSHIP).getAsString();
+						tupleMap.put((Class<? extends ArchimateElement>) Class.forName(SETUP_CLASS_ROOT + to),
+								(Class<? extends ArchimateRelationship>) Class
+										.forName(SETUP_CLASS_ROOT + relationship));
+					}
+					mapPrioritizedRelationship
+							.put((Class<? extends ArchimateElement>) Class.forName(SETUP_CLASS_ROOT + from), tupleMap);
+				} catch (ClassNotFoundException e) {
+					LOGGER.warn("Extraction setup is not valid" + e.getMessage());
+				}
+			}
+		} catch (Exception ex) {
+			LOGGER.error("Extraction setup is not valid" + ex.getMessage());
+		}
+	}
+}
