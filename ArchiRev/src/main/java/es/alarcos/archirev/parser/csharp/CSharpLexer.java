@@ -1,7 +1,9 @@
+// Generated from CSharpLexer.g4 by ANTLR 4.5
+
 package es.alarcos.archirev.parser.csharp;
 
-// Generated from CSharpLexer.g4 by ANTLR 4.5
 import java.util.Stack;
+
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;

@@ -7,7 +7,10 @@ parser grammar CSharpPreprocessorParser;
 options { tokenVocab=CSharpLexer; }
 
 @parser::header 
-{import java.util.Stack;
+{
+package es.alarcos.archirev.parser.csharp;
+
+import java.util.Stack;
 import java.util.HashSet;}
 
 @parser::members

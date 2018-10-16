@@ -6,6 +6,11 @@ parser grammar CSharpParser;
 
 options { tokenVocab=CSharpLexer; }
 
+@parser::header 
+{
+package es.alarcos.archirev.parser.csharp;
+}
+
 // entry point
 compilation_unit
 	: BYTE_ORDER_MARK? extern_alias_directives? using_directives?

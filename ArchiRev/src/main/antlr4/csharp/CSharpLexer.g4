@@ -5,7 +5,11 @@
 lexer grammar CSharpLexer;
 
 @lexer::header
-{import java.util.Stack;}
+{
+package es.alarcos.archirev.parser.csharp;
+
+import java.util.Stack;
+}
 
 channels { COMMENTS_CHANNEL, DIRECTIVE }
 
