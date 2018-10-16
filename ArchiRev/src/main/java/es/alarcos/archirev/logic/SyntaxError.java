@@ -1,4 +1,4 @@
-package es.alarcos.archirev;
+package es.alarcos.archirev.logic;
 
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;

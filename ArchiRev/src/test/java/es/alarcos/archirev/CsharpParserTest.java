@@ -16,6 +16,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 
+import es.alarcos.archirev.logic.SyntaxError;
+import es.alarcos.archirev.logic.SyntaxErrorListener;
 import es.alarcos.archirev.parser.csharp.CSharpLexer;
 import es.alarcos.archirev.parser.csharp.CSharpParser;
 import es.alarcos.archirev.parser.csharp.CSharpParser.Class_definitionContext;

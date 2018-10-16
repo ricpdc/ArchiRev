@@ -1,4 +1,4 @@
-package es.alarcos.archirev;
+package es.alarcos.archirev.logic;
 
 import java.util.ArrayList;
 import java.util.List;
