@@ -59,8 +59,9 @@ public class JavaSourceCodeParser extends AbstractSourceCodeParser implements Se
 			if (entry.isDirectory())
 				continue;
 
-			if (!entry.getName().endsWith(".class"))
+			if (!entry.getName().endsWith(".class")) {
 				continue;
+			}
 
 			cp = new ClassParser(tempWarFile.getAbsolutePath(), entry.getName());
 			JavaClass javaClass = null;
