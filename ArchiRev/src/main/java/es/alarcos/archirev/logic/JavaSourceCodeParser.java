@@ -94,45 +94,11 @@ public class JavaSourceCodeParser extends AbstractSourceCodeParser implements Se
 				}
 			}
 
-			for (ArchimateElementEnum archimateElementEnum : uniqueElements) {
-				ArchimateElement elementToBeAdded = null;
-				switch (archimateElementEnum) {
-				case APPLICATION:
-					elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createApplicationFunction();
-					break;
-				case SERVICE:
-					elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createApplicationService();
-					break;
-				case DATA_ENTITY:
-					elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createDataObject();
-					if (mappedSuperclass) {
-						elementToBeAdded.setDocumentation(MAPPED_SUPERCLASS_ANNOTATION);
-					}
-					break;
-				case COMPONENT:
-					elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createApplicationComponent();
-					break;
-				default:
-					break;
-				}
-				String formattedName = getFormattedName(javaClass);
-				elementToBeAdded.setName(formattedName);
-				boolean existent = false;
-				List<ArchimateElement> archimateElements = modelElementsByClassName.get(javaClass.getClassName());
-				for (int i = 0; archimateElements != null && i < archimateElements.size(); i++) {
-					if (archimateElements.get(i).getClass().equals(elementToBeAdded.getClass())) {
-						existent = true;
-						break;
-					}
-
-				}
-				if (!existent) {
-					modelElementsByClassName.add(javaClass.getClassName(), elementToBeAdded);
-				}
-			}
+			createModelElements(modelElementsByClassName, javaClass.getClassName(), uniqueElements, mappedSuperclass);
 		}
 		return modelElementsByClassName;
 	}
+
 
 	@Override
 	public MultiValueMap<String, ArchimateRelationship> computeModelRelationshipsByClassName(Source warSource,

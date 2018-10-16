@@ -299,9 +299,9 @@ public class ExtractionService implements Serializable {
 				ImageIO.write(image, "PNG", file);
 
 				// TODO remove this local test
-				// File localFile = new File(
-				// "C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\target\\diagrams\\testJgraphX.png");
-				// ImageIO.write(image, "PNG", localFile);
+				 File localFile = new File(
+				 "C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\target\\diagrams\\testJgraphX.png");
+				 ImageIO.write(image, "PNG", localFile);
 			}
 
 			return file;

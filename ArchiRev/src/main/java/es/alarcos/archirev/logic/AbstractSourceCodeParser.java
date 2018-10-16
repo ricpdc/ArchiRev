@@ -5,11 +5,12 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import org.apache.bcel.classfile.JavaClass;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -76,8 +77,8 @@ public abstract class AbstractSourceCodeParser implements Serializable {
 		return zipFile;
 	}
 
-	protected String getFormattedName(JavaClass javaClass) {
-		String simpleClassName = javaClass.getClassName().substring(javaClass.getClassName().lastIndexOf(".") + 1);
+	protected String getFormattedName(String className) {
+		String simpleClassName = className.substring(className.lastIndexOf(".") + 1);
 		simpleClassName = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(simpleClassName), " ");
 		return simpleClassName;
 	}
@@ -173,6 +174,46 @@ public abstract class AbstractSourceCodeParser implements Serializable {
 			}
 		} catch (Exception ex) {
 			LOGGER.error("Extraction setup is not valid" + ex.getMessage());
+		}
+	}
+
+	protected void createModelElements(MultiValueMap<String, ArchimateElement> modelElementsByClassName,
+			String className, Set<ArchimateElementEnum> uniqueElements, boolean mappedSuperclass) {
+		for (ArchimateElementEnum archimateElementEnum : uniqueElements) {
+			ArchimateElement elementToBeAdded = null;
+			switch (archimateElementEnum) {
+			case APPLICATION:
+				elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createApplicationFunction();
+				break;
+			case SERVICE:
+				elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createApplicationService();
+				break;
+			case DATA_ENTITY:
+				elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createDataObject();
+				if (mappedSuperclass) {
+					elementToBeAdded.setDocumentation(MAPPED_SUPERCLASS_ANNOTATION);
+				}
+				break;
+			case COMPONENT:
+				elementToBeAdded = (ArchimateElement) ArchimateFactory.eINSTANCE.createApplicationComponent();
+				break;
+			default:
+				break;
+			}
+			String formattedName = getFormattedName(className);
+			elementToBeAdded.setName(formattedName);
+			boolean existent = false;
+			List<ArchimateElement> archimateElements = modelElementsByClassName.get(className);
+			for (int i = 0; archimateElements != null && i < archimateElements.size(); i++) {
+				if (archimateElements.get(i).getClass().equals(elementToBeAdded.getClass())) {
+					existent = true;
+					break;
+				}
+
+			}
+			if (!existent) {
+				modelElementsByClassName.add(className, elementToBeAdded);
+			}
 		}
 	}
 }

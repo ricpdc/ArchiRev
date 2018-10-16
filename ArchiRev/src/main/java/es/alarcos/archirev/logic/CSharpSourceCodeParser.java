@@ -10,7 +10,9 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -21,6 +23,7 @@ import java.util.zip.ZipFile;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
@@ -53,6 +56,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 	private Set<String> interfaces = new TreeSet<String>();
 	private Set<String> structs = new TreeSet<String>();
 	private Set<String> delegates = new TreeSet<String>();
+	private Set<String> delcatedTypeNames = new TreeSet<String>();
 
 	public CSharpSourceCodeParser(final String setup) {
 		super(setup);
@@ -84,7 +88,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			}
 
 			try {
-				parserCsharpFile(zipFile, zipEntry);
+				parserCsharpFile(zipFile, zipEntry, modelElementsByClassName);
 				numberOfCsharpFiles++;
 			} catch (Exception ex) {
 				LOGGER.error(zipEntry.getName() + " cannot be parsed");
@@ -127,7 +131,8 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		return modelElementsByClassName;
 	}
 
-	private void parserCsharpFile(final ZipFile zipFile, final ZipEntry zipEntry) throws IOException {
+	private void parserCsharpFile(final ZipFile zipFile, final ZipEntry zipEntry,
+			final MultiValueMap<String, ArchimateElement> modelElementsByClassName) throws IOException {
 		File tempFile = getTempFileWithoutDirectives(zipFile, zipEntry);
 		if (Files.readAllBytes(tempFile.toPath()).length == 0) {
 			return;
@@ -141,26 +146,52 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		SyntaxErrorListener listener = new SyntaxErrorListener();
 		parser.addErrorListener(listener);
 
+		delcatedTypeNames = new TreeSet<String>();
+
 		Compilation_unitContext compilation_unit = parser.compilation_unit();
 		for (int i = 0; i < compilation_unit.getChildCount(); i++) {
 			ParseTree tree = compilation_unit.getChild(i);
 			getElements(tree);
 		}
 
-		LOGGER.info("Parsing.... " + zipEntry.getName());
-		if (!listener.getSyntaxErrors().isEmpty()) {
-			wrongFiles.add(zipEntry.getName());
-		}
-		for (SyntaxError syntaxError : listener.getSyntaxErrors()) {
-			LOGGER.error("\tERROR: " + syntaxError);
-		}
+		String zipEntryName = zipEntry.getName();
+		LOGGER.info("Parsing.... " + zipEntryName);
+		if (listener.getSyntaxErrors().isEmpty()) {
+			Set<ArchimateElementEnum> uniqueElements = new HashSet<>();
+			boolean mappedSuperclass = false;
 
+			List<String> declaredTypeTags = new ArrayList<>();
+			for (String className : delcatedTypeNames) {
+				declaredTypeTags.addAll(Arrays.asList(StringUtils.splitByCharacterTypeCamelCase(className)));
+			}
+
+			for (String classTag : declaredTypeTags) {
+				List<ArchimateElementEnum> elementList = mapping.get(classTag);
+				if (elementList != null) {
+					uniqueElements.addAll(elementList);
+					if (!mappedSuperclass && MAPPED_SUPERCLASS_ANNOTATION.equals(classTag)) {
+						mappedSuperclass = true;
+					}
+				} else {
+					LOGGER.debug(
+							String.format("Not mapped annotation \"%s\" in class %s", classTag, zipEntryName));
+				}
+			}
+
+			createModelElements(modelElementsByClassName, zipEntryName, uniqueElements, mappedSuperclass);
+
+		} else {
+			wrongFiles.add(zipEntryName);
+			for (SyntaxError syntaxError : listener.getSyntaxErrors()) {
+				LOGGER.error("\tERROR: " + syntaxError);
+			}
+		}
 	}
 
 	private File getTempFileWithoutDirectives(final ZipFile zipFile, final ZipEntry zipEntry) throws IOException {
 		File tempFile = File.createTempFile(zipFile.getName(), "-withoutDirectives.tmp");
 		FileWriter fw = new FileWriter(tempFile);
-		
+
 		InputStream is = null;
 		BufferedReader br = null;
 
@@ -173,11 +204,9 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 					fw.write(line + "\n");
 				}
 			}
-		}
-		catch (IOException ioe) {
+		} catch (IOException ioe) {
 			LOGGER.error("Exception while reading input " + ioe);
-		}
-		finally {
+		} finally {
 			// close the streams using close method
 			try {
 				if (br != null) {
@@ -186,8 +215,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 				if (fw != null) {
 					fw.close();
 				}
-			}
-			catch (IOException ioe) {
+			} catch (IOException ioe) {
 				LOGGER.error("Error while closing stream: " + ioe);
 			}
 		}
@@ -198,26 +226,43 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		for (int i = 0; i < tree.getChildCount(); i++) {
 			ParseTree subTree = tree.getChild(i);
 			if (subTree.getClass().equals(Class_definitionContext.class)) {
-				classes.add(((Class_definitionContext) subTree).identifier().IDENTIFIER().getText());
+				String name = ((Class_definitionContext) subTree).identifier().IDENTIFIER().getText();
+				classes.add(name);
+				delcatedTypeNames.add(name);
 			} else if (subTree.getClass().equals(Enum_definitionContext.class)) {
-				enums.add(((Enum_definitionContext) subTree).identifier().IDENTIFIER().getText());
+				String name = ((Enum_definitionContext) subTree).identifier().IDENTIFIER().getText();
+				enums.add(name);
+				delcatedTypeNames.add(name);
 			} else if (subTree.getClass().equals(Interface_definitionContext.class)) {
-				interfaces.add(((Interface_definitionContext) subTree).identifier().IDENTIFIER().getText());
+				String name = ((Interface_definitionContext) subTree).identifier().IDENTIFIER().getText();
+				interfaces.add(name);
+				delcatedTypeNames.add(name);
 			} else if (subTree.getClass().equals(Struct_definitionContext.class)) {
-				structs.add(((Struct_definitionContext) subTree).identifier().IDENTIFIER().getText());
+				String name = ((Struct_definitionContext) subTree).identifier().IDENTIFIER().getText();
+				structs.add(name);
+				delcatedTypeNames.add(name);
 			} else if (subTree.getClass().equals(Delegate_definitionContext.class)) {
-				delegates.add(((Delegate_definitionContext) subTree).identifier().IDENTIFIER().getText());
+				String name = ((Delegate_definitionContext) subTree).identifier().IDENTIFIER().getText();
+				delegates.add(name);
+				delcatedTypeNames.add(name);
 			}
 			getElements(subTree);
 		}
+	}
+	
+	@Override
+	protected String getFormattedName(String className) {
+		String withoutExtenstion = className.substring(0, className.lastIndexOf("."));
+		String simpleClassName = withoutExtenstion.substring(withoutExtenstion.lastIndexOf("/") + 1);
+		simpleClassName = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(simpleClassName), " ");
+		return simpleClassName;
 	}
 
 	@Override
 	public MultiValueMap<String, ArchimateRelationship> computeModelRelationshipsByClassName(Source warSource,
 			MultiValueMap<String, ArchimateElement> modelElementsByClassName) throws ZipException, IOException {
 		MultiValueMap<String, ArchimateRelationship> modelRelationshipsByClassName = new LinkedMultiValueMap<>();
-		
-		
+
 		return modelRelationshipsByClassName;
 	}
 
