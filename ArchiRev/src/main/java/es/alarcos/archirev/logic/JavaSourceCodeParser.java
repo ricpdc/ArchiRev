@@ -152,45 +152,10 @@ public class JavaSourceCodeParser extends AbstractSourceCodeParser implements Se
 
 							List<ArchimateElement> sourceElements = modelElementsByClassName
 									.get(javaClass.getClassName());
-							List<ArchimateElement> targetElemetns = modelElementsByClassName.get(referencedClass);
+							List<ArchimateElement> targetElements = modelElementsByClassName.get(referencedClass);
 
-							for (ArchimateElement source : sourceElements) {
-								for (ArchimateElement target : targetElemetns) {
-									if (!source.equals(target)) {
-										ArchimateElement copySource = source;
-										ArchimateElement copyTarget = target;
-
-										ArchimateRelationship relationshipToBeAdded = getPrioritizedRelationship(source,
-												target);
-
-										if (relationshipToBeAdded instanceof CompositionRelationship
-												&& MAPPED_SUPERCLASS_ANNOTATION.equals(target.getDocumentation())) {
-											copySource = target;
-											copyTarget = source;
-											relationshipToBeAdded = (ArchimateRelationship) ArchimateFactory.eINSTANCE
-													.createSpecializationRelationship();
-										}
-
-										relationshipToBeAdded.setSource(copySource);
-										relationshipToBeAdded.setTarget(copyTarget);
-										relationshipToBeAdded
-												.setName(copySource.getName() + "-to-" + copyTarget.getName());
-										String relationshipId = copySource.getClass().getSimpleName() + "[\""
-												+ copySource.getName() + "\"]" + " --("
-												+ relationshipToBeAdded.getClass().getSimpleName() + ")--> "
-												+ copyTarget.getClass().getSimpleName() + "[\"" + copyTarget.getName()
-												+ "\"]";
-										relationshipToBeAdded.setId(relationshipId);
-
-										if (visitedRelationships.contains(relationshipId)) {
-											continue;
-										}
-										modelRelationshipsByClassName.add(javaClass.getClassName(),
-												relationshipToBeAdded);
-										visitedRelationships.add(relationshipId);
-									}
-								}
-							}
+							createModelRelationships(modelRelationshipsByClassName, visitedRelationships, javaClass.getClassName(),
+									sourceElements, targetElements);
 						}
 
 					}
@@ -199,5 +164,7 @@ public class JavaSourceCodeParser extends AbstractSourceCodeParser implements Se
 		}
 		return modelRelationshipsByClassName;
 	}
+
+	
 
 }

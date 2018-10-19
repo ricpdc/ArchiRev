@@ -216,4 +216,49 @@ public abstract class AbstractSourceCodeParser implements Serializable {
 			}
 		}
 	}
+	
+	protected void createModelRelationships(MultiValueMap<String, ArchimateRelationship> modelRelationshipsByClassName,
+			Set<String> visitedRelationships, String compilationUnitName, List<ArchimateElement> sourceElements,
+			List<ArchimateElement> targetElements) {
+		if(sourceElements==null || targetElements==null) {
+			return;
+		}
+		for (ArchimateElement source : sourceElements) {
+			for (ArchimateElement target : targetElements) {
+				if (!source.equals(target)) {
+					ArchimateElement copySource = source;
+					ArchimateElement copyTarget = target;
+
+					ArchimateRelationship relationshipToBeAdded = getPrioritizedRelationship(source,
+							target);
+
+					if (relationshipToBeAdded instanceof CompositionRelationship
+							&& MAPPED_SUPERCLASS_ANNOTATION.equals(target.getDocumentation())) {
+						copySource = target;
+						copyTarget = source;
+						relationshipToBeAdded = (ArchimateRelationship) ArchimateFactory.eINSTANCE
+								.createSpecializationRelationship();
+					}
+
+					relationshipToBeAdded.setSource(copySource);
+					relationshipToBeAdded.setTarget(copyTarget);
+					relationshipToBeAdded
+							.setName(copySource.getName() + "-to-" + copyTarget.getName());
+					String relationshipId = copySource.getClass().getSimpleName() + "[\""
+							+ copySource.getName() + "\"]" + " --("
+							+ relationshipToBeAdded.getClass().getSimpleName() + ")--> "
+							+ copyTarget.getClass().getSimpleName() + "[\"" + copyTarget.getName()
+							+ "\"]";
+					relationshipToBeAdded.setId(relationshipId);
+
+					if (visitedRelationships.contains(relationshipId)) {
+						continue;
+					}
+					modelRelationshipsByClassName.add(compilationUnitName,
+							relationshipToBeAdded);
+					visitedRelationships.add(relationshipId);
+				}
+			}
+		}
+	}
 }
