@@ -30,23 +30,18 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import com.archimatetool.model.impl.ArchimateElement;
-import com.archimatetool.model.impl.ArchimateFactory;
 import com.archimatetool.model.impl.ArchimateRelationship;
-import com.archimatetool.model.impl.CompositionRelationship;
 
 import es.alarcos.archirev.model.Source;
 import es.alarcos.archirev.parser.csharp.CSharpLexer;
 import es.alarcos.archirev.parser.csharp.CSharpParser;
 import es.alarcos.archirev.parser.csharp.CSharpParser.Class_definitionContext;
-import es.alarcos.archirev.parser.csharp.CSharpParser.Class_typeContext;
 import es.alarcos.archirev.parser.csharp.CSharpParser.Compilation_unitContext;
 import es.alarcos.archirev.parser.csharp.CSharpParser.Delegate_definitionContext;
 import es.alarcos.archirev.parser.csharp.CSharpParser.Enum_definitionContext;
 import es.alarcos.archirev.parser.csharp.CSharpParser.IdentifierContext;
 import es.alarcos.archirev.parser.csharp.CSharpParser.Interface_definitionContext;
-import es.alarcos.archirev.parser.csharp.CSharpParser.Qualified_identifierContext;
 import es.alarcos.archirev.parser.csharp.CSharpParser.Struct_definitionContext;
-import es.alarcos.archirev.parser.csharp.CSharpParser.Variable_declaratorContext;
 
 @SuppressWarnings("deprecation")
 public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements Serializable {
@@ -140,6 +135,15 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 
 	private void parserCsharpFile(final ZipFile zipFile, final ZipEntry zipEntry,
 			final MultiValueMap<String, ArchimateElement> modelElementsByClassName) throws IOException {
+		String zipEntryName = zipEntry.getName();
+		String simpleClassName = getSimpleClassName(zipEntryName);
+
+		for(String exclusion_tag : exclusions) {
+			if(simpleClassName.contains(exclusion_tag)) {
+				return;
+			}				
+		}
+		
 		File tempFile = getTempFileWithoutDirectives(zipFile, zipEntry);
 		if (Files.readAllBytes(tempFile.toPath()).length == 0) {
 			return;
@@ -161,7 +165,6 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			getDeclaredTypes(tree);
 		}
 
-		String zipEntryName = zipEntry.getName();
 		//LOGGER.info("Parsing.... " + zipEntryName);
 		if (listener.getSyntaxErrors().isEmpty()) {
 			Set<ArchimateElementEnum> uniqueElements = new HashSet<>();
@@ -184,7 +187,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 				}
 			}
 
-			createModelElements(modelElementsByClassName, getSimpleClassName(zipEntryName), uniqueElements,
+			createModelElements(modelElementsByClassName, simpleClassName, uniqueElements,
 					mappedSuperclass);
 
 		} else {

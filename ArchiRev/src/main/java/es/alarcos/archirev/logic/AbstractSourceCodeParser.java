@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,18 +50,20 @@ public abstract class AbstractSourceCodeParser implements Serializable {
 	private static final String JSON_PAIRS = "pairs";
 	private static final String JSON_ANNOTATION = "annotation";
 	private static final String JSON_ELEMENT = "element";
+	private static final String JSON_EXCLUSION = "exclusions";
+	private static final String JSON_EXCLUSION_TAGS = "exclusion_tags";
+	private static final String JSON_TAG = "tag";
 	private static final String JSON_PRIORITIZATION = "prioritization";
 	private static final String JSON_TUPLES = "tuples";
 	private static final String JSON_TARGETS = "targets";
 	private static final String JSON_FROM = "from";
 	private static final String JSON_TO = "to";
 	private static final String JSON_RELATIONSHIP = "relationship";
-
 	private static final String SETUP_CLASS_ROOT = "com.archimatetool.model.impl.";
 
-	private Map<Class<? extends ArchimateElement>, Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>>> mapPrioritizedRelationship = new HashMap<>();
-
 	protected MultiValueMap<String, ArchimateElementEnum> mapping = new LinkedMultiValueMap<>();
+	protected Set<String> exclusions = new HashSet<>();
+	protected Map<Class<? extends ArchimateElement>, Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>>> mapPrioritizedRelationship = new HashMap<>();
 
 	public AbstractSourceCodeParser(final String setup) {
 		loadSetup(setup);
@@ -140,8 +143,21 @@ public abstract class AbstractSourceCodeParser implements Serializable {
 				mapping.add(annotation, ArchimateElementEnum.valueOf(element));
 			}
 
+			// load exclusions
+			JsonObject exclusionsObject = objects.get(1).getAsJsonObject();
+			Validate.isTrue(JSON_EXCLUSION.equals(exclusionsObject.get(JSON_NAME).getAsString()));
+			Validate.isTrue(exclusionsObject.get(JSON_EXCLUSION_TAGS).isJsonArray());
+			JsonArray exclusionsTags = exclusionsObject.get(JSON_EXCLUSION_TAGS).getAsJsonArray();
+			exclusions = new HashSet<>();
+			for (int i = 0; i < exclusionsTags.size(); i++) {
+				Validate.isTrue(exclusionsTags.get(i).isJsonObject());
+				JsonObject tag = exclusionsTags.get(i).getAsJsonObject();
+				String exclusion_tag = tag.get(JSON_TAG).getAsString();
+				exclusions.add(exclusion_tag);
+			}
+
 			// load prioritization object
-			JsonObject prioritzationObject = objects.get(1).getAsJsonObject();
+			JsonObject prioritzationObject = objects.get(2).getAsJsonObject();
 			Validate.isTrue(JSON_PRIORITIZATION.equals(prioritzationObject.get(JSON_NAME).getAsString()));
 			Validate.isTrue(prioritzationObject.get(JSON_TUPLES).isJsonArray());
 			JsonArray prioritizationTuples = prioritzationObject.get(JSON_TUPLES).getAsJsonArray();
@@ -216,11 +232,11 @@ public abstract class AbstractSourceCodeParser implements Serializable {
 			}
 		}
 	}
-	
+
 	protected void createModelRelationships(MultiValueMap<String, ArchimateRelationship> modelRelationshipsByClassName,
 			Set<String> visitedRelationships, String compilationUnitName, List<ArchimateElement> sourceElements,
 			List<ArchimateElement> targetElements) {
-		if(sourceElements==null || targetElements==null) {
+		if (sourceElements == null || targetElements == null) {
 			return;
 		}
 		for (ArchimateElement source : sourceElements) {
@@ -229,8 +245,7 @@ public abstract class AbstractSourceCodeParser implements Serializable {
 					ArchimateElement copySource = source;
 					ArchimateElement copyTarget = target;
 
-					ArchimateRelationship relationshipToBeAdded = getPrioritizedRelationship(source,
-							target);
+					ArchimateRelationship relationshipToBeAdded = getPrioritizedRelationship(source, target);
 
 					if (relationshipToBeAdded instanceof CompositionRelationship
 							&& MAPPED_SUPERCLASS_ANNOTATION.equals(target.getDocumentation())) {
@@ -242,23 +257,44 @@ public abstract class AbstractSourceCodeParser implements Serializable {
 
 					relationshipToBeAdded.setSource(copySource);
 					relationshipToBeAdded.setTarget(copyTarget);
-					relationshipToBeAdded
-							.setName(copySource.getName() + "-to-" + copyTarget.getName());
-					String relationshipId = copySource.getClass().getSimpleName() + "[\""
-							+ copySource.getName() + "\"]" + " --("
-							+ relationshipToBeAdded.getClass().getSimpleName() + ")--> "
-							+ copyTarget.getClass().getSimpleName() + "[\"" + copyTarget.getName()
-							+ "\"]";
+					relationshipToBeAdded.setName(copySource.getName() + "-to-" + copyTarget.getName());
+					String relationshipId = copySource.getClass().getSimpleName() + "[\"" + copySource.getName() + "\"]"
+							+ " --(" + relationshipToBeAdded.getClass().getSimpleName() + ")--> "
+							+ copyTarget.getClass().getSimpleName() + "[\"" + copyTarget.getName() + "\"]";
 					relationshipToBeAdded.setId(relationshipId);
 
 					if (visitedRelationships.contains(relationshipId)) {
 						continue;
 					}
-					modelRelationshipsByClassName.add(compilationUnitName,
-							relationshipToBeAdded);
+					modelRelationshipsByClassName.add(compilationUnitName, relationshipToBeAdded);
 					visitedRelationships.add(relationshipId);
 				}
 			}
 		}
+	}
+
+	public Set<String> getExclusions() {
+		return exclusions;
+	}
+
+	public void setExclusions(Set<String> exclusions) {
+		this.exclusions = exclusions;
+	}
+
+	public Map<Class<? extends ArchimateElement>, Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>>> getMapPrioritizedRelationship() {
+		return mapPrioritizedRelationship;
+	}
+
+	public void setMapPrioritizedRelationship(
+			Map<Class<? extends ArchimateElement>, Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>>> mapPrioritizedRelationship) {
+		this.mapPrioritizedRelationship = mapPrioritizedRelationship;
+	}
+
+	public MultiValueMap<String, ArchimateElementEnum> getMapping() {
+		return mapping;
+	}
+
+	public void setMapping(MultiValueMap<String, ArchimateElementEnum> mapping) {
+		this.mapping = mapping;
 	}
 }

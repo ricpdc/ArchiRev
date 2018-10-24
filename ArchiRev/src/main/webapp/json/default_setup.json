@@ -10,6 +10,10 @@
 	{"annotation":"Repository","element":"COMPONENT"},
 	{"annotation":"SpringBootApplication","element":"COMPONENT"}
 	]},
+{"name":"exclusions","exclusion_tags":[
+	{"tag":"Builder"},
+	{"tag":"Helper"}
+	]},
 {"name":"prioritization","tuples":[
 	{"from":"ApplicationFunction","targets": [
 		{"to":"ApplicationFunction","relationship":"TriggeringRelationship"},
