@@ -75,6 +75,8 @@ import com.archimatetool.model.impl.RealizationRelationship;
 import com.archimatetool.model.impl.ServingRelationship;
 import com.archimatetool.model.impl.SpecializationRelationship;
 import com.archimatetool.model.impl.TriggeringRelationship;
+import com.mxgraph.analysis.mxGraphAnalysis;
+import com.mxgraph.analysis.mxUnionFind;
 import com.mxgraph.canvas.mxGraphics2DCanvas;
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.layout.mxCompactTreeLayout;
@@ -107,8 +109,8 @@ class BusinessTest {
 
 	static Logger LOGGER = LoggerFactory.getLogger(BusinessTest.class);
 
-	private final Decompiler decompiler = Decompiler.CFR;
-	private final DecompilerSettings settings = new DecompilerSettings(decompiler);
+	//private final Decompiler decompiler = Decompiler.CFR;
+	//private final DecompilerSettings settings = new DecompilerSettings(decompiler);
 
 	private final String warPath = ".\\src\\test\\resources\\ArchiRev.war";
 
@@ -630,6 +632,12 @@ class BusinessTest {
 			graph.getModel().endUpdate();
 		}
 
+		
+		
+		mxGraphAnalysis analyzer = mxGraphAnalysis.getInstance();
+		mxUnionFind connectionComponents = analyzer.getConnectionComponents(graph, graph.getChildVertices(graph.getDefaultParent()), graph.getChildEdges(graph.getDefaultParent()));
+		
+		
 		try {
 
 			mxHierarchicalLayout hierarchicalLayout = new mxHierarchicalLayout(graph);
@@ -1070,20 +1078,20 @@ class BusinessTest {
 		return classFolder;
 	}
 
-	private String[] generateMainMethod() {
-		for (Settings setting : Settings.values()) {
-			getSettings().registerSetting(setting);
-		}
-
-		String[] result = new String[getSettings().size() * 2 + 1];
-		result[0] = "bytecodeviewer";
-		int index = 1;
-		for (Settings setting : Settings.values()) {
-			result[index++] = "--" + setting.getParam();
-			result[index++] = String.valueOf(getSettings().isSelected(setting));
-		}
-		return result;
-	}
+//	private String[] generateMainMethod() {
+//		for (Settings setting : Settings.values()) {
+//			getSettings().registerSetting(setting);
+//		}
+//
+//		String[] result = new String[getSettings().size() * 2 + 1];
+//		result[0] = "bytecodeviewer";
+//		int index = 1;
+//		for (Settings setting : Settings.values()) {
+//			result[index++] = "--" + setting.getParam();
+//			result[index++] = String.valueOf(getSettings().isSelected(setting));
+//		}
+//		return result;
+//	}
 
 //	private String doClass(DCCommonState dcCommonState, byte[] content1) throws Exception {
 //		Options options = dcCommonState.getOptions();
@@ -1125,8 +1133,8 @@ class BusinessTest {
 //		return d.toString();
 //	}
 
-	private DecompilerSettings getSettings() {
-		return settings;
-	}
+//	private DecompilerSettings getSettings() {
+//		return settings;
+//	}
 
 }
