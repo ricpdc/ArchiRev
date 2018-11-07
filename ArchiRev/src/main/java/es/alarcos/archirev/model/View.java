@@ -3,7 +3,10 @@ package es.alarcos.archirev.model;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Set;
+import java.util.TreeSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,6 +14,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -32,6 +36,9 @@ public class View extends AbstractEntity implements Serializable {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "model_id")
 	private Model model;
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "view", orphanRemoval = true, fetch = FetchType.LAZY)
+	private Set<Metric> metrics = new TreeSet<>();
 
 	public String getImagePath() {
 		return imagePath;
@@ -67,6 +74,18 @@ public class View extends AbstractEntity implements Serializable {
 
 	public void setModel(Model model) {
 		this.model = model;
+	}
+
+	public Set<Metric> getMetrics() {
+		return metrics;
+	}
+
+	public void setMetrics(Set<Metric> metrics) {
+		this.metrics = metrics;
+	}
+	
+	public void addMetric(Metric metric) {
+		metrics.add(metric);
 	}
 
 }

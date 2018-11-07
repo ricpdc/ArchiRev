@@ -16,6 +16,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.slf4j.Logger;
@@ -54,6 +55,7 @@ public class ModelsController extends AbstractController {
 
 	private Model selectedModel;
 	private View selectedView;
+	private View selectedView2;
 
 	private StreamedContent exportedFile;
 
@@ -124,7 +126,20 @@ public class ModelsController extends AbstractController {
 	public void openMetricsDialog() {
 		RequestContext context = RequestContext.getCurrentInstance();
 		context.update("mainForm:metricsDialog");
+		context.update("mainForm:metricsTable");
 		context.execute("PF('metricsDialog').show()");
+	}
+	
+	public void onSelectModel(SelectEvent event) {
+		Model model = (Model) event.getObject();
+		LOGGER.info("Selected model: " + model);
+		setSelectedModel(model);
+	}
+	
+	public void onSelectView(SelectEvent event) {
+		View view = (View) event.getObject();
+		LOGGER.info("Selected view: " + view);
+		setSelectedView(view);
 	}
 
 	private String createExportedFile(final Model model) {
@@ -197,6 +212,14 @@ public class ModelsController extends AbstractController {
 
 	public void setSelectedView(View selectedView) {
 		this.selectedView = selectedView;
+	}
+
+	public View getSelectedView2() {
+		return selectedView2;
+	}
+
+	public void setSelectedView2(View selectedView2) {
+		this.selectedView2 = selectedView2;
 	}
 
 }

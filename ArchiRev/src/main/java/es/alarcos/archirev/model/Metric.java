@@ -19,8 +19,8 @@ public class Metric extends AbstractEntity implements Serializable {
 
 	}
 
-	public Metric(Model model, String name, String value) {
-		this.model = model;
+	public Metric(View view, String name, String value) {
+		this.view = view;
 		this.setName(name);
 		this.value = value;
 	}
@@ -29,8 +29,8 @@ public class Metric extends AbstractEntity implements Serializable {
 	private String value;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "model_id")
-	private Model model;
+	@JoinColumn(name = "view_id")
+	private View view;
 
 	public String getValue() {
 		return value;
@@ -40,12 +40,14 @@ public class Metric extends AbstractEntity implements Serializable {
 		this.value = value;
 	}
 
-	public Model getModel() {
-		return model;
+	public View getView() {
+		return view;
 	}
 
-	public void setModel(Model model) {
-		this.model = model;
+	public void setView(View view) {
+		this.view = view;
 	}
+
+	
 
 }

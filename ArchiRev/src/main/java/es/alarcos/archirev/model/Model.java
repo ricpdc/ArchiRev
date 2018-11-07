@@ -42,8 +42,7 @@ public class Model extends AbstractEntity {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "model", orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<Relationship> relationships = new TreeSet<>();
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "model", orphanRemoval = true, fetch = FetchType.LAZY)
-	private Set<Metric> metrics = new TreeSet<>();
+	
 
 	@Transient
 	private String rootDiagramPath;
@@ -117,17 +116,6 @@ public class Model extends AbstractEntity {
 		this.rootDiagramPath = rootDiagramPath;
 	}
 
-	public Set<Metric> getMetrics() {
-		return metrics;
-	}
-
-	public void setMetrics(Set<Metric> metrics) {
-		this.metrics = metrics;
-	}
-
-	public void addMetric(Metric metric) {
-		metrics.add(metric);
-	}
 	
 	public View getDefaultView() {
 		if(getViews()!=null && !getViews().isEmpty()) {

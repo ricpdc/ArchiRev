@@ -17,15 +17,16 @@
 
 					<p:dataTable id="modelsTableId" widgetVar="modelsTable"
 						value="#{modelsController.project.models}" var="model"
-						selection="#{modelsController.selectedModel}"
-						selectionMode="single" rowKey="#{model.id}" scrollable="true"
+						selectionMode="single" rowKey="#{model}"
+						scrollable="true"
 						scrollHeight="200">
 						emptyMessage="No models extracted" rows="5"
 						rowStyleClass="#{modelsController.selectedModel == model?'activeDiagram':''}">
 
 						<p:ajax event="rowToggle" update="modelExpansion" />
 						<p:ajax event="rowSelect"
-							update="mainForm:mainTabs:diagramVisualizationPanel, mainForm:mainTabs:elementsTabs"
+							listener="#{modelsController.onSelectModel}"
+							update="mainForm:mainTabs:diagramVisualizationPanel, mainForm:mainTabs:elementsTabs, mainForm:metricsTable"
 							oncomplete="resizeDiagram()" />
 
 						<p:column style="width:16px">
@@ -39,11 +40,13 @@
 						<p:rowExpansion id="modelExpansion">
 							<p:dataTable id="modelViewsTableId" widgetVar="modelViewsTable" style="width:100% !important"
 								value="#{modelsController.selectedModel.views}" var="modelView"
-								selection="#{modelsController.selectedView}"
-								selectionMode="single" rowKey="#{modelView.id}"
+								
+								selectionMode="single" rowKey="#{modelView}"
+								
 								scrollable="true" scrollHeight="300">
-								<p:ajax event="rowSelect"
-									update="mainForm:mainTabs:diagramVisualizationPanel"
+								<p:ajax event="rowSelect"  global="true" immediate="true"
+									listener="#{modelsController.onSelectView}"
+									update="mainForm:mainTabs:diagramVisualizationPanel, mainForm:metricsTable"
 									oncomplete="resizeDiagram()" />
 								<p:column style="width: 50% !important" headerText="Type">
 									<h:outputText value=" #{modelView.type}" />
@@ -97,7 +100,7 @@
 						<p:fileDownload value="#{modelsController.exportedFile}" />
 					</p:commandButton>
 					<p:commandButton id="metricsButton" value="metrics"
-						icon="ui-icon-calculator"
+						icon="ui-icon-calculator" update="mainForm:metricsTable"
 						actionListener="#{modelsController.openMetricsDialog()}" />
 
 					<p:separator id="diagramSeparator" />
@@ -105,7 +108,7 @@
 						style="width:800px;height:600px">
 						<p:graphicImage id="diagramImage"
 							value="#{modelsController.selectedDiagram}"
-							title="Archimate Diagram for #{modelsController.selectedModel.name}"
+							title="Archimate Diagram for #{modelsController.selectedView.name}"
 							cache="false" stream="false" />
 					</p:scrollPanel>
 				</p:outputPanel>

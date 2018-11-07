@@ -12,7 +12,7 @@
 		<p:scrollPanel style="border:none;">
 
 			<p:dataTable id="metricsTable" widgetVar="metricsTable"
-				value="#{modelsController.selectedModel.metrics}" var="metric"
+				value="#{modelsController.selectedView.metrics}" var="metric"
 				emptyMessage="No metrics computed">
 				<p:column headerText="Name" sortBy="#{metric.name}"
 					filterBy="#{metric.name}" filterMatchMode="contains">

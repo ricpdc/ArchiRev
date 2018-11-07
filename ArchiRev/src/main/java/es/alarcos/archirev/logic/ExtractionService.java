@@ -77,7 +77,6 @@ import es.alarcos.archirev.model.enums.ModelViewEnum;
 @Service
 public class ExtractionService implements Serializable {
 
-
 	private static final long serialVersionUID = -4392305100176250199L;
 
 	static Logger LOGGER = LoggerFactory.getLogger(ExtractionService.class);
@@ -142,7 +141,7 @@ public class ExtractionService implements Serializable {
 		mxGraph graph = generateGraphComponent(viewType, model);
 		List<List<mxCell>> components = computeGraphComponents(graph);
 		for (int i = 0; i < components.size(); i++) {
-			if(components.get(i).size()>MIN_NUM_NODES_FOR_GRAPH_COMPONENT_VIEW) {
+			if (components.get(i).size() > MIN_NUM_NODES_FOR_GRAPH_COMPONENT_VIEW) {
 				generateModelViewForComponent(viewType, model, graph, components.get(i));
 			}
 		}
@@ -293,7 +292,6 @@ public class ExtractionService implements Serializable {
 			model.getElements().addAll(elements);
 			model.getRelationships().clear();
 			model.getRelationships().addAll(relationships);
-			computeMetrics(model, graph);
 
 		} finally {
 			graph.getModel().endUpdate();
@@ -307,6 +305,7 @@ public class ExtractionService implements Serializable {
 			layout.execute(graph.getDefaultParent());
 
 			View defaultView = getDefaultView(model);
+			computeMetrics(defaultView, graph);
 			File file = new File(defaultView.getImagePath());
 			BufferedImage image = mxCellRenderer.createBufferedImage(graph, null, 1, java.awt.Color.WHITE, true, null);
 			if (image != null) {
@@ -496,6 +495,7 @@ public class ExtractionService implements Serializable {
 			layout.execute(graph.getDefaultParent());
 
 			View view = getView(viewType, model);
+			computeMetrics(view, graph);
 			File file = new File(view.getImagePath());
 			BufferedImage image = mxCellRenderer.createBufferedImage(graph, null, 1, java.awt.Color.WHITE, true, null);
 			if (image != null) {
@@ -608,6 +608,7 @@ public class ExtractionService implements Serializable {
 			layout.execute(graph.getDefaultParent());
 
 			View view = getView(viewType, model);
+			computeMetrics(view, graph);
 			File file = new File(view.getImagePath());
 			BufferedImage image = mxCellRenderer.createBufferedImage(graph, null, 1, java.awt.Color.WHITE, true, null);
 			if (image != null) {
@@ -627,6 +628,7 @@ public class ExtractionService implements Serializable {
 		View defaultView = null;
 		if (model.getViews() == null || model.getViews().isEmpty()) {
 			defaultView = new View();
+			defaultView.setName(model.getName() + " - " + defaultType.getLabel());
 			defaultView.setModel(model);
 			defaultView.setType(defaultType);
 			defaultView.setCreatedAt(now);
@@ -647,6 +649,7 @@ public class ExtractionService implements Serializable {
 		final Timestamp now = new Timestamp(new Date().getTime());
 
 		View view = new View();
+		view.setName(model.getName() + " - " + viewType.getLabel());
 		view.setModel(model);
 		view.setType(viewType);
 		view.setCreatedAt(now);
@@ -670,8 +673,8 @@ public class ExtractionService implements Serializable {
 		return filterInForView;
 	}
 
-	private void computeMetrics(Model model, mxGraph graph) {
-		model.getMetrics().clear();
+	private void computeMetrics(View view, mxGraph graph) {
+		view.getMetrics().clear();
 		DecimalFormat df = new DecimalFormat("###.###");
 
 		// TODO compute further metrics from graph.
@@ -725,24 +728,24 @@ public class ExtractionService implements Serializable {
 			}
 		}
 
-		model.addMetric(new Metric(model, "#Nodes", String.valueOf(numVertices)));
-		model.addMetric(new Metric(model, "#Edges", String.valueOf(numEdges)));
-		model.addMetric(new Metric(model, "Connectivity", df.format(connectivity)));
-		model.addMetric(new Metric(model, "Density", df.format(density)));
+		view.addMetric(new Metric(view, "#Nodes", String.valueOf(numVertices)));
+		view.addMetric(new Metric(view, "#Edges", String.valueOf(numEdges)));
+		view.addMetric(new Metric(view, "Connectivity", df.format(connectivity)));
+		view.addMetric(new Metric(view, "Density", df.format(density)));
 
-		model.addMetric(new Metric(model, "#" + ConnectorEnum.ACCESS.getModelRelationship().getSimpleName(),
+		view.addMetric(new Metric(view, "#" + ConnectorEnum.ACCESS.getModelRelationship().getSimpleName(),
 				String.valueOf(numAccess)));
-		model.addMetric(new Metric(model, "#" + ConnectorEnum.AGGREGATION.getModelRelationship().getSimpleName(),
+		view.addMetric(new Metric(view, "#" + ConnectorEnum.AGGREGATION.getModelRelationship().getSimpleName(),
 				String.valueOf(numAggregation)));
-		model.addMetric(new Metric(model, "#" + ConnectorEnum.COMPOSITION.getModelRelationship().getSimpleName(),
+		view.addMetric(new Metric(view, "#" + ConnectorEnum.COMPOSITION.getModelRelationship().getSimpleName(),
 				String.valueOf(numComposition)));
-		model.addMetric(new Metric(model, "#" + ConnectorEnum.REALIZATION.getModelRelationship().getSimpleName(),
+		view.addMetric(new Metric(view, "#" + ConnectorEnum.REALIZATION.getModelRelationship().getSimpleName(),
 				String.valueOf(numRealization)));
-		model.addMetric(new Metric(model, "#" + ConnectorEnum.SERVING.getModelRelationship().getSimpleName(),
+		view.addMetric(new Metric(view, "#" + ConnectorEnum.SERVING.getModelRelationship().getSimpleName(),
 				String.valueOf(numServing)));
-		model.addMetric(new Metric(model, "#" + ConnectorEnum.SPECIALIZATION.getModelRelationship().getSimpleName(),
+		view.addMetric(new Metric(view, "#" + ConnectorEnum.SPECIALIZATION.getModelRelationship().getSimpleName(),
 				String.valueOf(numSpecialization)));
-		model.addMetric(new Metric(model, "#" + ConnectorEnum.TRIGGERING.getModelRelationship().getSimpleName(),
+		view.addMetric(new Metric(view, "#" + ConnectorEnum.TRIGGERING.getModelRelationship().getSimpleName(),
 				String.valueOf(numTriggering)));
 
 	}
