@@ -20,10 +20,8 @@
 						selectionMode="single" rowKey="#{model}"
 						scrollable="true"
 						scrollHeight="200">
-						emptyMessage="No models extracted" rows="5"
-						rowStyleClass="#{modelsController.selectedModel == model?'activeDiagram':''}">
 
-						<p:ajax event="rowToggle" update="modelExpansion" />
+						<p:ajax event="rowToggle" update="modelViewsTableId" />
 						<p:ajax event="rowSelect"
 							listener="#{modelsController.onSelectModel}"
 							update="mainForm:mainTabs:diagramVisualizationPanel, mainForm:mainTabs:elementsTabs, mainForm:metricsTable"
@@ -39,12 +37,10 @@
 
 						<p:rowExpansion id="modelExpansion">
 							<p:dataTable id="modelViewsTableId" widgetVar="modelViewsTable" style="width:100% !important"
-								value="#{modelsController.selectedModel.views}" var="modelView"
-								
+								value="#{model.views}" var="modelView"
 								selectionMode="single" rowKey="#{modelView}"
-								
 								scrollable="true" scrollHeight="300">
-								<p:ajax event="rowSelect"  global="true" immediate="true"
+								<p:ajax event="rowSelect" global="true" immediate="true"
 									listener="#{modelsController.onSelectView}"
 									update="mainForm:mainTabs:diagramVisualizationPanel, mainForm:metricsTable"
 									oncomplete="resizeDiagram()" />
