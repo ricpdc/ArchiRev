@@ -3,6 +3,7 @@ package es.alarcos.archirev.model;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -38,7 +39,7 @@ public class View extends AbstractEntity implements Serializable {
 	private Model model;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "view", orphanRemoval = true, fetch = FetchType.LAZY)
-	private Set<Metric> metrics = new TreeSet<>();
+	private Set<Metric> metrics = new HashSet<>();
 
 	public String getImagePath() {
 		return imagePath;

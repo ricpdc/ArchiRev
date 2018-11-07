@@ -94,6 +94,7 @@ public class ExtractionService implements Serializable {
 
 	private MultiValueMap<String, ArchimateElement> modelElementsByClassName = new LinkedMultiValueMap<>();
 	private MultiValueMap<String, ArchimateRelationship> modelRelationshipsByClassName = new LinkedMultiValueMap<>();
+	private File exportXmlFile;
 
 	public ExtractionService() {
 
@@ -103,36 +104,26 @@ public class ExtractionService implements Serializable {
 		Set<Source> sources = model.getExtraction().getSources();
 		Validate.isTrue(sources != null && !sources.isEmpty(), "There is no source as input");
 		// TODO Integrate different sources into single one model
-		File imageFile = null;
 		String modelName = model.getExtraction().getName();
 
 		model.getViews().clear();
 
 		for (Source source : sources) {
 			modelName += ("_" + source.getName());
+			model.setName(modelName);
 			switch (source.getType()) {
-			case JAVA_WEB_APP:
-				sourceCodeParser = new JavaSourceCodeParser(model.getExtraction().getSetup());
-				imageFile = extractArchimateModelFromSourceCode(model, source, false);
-				break;
-			case CSHARP_APP:
-				sourceCodeParser = new CSharpSourceCodeParser(model.getExtraction().getSetup());
-				imageFile = extractArchimateModelFromSourceCode(model, source, false);
-				break;
-			case JPA:
-				// TODO complete this
-				break;
-			default:
-			}
-		}
-		model.setName(modelName);
-		for (ModelViewEnum viewType : model.getExtraction().getSelectedViews()) {
-			if (viewType.equals(ModelViewEnum.ALL)) {
-				continue;
-			} else if (viewType.equals(ModelViewEnum.ALL_WITH_COMPONENTS)) {
-				generateModelViewsForComponents(model, viewType);
-			} else {
-				generateModelView(viewType, model);
+				case JAVA_WEB_APP:
+					sourceCodeParser = new JavaSourceCodeParser(model.getExtraction().getSetup());
+					extractArchimateModelFromSourceCode(model, source, false);
+					break;
+				case CSHARP_APP:
+					sourceCodeParser = new CSharpSourceCodeParser(model.getExtraction().getSetup());
+					extractArchimateModelFromSourceCode(model, source, false);
+					break;
+				case JPA:
+					// TODO complete this
+					break;
+				default:
 			}
 		}
 	}
@@ -151,11 +142,16 @@ public class ExtractionService implements Serializable {
 		Set<Source> sources = model.getExtraction().getSources();
 		Validate.isTrue(sources != null && !sources.isEmpty(), "There is no source as input");
 		// TODO Integrate different sources into single one model
-		File exportXmlFile = null;
+		exportXmlFile = null;
 		for (Source source : sources) {
 			switch (source.getType()) {
 			case JAVA_WEB_APP:
-				exportXmlFile = extractArchimateModelFromSourceCode(model, source, true);
+				sourceCodeParser = new JavaSourceCodeParser(model.getExtraction().getSetup());
+				extractArchimateModelFromSourceCode(model, source, true);
+				break;
+			case CSHARP_APP:
+				sourceCodeParser = new CSharpSourceCodeParser(model.getExtraction().getSetup());
+				extractArchimateModelFromSourceCode(model, source, true);
 				break;
 			case JPA:
 				break;
@@ -167,7 +163,7 @@ public class ExtractionService implements Serializable {
 		}
 	}
 
-	private File extractArchimateModelFromSourceCode(Model model, Source source, boolean export) {
+	private void extractArchimateModelFromSourceCode(Model model, Source source, boolean export) {
 
 		modelElementsByClassName = new LinkedMultiValueMap<>();
 		modelRelationshipsByClassName = new LinkedMultiValueMap<>();
@@ -176,15 +172,22 @@ public class ExtractionService implements Serializable {
 			modelRelationshipsByClassName = sourceCodeParser.computeModelRelationshipsByClassName(source,
 					modelElementsByClassName);
 			if (!export) {
-				return generateModelAndDefaultView(model, modelElementsByClassName, modelRelationshipsByClassName);
+				generateModelAndDefaultView(model, modelElementsByClassName, modelRelationshipsByClassName);
+				for (ModelViewEnum viewType : model.getExtraction().getSelectedViews()) {
+					if (viewType.equals(ModelViewEnum.ALL)) {
+						continue;
+					} else if (viewType.equals(ModelViewEnum.ALL_WITH_COMPONENTS)) {
+						generateModelViewsForComponents(model, viewType);
+					} else {
+						generateModelView(viewType, model);
+					}
+				}
 			} else {
-				return exportOpenExchangeFormat(model, modelElementsByClassName, modelRelationshipsByClassName);
+				exportXmlFile = exportOpenExchangeFormat(model, modelElementsByClassName, modelRelationshipsByClassName);
 			}
 		} catch (NoClassDefFoundError | IOException e) {
 			e.printStackTrace();
 		}
-		return null;
-
 	}
 
 	private File generateModelAndDefaultView(Model model,

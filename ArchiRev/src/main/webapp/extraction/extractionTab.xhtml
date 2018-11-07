@@ -51,7 +51,7 @@
 				paginatorPosition="bottom"
 				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 				rowsPerPageTemplate="5,10,15" lazy="true"
-				sortBy="#{extraction.name}">
+				sortBy="#{extraction.modifiedAt}" sortOrder="descending">
 				<p:column headerText="Name" sortBy="#{extraction.name}" width="180"
 					filterBy="#{extraction.name}" filterMatchMode="contains">
 					<h:outputText value="#{extraction.name}" />
