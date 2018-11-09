@@ -102,6 +102,8 @@ public class ModelsController extends AbstractController {
 
 			selectedModel.setExportedPath(createExportedFile(selectedModel));
 
+			selectedModel.setRootDiagramPath(getSessionController().getProperty("location.diagram"));
+			
 			extractionService.exportArchimateModel(selectedModel);
 
 			getProject().setModifiedAt(now);
@@ -133,7 +135,10 @@ public class ModelsController extends AbstractController {
 	public void onSelectModel(SelectEvent event) {
 		Model model = (Model) event.getObject();
 		LOGGER.info("Selected model: " + model);
-		setSelectedModel(model);
+		selectedModel = model;
+		if(selectedModel!=null) {
+			selectedView = selectedModel.getDefaultView();
+		}
 	}
 	
 	public void onSelectView(SelectEvent event) {

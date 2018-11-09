@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
@@ -218,6 +219,7 @@ public abstract class AbstractSourceCodeParser implements Serializable {
 			}
 			String formattedName = getFormattedName(className);
 			elementToBeAdded.setName(formattedName);
+			elementToBeAdded.setId("id-" + UUID.randomUUID());
 			boolean existent = false;
 			List<ArchimateElement> archimateElements = modelElementsByClassName.get(className);
 			for (int i = 0; archimateElements != null && i < archimateElements.size(); i++) {
@@ -258,9 +260,10 @@ public abstract class AbstractSourceCodeParser implements Serializable {
 					relationshipToBeAdded.setSource(copySource);
 					relationshipToBeAdded.setTarget(copyTarget);
 					relationshipToBeAdded.setName(copySource.getName() + "-to-" + copyTarget.getName());
-					String relationshipId = copySource.getClass().getSimpleName() + "[\"" + copySource.getName() + "\"]"
-							+ " --(" + relationshipToBeAdded.getClass().getSimpleName() + ")--> "
-							+ copyTarget.getClass().getSimpleName() + "[\"" + copyTarget.getName() + "\"]";
+//					String relationshipId = copySource.getClass().getSimpleName() + "[\"" + copySource.getName() + "\"]"
+//							+ " --(" + relationshipToBeAdded.getClass().getSimpleName() + ")--> "
+//							+ copyTarget.getClass().getSimpleName() + "[\"" + copyTarget.getName() + "\"]";
+					String relationshipId = "id-" + UUID.randomUUID();
 					relationshipToBeAdded.setId(relationshipId);
 
 					if (visitedRelationships.contains(relationshipId)) {
