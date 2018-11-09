@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.archimatetool.model.impl.ArchimateElement;
+
 @Entity
 @Table(name = "element")
 public class Element extends AbstractEntity implements Serializable {
@@ -16,19 +18,28 @@ public class Element extends AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 8422344555319120259L;
 
 	public Element() {
-
+		
 	}
-
-	public Element(Model model, String name, String documentation, String type) {
+	
+	public Element(Model model, String elementId, String name, String documentation, String type) {
 		this.model = model;
+		this.elementId = elementId;
 		this.name = name;
 		this.documentation = documentation;
 		this.type = type;
 	}
 
+	public Element(Model model, ArchimateElement archimateElement) {
+		this(model, archimateElement.getId(), archimateElement.getName(), archimateElement.getDocumentation(),
+				archimateElement.getClass().getSimpleName());
+	}
+
+	@Column(name = "elementId")
+	private String elementId;
+
 	@Column(name = "documentation")
 	private String documentation;
-	
+
 	@Column(name = "type")
 	private String type;
 
@@ -60,5 +71,12 @@ public class Element extends AbstractEntity implements Serializable {
 		this.model = model;
 	}
 
-	
+	public String getElementId() {
+		return elementId;
+	}
+
+	public void setElementId(String elementId) {
+		this.elementId = elementId;
+	}
+
 }

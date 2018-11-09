@@ -135,7 +135,7 @@ public class ExtractionService implements Serializable {
 	}
 
 	private void generateModelViewsForComponents(Model model, ModelViewEnum viewType) {
-		mxGraph graph = generateGraphComponent(viewType, model);
+		mxGraph graph = viewGraph.get(defaultView);
 		List<List<mxCell>> components = computeGraphComponents(graph);
 		for (int i = 0; i < components.size(); i++) {
 			if (components.get(i).size() > MIN_NUM_NODES_FOR_GRAPH_COMPONENT_VIEW) {
@@ -249,8 +249,7 @@ public class ExtractionService implements Serializable {
 					Object node = graph.insertVertex(parent, archimateElement.getId(), archimateElement.getName(), 15,
 							20, archimateElement.getName().length() * 5 + 60, 40, shapeEnum.getShape().getSimpleName());
 					graphNodesMap.put(archimateElement, componentNode != null ? componentNode : node);
-					elements.add(new Element(model, archimateElement.getName(), archimateElement.getDocumentation(),
-							archimateElement.getClass().getSimpleName()));
+					elements.add(new Element(model, archimateElement));
 					// nodes.put(archimateElement, node);
 
 					// LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + " (\"" +
@@ -283,9 +282,7 @@ public class ExtractionService implements Serializable {
 						String simpleName = archimateRelationship.getClass().getSimpleName();
 						Object edge = graph.insertEdge(parent, archimateRelationship.getId(), simpleName, node1, node2,
 								archimateRelationship.getClass().getSimpleName());
-						relationships.add(new Relationship(model, archimateRelationship.getName(),
-								archimateRelationship.getDocumentation(),
-								archimateRelationship.getClass().getSimpleName()));
+						relationships.add(new Relationship(model, archimateRelationship));
 						visitedEdges.add(edgeId);
 						graphEdgesMap.put(archimateRelationship, edge);
 

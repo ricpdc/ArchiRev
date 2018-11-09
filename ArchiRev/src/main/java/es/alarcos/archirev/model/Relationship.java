@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.archimatetool.model.impl.ArchimateRelationship;
+
 @Entity
 @Table(name = "relationship")
 public class Relationship extends AbstractEntity implements Serializable {
@@ -19,12 +21,21 @@ public class Relationship extends AbstractEntity implements Serializable {
 
 	}
 
-	public Relationship(Model model, String name, String documentation, String type) {
+	public Relationship(Model model, String relationshipId, String name, String documentation, String type) {
 		this.model = model;
+		this.relationshipId = relationshipId;
 		this.name = name;
 		this.documentation = documentation;
 		this.type = type;
 	}
+
+	public Relationship(Model model, ArchimateRelationship archimateRelationship) {
+		this(model, archimateRelationship.getId(), archimateRelationship.getName(),
+				archimateRelationship.getDocumentation(), archimateRelationship.getClass().getSimpleName());
+	}
+
+	@Column(name = "relationshipId")
+	private String relationshipId;
 
 	@Column(name = "documentation")
 	private String documentation;
@@ -82,6 +93,14 @@ public class Relationship extends AbstractEntity implements Serializable {
 
 	public void setTarget(Element target) {
 		this.target = target;
+	}
+
+	public String getRelationshipId() {
+		return relationshipId;
+	}
+
+	public void setRelationshipId(String relationshipId) {
+		this.relationshipId = relationshipId;
 	}
 
 }
