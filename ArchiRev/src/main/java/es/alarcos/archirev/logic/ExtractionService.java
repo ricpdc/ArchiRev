@@ -315,11 +315,6 @@ public class ExtractionService implements Serializable {
 			BufferedImage image = mxCellRenderer.createBufferedImage(graph, null, 1, java.awt.Color.WHITE, true, null);
 			if (image != null) {
 				ImageIO.write(image, "PNG", file);
-
-				// TODO remove this local test
-				File localFile = new File(
-						"C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\target\\diagrams\\testJgraphX.png");
-				ImageIO.write(image, "PNG", localFile);
 			}
 
 			return file;
@@ -785,7 +780,7 @@ public class ExtractionService implements Serializable {
 			xmlOutput.output(doc, new FileWriter(model.getExportedPath()));
 
 			// TODO remove this local test
-			String xmlFileName = "C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\target\\diagrams\\" + model.getName()
+			String xmlFileName = "C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\temp\\" + model.getName()
 					+ ".xml";
 			xmlOutput.output(doc, new FileWriter(xmlFileName));
 

@@ -32,7 +32,7 @@ public class Extraction extends AbstractEntity {
 
 	private static final long serialVersionUID = -8699651777914138510L;
 
-	@Column(name = "setup")
+	@Column(name = "setup", length=4096)
 	private String setup;
 
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})

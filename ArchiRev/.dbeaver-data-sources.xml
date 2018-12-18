@@ -15,5 +15,8 @@
 			<network-handler type="CONFIG" id="postgre_ssl" enabled="false" save-password="false"/>
 		</connection>
 	</data-source>
+	<data-source id="mysql3-16718d9dc79-3be8e1bbbc62ace7" provider="generic" driver="mysql3" name="MariaDB - archirev" save-password="true" show-system-objects="true" show-util-objects="true" read-only="false">
+		<connection host="localhost" port="3316" server="" database="archirev" url="jdbc:mariadb://localhost:3316/archirev" user="archirev" password="EhYFKEhRQQBl8w==" type="dev"/>
+	</data-source>
 	<filters/>
 </data-sources>

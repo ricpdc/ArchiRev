@@ -1,0 +1,1 @@
+alter table extraction modify setup varchar(4096);
