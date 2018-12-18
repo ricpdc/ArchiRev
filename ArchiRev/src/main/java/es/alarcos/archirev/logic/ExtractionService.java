@@ -139,7 +139,9 @@ public class ExtractionService implements Serializable {
 		List<List<mxCell>> components = computeGraphComponents(graph);
 		for (int i = 0; i < components.size(); i++) {
 			if (components.get(i).size() > MIN_NUM_NODES_FOR_GRAPH_COMPONENT_VIEW) {
-				generateModelViewForComponent(viewType, model, graph, components.get(i));
+				long time = System.nanoTime();
+				generateModelViewForComponent(viewType, model, graph, components.get(i), "_" + (i + 1));
+				LOGGER.info(">Time> " + viewType.getLabel() + "_" + (i+1) + ": " + (System.nanoTime() - time));
 			}
 		}
 	}
@@ -179,14 +181,18 @@ public class ExtractionService implements Serializable {
 			modelElementsByClassName = sourceCodeParser.computeModelElementsByClassName(source);
 			modelRelationshipsByClassName = sourceCodeParser.computeModelRelationshipsByClassName(source,
 					modelElementsByClassName);
+			long time = System.nanoTime();
 			generateModelAndDefaultView(model);
+			LOGGER.info(">Time> " + ModelViewEnum.ALL.getLabel() + ": " + (System.nanoTime() - time));
 			for (ModelViewEnum viewType : model.getExtraction().getSelectedViews()) {
 				if (viewType.equals(ModelViewEnum.ALL)) {
 					continue;
 				} else if (viewType.equals(ModelViewEnum.ALL_WITH_COMPONENTS)) {
 					generateModelViewsForComponents(model, viewType);
 				} else {
+					time = System.nanoTime();
 					generateModelView(viewType, model);
+					LOGGER.info(">Time> " + viewType.getLabel() + ": " + (System.nanoTime() - time));
 				}
 			}
 		} catch (NoClassDefFoundError | IOException e) {
@@ -371,96 +377,10 @@ public class ExtractionService implements Serializable {
 		return newComponent;
 	}
 
-	private mxGraph generateGraphComponent(ModelViewEnum viewType, Model model) {
-		mxGraph graph = new mxGraph();
-		Object parent = graph.getDefaultParent();
-		graph.getModel().beginUpdate();
-
-		loadShapeStyles(graph);
-
-		try {
-			Map<ArchimateElement, Object> nodes = new HashMap<>();
-
-			for (Entry<String, List<ArchimateElement>> entry : modelElementsByClassName.entrySet()) {
-
-				Collections.sort(entry.getValue(), new Comparator<ArchimateElement>() {
-					@Override
-					public int compare(ArchimateElement o1, ArchimateElement o2) {
-						return o1.getClass().getSimpleName().compareTo(o2.getClass().getSimpleName());
-					}
-				});
-
-				parent = graph.getDefaultParent();
-
-				List<ArchimateElement> componentElments = new ArrayList<>();
-				for (ArchimateElement element : entry.getValue()) {
-					if (element instanceof ApplicationComponent) {
-						componentElments.add(element);
-					}
-				}
-
-				ApplicationComponent component = componentElments.isEmpty() ? null
-						: (ApplicationComponent) componentElments.get(0);
-				Object componentNode = null;
-				if (component != null) {
-					ShapeEnum shapeEnum = ShapeEnum.getByModelElement(component.getClass());
-					componentNode = graph.insertVertex(parent, component.getId(), component.getName(), 0, 0,
-							component.getName().length() * 5 + 60 + 30, 40 + 35, shapeEnum.getShape().getSimpleName());
-					nodes.put(component, componentNode);
-					parent = componentNode;
-				}
-
-				for (ArchimateElement archimateElement : entry.getValue()) {
-					ShapeEnum shapeEnum = ShapeEnum.getByModelElement(archimateElement.getClass());
-
-					if (archimateElement instanceof ApplicationComponent) {
-						continue;
-					}
-
-					Object node = graph.insertVertex(parent, archimateElement.getId(), archimateElement.getName(), 15,
-							20, archimateElement.getName().length() * 5 + 60, 40, shapeEnum.getShape().getSimpleName());
-					nodes.put(archimateElement, componentNode != null ? componentNode : node);
-				}
-			}
-
-			parent = graph.getDefaultParent();
-			List<String> visitedEdges = new ArrayList<>();
-			for (Entry<String, List<ArchimateRelationship>> entry : modelRelationshipsByClassName.entrySet()) {
-				LOGGER.info("");
-				LOGGER.info(entry.getKey());
-
-				for (ArchimateRelationship archimateRelationship : entry.getValue()) {
-
-					mxCell node1 = (mxCell) nodes.get(archimateRelationship.getSource());
-					mxCell node2 = (mxCell) nodes.get(archimateRelationship.getTarget());
-					if (node1 != null && node2 != null) {
-						String edgeId = node1.getValue() + "--" + archimateRelationship.getClass().getSimpleName()
-								+ "-->" + node2.getValue();
-
-						if (visitedEdges.contains(edgeId) || node1.equals(node2) || node1.getParent().equals(node2)
-								|| node2.getParent().equals(node1)) {
-							continue;
-						}
-
-						String simpleName = archimateRelationship.getClass().getSimpleName();
-						graph.insertEdge(parent, archimateRelationship.getId(), simpleName, node1, node2,
-								archimateRelationship.getClass().getSimpleName());
-
-						visitedEdges.add(edgeId);
-					}
-				}
-			}
-
-		} finally {
-			graph.getModel().endUpdate();
-		}
-
-		return graph;
-
-	}
+	
 
 	private File generateModelViewForComponent(ModelViewEnum viewType, Model model, mxGraph fullGraph,
-			List<mxCell> component) {
+			List<mxCell> component, String extraNameLabel) {
 		mxGraph graph = new mxGraph();
 		Object parent = graph.getDefaultParent();
 		graph.getModel().beginUpdate();
@@ -494,7 +414,7 @@ public class ExtractionService implements Serializable {
 			mxGraphLayout layout = extendedHierarchicalLayout;
 			layout.execute(graph.getDefaultParent());
 
-			View view = getView(viewType, model);
+			View view = getView(viewType, model, extraNameLabel);
 			computeMetrics(view, graph);
 			viewGraph.put(view, graph);
 			File file = new File(view.getImagePath());
@@ -649,10 +569,14 @@ public class ExtractionService implements Serializable {
 	}
 
 	private View getView(ModelViewEnum viewType, Model model) {
+		return getView(viewType, model, "");
+	}
+
+	private View getView(ModelViewEnum viewType, Model model, String extraLabel) {
 		final Timestamp now = new Timestamp(new Date().getTime());
 
 		View view = new View();
-		view.setName(model.getName() + " - " + viewType.getLabel());
+		view.setName(model.getName() + " - " + viewType.getLabel() + extraLabel);
 		view.setModel(model);
 		view.setType(viewType);
 		view.setCreatedAt(now);
@@ -780,8 +704,7 @@ public class ExtractionService implements Serializable {
 			xmlOutput.output(doc, new FileWriter(model.getExportedPath()));
 
 			// TODO remove this local test
-			String xmlFileName = "C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\temp\\" + model.getName()
-					+ ".xml";
+			String xmlFileName = "C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\temp\\" + model.getName() + ".xml";
 			xmlOutput.output(doc, new FileWriter(xmlFileName));
 
 			if (validateXmlFile(xmlFileName)) {
@@ -886,7 +809,7 @@ public class ExtractionService implements Serializable {
 		Object[] nodes = graph.getChildVertices(graph.getDefaultParent());
 
 		Map<String, String> viewNodeIds = new HashMap<>();
-		
+
 		for (Object node : nodes) {
 			org.jdom2.Element eNode = new org.jdom2.Element("node", nsArchimate);
 			mxCell nodeCell = (mxCell) node;
@@ -925,7 +848,7 @@ public class ExtractionService implements Serializable {
 			org.jdom2.Element eConnection = new org.jdom2.Element("connection", nsArchimate);
 			mxCell edgeCell = (mxCell) edge;
 			addIdentifier(eConnection);
-			
+
 			eConnection.setAttribute("relationshipRef", edgeCell.getId());
 			eConnection.setAttribute("type", "Relationship", nsXsi);
 			eConnection.setAttribute("source", viewNodeIds.get(edgeCell.getSource().getId()));

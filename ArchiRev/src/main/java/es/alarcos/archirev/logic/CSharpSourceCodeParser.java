@@ -53,7 +53,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 	private static Logger LOGGER = LoggerFactory.getLogger(CSharpSourceCodeParser.class);
 
 	private int numberOfCsharpFiles;
-	private List<String> wrongFiles;
+	private Set<String> wrongFiles;
 	private Set<String> classes = new TreeSet<String>();
 	private Set<String> enums = new TreeSet<String>();
 	private Set<String> interfaces = new TreeSet<String>();
@@ -61,6 +61,9 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 	private Set<String> delegates = new TreeSet<String>();
 	private Set<String> delcaredTypeNames = new TreeSet<String>();
 	private Set<String> callsToCallableUnits = new TreeSet<String>();
+
+	private static File elementsLog;
+	private static File relationshipsLog;
 
 	public CSharpSourceCodeParser(final String setup) {
 		super(setup);
@@ -70,7 +73,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 	public MultiValueMap<String, ArchimateElement> computeModelElementsByClassName(Source zipSource)
 			throws ZipException, IOException {
 		numberOfCsharpFiles = 0;
-		wrongFiles = new ArrayList<>();
+		wrongFiles = new HashSet<>();
 		MultiValueMap<String, ArchimateElement> modelElementsByClassName = new LinkedMultiValueMap<>();
 
 		File tempZipFile = File.createTempFile("zipFile", ".tmp", null);
@@ -82,6 +85,20 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 
 		@SuppressWarnings("unchecked")
 		Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zipFile.entries();
+
+		elementsLog = new File("C:\\Temp\\elements.txt");
+		if (elementsLog.exists()) {
+			elementsLog.delete();
+		}
+		elementsLog.createNewFile();
+		try {
+			Files.write(elementsLog.toPath(),
+					"path;name;linesOfCode;parsingTime;numberOfElements;elementsGeneratingTime\n".getBytes(),
+					StandardOpenOption.APPEND);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		while (entries.hasMoreElements()) {
 			ZipEntry zipEntry = entries.nextElement();
 			if (zipEntry.isDirectory())
@@ -92,23 +109,11 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			}
 
 			try {
-				long startTime = System.nanoTime();
 				parserCsharpFile(zipFile, zipEntry, modelElementsByClassName);
-				long timeSpent = System.nanoTime() - startTime;
-				int numberOfElements = modelElementsByClassName.get(getSimpleClassName(zipEntry.getName())).size();
-				try {
-					String msg = "\n" + zipEntry.getName() + ";" + getSimpleClassName(zipEntry.getName()) + ";"
-							+ timeSpent + ";" + numberOfElements;
-					
-					Files.write(Paths.get("C:\\Temp\\elements.txt"), msg.getBytes(), StandardOpenOption.APPEND);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
 				numberOfCsharpFiles++;
 			} catch (Exception ex) {
 				LOGGER.error(zipEntry.getName() + " cannot be parsed");
-				wrongFiles.add(zipEntry.getName());
+				// wrongFiles.add(zipEntry.getName());
 			}
 
 		}
@@ -150,8 +155,11 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 
 	private void parserCsharpFile(final ZipFile zipFile, final ZipEntry zipEntry,
 			final MultiValueMap<String, ArchimateElement> modelElementsByClassName) throws IOException {
+		long time = System.nanoTime();
 		String zipEntryName = zipEntry.getName();
 		String simpleClassName = getSimpleClassName(zipEntryName);
+
+		String msg = "" + zipEntryName + ";" + simpleClassName + ";";
 
 		for (String exclusion_tag : exclusions) {
 			if (simpleClassName.contains(exclusion_tag)) {
@@ -168,8 +176,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		CSharpLexer lexer = new CSharpLexer(grammarInput);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		CSharpParser parser = new CSharpParser(tokens);
-		
-		
+
 		SyntaxErrorListener listener = new SyntaxErrorListener();
 		parser.addErrorListener(listener);
 
@@ -203,14 +210,30 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 				}
 			}
 
+			msg += (Files.lines(tempFile.toPath()).count() + ";");
+			msg += ((System.nanoTime() - time) + ";");
+			time = System.nanoTime();
+
 			createModelElements(modelElementsByClassName, simpleClassName, uniqueElements, mappedSuperclass);
+
+			List<ArchimateElement> elementsCreated = modelElementsByClassName
+					.get(getSimpleClassName(zipEntry.getName()));
+			int numberOfElements = elementsCreated != null ? elementsCreated.size() : 0;
+			msg += (numberOfElements + ";");
+			msg += ((System.nanoTime() - time) + ";\n");
+			try {
+				Files.write(elementsLog.toPath(), msg.getBytes(), StandardOpenOption.APPEND);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
 		} else {
 			wrongFiles.add(zipEntryName);
 			for (SyntaxError syntaxError : listener.getSyntaxErrors()) {
-				LOGGER.error("\tERROR: " + syntaxError);
+				LOGGER.error("\tSYNTACTIC ERROR: " + syntaxError);
 			}
 		}
+
 	}
 
 	private File getTempFileWithoutDirectives(final ZipFile zipFile, final ZipEntry zipEntry) throws IOException {
@@ -293,7 +316,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		MultiValueMap<String, ArchimateRelationship> modelRelationshipsByClassName = new LinkedMultiValueMap<>();
 
 		numberOfCsharpFiles = 0;
-		wrongFiles = new ArrayList<>();
+		wrongFiles = new HashSet<>();
 
 		File tempZipFile = File.createTempFile("zipFile", ".tmp", null);
 		FileOutputStream fos = new FileOutputStream(tempZipFile);
@@ -301,6 +324,19 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		fos.close();
 
 		ZipFile zipFile = getZipFile(tempZipFile);
+
+		relationshipsLog = new File("C:\\Temp\\relationships.txt");
+		if (relationshipsLog.exists()) {
+			relationshipsLog.delete();
+		}
+		relationshipsLog.createNewFile();
+		try {
+			Files.write(relationshipsLog.toPath(),
+					"path;name;linesOfCode;parsingTime;numberOfRelationships;relationshipsGeneratingTime\n".getBytes(),
+					StandardOpenOption.APPEND);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		@SuppressWarnings("unchecked")
 		Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zipFile.entries();
@@ -314,6 +350,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			}
 
 			try {
+
 				parserCsharpFileForRelationships(zipFile, zipEntry, modelElementsByClassName,
 						modelRelationshipsByClassName);
 				numberOfCsharpFiles++;
@@ -330,6 +367,8 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 	private void parserCsharpFileForRelationships(final ZipFile zipFile, final ZipEntry zipEntry,
 			final MultiValueMap<String, ArchimateElement> modelElementsByClassName,
 			final MultiValueMap<String, ArchimateRelationship> modelRelationshipsByClassName) throws IOException {
+		long time = System.nanoTime();
+		String msg = "" + zipEntry.getName() + ";" + getSimpleClassName(zipEntry.getName()) + ";";
 		File tempFile = getTempFileWithoutDirectives(zipFile, zipEntry);
 		if (Files.readAllBytes(tempFile.toPath()).length == 0) {
 			return;
@@ -354,6 +393,9 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		// LOGGER.info("Parsing.... " + zipEntryName);
 		if (listener.getSyntaxErrors().isEmpty()) {
 			Set<String> visitedRelationships = new HashSet<>();
+			msg += (Files.lines(tempFile.toPath()).count() + ";");
+			msg += ((System.nanoTime() - time) + ";");
+			time = System.nanoTime();
 			for (String referencedClass : callsToCallableUnits) {
 
 				List<ArchimateElement> sourceElements = modelElementsByClassName.get(zipEntrySimpleName);
@@ -363,10 +405,20 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 						sourceElements, targetElements);
 
 			}
+			List<ArchimateRelationship> relationshipsCreated = modelRelationshipsByClassName
+					.get(getSimpleClassName(zipEntry.getName()));
+			int numberOfRelationships = relationshipsCreated != null ? relationshipsCreated.size() : 0;
+			msg += (numberOfRelationships + ";");
+			msg += ((System.nanoTime() - time) + ";\n");
+			try {
+				Files.write(relationshipsLog.toPath(), msg.getBytes(), StandardOpenOption.APPEND);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} else {
 			wrongFiles.add(zipEntry.getName());
 			for (SyntaxError syntaxError : listener.getSyntaxErrors()) {
-				LOGGER.error("\tERROR: " + syntaxError);
+				LOGGER.error("\tSYNTACTIC ERROR: " + syntaxError);
 			}
 		}
 	}
