@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -90,10 +92,23 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			}
 
 			try {
+				long startTime = System.nanoTime();
 				parserCsharpFile(zipFile, zipEntry, modelElementsByClassName);
+				long timeSpent = System.nanoTime() - startTime;
+				int numberOfElements = modelElementsByClassName.get(getSimpleClassName(zipEntry.getName())).size();
+				try {
+					String msg = "\n" + zipEntry.getName() + ";" + getSimpleClassName(zipEntry.getName()) + ";"
+							+ timeSpent + ";" + numberOfElements;
+					
+					Files.write(Paths.get("C:\\Temp\\elements.txt"), msg.getBytes(), StandardOpenOption.APPEND);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
 				numberOfCsharpFiles++;
 			} catch (Exception ex) {
 				LOGGER.error(zipEntry.getName() + " cannot be parsed");
+				wrongFiles.add(zipEntry.getName());
 			}
 
 		}
@@ -138,12 +153,12 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		String zipEntryName = zipEntry.getName();
 		String simpleClassName = getSimpleClassName(zipEntryName);
 
-		for(String exclusion_tag : exclusions) {
-			if(simpleClassName.contains(exclusion_tag)) {
+		for (String exclusion_tag : exclusions) {
+			if (simpleClassName.contains(exclusion_tag)) {
 				return;
-			}				
+			}
 		}
-		
+
 		File tempFile = getTempFileWithoutDirectives(zipFile, zipEntry);
 		if (Files.readAllBytes(tempFile.toPath()).length == 0) {
 			return;
@@ -153,7 +168,8 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		CSharpLexer lexer = new CSharpLexer(grammarInput);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		CSharpParser parser = new CSharpParser(tokens);
-
+		
+		
 		SyntaxErrorListener listener = new SyntaxErrorListener();
 		parser.addErrorListener(listener);
 
@@ -165,7 +181,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			getDeclaredTypes(tree);
 		}
 
-		//LOGGER.info("Parsing.... " + zipEntryName);
+		// LOGGER.info("Parsing.... " + zipEntryName);
 		if (listener.getSyntaxErrors().isEmpty()) {
 			Set<ArchimateElementEnum> uniqueElements = new HashSet<>();
 			boolean mappedSuperclass = false;
@@ -187,8 +203,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 				}
 			}
 
-			createModelElements(modelElementsByClassName, simpleClassName, uniqueElements,
-					mappedSuperclass);
+			createModelElements(modelElementsByClassName, simpleClassName, uniqueElements, mappedSuperclass);
 
 		} else {
 			wrongFiles.add(zipEntryName);
@@ -363,7 +378,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 				IdentifierContext idContext = (IdentifierContext) subTree;
 				String name = idContext.IDENTIFIER() != null ? idContext.IDENTIFIER().getText() : idContext.getText();
 				callsToCallableUnits.add(name);
-				//LOGGER.info(name);
+				// LOGGER.info(name);
 			}
 			getCallToCallableUnits(subTree);
 		}
