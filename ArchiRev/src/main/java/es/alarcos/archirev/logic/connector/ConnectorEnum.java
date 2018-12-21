@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.archimatetool.model.impl.AccessRelationship;
+import com.archimatetool.model.impl.AssociationRelationship;
 import com.archimatetool.model.impl.AggregationRelationship;
 import com.archimatetool.model.impl.ArchimateRelationship;
 import com.archimatetool.model.impl.CompositionRelationship;
@@ -28,6 +29,7 @@ public enum ConnectorEnum {
 	AGGREGATION(AggregationRelationship.class, ArchiMateAggregationConnector.class, "diamond", "dash", false, true, 12, 0, false),
 	REALIZATION(RealizationRelationship.class, ArchiMateRealizationConnector.class, "none", "block", true, false, 0, 10, true),
 	ACCESS(AccessRelationship.class, ArchiMateAccessConnector.class, "none", "open", true, true, 0, 8, true),
+	ASSOCIATION(AssociationRelationship.class, ArchiMateAssociationConnector.class, "none", "none", true, true, 0, 0, false),
 	SERVING(ServingRelationship.class, ArchiMateServingConnector.class, "none", "open", true, true, 0, 6, false);
 	
 	// @formatter:on

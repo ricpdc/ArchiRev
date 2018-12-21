@@ -617,6 +617,7 @@ public class ExtractionService implements Serializable {
 		// vertices
 
 		int numAccess = 0;
+		int numAssociation = 0;
 		int numAggregation = 0;
 		int numComposition = 0;
 		int numRealization = 0;
@@ -631,6 +632,9 @@ public class ExtractionService implements Serializable {
 			switch (edgeType) {
 			case ACCESS:
 				numAccess++;
+				break;
+			case ASSOCIATION:
+				numAssociation++;
 				break;
 			case AGGREGATION:
 				numAggregation++;
@@ -662,6 +666,8 @@ public class ExtractionService implements Serializable {
 
 		view.addMetric(new Metric(view, "#" + ConnectorEnum.ACCESS.getModelRelationship().getSimpleName(),
 				String.valueOf(numAccess)));
+		view.addMetric(new Metric(view, "#" + ConnectorEnum.ASSOCIATION.getModelRelationship().getSimpleName(),
+				String.valueOf(numAssociation)));
 		view.addMetric(new Metric(view, "#" + ConnectorEnum.AGGREGATION.getModelRelationship().getSimpleName(),
 				String.valueOf(numAggregation)));
 		view.addMetric(new Metric(view, "#" + ConnectorEnum.COMPOSITION.getModelRelationship().getSimpleName(),

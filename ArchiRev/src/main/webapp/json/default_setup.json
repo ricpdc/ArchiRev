@@ -4,7 +4,7 @@
 	{"annotation":"Component","element":"APPLICATION"},
 	{"annotation":"Named","element":"APPLICATION"},
 	{"annotation":"Service","element":"APPLICATION"},
-	{"annotation":"Entity","element":"DATA_ENTITY"},
+	{"annotation":"Controller","element":"DATA_ENTITY"},
 	{"annotation":"Table","element":"DATA_ENTITY"},
 	{"annotation":"MappedSuperclass","element":"DATA_ENTITY"},
 	{"annotation":"Repository","element":"COMPONENT"},
@@ -12,7 +12,8 @@
 	]},
 {"name":"exclusions","exclusion_tags":[
 	{"tag":"Builder"},
-	{"tag":"Helper"}
+	{"tag":"Helper"},
+	{"tag":"Entity"}
 	]},
 {"name":"prioritization","tuples":[
 	{"from":"ApplicationFunction","targets": [
@@ -32,7 +33,7 @@
 		{"to":"DataObject","relationship":"AccessRelationship"}]},
 	{"from":"DataObject","targets": [
 		{"to":"ApplicationFunction","relationship":"AccessRelationship"},
-		{"to":"ApplicationComponent","relationship":"AccessRelationship"},
+		{"to":"ApplicationComponent","relationship":"AssociationRelationship"},
 		{"to":"ApplicationService","relationship":"AccessRelationship"},
 		{"to":"DataObject","relationship":"CompositionRelationship"}]}
 ]}]

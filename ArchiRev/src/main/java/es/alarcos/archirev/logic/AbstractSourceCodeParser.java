@@ -196,6 +196,7 @@ public abstract class AbstractSourceCodeParser implements Serializable {
 
 	protected void createModelElements(MultiValueMap<String, ArchimateElement> modelElementsByClassName,
 			String className, Set<ArchimateElementEnum> uniqueElements, boolean mappedSuperclass) {
+		String formattedName = getFormattedName(className);
 		for (ArchimateElementEnum archimateElementEnum : uniqueElements) {
 			ArchimateElement elementToBeAdded = null;
 			switch (archimateElementEnum) {
@@ -217,7 +218,6 @@ public abstract class AbstractSourceCodeParser implements Serializable {
 			default:
 				break;
 			}
-			String formattedName = getFormattedName(className);
 			elementToBeAdded.setName(formattedName);
 			elementToBeAdded.setId("id-" + UUID.randomUUID());
 			boolean existent = false;
