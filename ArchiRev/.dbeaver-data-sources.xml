@@ -18,5 +18,24 @@
 	<data-source id="mysql3-16718d9dc79-3be8e1bbbc62ace7" provider="generic" driver="mysql3" name="MariaDB - archirev" save-password="true" show-system-objects="true" show-util-objects="true" read-only="false">
 		<connection host="localhost" port="3316" server="" database="archirev" url="jdbc:mariadb://localhost:3316/archirev" user="archirev" password="EhYFKEhRQQBl8w==" type="dev"/>
 	</data-source>
+	<data-source id="postgres-jdbc-168582b1f80-3a06676821adf144" provider="postgresql" driver="postgres-jdbc" name="EC2 AWS" save-password="true" show-system-objects="true" show-util-objects="true" read-only="false">
+		<connection host="35.180.39.174" port="5432" server="" database="archirev" url="jdbc:postgresql://35.180.39.174:5432/archirev" user="archirev" password="EhYFKEhRQQBl8w==" type="dev">
+			<property name="connectTimeout" value="20"/>
+			<property name="loginTimeout" value="20"/>
+			<provider-property name="@dbeaver-show-non-default-db@" value="true"/>
+			<provider-property name="@dbeaver-show-template-db@" value="false"/>
+			<network-handler type="CONFIG" id="postgre_ssl" enabled="false" save-password="true"/>
+			<network-handler type="TUNNEL" id="ssh_tunnel" enabled="false" save-password="true">
+				<property name="sshConnectTimeout" value="10000"/>
+				<property name="port" value="22"/>
+				<property name="implementation" value="jsch"/>
+				<property name="authType" value="PASSWORD"/>
+			</network-handler>
+			<network-handler type="PROXY" id="socks_proxy" enabled="false" save-password="true">
+				<property name="socks-port" value="1080"/>
+			</network-handler>
+			<bootstrap defaultObject="public"/>
+		</connection>
+	</data-source>
 	<filters/>
 </data-sources>

@@ -229,7 +229,7 @@
 				</configuration>
 			</plugin>
 
-			<plugin>
+<!-- 			<plugin>
 				<groupId>org.antlr</groupId>
 				<artifactId>antlr4-maven-plugin</artifactId>
 				<version>4.5</version>
@@ -251,7 +251,7 @@
 					<visitor>true</visitor>
 					<listener>true</listener>
 				</configuration>
-			</plugin>
+			</plugin> -->
 
 		</plugins>
 		<finalName>ArchiRev</finalName>
