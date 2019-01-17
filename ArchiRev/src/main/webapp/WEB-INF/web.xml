@@ -6,7 +6,7 @@
 	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	id="WebApp_ID" version="2.5">
 
-  <display-name>ArquiRev Web Application</display-name>
+  <display-name>ArchiRev Web Application</display-name>
 
   	<!-- Change to "Production" when you are ready to deploy -->
 	<context-param>
