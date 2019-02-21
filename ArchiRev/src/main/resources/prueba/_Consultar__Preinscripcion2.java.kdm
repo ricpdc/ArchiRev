@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kdm:Segment xmlns:kdm="http://kdm.omg.org/kdm" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:action="http://kdm.omg.org/action" xmlns:code="http://kdm.omg.org/code" xmi:version="2.0" xsi:schemaLocation="http://kdm.omg.org/action ../metamodels/kdm.ecore#//action http://kdm.omg.org/code ../metamodels/kdm.ecore#//code http://kdm.omg.org/kdm ../metamodels/kdm.ecore#//kdm" name="_Consultar__Preinscripcion2.java.kdm">
+  <model xsi:type="code:CodeModel" xmi:id="id.0" name="_Consultar__Preinscripcion2.java">
+    <codeElement xsi:type="code:LanguageUnit" xmi:id="id.1" name="Common Java Datatypes">
+      <codeElement xsi:type="code:IntegerType" xmi:id="id.6" name="int" />
+    </codeElement>
+    <codeElement xsi:type="code:Package" xmi:id="id.2" name="prueba">
+      <codeElement xsi:type="code:ClassUnit" xmi:id="id.3" name="_Consultar__Preinscripcion2">
+        <codeElement xsi:type="code:Signature" xmi:id="id.4" name="_Consultar__Preinscripcion2" />
+        <codeElement xsi:type="code:MethodUnit" xmi:id="id.5" type="id.6" name="esta">
+          <codeElement xsi:type="code:Signature" xmi:id="id.7" name="esta">
+            <parameterUnit xmi:id="id.8" name="x" />
+            <parameterUnit xmi:id="id.9" name="pks" />
+          </codeElement>
+          <codeElement xmi:id="id.10" xsi:type="code:StorableUnit" name="i" kind="local" />
+          <entryFlow xmi:id="id.11" from="id.5" to="id.12" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.12" name="a1" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.13" from="id.12" to="id.10" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.14" from="id.12" to="id.16" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.16" name="ifa2" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.17" from="id.16" to="id.19" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.19" name="a3" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.20" from="id.19" to="id.10" />
+          </codeElement>
+        </codeElement>
+        <codeElement xsi:type="code:MethodUnit" xmi:id="id.22" name="_jspService">
+          <codeElement xsi:type="code:Signature" xmi:id="id.23" name="_jspService">
+            <parameterUnit xmi:id="id.24" name="request" />
+            <parameterUnit xmi:id="id.25" name="response" />
+          </codeElement>
+          <entryFlow xmi:id="id.26" from="id.22" to="id.27" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.27" name="a1" kind="Call">
+            <attribute tag="api-call" value="setContentType" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.29" from="id.27" to="id.33" />
+          </codeElement>
+          <codeElement xmi:id="id.30" xsi:type="code:StorableUnit" name="pageContext" kind="local" />
+          <codeElement xmi:id="id.31" xsi:type="code:StorableUnit" name="session" kind="local" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.33" name="ifa2" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.34" from="id.33" to="id.37" />
+            <actionRelation xsi:type="action:TrueFlow" xmi:id="id.35" from="id.33" to="">
+              <attribute tag="api-call" value="setAttribute" />
+            </actionRelation>
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.37" name="a3" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.38" from="id.37" to="id.30" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.39" from="id.37" to="id.41" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.41" name="a4" kind="Call">
+            <attribute tag="api-call" value="getDefaultFactory" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.43" from="id.41" to="id.50" />
+          </codeElement>
+          <codeElement xmi:id="id.44" xsi:type="code:StorableUnit" name="__jsp_tag_starteval" kind="local" />
+          <codeElement xmi:id="id.45" xsi:type="code:StorableUnit" name="application" kind="local" />
+          <codeElement xmi:id="id.46" xsi:type="code:StorableUnit" name="out" kind="local" />
+          <codeElement xmi:id="id.47" xsi:type="code:StorableUnit" name="page" kind="local" />
+          <codeElement xmi:id="id.48" xsi:type="code:StorableUnit" name="config" kind="local" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.50" name="a5" kind="Call">
+            <attribute tag="api-call" value="write" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.52" from="id.50" to="id.54" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.54" name="a6" kind="Call">
+            <attribute tag="api-call" value="write" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.56" from="id.54" to="id.58" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.58" name="a7" kind="Call">
+            <attribute tag="api-call" value="write" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.60" from="id.58" to="id.62" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.62" name="a8" kind="Call">
+            <attribute tag="api-call" value="write" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.64" from="id.62" to="id.66" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.66" name="ifa9" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.67" from="id.66" to="id.73" />
+            <actionRelation xsi:type="action:TrueFlow" xmi:id="id.68" from="id.66" to="">
+              <attribute tag="api-call" value="setAttribute" />
+            </actionRelation>
+          </codeElement>
+          <codeElement xmi:id="id.69" xsi:type="code:StorableUnit" name="usu" kind="local" />
+          <codeElement xmi:id="id.70" xsi:type="code:StorableUnit" name="bd" kind="local" />
+          <codeElement xmi:id="id.71" xsi:type="code:StorableUnit" name="bd2" kind="local" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.73" name="ifa10" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.74" from="id.73" to="id.77" />
+            <actionRelation xsi:type="action:TrueFlow" xmi:id="id.75" from="id.73" to="">
+              <attribute tag="api-call" value="setAttribute" />
+            </actionRelation>
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.77" name="a11" kind="Call">
+            <attribute tag="api-call" value="write" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.79" from="id.77" to="id.81" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.81" name="a12" kind="Call">
+            <attribute tag="api-call" value="write" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.83" from="id.81" to="id.88" />
+          </codeElement>
+          <codeElement xmi:id="id.84" xsi:type="code:StorableUnit" name="NombreCurso" kind="local" />
+          <codeElement xmi:id="id.85" xsi:type="code:StorableUnit" name="codigo" kind="local" />
+          <codeElement xmi:id="id.86" xsi:type="code:StorableUnit" name="SQL" kind="local" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.88" name="a13" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.89" from="id.88" to="id.86" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.90" from="id.88" to="id.92" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.92" name="a14" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.93" from="id.92" to="id.86" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.94" from="id.92" to="id.98" />
+          </codeElement>
+          <codeElement xmi:id="id.95" xsi:type="code:StorableUnit" name="sentencia" kind="local" />
+          <codeElement xmi:id="id.96" xsi:type="code:StorableUnit" name="rs" kind="local" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.98" name="ifa15" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.99" from="id.98" to="id.101" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.101" name="a16" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.102" from="id.101" to="id.84" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.103" from="id.101" to="id.105" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.105" name="a17" kind="Call">
+            <attribute tag="api-call" value="close" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.107" from="id.105" to="id.109" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.109" name="a18" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.110" from="id.109" to="id.96" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.111" from="id.109" to="id.113" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.113" name="a19" kind="Call">
+            <attribute tag="api-call" value="write" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.115" from="id.113" to="id.117" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.117" name="a20" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.118" from="id.117" to="id.84" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.119" from="id.117" to="id.121" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.121" name="a21" kind="Call">
+            <attribute tag="api-call" value="print" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.123" from="id.121" to="id.125" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.125" name="a22" kind="Call">
+            <attribute tag="api-call" value="write" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.127" from="id.125" to="id.131" />
+          </codeElement>
+          <codeElement xmi:id="id.128" xsi:type="code:StorableUnit" name="tabla" kind="local" />
+          <codeElement xmi:id="id.129" xsi:type="code:StorableUnit" name="DNI" kind="local" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.131" name="a23" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.132" from="id.131" to="id.86" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.133" from="id.131" to="id.135" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.135" name="a24" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.136" from="id.135" to="id.95" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.137" from="id.135" to="id.139" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.139" name="a25" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.140" from="id.139" to="id.86" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.141" from="id.139" to="id.146" />
+          </codeElement>
+          <codeElement xmi:id="id.142" xsi:type="code:StorableUnit" name="r" kind="local" />
+          <codeElement xmi:id="id.143" xsi:type="code:StorableUnit" name="meta" kind="local" />
+          <codeElement xmi:id="id.144" xsi:type="code:StorableUnit" name="cols" kind="local" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.146" name="a26" kind="Call">
+            <attribute tag="api-call" value="write" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.148" from="id.146" to="id.152" />
+          </codeElement>
+          <codeElement xmi:id="id.149" xsi:type="code:StorableUnit" name="colsPK" kind="local" />
+          <codeElement xmi:id="id.150" xsi:type="code:StorableUnit" name="i" kind="local" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.152" name="a27" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.153" from="id.152" to="id.144" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.154" from="id.152" to="id.156" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.156" name="a28" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.157" from="id.156" to="id.150" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.158" from="id.156" to="id.160" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.160" name="a29" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.161" from="id.160" to="id.149" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.162" from="id.160" to="id.164" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.164" name="ifa30" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.165" from="id.164" to="id.168" />
+            <actionRelation xsi:type="action:TrueFlow" xmi:id="id.166" from="id.164" to="">
+              <attribute tag="api-call" value="write" />
+            </actionRelation>
+            <actionRelation xsi:type="action:FalseFlow" xmi:id="id.179" from="id.164" to="">
+              <attribute tag="api-call" value="write" />
+            </actionRelation>
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.168" name="a31" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.169" from="id.168" to="id.150" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.170" from="id.168" to="id.172" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.172" name="a32" kind="Call">
+            <attribute tag="api-call" value="print" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.174" from="id.172" to="id.176" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.176" name="a33" kind="Call">
+            <attribute tag="api-call" value="write" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.178" from="id.176" to="id.181" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.181" name="a34" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.182" from="id.181" to="id.150" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.183" from="id.181" to="id.185" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.185" name="a35" kind="Call">
+            <attribute tag="api-call" value="print" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.187" from="id.185" to="id.189" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.189" name="a36" kind="Call">
+            <attribute tag="api-call" value="write" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.191" from="id.189" to="id.193" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.193" name="a37" kind="Call">
+            <attribute tag="api-call" value="write" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.195" from="id.193" to="id.198" />
+          </codeElement>
+          <codeElement xmi:id="id.196" xsi:type="code:StorableUnit" name="tipo" kind="local" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.198" name="a38" kind="Call">
+            <attribute tag="api-call" value="write" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.200" from="id.198" to="id.204" />
+          </codeElement>
+          <codeElement xmi:id="id.201" xsi:type="code:StorableUnit" name="resto" kind="local" />
+          <codeElement xmi:id="id.202" xsi:type="code:StorableUnit" name="i" kind="local" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.204" name="a39" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.205" from="id.204" to="id.144" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.206" from="id.204" to="id.208" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.208" name="a40" kind="Call">
+            <attribute tag="api-call" value="write" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.210" from="id.208" to="id.212" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.212" name="a41" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.213" from="id.212" to="id.202" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.214" from="id.212" to="id.217" />
+          </codeElement>
+          <codeElement xmi:id="id.215" xsi:type="code:StorableUnit" name="valor" kind="local" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.217" name="a42" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.218" from="id.217" to="id.202" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.219" from="id.217" to="id.221" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.221" name="ifa43" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.222" from="id.221" to="id.224" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.224" name="a44" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.225" from="id.224" to="id.129" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.226" from="id.224" to="id.228" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.228" name="a45" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.229" from="id.228" to="id.215" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.230" from="id.228" to="id.232" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.232" name="a46" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.233" from="id.232" to="id.202" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.234" from="id.232" to="id.236" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.236" name="ifa47" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.237" from="id.236" to="id.239" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.239" name="a48" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.240" from="id.239" to="id.196" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.241" from="id.239" to="id.243" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.243" name="a49" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.244" from="id.243" to="id.215" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.245" from="id.243" to="id.247" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.247" name="a50" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.248" from="id.247" to="id.196" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.249" from="id.247" to="id.251" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.251" name="a51" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.252" from="id.251" to="id.215" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.253" from="id.251" to="id.255" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.255" name="a52" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.256" from="id.255" to="id.215" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.257" from="id.255" to="id.259" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.259" name="a53" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.260" from="id.259" to="id.215" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.261" from="id.259" to="id.263" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.263" name="a54" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.264" from="id.263" to="id.215" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.265" from="id.263" to="id.267" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.267" name="a55" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.268" from="id.267" to="id.215" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.269" from="id.267" to="id.271" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.271" name="a56" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.272" from="id.271" to="id.215" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.273" from="id.271" to="id.275" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.275" name="a57" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.276" from="id.275" to="id.215" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.277" from="id.275" to="id.279" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.279" name="a58" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.280" from="id.279" to="id.202" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.281" from="id.279" to="id.283" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.283" name="ifa59" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.284" from="id.283" to="id.286" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.286" name="a60" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.287" from="id.286" to="id.288" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.289" from="id.286" to="id.291" />
+          </codeElement>
+          <codeElement xmi:id="id.288" xsi:type="code:StorableUnit" name="admitido" kind="local" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.291" name="a61" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.292" from="id.291" to="id.215" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.293" from="id.291" to="id.295" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.295" name="a62" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.296" from="id.295" to="id.215" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.297" from="id.295" to="id.299" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.299" name="ifa63" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.300" from="id.299" to="id.303" />
+            <actionRelation xsi:type="action:TrueFlow" xmi:id="id.301" from="id.299" to="">
+              <attribute tag="api-call" value="write" />
+            </actionRelation>
+            <actionRelation xsi:type="action:FalseFlow" xmi:id="id.314" from="id.299" to="">
+              <attribute tag="api-call" value="write" />
+            </actionRelation>
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.303" name="a64" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.304" from="id.303" to="id.129" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.305" from="id.303" to="id.307" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.307" name="a65" kind="Call">
+            <attribute tag="api-call" value="print" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.309" from="id.307" to="id.311" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.311" name="a66" kind="Call">
+            <attribute tag="api-call" value="write" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.313" from="id.311" to="id.316" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.316" name="a67" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.317" from="id.316" to="id.129" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.318" from="id.316" to="id.320" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.320" name="a68" kind="Call">
+            <attribute tag="api-call" value="print" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.322" from="id.320" to="id.324" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.324" name="a69" kind="Call">
+            <attribute tag="api-call" value="write" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.326" from="id.324" to="id.328" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.328" name="ifa70" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.329" from="id.328" to="id.331" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.331" name="a71" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.332" from="id.331" to="id.215" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.333" from="id.331" to="id.335" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.335" name="a72" kind="Call">
+            <attribute tag="api-call" value="write" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.337" from="id.335" to="id.339" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.339" name="a73" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.340" from="id.339" to="id.215" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.341" from="id.339" to="id.343" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.343" name="a74" kind="Call">
+            <attribute tag="api-call" value="print" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.345" from="id.343" to="id.347" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.347" name="a75" kind="Call">
+            <attribute tag="api-call" value="write" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.349" from="id.347" to="id.351" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.351" name="a76" kind="Call">
+            <attribute tag="api-call" value="write" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.353" from="id.351" to="id.355" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.355" name="a77" kind="Call">
+            <attribute tag="api-call" value="close" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.357" from="id.355" to="id.359" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.359" name="a78" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.360" from="id.359" to="id.142" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.361" from="id.359" to="id.363" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.363" name="a79" kind="Call">
+            <attribute tag="api-call" value="getOtroBroker" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.365" from="id.363" to="id.367" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.367" name="a80" kind="Call">
+            <attribute tag="api-call" value="write" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.369" from="id.367" to="id.371" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.371" name="a81" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.372" from="id.371" to="id.85" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.373" from="id.371" to="id.375" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.375" name="a82" kind="Call">
+            <attribute tag="api-call" value="print" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.377" from="id.375" to="id.379" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.379" name="a83" kind="Call">
+            <attribute tag="api-call" value="write" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.381" from="id.379" to="id.383" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.383" name="ifa84" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.384" from="id.383" to="id.387" />
+            <actionRelation xsi:type="action:TrueFlow" xmi:id="id.385" from="id.383" to="">
+              <attribute tag="api-call" value="clear" />
+            </actionRelation>
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.387" name="a85" kind="Call">
+            <attribute tag="api-call" value="handlePageException" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.389" from="id.387" to="id.391" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.391" name="a86" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.392" from="id.391" to="id.30" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.393" from="id.391" to="id.395" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.395" name="a87" kind="Call">
+            <attribute tag="api-call" value="extraHandlePCFinally" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.397" from="id.395" to="id.399" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.399" name="a88" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.400" from="id.399" to="id.30" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.401" from="id.399" to="id.403" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.403" name="a89" kind="Call">
+            <attribute tag="api-call" value="getDefaultFactory" />
+          </codeElement>
+        </codeElement>
+      </codeElement>
+    </codeElement>
+  </model>
+</kdm:Segment>
+

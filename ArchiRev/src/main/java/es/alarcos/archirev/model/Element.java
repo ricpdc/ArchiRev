@@ -21,7 +21,7 @@ public class Element extends AbstractEntity implements Serializable {
 		
 	}
 	
-	public Element(Model model, String elementId, String name, String documentation, String type) {
+	public Element(ArchimateModel model, String elementId, String name, String documentation, String type) {
 		this.model = model;
 		this.elementId = elementId;
 		this.name = name;
@@ -29,7 +29,7 @@ public class Element extends AbstractEntity implements Serializable {
 		this.type = type;
 	}
 
-	public Element(Model model, ArchimateElement archimateElement) {
+	public Element(ArchimateModel model, ArchimateElement archimateElement) {
 		this(model, archimateElement.getId(), archimateElement.getName(), archimateElement.getDocumentation(),
 				archimateElement.getClass().getSimpleName());
 	}
@@ -45,7 +45,7 @@ public class Element extends AbstractEntity implements Serializable {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "model_id")
-	private Model model;
+	private ArchimateModel model;
 
 	public String getDocumentation() {
 		return documentation;
@@ -67,7 +67,7 @@ public class Element extends AbstractEntity implements Serializable {
 		return model;
 	}
 
-	public void setModel(Model model) {
+	public void setModel(ArchimateModel model) {
 		this.model = model;
 	}
 

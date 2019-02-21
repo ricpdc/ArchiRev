@@ -43,7 +43,10 @@ public class Extraction extends AbstractEntity {
 
 	
 	@OneToOne(mappedBy = "extraction", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
-	private Model model;
+	private ArchimateModel archimateModel;
+	
+	@OneToOne(mappedBy = "extraction", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
+	private KdmModel kdmModel;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "project_id")
@@ -75,12 +78,12 @@ public class Extraction extends AbstractEntity {
 		this.sources = sources;
 	}
 
-	public Model getModel() {
-		return model;
+	public ArchimateModel getArchimateModel() {
+		return archimateModel;
 	}
 
-	public void setModel(Model model) {
-		this.model = model;
+	public void setArchimateModel(ArchimateModel model) {
+		this.archimateModel = model;
 	}
 
 	public Project getProject() {
@@ -129,6 +132,14 @@ public class Extraction extends AbstractEntity {
 
 	public void setSelectedViews(Set<ModelViewEnum> selectedViews) {
 		this.selectedViews = selectedViews;
+	}
+
+	public KdmModel getKdmModel() {
+		return kdmModel;
+	}
+
+	public void setKdmModel(KdmModel kdmModel) {
+		this.kdmModel = kdmModel;
 	}
 
 }

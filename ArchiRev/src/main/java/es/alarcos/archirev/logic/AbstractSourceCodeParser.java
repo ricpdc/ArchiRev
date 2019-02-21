@@ -15,6 +15,8 @@ import java.util.zip.ZipFile;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.jdom2.Document;
+import org.jdom2.Namespace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
@@ -61,6 +63,13 @@ public abstract class AbstractSourceCodeParser implements Serializable {
 	private static final String JSON_TO = "to";
 	private static final String JSON_RELATIONSHIP = "relationship";
 	private static final String SETUP_CLASS_ROOT = "com.archimatetool.model.impl.";
+	
+	
+	protected static final String NS_KDM = "http://kdm.omg.org/kdm";
+	protected static final String NS_XMI = "http://www.omg.org/XMI";
+	protected static final String NS_XSI = "http://www.w3.org/2001/XMLSchema-instance";
+	protected static final String NS_ACTION = "http://kdm.omg.org/action";
+	protected static final String NS_CODE = "http://kdm.omg.org/code";
 
 	protected MultiValueMap<String, ArchimateElementEnum> mapping = new LinkedMultiValueMap<>();
 	protected Set<String> exclusions = new HashSet<>();
@@ -75,6 +84,8 @@ public abstract class AbstractSourceCodeParser implements Serializable {
 
 	public abstract MultiValueMap<String, ArchimateRelationship> computeModelRelationshipsByClassName(Source warSource,
 			MultiValueMap<String, ArchimateElement> modelElementsByClassName) throws ZipException, IOException;
+	
+	public abstract Document generateCodeElements(Source zipSource, Document document) throws ZipException, IOException;
 
 	protected ZipFile getZipFile(final File file) throws ZipException, IOException {
 		ZipFile zipFile = new ZipFile(file);
@@ -300,4 +311,13 @@ public abstract class AbstractSourceCodeParser implements Serializable {
 	public void setMapping(MultiValueMap<String, ArchimateElementEnum> mapping) {
 		this.mapping = mapping;
 	}
+	
+	protected String addXmiIdentifier(org.jdom2.Element element) {
+		Namespace nsXmi = Namespace.getNamespace("xmi", NS_XMI);
+		String id = "id." + UUID.randomUUID();
+		element.setAttribute("identifier", id, nsXmi);
+		return id;
+	}
+
+	
 }

@@ -1,8 +1,10 @@
 package es.alarcos.archirev.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -31,8 +34,11 @@ import org.springframework.stereotype.Controller;
 
 import com.google.common.collect.Maps;
 
-import es.alarcos.archirev.logic.ExtractionService;
+import es.alarcos.archirev.logic.ArchimateExtractionService;
+import es.alarcos.archirev.logic.KdmExtractionService;
+import es.alarcos.archirev.model.ArchimateModel;
 import es.alarcos.archirev.model.Extraction;
+import es.alarcos.archirev.model.KdmModel;
 import es.alarcos.archirev.model.Model;
 import es.alarcos.archirev.model.Project;
 import es.alarcos.archirev.model.Source;
@@ -64,7 +70,10 @@ public class ExtractionController extends AbstractController {
 	private ModelDao modelDao;
 
 	@Autowired
-	private ExtractionService extractionService;
+	private ArchimateExtractionService archimateExtractionService;
+	
+	@Autowired
+	private KdmExtractionService kdmExtractionService;
 
 	private DualListModel<Source> sourcePickerList;
 
@@ -192,26 +201,26 @@ public class ExtractionController extends AbstractController {
 	public void startExtraction(Extraction extraction) {
 		final Timestamp now = new Timestamp(new Date().getTime());
 		final String loggedUser = sessionController.getLoggedUser();
-		Model model = null;
-		if (extraction.getModel() == null) {
-			model = new Model();
-			model.setExtraction(extraction);
-			model.setProject(getProject());
-			model.setCreatedAt(now);
-			model.setCreatedBy(loggedUser);
-			model.setModifiedAt(now);
-			model.setModifiedBy(loggedUser);
-			extraction.setModel(model);
-			getProject().getModels().add(model);
+		ArchimateModel archiMateModel = null;
+		if (extraction.getArchimateModel() == null) {
+			archiMateModel = new ArchimateModel();
+			archiMateModel.setExtraction(extraction);
+			archiMateModel.setProject(getProject());
+			archiMateModel.setCreatedAt(now);
+			archiMateModel.setCreatedBy(loggedUser);
+			archiMateModel.setModifiedAt(now);
+			archiMateModel.setModifiedBy(loggedUser);
+			extraction.setArchimateModel(archiMateModel);
+			getProject().getArchimateModels().add(archiMateModel);
 		} else {
-			model = extraction.getModel();
-			model.setModifiedAt(now);
-			model.setModifiedBy(loggedUser);
+			archiMateModel = extraction.getArchimateModel();
+			archiMateModel.setModifiedAt(now);
+			archiMateModel.setModifiedBy(loggedUser);
 		}
 
-		model.setRootDiagramPath(getSessionController().getProperty("location.diagram"));
+		archiMateModel.setRootDiagramPath(getSessionController().getProperty("location.diagram"));
 
-		extractionService.extractArchimateModel(model);
+		archimateExtractionService.extractArchimateModel(archiMateModel);
 
 		getProject().setModifiedAt(now);
 		getProject().setModifiedBy(loggedUser);
@@ -224,12 +233,72 @@ public class ExtractionController extends AbstractController {
 		FacesContext.getCurrentInstance().addMessage(null, message);
 
 	}
+	
+	public void startKdmExtraction(Extraction extraction) {
+		final Timestamp now = new Timestamp(new Date().getTime());
+		final String loggedUser = sessionController.getLoggedUser();
+		KdmModel kdmModel = null;
+		if (extraction.getKdmModel() == null) {
+			kdmModel = new KdmModel();
+			kdmModel.setExtraction(extraction);
+			kdmModel.setProject(getProject());
+			kdmModel.setCreatedAt(now);
+			kdmModel.setCreatedBy(loggedUser);
+			kdmModel.setModifiedAt(now);
+			kdmModel.setModifiedBy(loggedUser);
+			kdmModel.setExportedPath(createKdmFile(kdmModel));
+			extraction.setKdmModel(kdmModel);
+			getProject().getKdmModels().add(kdmModel);
+		} else {
+			kdmModel = extraction.getKdmModel();
+			kdmModel.setModifiedAt(now);
+			kdmModel.setModifiedBy(loggedUser);
+		}
+
+		kdmExtractionService.extractKdmModel(kdmModel);
+
+		getProject().setModifiedAt(now);
+		getProject().setModifiedBy(loggedUser);
+
+		sessionController.updateProject();
+
+		reload();
+
+		FacesMessage message = new FacesMessage("KDM Extractioin: " + extraction.getName() + " has been completed.");
+		FacesContext.getCurrentInstance().addMessage(null, message);
+
+	}
+	
+	
+	private String createKdmFile(final KdmModel model) {
+		File folder = new File(getSessionController().getProperty("location.kdm"));
+		if (!folder.exists()) {
+			folder.mkdir();
+		}
+		Path filePath = null;
+		try {
+			filePath = Files.createFile(Paths.get(folder.getAbsolutePath() + File.separator + "p_"
+					+ getProject().getId() + "_kdm_" + model.getId() + "_" + UUID.randomUUID() + ".kdm"));
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
+			return null;
+		}
+		return filePath.toString();
+	}
 
 	public void startAllExtractions() {
 		for (Extraction extraction : getProject().getExtractions()) {
-			if (extraction.getModel() != null) {
+			if (extraction.getArchimateModel() != null) {
 				startExtraction(extraction);
 			}
+		}
+	}
+	
+	public void startAllKdmExtractions() {
+		for (Extraction extraction : getProject().getExtractions()) {
+			//if (extraction.getKdmModel() != null) {
+				startKdmExtraction(extraction);
+			//}
 		}
 	}
 

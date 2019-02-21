@@ -24,43 +24,35 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import es.alarcos.archirev.logic.ArchimateExtractionService;
-import es.alarcos.archirev.logic.IconService;
-import es.alarcos.archirev.model.Element;
+import es.alarcos.archirev.logic.KdmExtractionService;
 import es.alarcos.archirev.model.Extraction;
+import es.alarcos.archirev.model.KdmModel;
 import es.alarcos.archirev.model.Model;
-import es.alarcos.archirev.model.ArchimateModel;
 import es.alarcos.archirev.model.Project;
-import es.alarcos.archirev.model.Relationship;
-import es.alarcos.archirev.model.View;
 
 @ManagedBean(name = "modelsController")
 @Controller
 @ViewScoped
-public class ModelsController extends AbstractController {
+public class KdmModelsController extends AbstractController {
 
 	private static final String IMAGES_FAV_PNG = "images/fav.png";
 
 	private static final long serialVersionUID = 1220451072138440791L;
 
-	static Logger LOGGER = LoggerFactory.getLogger(ModelsController.class);
+	static Logger LOGGER = LoggerFactory.getLogger(KdmModelsController.class);
 
 	@Autowired
 	private SessionController sessionController;
 
 	@Autowired
-	private ArchimateExtractionService extractionService;
+	private KdmExtractionService extractionService;
 
-	@Autowired
-	private IconService iconService;
 
-	private ArchimateModel selectedModel;
-	private View selectedView;
-	private View selectedView2;
+	private KdmModel selectedModel;
 
 	private StreamedContent exportedFile;
 
-	public ModelsController() {
+	public KdmModelsController() {
 		super();
 	}
 
@@ -71,27 +63,10 @@ public class ModelsController extends AbstractController {
 	}
 
 	public void reload() {
-		if (!getProject().getArchimateModels().isEmpty()) {
-			selectedModel = getProject().getArchimateModels().iterator().next();
+		if (!getProject().getKdmModels().isEmpty()) {
+			selectedModel = getProject().getKdmModels().iterator().next();
 		}
 		RequestContext.getCurrentInstance().update("mainForm:mainTabs:eaModelsPanel");
-	}
-
-	public StreamedContent getSelectedDiagram() {
-		byte[] imageBytes = null;
-		if (selectedModel == null || selectedModel.getDefaultView() == null) {
-			return null;
-		}
-		try {
-			if (selectedView == null) {
-				selectedView = selectedModel.getDefaultView();
-			}
-			imageBytes = Files.readAllBytes(new File(selectedView.getSanitizedImagePath()).toPath());
-			return new DefaultStreamedContent(new ByteArrayInputStream(imageBytes), "image/png");
-		} catch (IOException e) {
-			LOGGER.error("Error rendering the model diagram");
-		}
-		return null;
 	}
 
 	public void exportModel() {
@@ -102,11 +77,7 @@ public class ModelsController extends AbstractController {
 			selectedModel.setModifiedBy(loggedUser);
 
 			selectedModel.setExportedPath(createExportedFile(selectedModel));
-
-			selectedModel.setRootDiagramPath(getSessionController().getProperty("location.diagram"));
 			
-			extractionService.exportArchimateModel(selectedModel);
-
 			getProject().setModifiedAt(now);
 			getProject().setModifiedBy(loggedUser);
 
@@ -123,29 +94,13 @@ public class ModelsController extends AbstractController {
 			LOGGER.error(e.getMessage());
 		}
 		exportedFile = new DefaultStreamedContent(new ByteArrayInputStream(xmlFileBytes), "text/xml",
-				selectedModel.getName() + ".xml");
+				new File(selectedModel.getSanitizedExportedPath()).getName());
 	}
 
-	public void openMetricsDialog() {
-		RequestContext context = RequestContext.getCurrentInstance();
-		context.update("mainForm:metricsDialog");
-		context.update("mainForm:metricsTable");
-		context.execute("PF('metricsDialog').show()");
-	}
-	
 	public void onSelectModel(SelectEvent event) {
-		ArchimateModel model = (ArchimateModel) event.getObject();
+		KdmModel model = (KdmModel) event.getObject();
 		LOGGER.info("Selected model: " + model);
 		selectedModel = model;
-		if(selectedModel!=null) {
-			selectedView = selectedModel.getDefaultView();
-		}
-	}
-	
-	public void onSelectView(SelectEvent event) {
-		View view = (View) event.getObject();
-		LOGGER.info("Selected view: " + view);
-		setSelectedView(view);
 	}
 
 	private String createExportedFile(final Model model) {
@@ -162,22 +117,6 @@ public class ModelsController extends AbstractController {
 			return null;
 		}
 		return filePath.toString();
-	}
-
-	public String getElementIconPath(Element element) {
-		if (element == null) {
-			return IMAGES_FAV_PNG;
-		}
-		String icon = IconService.getIcon(element.getType());
-		return icon != null ? icon : IMAGES_FAV_PNG;
-	}
-
-	public String getRelationshipIconPath(Relationship relationship) {
-		if (relationship == null) {
-			return IMAGES_FAV_PNG;
-		}
-		String icon = IconService.getIcon(relationship.getType());
-		return icon != null ? icon : IMAGES_FAV_PNG;
 	}
 
 	public Project getProject() {
@@ -200,7 +139,7 @@ public class ModelsController extends AbstractController {
 		return selectedModel;
 	}
 
-	public void setSelectedModel(ArchimateModel selectedModel) {
+	public void setSelectedModel(KdmModel selectedModel) {
 		this.selectedModel = selectedModel;
 	}
 
@@ -210,22 +149,6 @@ public class ModelsController extends AbstractController {
 
 	public void setExportedFile(StreamedContent exportedFile) {
 		this.exportedFile = exportedFile;
-	}
-
-	public View getSelectedView() {
-		return selectedView;
-	}
-
-	public void setSelectedView(View selectedView) {
-		this.selectedView = selectedView;
-	}
-
-	public View getSelectedView2() {
-		return selectedView2;
-	}
-
-	public void setSelectedView2(View selectedView2) {
-		this.selectedView2 = selectedView2;
 	}
 
 }

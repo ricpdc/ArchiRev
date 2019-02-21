@@ -68,6 +68,7 @@ import es.alarcos.archirev.logic.shape.ShapeEnum;
 import es.alarcos.archirev.model.Element;
 import es.alarcos.archirev.model.Metric;
 import es.alarcos.archirev.model.Model;
+import es.alarcos.archirev.model.ArchimateModel;
 import es.alarcos.archirev.model.Relationship;
 import es.alarcos.archirev.model.Source;
 import es.alarcos.archirev.model.View;
@@ -75,11 +76,11 @@ import es.alarcos.archirev.model.enums.ModelViewEnum;
 
 @Singleton
 @Service
-public class ExtractionService implements Serializable {
+public class ArchimateExtractionService implements Serializable {
 
 	private static final long serialVersionUID = -4392305100176250199L;
 
-	static Logger LOGGER = LoggerFactory.getLogger(ExtractionService.class);
+	static Logger LOGGER = LoggerFactory.getLogger(ArchimateExtractionService.class);
 
 	private static final String DEFAULT_LANG = "en";
 	private static final String SCHEMA_LOCATION = "http://www.opengroup.org/xsd/archimate/3.0/ http://www.opengroup.org/xsd/archimate/3.0/archimate3_Diagram.xsd http://purl.org/dc/elements/1.1/ http://dublincore.org/schemas/xmls/qdc/2008/02/11/dc.xsd";
@@ -102,11 +103,11 @@ public class ExtractionService implements Serializable {
 	private Map<ArchimateElement, Object> graphNodesMap;
 	private Map<ArchimateRelationship, Object> graphEdgesMap;
 
-	public ExtractionService() {
+	public ArchimateExtractionService() {
 
-	}
+	}	
 
-	public void extractArchimateModel(Model model) {
+	public void extractArchimateModel(ArchimateModel model) {
 		Set<Source> sources = model.getExtraction().getSources();
 		Validate.isTrue(sources != null && !sources.isEmpty(), "There is no source as input");
 		// TODO Integrate different sources into single one model
@@ -134,7 +135,7 @@ public class ExtractionService implements Serializable {
 		}
 	}
 
-	private void generateModelViewsForComponents(Model model, ModelViewEnum viewType) {
+	private void generateModelViewsForComponents(ArchimateModel model, ModelViewEnum viewType) {
 		mxGraph graph = viewGraph.get(defaultView);
 		List<List<mxCell>> components = computeGraphComponents(graph);
 		for (int i = 0; i < components.size(); i++) {
@@ -146,7 +147,7 @@ public class ExtractionService implements Serializable {
 		}
 	}
 
-	public void exportArchimateModel(Model model) {
+	public void exportArchimateModel(ArchimateModel model) {
 		Set<Source> sources = model.getExtraction().getSources();
 		Validate.isTrue(sources != null && !sources.isEmpty(), "There is no source as input");
 		// TODO Integrate different sources into single one model
@@ -173,7 +174,7 @@ public class ExtractionService implements Serializable {
 		}
 	}
 
-	private void extractArchimateModelFromSourceCode(Model model, Source source) {
+	private void extractArchimateModelFromSourceCode(ArchimateModel model, Source source) {
 		viewGraph = new HashMap<>();
 		modelElementsByClassName = new LinkedMultiValueMap<>();
 		modelRelationshipsByClassName = new LinkedMultiValueMap<>();
@@ -200,7 +201,7 @@ public class ExtractionService implements Serializable {
 		}
 	}
 
-	private File generateModelAndDefaultView(Model model) {
+	private File generateModelAndDefaultView(ArchimateModel model) {
 
 		mxGraph graph = new mxGraph();
 		Object parent = graph.getDefaultParent();
@@ -379,7 +380,7 @@ public class ExtractionService implements Serializable {
 
 	
 
-	private File generateModelViewForComponent(ModelViewEnum viewType, Model model, mxGraph fullGraph,
+	private File generateModelViewForComponent(ModelViewEnum viewType, ArchimateModel model, mxGraph fullGraph,
 			List<mxCell> component, String extraNameLabel) {
 		mxGraph graph = new mxGraph();
 		Object parent = graph.getDefaultParent();
@@ -431,7 +432,7 @@ public class ExtractionService implements Serializable {
 
 	}
 
-	private File generateModelView(final ModelViewEnum viewType, final Model model) {
+	private File generateModelView(final ModelViewEnum viewType, final ArchimateModel model) {
 
 		mxGraph graph = new mxGraph();
 		Object parent = graph.getDefaultParent();
@@ -545,7 +546,7 @@ public class ExtractionService implements Serializable {
 		return null;
 	}
 
-	private View getDefaultView(Model model) {
+	private View getDefaultView(ArchimateModel model) {
 		final Timestamp now = new Timestamp(new Date().getTime());
 		ModelViewEnum defaultType = ModelViewEnum.ALL;
 		View defaultView = null;
@@ -568,11 +569,11 @@ public class ExtractionService implements Serializable {
 		return defaultView;
 	}
 
-	private View getView(ModelViewEnum viewType, Model model) {
+	private View getView(ModelViewEnum viewType, ArchimateModel model) {
 		return getView(viewType, model, "");
 	}
 
-	private View getView(ModelViewEnum viewType, Model model, String extraLabel) {
+	private View getView(ModelViewEnum viewType, ArchimateModel model, String extraLabel) {
 		final Timestamp now = new Timestamp(new Date().getTime());
 
 		View view = new View();
@@ -951,7 +952,7 @@ public class ExtractionService implements Serializable {
 		}
 	}
 
-	private String createImageFile(final Model model, final ModelViewEnum type) {
+	private String createImageFile(final ArchimateModel model, final ModelViewEnum type) {
 		File folder = new File(model.getRootDiagramPath());
 		if (!folder.exists()) {
 			folder.mkdir();

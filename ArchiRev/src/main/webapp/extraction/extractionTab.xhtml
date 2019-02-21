@@ -80,7 +80,7 @@
 				</p:column>
 				<p:column style="width:60px;text-align: center">
 					<p:outputLabel
-						styleClass="#{extraction.model==null? 'fa fa-file-o' : 'fa fa-file-text'}"
+						styleClass="#{extraction.archimateModel==null? 'fa fa-file-o' : 'fa fa-file-text'}"
 						style="font-size: 1em; color: #3c667c; padding-right:10px" />
 
 					<p:commandButton id="startExtraction" icon="ui-icon-gear"
@@ -105,6 +105,13 @@
 					</p:confirmDialog>
 				</p:column>
 			</p:dataTable>
+			<p:panel
+				style="border:none; text-align:right; padding-top:20px; padding-right: 0px;">
+				<p:commandButton id="startKdmExtractionall" icon="ui-icon-gear"
+					value="All KDM extractions" title="Start All KDM Extraction"
+					action="#{extractionController.startAllKdmExtractions()}"
+					onclick="PF('blockUI').show()" oncomplete="PF('blockUI').hide()" />
+			</p:panel>
 			<p:panel
 				style="border:none; text-align:right; padding-top:20px; padding-right: 0px;">
 				<p:commandButton id="startExtractionall" icon="ui-icon-gear"

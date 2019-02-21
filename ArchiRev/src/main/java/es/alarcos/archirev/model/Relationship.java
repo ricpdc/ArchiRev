@@ -21,7 +21,7 @@ public class Relationship extends AbstractEntity implements Serializable {
 
 	}
 
-	public Relationship(Model model, String relationshipId, String name, String documentation, String type) {
+	public Relationship(ArchimateModel model, String relationshipId, String name, String documentation, String type) {
 		this.model = model;
 		this.relationshipId = relationshipId;
 		this.name = name;
@@ -29,7 +29,7 @@ public class Relationship extends AbstractEntity implements Serializable {
 		this.type = type;
 	}
 
-	public Relationship(Model model, ArchimateRelationship archimateRelationship) {
+	public Relationship(ArchimateModel model, ArchimateRelationship archimateRelationship) {
 		this(model, archimateRelationship.getId(), archimateRelationship.getName(),
 				archimateRelationship.getDocumentation(), archimateRelationship.getClass().getSimpleName());
 	}
@@ -53,7 +53,7 @@ public class Relationship extends AbstractEntity implements Serializable {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "model_id")
-	private Model model;
+	private ArchimateModel model;
 
 	public String getDocumentation() {
 		return documentation;
@@ -75,7 +75,7 @@ public class Relationship extends AbstractEntity implements Serializable {
 		return model;
 	}
 
-	public void setModel(Model model) {
+	public void setModel(ArchimateModel model) {
 		this.model = model;
 	}
 

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kdm:Segment xmlns:kdm="http://kdm.omg.org/kdm" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:action="http://kdm.omg.org/action" xmlns:code="http://kdm.omg.org/code" xmi:version="2.0" xsi:schemaLocation="http://kdm.omg.org/action ../metamodels/kdm.ecore#//action http://kdm.omg.org/code ../metamodels/kdm.ecore#//code http://kdm.omg.org/kdm ../metamodels/kdm.ecore#//kdm" name="Medio.java.kdm">
+  <model xsi:type="code:CodeModel" xmi:id="id.0" name="Medio.java">
+    <codeElement xsi:type="code:LanguageUnit" xmi:id="id.1" name="Common Java Datatypes">
+      <codeElement xsi:type="code:IntegerType" xmi:id="id.6" name="int" />
+    </codeElement>
+    <codeElement xsi:type="code:Package" xmi:id="id.2" name="default">
+      <codeElement xsi:type="code:ClassUnit" xmi:id="id.3" name="Medio">
+        <codeElement xsi:type="code:Signature" xmi:id="id.4" name="Medio" />
+        <codeElement xsi:type="code:MethodUnit" xmi:id="id.5" type="id.6" name="getMedio">
+          <codeElement xsi:type="code:Signature" xmi:id="id.7" name="getMedio">
+            <parameterUnit xmi:id="id.8" name="a" />
+            <parameterUnit xmi:id="id.9" name="b" />
+            <parameterUnit xmi:id="id.10" name="c" />
+          </codeElement>
+          <codeElement xmi:id="id.11" xsi:type="code:StorableUnit" name="value" kind="local" />
+          <entryFlow xmi:id="id.12" from="id.5" to="id.13" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.13" name="ifa1" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.14" from="id.13" to="id.16" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.16" name="a2" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.17" from="id.16" to="id.11" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.18" from="id.16" to="id.20" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.20" name="ifa3" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.21" from="id.20" to="id.23" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.23" name="a4" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.24" from="id.23" to="id.11" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.25" from="id.23" to="id.27" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.27" name="ifa5" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.28" from="id.27" to="id.30" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.30" name="a6" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.31" from="id.30" to="id.11" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.32" from="id.30" to="id.34" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.34" name="a7" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.35" from="id.34" to="id.11" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.36" from="id.34" />
+          </codeElement>
+        </codeElement>
+      </codeElement>
+    </codeElement>
+  </model>
+</kdm:Segment>
+

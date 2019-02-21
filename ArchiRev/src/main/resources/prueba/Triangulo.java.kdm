@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kdm:Segment xmlns:kdm="http://kdm.omg.org/kdm" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:action="http://kdm.omg.org/action" xmlns:code="http://kdm.omg.org/code" xmi:version="2.0" xsi:schemaLocation="http://kdm.omg.org/action ../metamodels/kdm.ecore#//action http://kdm.omg.org/code ../metamodels/kdm.ecore#//code http://kdm.omg.org/kdm ../metamodels/kdm.ecore#//kdm" name="Triangulo.java.kdm">
+  <model xsi:type="code:CodeModel" xmi:id="id.0" name="Triangulo.java">
+    <codeElement xsi:type="code:LanguageUnit" xmi:id="id.1" name="Common Java Datatypes">
+      <codeElement xsi:type="code:IntegerType" xmi:id="id.41" name="int" />
+    </codeElement>
+    <codeElement xsi:type="code:Package" xmi:id="id.2" name="default">
+      <codeElement xsi:type="code:ClassUnit" xmi:id="id.3" name="Triangulo">
+        <codeElement xsi:type="code:Signature" xmi:id="id.4" name="Triangulo" />
+        <codeElement xsi:type="code:MethodUnit" xmi:id="id.5" kind="constructor" name="Triangulo">
+          <codeElement xsi:type="code:Signature" xmi:id="id.6" name="Triangulo" />
+        </codeElement>
+        <codeElement xsi:type="code:MethodUnit" xmi:id="id.7" name="setI">
+          <codeElement xsi:type="code:Signature" xmi:id="id.8" name="setI">
+            <parameterUnit xmi:id="id.9" name="v" />
+          </codeElement>
+          <entryFlow xmi:id="id.10" from="id.7" to="id.11" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.11" name="ifa1" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.12" from="id.11" to="id.14" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.14" name="a2" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.15" from="id.14" to="id.16" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.17" from="id.14" />
+          </codeElement>
+          <codeElement xmi:id="id.16" xsi:type="code:StorableUnit" name="i" kind="local" />
+        </codeElement>
+        <codeElement xsi:type="code:MethodUnit" xmi:id="id.18" name="setJ">
+          <codeElement xsi:type="code:Signature" xmi:id="id.19" name="setJ">
+            <parameterUnit xmi:id="id.20" name="v" />
+          </codeElement>
+          <entryFlow xmi:id="id.21" from="id.18" to="id.22" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.22" name="ifa1" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.23" from="id.22" to="id.25" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.25" name="a2" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.26" from="id.25" to="id.27" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.28" from="id.25" />
+          </codeElement>
+          <codeElement xmi:id="id.27" xsi:type="code:StorableUnit" name="j" kind="local" />
+        </codeElement>
+        <codeElement xsi:type="code:MethodUnit" xmi:id="id.29" name="setK">
+          <codeElement xsi:type="code:Signature" xmi:id="id.30" name="setK">
+            <parameterUnit xmi:id="id.31" name="v" />
+          </codeElement>
+          <entryFlow xmi:id="id.32" from="id.29" to="id.33" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.33" name="ifa1" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.34" from="id.33" to="id.36" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.36" name="a2" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.37" from="id.36" to="id.38" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.39" from="id.36" />
+          </codeElement>
+          <codeElement xmi:id="id.38" xsi:type="code:StorableUnit" name="k" kind="local" />
+        </codeElement>
+        <codeElement xsi:type="code:MethodUnit" xmi:id="id.40" type="id.41" name="getTipo">
+          <codeElement xsi:type="code:Signature" xmi:id="id.42" name="getTipo" />
+          <entryFlow xmi:id="id.43" from="id.40" to="id.44" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.44" name="a1" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.45" from="id.44" to="id.27" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.46" from="id.44" to="id.48" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.48" name="ifa2" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.49" from="id.48" to="id.51" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.51" name="a3" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.52" from="id.51" to="id.53" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.54" from="id.51" to="id.56" />
+          </codeElement>
+          <codeElement xmi:id="id.53" xsi:type="code:StorableUnit" name="tipo" kind="local" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.56" name="a4" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.57" from="id.56" to="id.38" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.58" from="id.56" to="id.60" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.60" name="ifa5" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.61" from="id.60" to="id.63" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.63" name="a6" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.64" from="id.63" to="id.53" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.65" from="id.63" to="id.67" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.67" name="a7" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.68" from="id.67" to="id.38" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.69" from="id.67" to="id.71" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.71" name="ifa8" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.72" from="id.71" to="id.74" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.74" name="a9" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.75" from="id.74" to="id.53" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.76" from="id.74" to="id.78" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.78" name="ifa10" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.79" from="id.78" to="id.81" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.81" name="a11" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.82" from="id.81" to="id.53" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.83" from="id.81" to="id.85" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.85" name="a12" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.86" from="id.85" to="id.53" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.87" from="id.85" to="id.89" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.89" name="ifa13" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.90" from="id.89" to="id.92" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.92" name="a14" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.93" from="id.92" to="id.27" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.94" from="id.92" to="id.96" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.96" name="ifa15" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.97" from="id.96" to="id.99" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.99" name="a16" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.100" from="id.99" to="id.53" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.101" from="id.99" to="id.103" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.103" name="a17" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.104" from="id.103" to="id.53" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.105" from="id.103" to="id.107" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.107" name="a18" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.108" from="id.107" to="id.53" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.109" from="id.107" to="id.111" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.111" name="a19" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.112" from="id.111" to="id.53" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.113" from="id.111" to="id.115" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.115" name="ifa20" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.116" from="id.115" to="id.118" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.118" name="a21" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.119" from="id.118" to="id.53" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.120" from="id.118" to="id.122" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.122" name="a22" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.123" from="id.122" to="id.53" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.124" from="id.122" to="id.126" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.126" name="a23" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.127" from="id.126" to="id.38" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.128" from="id.126" to="id.130" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.130" name="ifa24" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.131" from="id.130" to="id.133" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.133" name="a25" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.134" from="id.133" to="id.53" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.135" from="id.133" to="id.137" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.137" name="a26" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.138" from="id.137" to="id.53" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.139" from="id.137" to="id.141" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.141" name="a27" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.142" from="id.141" to="id.27" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.143" from="id.141" to="id.145" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.145" name="ifa28" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.146" from="id.145" to="id.148" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.148" name="a29" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.149" from="id.148" to="id.53" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.150" from="id.148" to="id.152" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.152" name="a30" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.153" from="id.152" to="id.53" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.154" from="id.152" to="id.156" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.156" name="a31" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.157" from="id.156" to="id.16" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.158" from="id.156" to="id.160" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.160" name="ifa32" kind="Condition">
+            <actionRelation xsi:type="action:Flow" xmi:id="id.161" from="id.160" to="id.163" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.163" name="a33" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.164" from="id.163" to="id.53" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.165" from="id.163" to="id.167" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.167" name="a34" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.168" from="id.167" to="id.53" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.169" from="id.167" to="id.171" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.171" name="a35" kind="Assign">
+            <actionRelation xsi:type="action:Writes" xmi:id="id.172" from="id.171" to="id.53" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.173" from="id.171" to="id.175" />
+          </codeElement>
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.175" name="a36" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.176" from="id.175" to="id.53" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.177" from="id.175" />
+          </codeElement>
+        </codeElement>
+      </codeElement>
+    </codeElement>
+  </model>
+</kdm:Segment>
+

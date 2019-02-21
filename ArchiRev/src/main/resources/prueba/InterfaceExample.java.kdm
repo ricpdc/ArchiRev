@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kdm:Segment xmlns:kdm="http://kdm.omg.org/kdm" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:action="http://kdm.omg.org/action" xmlns:code="http://kdm.omg.org/code" xmi:version="2.0" xsi:schemaLocation="http://kdm.omg.org/action ../metamodels/kdm.ecore#//action http://kdm.omg.org/code ../metamodels/kdm.ecore#//code http://kdm.omg.org/kdm ../metamodels/kdm.ecore#//kdm" name="InterfaceExample.java.kdm">
+  <model xsi:type="code:CodeModel" xmi:id="id.0" name="InterfaceExample.java">
+    <codeElement xsi:type="code:LanguageUnit" xmi:id="id.1" name="Common Java Datatypes">
+      <codeElement xsi:type="code:IntegerType" xmi:id="id.6" name="int" />
+    </codeElement>
+    <codeElement xsi:type="code:Package" xmi:id="id.2" name="flip">
+      <codeElement xsi:type="code:ClassUnit" xmi:id="id.3" name="iFlip">
+        <codeElement xsi:type="code:Signature" xmi:id="id.4" name="iFlip" />
+        <codeElement xsi:type="code:MethodUnit" xmi:id="id.5" type="id.6" name="flip">
+          <codeElement xsi:type="code:Signature" xmi:id="id.7" name="flip">
+            <parameterUnit xmi:id="id.8" name="i" />
+          </codeElement>
+        </codeElement>
+      </codeElement>
+      <codeElement xsi:type="code:ClassUnit" xmi:id="id.9" name="foo">
+        <codeElement xsi:type="code:Signature" xmi:id="id.10" name="foo" />
+        <codeElement xsi:type="code:MethodUnit" xmi:id="id.11" kind="constructor" name="foo">
+          <codeElement xsi:type="code:Signature" xmi:id="id.12" name="foo" />
+        </codeElement>
+        <codeElement xsi:type="code:MethodUnit" xmi:id="id.13" kind="constructor" name="flip">
+          <codeElement xsi:type="code:Signature" xmi:id="id.14" name="flip">
+            <parameterUnit xmi:id="id.15" name="i" />
+          </codeElement>
+        </codeElement>
+      </codeElement>
+      <codeElement xsi:type="code:ClassUnit" xmi:id="id.16" name="FlipClient">
+        <codeElement xsi:type="code:Signature" xmi:id="id.17" name="FlipClient" />
+        <codeElement xsi:type="code:MethodUnit" xmi:id="id.18" name="main">
+          <codeElement xsi:type="code:Signature" xmi:id="id.19" name="main">
+            <parameterUnit xmi:id="id.20" name="args" />
+          </codeElement>
+          <codeElement xmi:id="id.21" xsi:type="code:StorableUnit" name="f" kind="local" />
+          <entryFlow xmi:id="id.22" from="id.18" to="id.23" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.23" name="a1" kind="Assign">
+            <actionRelation xsi:type="action:Reads" xmi:id="id.24" from="id.23" to="id.21" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.25" from="id.23" to="id.28" />
+          </codeElement>
+          <codeElement xmi:id="id.26" xsi:type="code:StorableUnit" name="g" kind="local" />
+          <codeElement xsi:type="action:ActionElement" xmi:id="id.28" name="a2" kind="MethodCall">
+            <actionRelation xsi:type="action:Calls" xmi:id="id.29" from="id.28" to="id.13" />
+            <actionRelation xsi:type="action:Flow" xmi:id="id.30" from="id.28" />
+          </codeElement>
+        </codeElement>
+      </codeElement>
+    </codeElement>
+  </model>
+</kdm:Segment>
+

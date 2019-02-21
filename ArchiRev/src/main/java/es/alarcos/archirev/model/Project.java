@@ -30,7 +30,10 @@ public class Project extends AbstractEntity {
 	private Set<Extraction> extractions = new HashSet<>();
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "project", orphanRemoval = true, fetch = FetchType.LAZY)
-	private Set<Model> models = new HashSet<>();
+	private Set<ArchimateModel> archimateModels = new HashSet<>();
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "project", orphanRemoval = true, fetch = FetchType.LAZY)
+	private Set<KdmModel> kdmModels = new HashSet<>();
 
 	public Project() {
 		super();
@@ -64,12 +67,20 @@ public class Project extends AbstractEntity {
 		this.extractions = extractions;
 	}
 
-	public Set<Model> getModels() {
-		return models;
+	public Set<ArchimateModel> getArchimateModels() {
+		return archimateModels;
 	}
 
-	public void setModels(Set<Model> models) {
-		this.models = models;
+	public void setArchimateModels(Set<ArchimateModel> archimateModels) {
+		this.archimateModels = archimateModels;
+	}
+
+	public Set<KdmModel> getKdmModels() {
+		return kdmModels;
+	}
+
+	public void setKdmModels(Set<KdmModel> kdmModels) {
+		this.kdmModels = kdmModels;
 	}
 
 }

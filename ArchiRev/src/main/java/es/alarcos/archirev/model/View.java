@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -36,7 +35,7 @@ public class View extends AbstractEntity implements Serializable {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "model_id")
-	private Model model;
+	private ArchimateModel model;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "view", orphanRemoval = true, fetch = FetchType.LAZY)
 	private Set<Metric> metrics = new HashSet<>();
@@ -73,7 +72,7 @@ public class View extends AbstractEntity implements Serializable {
 		return model;
 	}
 
-	public void setModel(Model model) {
+	public void setModel(ArchimateModel model) {
 		this.model = model;
 	}
 
