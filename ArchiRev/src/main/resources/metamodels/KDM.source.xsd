@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:core="http://www.omg.org/spec/KDM/20160201/core" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:kdm="http://www.omg.org/spec/KDM/20160201/kdm" xmlns:source="http://www.omg.org/spec/KDM/20160201/source" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ecore:nsPrefix="source" ecore:package="KDM.source" targetNamespace="http://www.omg.org/spec/KDM/20160201/source">
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/kdm" schemaLocation="KDM.kdm.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/core" schemaLocation="KDM.core.xsd"/>
+  <xsd:element ecore:ignore="true" name="SourceRef" type="source:SourceRef"/>
+  <xsd:element ecore:ignore="true" name="Region" type="source:Region"/>
+  <xsd:element ecore:ignore="true" name="SourceRegion" type="source:SourceRegion"/>
+  <xsd:element ecore:ignore="true" name="InventoryModel" type="source:InventoryModel"/>
+  <xsd:element ecore:ignore="true" name="AbstractInventoryElement" type="source:AbstractInventoryElement"/>
+  <xsd:element ecore:ignore="true" name="InventoryItem" type="source:InventoryItem"/>
+  <xsd:element ecore:ignore="true" name="SourceFile" type="source:SourceFile"/>
+  <xsd:element ecore:ignore="true" name="ImageFile" type="source:ImageFile"/>
+  <xsd:element ecore:ignore="true" name="ConfigFile" type="source:ConfigFile"/>
+  <xsd:element ecore:ignore="true" name="InventoryContainer" type="source:InventoryContainer"/>
+  <xsd:element ecore:ignore="true" name="Directory" type="source:Directory"/>
+  <xsd:element ecore:ignore="true" name="Project" type="source:Project"/>
+  <xsd:element ecore:ignore="true" name="AbstractInventoryRelationship" type="source:AbstractInventoryRelationship"/>
+  <xsd:element ecore:ignore="true" name="LinkableFile" type="source:LinkableFile"/>
+  <xsd:element ecore:ignore="true" name="ObjectFile" type="source:ObjectFile"/>
+  <xsd:element ecore:ignore="true" name="ExecutableFile" type="source:ExecutableFile"/>
+  <xsd:element ecore:ignore="true" name="DependsOn" type="source:DependsOn"/>
+  <xsd:element ecore:ignore="true" name="InventoryElement" type="source:InventoryElement"/>
+  <xsd:element ecore:ignore="true" name="InventoryRelationship" type="source:InventoryRelationship"/>
+  <xsd:element ecore:ignore="true" name="LibraryFile" type="source:LibraryFile"/>
+  <xsd:element ecore:ignore="true" name="AudioFile" type="source:AudioFile"/>
+  <xsd:element ecore:ignore="true" name="DataFile" type="source:DataFile"/>
+  <xsd:element ecore:ignore="true" name="Service" type="source:Service"/>
+  <xsd:element ecore:ignore="true" name="Document" type="source:Document"/>
+  <xsd:element ecore:ignore="true" name="Track" type="source:Track"/>
+  <xsd:element ecore:ignore="true" name="BinaryRegion" type="source:BinaryRegion"/>
+  <xsd:element ecore:ignore="true" name="ReferenceableRegion" type="source:ReferenceableRegion"/>
+  <xsd:element ecore:ignore="true" name="TraceableTo" type="source:TraceableTo"/>
+  <xsd:element ecore:ignore="true" name="Model" type="source:Model"/>
+  <xsd:complexType name="SourceRef">
+    <xsd:complexContent>
+      <xsd:extension base="core:AnnotatableElement">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="region" type="source:Region"/>
+        </xsd:sequence>
+        <xsd:attribute name="language" type="core:String"/>
+        <xsd:attribute name="snippet" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="Region">
+    <xsd:complexContent>
+      <xsd:extension base="core:AnnotatableElement">
+        <xsd:attribute ecore:reference="source:InventoryItem" name="file" type="xsd:anyURI"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="SourceRegion">
+    <xsd:complexContent>
+      <xsd:extension base="source:Region">
+        <xsd:attribute name="startLine" type="core:Integer"/>
+        <xsd:attribute name="startPosition" type="core:Integer"/>
+        <xsd:attribute name="endLine" type="core:Integer"/>
+        <xsd:attribute name="endPosition" type="core:Integer"/>
+        <xsd:attribute name="language" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="InventoryModel">
+    <xsd:complexContent>
+      <xsd:extension base="kdm:KDMModel">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="inventoryElement" type="source:AbstractInventoryElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AbstractInventoryElement">
+    <xsd:complexContent>
+      <xsd:extension base="core:KDMEntity">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="inventoryRelation" type="source:AbstractInventoryRelationship"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="InventoryItem">
+    <xsd:complexContent>
+      <xsd:extension base="source:AbstractInventoryElement">
+        <xsd:attribute name="version" type="core:String"/>
+        <xsd:attribute name="path" type="core:String"/>
+        <xsd:attribute name="format" type="core:String"/>
+        <xsd:attribute name="md5" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="SourceFile">
+    <xsd:complexContent>
+      <xsd:extension base="source:InventoryItem">
+        <xsd:attribute name="language" type="core:String"/>
+        <xsd:attribute name="encoding" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ImageFile">
+    <xsd:complexContent>
+      <xsd:extension base="source:InventoryItem"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ConfigFile">
+    <xsd:complexContent>
+      <xsd:extension base="source:InventoryItem"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="InventoryContainer">
+    <xsd:complexContent>
+      <xsd:extension base="source:AbstractInventoryElement">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="inventoryElement" type="source:AbstractInventoryElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Directory">
+    <xsd:complexContent>
+      <xsd:extension base="source:InventoryContainer">
+        <xsd:attribute name="path" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Project">
+    <xsd:complexContent>
+      <xsd:extension base="source:InventoryContainer"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AbstractInventoryRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="core:KDMRelationship"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="LinkableFile">
+    <xsd:complexContent>
+      <xsd:extension base="source:InventoryItem"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ObjectFile">
+    <xsd:complexContent>
+      <xsd:extension base="source:LinkableFile"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ExecutableFile">
+    <xsd:complexContent>
+      <xsd:extension base="source:InventoryItem"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DependsOn">
+    <xsd:complexContent>
+      <xsd:extension base="source:AbstractInventoryRelationship">
+        <xsd:attribute ecore:reference="source:AbstractInventoryElement" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="source:AbstractInventoryElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="InventoryElement">
+    <xsd:complexContent>
+      <xsd:extension base="source:AbstractInventoryElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="InventoryRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="source:AbstractInventoryRelationship">
+        <xsd:attribute ecore:reference="core:KDMEntity" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="source:AbstractInventoryElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="LibraryFile">
+    <xsd:complexContent>
+      <xsd:extension base="source:LinkableFile"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="AudioFile">
+    <xsd:complexContent>
+      <xsd:extension base="source:InventoryItem"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DataFile">
+    <xsd:complexContent>
+      <xsd:extension base="source:InventoryItem"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Service">
+    <xsd:complexContent>
+      <xsd:extension base="source:InventoryItem"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Document">
+    <xsd:complexContent>
+      <xsd:extension base="source:InventoryItem"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Track">
+    <xsd:complexContent>
+      <xsd:extension base="source:AbstractInventoryElement">
+        <xsd:attribute name="description" type="core:String"/>
+        <xsd:attribute ecore:opposite="track" ecore:reference="core:KDMEntity" name="owner" type="xsd:anyURI"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="BinaryRegion">
+    <xsd:complexContent>
+      <xsd:extension base="source:Region">
+        <xsd:attribute name="startAddr" type="core:Integer"/>
+        <xsd:attribute name="endAddr" type="core:Integer"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ReferenceableRegion">
+    <xsd:complexContent>
+      <xsd:extension base="source:Region">
+        <xsd:attribute name="ref" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="TraceableTo">
+    <xsd:complexContent>
+      <xsd:extension base="source:AbstractInventoryRelationship">
+        <xsd:attribute ecore:reference="core:KDMEntity" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="source:Track" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Model">
+    <xsd:complexContent>
+      <xsd:extension base="source:InventoryItem"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+</xsd:schema>

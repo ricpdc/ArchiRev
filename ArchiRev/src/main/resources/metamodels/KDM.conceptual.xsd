@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:action="http://www.omg.org/spec/KDM/20160201/action" xmlns:conceptual="http://www.omg.org/spec/KDM/20160201/conceptual" xmlns:core="http://www.omg.org/spec/KDM/20160201/core" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:kdm="http://www.omg.org/spec/KDM/20160201/kdm" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ecore:nsPrefix="conceptual" ecore:package="KDM.conceptual" targetNamespace="http://www.omg.org/spec/KDM/20160201/conceptual">
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/action" schemaLocation="KDM.action.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/core" schemaLocation="KDM.core.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/kdm" schemaLocation="KDM.kdm.xsd"/>
+  <xsd:element ecore:ignore="true" name="ConceptualModel" type="conceptual:ConceptualModel"/>
+  <xsd:element ecore:ignore="true" name="AbstractConceptualElement" type="conceptual:AbstractConceptualElement"/>
+  <xsd:element ecore:ignore="true" name="TermUnit" type="conceptual:TermUnit"/>
+  <xsd:element ecore:ignore="true" name="ConceptualContainer" type="conceptual:ConceptualContainer"/>
+  <xsd:element ecore:ignore="true" name="FactUnit" type="conceptual:FactUnit"/>
+  <xsd:element ecore:ignore="true" name="AbstractConceptualRelationship" type="conceptual:AbstractConceptualRelationship"/>
+  <xsd:element ecore:ignore="true" name="ConceptualRelationship" type="conceptual:ConceptualRelationship"/>
+  <xsd:element ecore:ignore="true" name="BehaviorUnit" type="conceptual:BehaviorUnit"/>
+  <xsd:element ecore:ignore="true" name="RuleUnit" type="conceptual:RuleUnit"/>
+  <xsd:element ecore:ignore="true" name="ScenarioUnit" type="conceptual:ScenarioUnit"/>
+  <xsd:element ecore:ignore="true" name="ConceptualFlow" type="conceptual:ConceptualFlow"/>
+  <xsd:element ecore:ignore="true" name="ConceptualElement" type="conceptual:ConceptualElement"/>
+  <xsd:element ecore:ignore="true" name="ConceptualRole" type="conceptual:ConceptualRole"/>
+  <xsd:complexType name="ConceptualModel">
+    <xsd:complexContent>
+      <xsd:extension base="kdm:KDMModel">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="conceptualElement" type="conceptual:AbstractConceptualElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AbstractConceptualElement">
+    <xsd:complexContent>
+      <xsd:extension base="core:KDMEntity">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="conceptualRelation" type="conceptual:AbstractConceptualRelationship"/>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="abstraction" type="action:ActionElement"/>
+        </xsd:sequence>
+        <xsd:attribute ecore:ordered="false" ecore:reference="core:KDMEntity" name="implementation">
+          <xsd:simpleType>
+            <xsd:list itemType="xsd:anyURI"/>
+          </xsd:simpleType>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="TermUnit">
+    <xsd:complexContent>
+      <xsd:extension base="conceptual:AbstractConceptualElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ConceptualContainer">
+    <xsd:complexContent>
+      <xsd:extension base="conceptual:AbstractConceptualElement">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="conceptualElement" type="conceptual:AbstractConceptualElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="FactUnit">
+    <xsd:complexContent>
+      <xsd:extension base="conceptual:ConceptualContainer"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AbstractConceptualRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="core:KDMRelationship"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ConceptualRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="conceptual:AbstractConceptualRelationship">
+        <xsd:attribute ecore:reference="core:KDMEntity" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="conceptual:AbstractConceptualElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="BehaviorUnit">
+    <xsd:complexContent>
+      <xsd:extension base="conceptual:ConceptualContainer"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="RuleUnit">
+    <xsd:complexContent>
+      <xsd:extension base="conceptual:ConceptualContainer"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ScenarioUnit">
+    <xsd:complexContent>
+      <xsd:extension base="conceptual:ConceptualContainer"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ConceptualFlow">
+    <xsd:complexContent>
+      <xsd:extension base="conceptual:AbstractConceptualRelationship">
+        <xsd:attribute ecore:reference="conceptual:AbstractConceptualElement" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="conceptual:AbstractConceptualElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ConceptualElement">
+    <xsd:complexContent>
+      <xsd:extension base="conceptual:AbstractConceptualElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ConceptualRole">
+    <xsd:complexContent>
+      <xsd:extension base="conceptual:AbstractConceptualElement">
+        <xsd:attribute ecore:reference="conceptual:AbstractConceptualElement" name="conceptualElement" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+</xsd:schema>

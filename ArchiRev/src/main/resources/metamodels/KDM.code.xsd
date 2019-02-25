@@ -1,0 +1,739 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:action="http://www.omg.org/spec/KDM/20160201/action" xmlns:code="http://www.omg.org/spec/KDM/20160201/code" xmlns:core="http://www.omg.org/spec/KDM/20160201/core" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:kdm="http://www.omg.org/spec/KDM/20160201/kdm" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ecore:nsPrefix="code" ecore:package="KDM.code" targetNamespace="http://www.omg.org/spec/KDM/20160201/code">
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/kdm" schemaLocation="KDM.kdm.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/action" schemaLocation="KDM.action.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/core" schemaLocation="KDM.core.xsd"/>
+  <xsd:element ecore:ignore="true" name="AbstractCodeElement" type="code:AbstractCodeElement"/>
+  <xsd:element ecore:ignore="true" name="CodeItem" type="code:CodeItem"/>
+  <xsd:element ecore:ignore="true" name="ComputationalObject" type="code:ComputationalObject"/>
+  <xsd:element ecore:ignore="true" name="ControlElement" type="code:ControlElement"/>
+  <xsd:element ecore:ignore="true" name="MethodUnit" type="code:MethodUnit"/>
+  <xsd:element ecore:ignore="true" name="Module" type="code:Module"/>
+  <xsd:element ecore:ignore="true" name="CodeAssembly" type="code:CodeAssembly"/>
+  <xsd:element ecore:ignore="true" name="CallableUnit" type="code:CallableUnit"/>
+  <xsd:element ecore:ignore="true" name="Datatype" type="code:Datatype"/>
+  <xsd:element ecore:ignore="true" name="TemplateElement" type="code:TemplateElement"/>
+  <xsd:element ecore:ignore="true" name="TemplateUnit" type="code:TemplateUnit"/>
+  <xsd:element ecore:ignore="true" name="TemplateParameter" type="code:TemplateParameter"/>
+  <xsd:element ecore:ignore="true" name="AbstractCodeRelationship" type="code:AbstractCodeRelationship"/>
+  <xsd:element ecore:ignore="true" name="InstanceOf" type="code:InstanceOf"/>
+  <xsd:element ecore:ignore="true" name="CompilationUnit" type="code:CompilationUnit"/>
+  <xsd:element ecore:ignore="true" name="CodeModel" type="code:CodeModel"/>
+  <xsd:element ecore:ignore="true" name="DerivedType" type="code:DerivedType"/>
+  <xsd:element ecore:ignore="true" name="ArrayType" type="code:ArrayType"/>
+  <xsd:element ecore:ignore="true" name="PrimitiveType" type="code:PrimitiveType"/>
+  <xsd:element ecore:ignore="true" name="BooleanType" type="code:BooleanType"/>
+  <xsd:element ecore:ignore="true" name="CharType" type="code:CharType"/>
+  <xsd:element ecore:ignore="true" name="ClassUnit" type="code:ClassUnit"/>
+  <xsd:element ecore:ignore="true" name="CompositeType" type="code:CompositeType"/>
+  <xsd:element ecore:ignore="true" name="RecordType" type="code:RecordType"/>
+  <xsd:element ecore:ignore="true" name="EnumeratedType" type="code:EnumeratedType"/>
+  <xsd:element ecore:ignore="true" name="Extends" type="code:Extends"/>
+  <xsd:element ecore:ignore="true" name="ScaledType" type="code:ScaledType"/>
+  <xsd:element ecore:ignore="true" name="FloatType" type="code:FloatType"/>
+  <xsd:element ecore:ignore="true" name="HasType" type="code:HasType"/>
+  <xsd:element ecore:ignore="true" name="ImplementationOf" type="code:ImplementationOf"/>
+  <xsd:element ecore:ignore="true" name="Implements" type="code:Implements"/>
+  <xsd:element ecore:ignore="true" name="IntegerType" type="code:IntegerType"/>
+  <xsd:element ecore:ignore="true" name="InterfaceUnit" type="code:InterfaceUnit"/>
+  <xsd:element ecore:ignore="true" name="PointerType" type="code:PointerType"/>
+  <xsd:element ecore:ignore="true" name="DefinedType" type="code:DefinedType"/>
+  <xsd:element ecore:ignore="true" name="TypeUnit" type="code:TypeUnit"/>
+  <xsd:element ecore:ignore="true" name="RangeType" type="code:RangeType"/>
+  <xsd:element ecore:ignore="true" name="Signature" type="code:Signature"/>
+  <xsd:element ecore:ignore="true" name="DataElement" type="code:DataElement"/>
+  <xsd:element ecore:ignore="true" name="StringType" type="code:StringType"/>
+  <xsd:element ecore:ignore="true" name="ChoiceType" type="code:ChoiceType"/>
+  <xsd:element ecore:ignore="true" name="NamespaceUnit" type="code:NamespaceUnit"/>
+  <xsd:element ecore:ignore="true" name="VisibleIn" type="code:VisibleIn"/>
+  <xsd:element ecore:ignore="true" name="CommentUnit" type="code:CommentUnit"/>
+  <xsd:element ecore:ignore="true" name="SharedUnit" type="code:SharedUnit"/>
+  <xsd:element ecore:ignore="true" name="DecimalType" type="code:DecimalType"/>
+  <xsd:element ecore:ignore="true" name="DateType" type="code:DateType"/>
+  <xsd:element ecore:ignore="true" name="TimeType" type="code:TimeType"/>
+  <xsd:element ecore:ignore="true" name="VoidType" type="code:VoidType"/>
+  <xsd:element ecore:ignore="true" name="ValueElement" type="code:ValueElement"/>
+  <xsd:element ecore:ignore="true" name="Value" type="code:Value"/>
+  <xsd:element ecore:ignore="true" name="ValueList" type="code:ValueList"/>
+  <xsd:element ecore:ignore="true" name="StorableUnit" type="code:StorableUnit"/>
+  <xsd:element ecore:ignore="true" name="MemberUnit" type="code:MemberUnit"/>
+  <xsd:element ecore:ignore="true" name="ParameterUnit" type="code:ParameterUnit"/>
+  <xsd:element ecore:ignore="true" name="ItemUnit" type="code:ItemUnit"/>
+  <xsd:element ecore:ignore="true" name="IndexUnit" type="code:IndexUnit"/>
+  <xsd:element ecore:ignore="true" name="SynonymType" type="code:SynonymType"/>
+  <xsd:element ecore:ignore="true" name="SequenceType" type="code:SequenceType"/>
+  <xsd:element ecore:ignore="true" name="BagType" type="code:BagType"/>
+  <xsd:element ecore:ignore="true" name="SetType" type="code:SetType"/>
+  <xsd:element ecore:ignore="true" name="CodeElement" type="code:CodeElement"/>
+  <xsd:element ecore:ignore="true" name="CodeRelationship" type="code:CodeRelationship"/>
+  <xsd:element ecore:ignore="true" name="LanguageUnit" type="code:LanguageUnit"/>
+  <xsd:element ecore:ignore="true" name="OrdinalType" type="code:OrdinalType"/>
+  <xsd:element ecore:ignore="true" name="BitstringType" type="code:BitstringType"/>
+  <xsd:element ecore:ignore="true" name="OctetType" type="code:OctetType"/>
+  <xsd:element ecore:ignore="true" name="OctetstringType" type="code:OctetstringType"/>
+  <xsd:element ecore:ignore="true" name="BitType" type="code:BitType"/>
+  <xsd:element ecore:ignore="true" name="Imports" type="code:Imports"/>
+  <xsd:element ecore:ignore="true" name="Package" type="code:Package"/>
+  <xsd:element ecore:ignore="true" name="ParameterTo" type="code:ParameterTo"/>
+  <xsd:element ecore:ignore="true" name="TemplateType" type="code:TemplateType"/>
+  <xsd:element ecore:ignore="true" name="PreprocessorDirective" type="code:PreprocessorDirective"/>
+  <xsd:element ecore:ignore="true" name="MacroDirective" type="code:MacroDirective"/>
+  <xsd:element ecore:ignore="true" name="MacroUnit" type="code:MacroUnit"/>
+  <xsd:element ecore:ignore="true" name="ConditionalDirective" type="code:ConditionalDirective"/>
+  <xsd:element ecore:ignore="true" name="IncludeDirective" type="code:IncludeDirective"/>
+  <xsd:element ecore:ignore="true" name="VariantTo" type="code:VariantTo"/>
+  <xsd:element ecore:ignore="true" name="Expands" type="code:Expands"/>
+  <xsd:element ecore:ignore="true" name="Redefines" type="code:Redefines"/>
+  <xsd:element ecore:ignore="true" name="GeneratedFrom" type="code:GeneratedFrom"/>
+  <xsd:element ecore:ignore="true" name="Includes" type="code:Includes"/>
+  <xsd:element ecore:ignore="true" name="HasValue" type="code:HasValue"/>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AbstractCodeElement">
+    <xsd:complexContent>
+      <xsd:extension base="core:KDMEntity">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="comment" type="code:CommentUnit"/>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="codeRelation" type="code:AbstractCodeRelationship"/>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="entryFlow" type="action:EntryFlow"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="CodeItem">
+    <xsd:complexContent>
+      <xsd:extension base="code:AbstractCodeElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ComputationalObject">
+    <xsd:complexContent>
+      <xsd:extension base="code:CodeItem"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ControlElement">
+    <xsd:annotation>
+      <xsd:appinfo ecore:key="operations" source="http://www.eclipse.org/emf/2002/Ecore">
+        <operation name="getSignature" type="code:Signature"/>
+        <operation name="getReturnType" type="code:Datatype"/>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="code:ComputationalObject">
+        <xsd:sequence>
+          <xsd:element ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="codeElement" type="code:AbstractCodeElement"/>
+        </xsd:sequence>
+        <xsd:attribute ecore:reference="code:Datatype" name="type" type="xsd:anyURI"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="MethodUnit">
+    <xsd:complexContent>
+      <xsd:extension base="code:ControlElement">
+        <xsd:attribute ecore:unsettable="false" name="kind" type="code:MethodKind"/>
+        <xsd:attribute ecore:unsettable="false" name="export" type="code:ExportKind"/>
+        <xsd:attribute name="isFinal" type="core:Boolean"/>
+        <xsd:attribute name="isStatic" type="core:Boolean"/>
+        <xsd:attribute name="isVirtual" type="core:Boolean"/>
+        <xsd:attribute name="isAbstract" type="core:Boolean"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Module">
+    <xsd:complexContent>
+      <xsd:extension base="code:CodeItem">
+        <xsd:sequence>
+          <xsd:element ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="codeElement" type="code:AbstractCodeElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="CodeAssembly">
+    <xsd:complexContent>
+      <xsd:extension base="code:Module"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="CallableUnit">
+    <xsd:complexContent>
+      <xsd:extension base="code:ControlElement">
+        <xsd:attribute ecore:unsettable="false" name="kind" type="code:CallableKind"/>
+        <xsd:attribute name="isStatic" type="core:Boolean"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Datatype">
+    <xsd:complexContent>
+      <xsd:extension base="code:CodeItem"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="TemplateElement">
+    <xsd:complexContent>
+      <xsd:extension base="code:Datatype"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="TemplateUnit">
+    <xsd:complexContent>
+      <xsd:extension base="code:TemplateElement">
+        <xsd:sequence>
+          <xsd:element ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="codeElement" type="code:AbstractCodeElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="TemplateParameter">
+    <xsd:complexContent>
+      <xsd:extension base="code:TemplateElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AbstractCodeRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="core:KDMRelationship"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="InstanceOf">
+    <xsd:complexContent>
+      <xsd:extension base="code:AbstractCodeRelationship">
+        <xsd:attribute ecore:reference="code:TemplateUnit" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="code:AbstractCodeElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="CompilationUnit">
+    <xsd:complexContent>
+      <xsd:extension base="code:Module"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="CodeModel">
+    <xsd:complexContent>
+      <xsd:extension base="kdm:KDMModel">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="codeElement" type="code:AbstractCodeElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DerivedType">
+    <xsd:complexContent>
+      <xsd:extension base="code:Datatype">
+        <xsd:sequence>
+          <xsd:element ecore:resolveProxies="true" name="itemUnit" type="code:ItemUnit"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ArrayType">
+    <xsd:complexContent>
+      <xsd:extension base="code:DerivedType">
+        <xsd:sequence>
+          <xsd:element ecore:resolveProxies="true" minOccurs="0" name="indexUnit" type="code:IndexUnit"/>
+        </xsd:sequence>
+        <xsd:attribute name="size" type="core:Integer"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="PrimitiveType">
+    <xsd:complexContent>
+      <xsd:extension base="code:Datatype"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="BooleanType">
+    <xsd:complexContent>
+      <xsd:extension base="code:PrimitiveType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="CharType">
+    <xsd:complexContent>
+      <xsd:extension base="code:PrimitiveType">
+        <xsd:attribute name="charset" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ClassUnit">
+    <xsd:complexContent>
+      <xsd:extension base="code:Datatype">
+        <xsd:sequence>
+          <xsd:element ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="codeElement" type="code:AbstractCodeElement"/>
+        </xsd:sequence>
+        <xsd:attribute name="isAbstract" type="core:Boolean"/>
+        <xsd:attribute name="isFinal" type="core:Boolean"/>
+        <xsd:attribute ecore:unsettable="false" name="exportKind" type="code:ExportKind"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="CompositeType">
+    <xsd:complexContent>
+      <xsd:extension base="code:Datatype">
+        <xsd:sequence>
+          <xsd:element ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="itemUnit" type="code:ItemUnit"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="RecordType">
+    <xsd:complexContent>
+      <xsd:extension base="code:CompositeType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="EnumeratedType">
+    <xsd:complexContent>
+      <xsd:extension base="code:Datatype">
+        <xsd:sequence>
+          <xsd:element ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="value" type="code:Value"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Extends">
+    <xsd:complexContent>
+      <xsd:extension base="code:AbstractCodeRelationship">
+        <xsd:attribute ecore:reference="code:Datatype" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="code:Datatype" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ScaledType">
+    <xsd:complexContent>
+      <xsd:extension base="code:PrimitiveType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="FloatType">
+    <xsd:complexContent>
+      <xsd:extension base="code:PrimitiveType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="HasType">
+    <xsd:complexContent>
+      <xsd:extension base="code:AbstractCodeRelationship">
+        <xsd:attribute ecore:reference="code:Datatype" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="code:CodeItem" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ImplementationOf">
+    <xsd:complexContent>
+      <xsd:extension base="code:AbstractCodeRelationship">
+        <xsd:attribute ecore:reference="code:CodeItem" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="code:CodeItem" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Implements">
+    <xsd:complexContent>
+      <xsd:extension base="code:AbstractCodeRelationship">
+        <xsd:attribute ecore:reference="code:CodeItem" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="code:CodeItem" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="IntegerType">
+    <xsd:complexContent>
+      <xsd:extension base="code:PrimitiveType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="InterfaceUnit">
+    <xsd:complexContent>
+      <xsd:extension base="code:Datatype">
+        <xsd:sequence>
+          <xsd:element ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="codeElement" type="code:AbstractCodeElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="PointerType">
+    <xsd:complexContent>
+      <xsd:extension base="code:DerivedType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DefinedType">
+    <xsd:complexContent>
+      <xsd:extension base="code:Datatype">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="codeElement" type="code:Datatype"/>
+        </xsd:sequence>
+        <xsd:attribute ecore:reference="code:Datatype" name="type" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="TypeUnit">
+    <xsd:complexContent>
+      <xsd:extension base="code:DefinedType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="RangeType">
+    <xsd:complexContent>
+      <xsd:extension base="code:DerivedType">
+        <xsd:sequence>
+          <xsd:element ecore:resolveProxies="true" minOccurs="0" name="lower" type="code:Value"/>
+          <xsd:element ecore:resolveProxies="true" minOccurs="0" name="upper" type="code:Value"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Signature">
+    <xsd:complexContent>
+      <xsd:extension base="code:Datatype">
+        <xsd:sequence>
+          <xsd:element ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="parameterUnit" type="code:ParameterUnit"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DataElement">
+    <xsd:complexContent>
+      <xsd:extension base="code:ComputationalObject">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="codeElement" type="code:Datatype"/>
+        </xsd:sequence>
+        <xsd:attribute ecore:reference="code:Datatype" name="type" type="xsd:anyURI" use="required"/>
+        <xsd:attribute name="ext" type="core:String"/>
+        <xsd:attribute name="size" type="core:Integer"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="StringType">
+    <xsd:complexContent>
+      <xsd:extension base="code:PrimitiveType">
+        <xsd:attribute name="charset" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ChoiceType">
+    <xsd:complexContent>
+      <xsd:extension base="code:CompositeType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="NamespaceUnit">
+    <xsd:complexContent>
+      <xsd:extension base="code:CodeItem">
+        <xsd:attribute ecore:ordered="false" ecore:reference="code:CodeItem" name="groupedCode">
+          <xsd:simpleType>
+            <xsd:list itemType="xsd:anyURI"/>
+          </xsd:simpleType>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="VisibleIn">
+    <xsd:complexContent>
+      <xsd:extension base="code:AbstractCodeRelationship">
+        <xsd:attribute ecore:reference="code:CodeItem" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="code:CodeItem" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="CommentUnit">
+    <xsd:complexContent>
+      <xsd:extension base="core:ModelElement">
+        <xsd:attribute name="text" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="SharedUnit">
+    <xsd:complexContent>
+      <xsd:extension base="code:CompilationUnit"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DecimalType">
+    <xsd:complexContent>
+      <xsd:extension base="code:PrimitiveType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DateType">
+    <xsd:complexContent>
+      <xsd:extension base="code:PrimitiveType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="TimeType">
+    <xsd:complexContent>
+      <xsd:extension base="code:PrimitiveType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="VoidType">
+    <xsd:complexContent>
+      <xsd:extension base="code:PrimitiveType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ValueElement">
+    <xsd:complexContent>
+      <xsd:extension base="code:DataElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Value">
+    <xsd:complexContent>
+      <xsd:extension base="code:ValueElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ValueList">
+    <xsd:complexContent>
+      <xsd:extension base="code:ValueElement">
+        <xsd:sequence>
+          <xsd:element ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="valueElement" type="code:ValueElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="StorableUnit">
+    <xsd:complexContent>
+      <xsd:extension base="code:DataElement">
+        <xsd:attribute ecore:unsettable="false" name="kind" type="code:StorableKind"/>
+        <xsd:attribute name="isStatic" type="core:Boolean"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="MemberUnit">
+    <xsd:complexContent>
+      <xsd:extension base="code:DataElement">
+        <xsd:attribute ecore:unsettable="false" name="export" type="code:ExportKind"/>
+        <xsd:attribute name="isFinal" type="core:Boolean"/>
+        <xsd:attribute name="isStatic" type="core:Boolean"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ParameterUnit">
+    <xsd:complexContent>
+      <xsd:extension base="code:DataElement">
+        <xsd:attribute ecore:unsettable="false" name="kind" type="code:ParameterKind"/>
+        <xsd:attribute name="pos" type="core:Integer"/>
+        <xsd:attribute name="isFinal" type="core:Boolean"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ItemUnit">
+    <xsd:complexContent>
+      <xsd:extension base="code:DataElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="IndexUnit">
+    <xsd:complexContent>
+      <xsd:extension base="code:DataElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="SynonymType">
+    <xsd:complexContent>
+      <xsd:extension base="code:DefinedType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="SequenceType">
+    <xsd:complexContent>
+      <xsd:extension base="code:DerivedType">
+        <xsd:attribute name="size" type="core:Integer"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="BagType">
+    <xsd:complexContent>
+      <xsd:extension base="code:DerivedType">
+        <xsd:attribute name="size" type="core:Integer"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="SetType">
+    <xsd:complexContent>
+      <xsd:extension base="code:DerivedType">
+        <xsd:attribute name="size" type="core:Integer"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="CodeElement">
+    <xsd:complexContent>
+      <xsd:extension base="code:CodeItem"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="CodeRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="code:AbstractCodeRelationship">
+        <xsd:attribute ecore:reference="core:KDMEntity" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="code:CodeItem" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="LanguageUnit">
+    <xsd:complexContent>
+      <xsd:extension base="code:Module"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="OrdinalType">
+    <xsd:complexContent>
+      <xsd:extension base="code:PrimitiveType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="BitstringType">
+    <xsd:complexContent>
+      <xsd:extension base="code:PrimitiveType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="OctetType">
+    <xsd:complexContent>
+      <xsd:extension base="code:PrimitiveType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="OctetstringType">
+    <xsd:complexContent>
+      <xsd:extension base="code:PrimitiveType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="BitType">
+    <xsd:complexContent>
+      <xsd:extension base="code:PrimitiveType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Imports">
+    <xsd:complexContent>
+      <xsd:extension base="code:AbstractCodeRelationship">
+        <xsd:attribute ecore:reference="code:CodeItem" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="code:CodeItem" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Package">
+    <xsd:complexContent>
+      <xsd:extension base="code:Module"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ParameterTo">
+    <xsd:complexContent>
+      <xsd:extension base="code:AbstractCodeRelationship">
+        <xsd:attribute ecore:reference="code:CodeItem" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="code:AbstractCodeElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="TemplateType">
+    <xsd:complexContent>
+      <xsd:extension base="code:TemplateElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="PreprocessorDirective">
+    <xsd:complexContent>
+      <xsd:extension base="code:AbstractCodeElement">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="codeElement" type="code:AbstractCodeElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="MacroDirective">
+    <xsd:complexContent>
+      <xsd:extension base="code:PreprocessorDirective"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="MacroUnit">
+    <xsd:complexContent>
+      <xsd:extension base="code:PreprocessorDirective">
+        <xsd:attribute ecore:unsettable="false" name="kind" type="code:MacroKind"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ConditionalDirective">
+    <xsd:complexContent>
+      <xsd:extension base="code:PreprocessorDirective"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="IncludeDirective">
+    <xsd:complexContent>
+      <xsd:extension base="code:PreprocessorDirective"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="VariantTo">
+    <xsd:complexContent>
+      <xsd:extension base="code:AbstractCodeRelationship">
+        <xsd:attribute ecore:reference="code:PreprocessorDirective" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="code:PreprocessorDirective" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Expands">
+    <xsd:complexContent>
+      <xsd:extension base="code:AbstractCodeRelationship">
+        <xsd:attribute ecore:reference="code:PreprocessorDirective" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="code:PreprocessorDirective" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Redefines">
+    <xsd:complexContent>
+      <xsd:extension base="code:AbstractCodeRelationship">
+        <xsd:attribute ecore:reference="code:PreprocessorDirective" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="code:PreprocessorDirective" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="GeneratedFrom">
+    <xsd:complexContent>
+      <xsd:extension base="code:AbstractCodeRelationship">
+        <xsd:attribute ecore:reference="code:PreprocessorDirective" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="code:AbstractCodeElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Includes">
+    <xsd:complexContent>
+      <xsd:extension base="code:AbstractCodeRelationship">
+        <xsd:attribute ecore:reference="code:AbstractCodeElement" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="code:PreprocessorDirective" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="HasValue">
+    <xsd:complexContent>
+      <xsd:extension base="code:AbstractCodeRelationship">
+        <xsd:attribute ecore:reference="code:AbstractCodeElement" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="code:CodeItem" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:simpleType name="CallableKind">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="external"/>
+      <xsd:enumeration value="regular"/>
+      <xsd:enumeration value="operator"/>
+      <xsd:enumeration value="stored"/>
+      <xsd:enumeration value="unknown"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="MethodKind">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="method"/>
+      <xsd:enumeration value="constructor"/>
+      <xsd:enumeration value="destructor"/>
+      <xsd:enumeration value="operator"/>
+      <xsd:enumeration value="unknown"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="ExportKind">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="public"/>
+      <xsd:enumeration value="private"/>
+      <xsd:enumeration value="protected"/>
+      <xsd:enumeration value="unknown"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="MacroKind">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="regular"/>
+      <xsd:enumeration value="option"/>
+      <xsd:enumeration value="undefined"/>
+      <xsd:enumeration value="external"/>
+      <xsd:enumeration value="unknown"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="StorableKind">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="global"/>
+      <xsd:enumeration value="local"/>
+      <xsd:enumeration value="external"/>
+      <xsd:enumeration value="register"/>
+      <xsd:enumeration value="unknown"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="ParameterKind">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="byValue"/>
+      <xsd:enumeration value="byName"/>
+      <xsd:enumeration value="byReference"/>
+      <xsd:enumeration value="variadic"/>
+      <xsd:enumeration value="return"/>
+      <xsd:enumeration value="throws"/>
+      <xsd:enumeration value="exception"/>
+      <xsd:enumeration value="catchall"/>
+      <xsd:enumeration value="unknown"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>

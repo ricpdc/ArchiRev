@@ -315,7 +315,7 @@ public abstract class AbstractSourceCodeParser implements Serializable {
 	protected String addXmiIdentifier(org.jdom2.Element element) {
 		Namespace nsXmi = Namespace.getNamespace("xmi", NS_XMI);
 		String id = "id." + UUID.randomUUID();
-		element.setAttribute("identifier", id, nsXmi);
+		element.setAttribute("id", id, nsXmi);
 		return id;
 	}
 

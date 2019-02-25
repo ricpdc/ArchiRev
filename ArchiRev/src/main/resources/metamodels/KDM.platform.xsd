@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:action="http://www.omg.org/spec/KDM/20160201/action" xmlns:code="http://www.omg.org/spec/KDM/20160201/code" xmlns:core="http://www.omg.org/spec/KDM/20160201/core" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:kdm="http://www.omg.org/spec/KDM/20160201/kdm" xmlns:platform="http://www.omg.org/spec/KDM/20160201/platform" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ecore:nsPrefix="platform" ecore:package="KDM.platform" targetNamespace="http://www.omg.org/spec/KDM/20160201/platform">
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/kdm" schemaLocation="KDM.kdm.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/code" schemaLocation="KDM.code.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/action" schemaLocation="KDM.action.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/core" schemaLocation="KDM.core.xsd"/>
+  <xsd:element ecore:ignore="true" name="AbstractPlatformElement" type="platform:AbstractPlatformElement"/>
+  <xsd:element ecore:ignore="true" name="PlatformModel" type="platform:PlatformModel"/>
+  <xsd:element ecore:ignore="true" name="AbstractPlatformRelationship" type="platform:AbstractPlatformRelationship"/>
+  <xsd:element ecore:ignore="true" name="Requires" type="platform:Requires"/>
+  <xsd:element ecore:ignore="true" name="PlatformResource" type="platform:PlatformResource"/>
+  <xsd:element ecore:ignore="true" name="NamingResource" type="platform:NamingResource"/>
+  <xsd:element ecore:ignore="true" name="MarshalledResource" type="platform:MarshalledResource"/>
+  <xsd:element ecore:ignore="true" name="MessagingResource" type="platform:MessagingResource"/>
+  <xsd:element ecore:ignore="true" name="FileResource" type="platform:FileResource"/>
+  <xsd:element ecore:ignore="true" name="ExecutionResource" type="platform:ExecutionResource"/>
+  <xsd:element ecore:ignore="true" name="PlatformAction" type="platform:PlatformAction"/>
+  <xsd:element ecore:ignore="true" name="ExternalActor" type="platform:ExternalActor"/>
+  <xsd:element ecore:ignore="true" name="DataManager" type="platform:DataManager"/>
+  <xsd:element ecore:ignore="true" name="BindsTo" type="platform:BindsTo"/>
+  <xsd:element ecore:ignore="true" name="PlatformElement" type="platform:PlatformElement"/>
+  <xsd:element ecore:ignore="true" name="PlatformRelationship" type="platform:PlatformRelationship"/>
+  <xsd:element ecore:ignore="true" name="PlatformEvent" type="platform:PlatformEvent"/>
+  <xsd:element ecore:ignore="true" name="LockResource" type="platform:LockResource"/>
+  <xsd:element ecore:ignore="true" name="DeploymentElement" type="platform:DeploymentElement"/>
+  <xsd:element ecore:ignore="true" name="DeployedSoftwareSystem" type="platform:DeployedSoftwareSystem"/>
+  <xsd:element ecore:ignore="true" name="Machine" type="platform:Machine"/>
+  <xsd:element ecore:ignore="true" name="DeployedComponent" type="platform:DeployedComponent"/>
+  <xsd:element ecore:ignore="true" name="DeployedResource" type="platform:DeployedResource"/>
+  <xsd:element ecore:ignore="true" name="Loads" type="platform:Loads"/>
+  <xsd:element ecore:ignore="true" name="Spawns" type="platform:Spawns"/>
+  <xsd:element ecore:ignore="true" name="RuntimeResource" type="platform:RuntimeResource"/>
+  <xsd:element ecore:ignore="true" name="Thread" type="platform:Thread"/>
+  <xsd:element ecore:ignore="true" name="Process" type="platform:Process"/>
+  <xsd:element ecore:ignore="true" name="ReadsResource" type="platform:ReadsResource"/>
+  <xsd:element ecore:ignore="true" name="WritesResource" type="platform:WritesResource"/>
+  <xsd:element ecore:ignore="true" name="ManagesResource" type="platform:ManagesResource"/>
+  <xsd:element ecore:ignore="true" name="DefinedBy" type="platform:DefinedBy"/>
+  <xsd:element ecore:ignore="true" name="StreamResource" type="platform:StreamResource"/>
+  <xsd:element ecore:ignore="true" name="ProducesPlatformEvent" type="platform:ProducesPlatformEvent"/>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AbstractPlatformElement">
+    <xsd:complexContent>
+      <xsd:extension base="core:KDMEntity">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="relation" type="platform:AbstractPlatformRelationship"/>
+          <xsd:element ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="abstraction" type="action:ActionElement"/>
+        </xsd:sequence>
+        <xsd:attribute ecore:ordered="false" ecore:reference="code:AbstractCodeElement" name="implementation">
+          <xsd:simpleType>
+            <xsd:list itemType="xsd:anyURI"/>
+          </xsd:simpleType>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="PlatformModel">
+    <xsd:complexContent>
+      <xsd:extension base="kdm:KDMModel">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="platformElement" type="platform:AbstractPlatformElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AbstractPlatformRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="core:KDMRelationship"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Requires">
+    <xsd:complexContent>
+      <xsd:extension base="platform:AbstractPlatformRelationship">
+        <xsd:attribute ecore:reference="platform:AbstractPlatformElement" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="platform:DeployedComponent" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="PlatformResource">
+    <xsd:complexContent>
+      <xsd:extension base="platform:AbstractPlatformElement">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="platformElement" type="platform:AbstractPlatformElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="NamingResource">
+    <xsd:complexContent>
+      <xsd:extension base="platform:PlatformResource"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="MarshalledResource">
+    <xsd:complexContent>
+      <xsd:extension base="platform:PlatformResource"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="MessagingResource">
+    <xsd:complexContent>
+      <xsd:extension base="platform:PlatformResource"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="FileResource">
+    <xsd:complexContent>
+      <xsd:extension base="platform:PlatformResource"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ExecutionResource">
+    <xsd:complexContent>
+      <xsd:extension base="platform:PlatformResource"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="PlatformAction">
+    <xsd:complexContent>
+      <xsd:extension base="platform:AbstractPlatformElement">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="platformElement" type="platform:PlatformEvent"/>
+        </xsd:sequence>
+        <xsd:attribute name="kind" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ExternalActor">
+    <xsd:complexContent>
+      <xsd:extension base="platform:PlatformAction"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DataManager">
+    <xsd:complexContent>
+      <xsd:extension base="platform:PlatformResource"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="BindsTo">
+    <xsd:complexContent>
+      <xsd:extension base="platform:AbstractPlatformRelationship">
+        <xsd:attribute ecore:reference="core:KDMEntity" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="platform:PlatformResource" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="PlatformElement">
+    <xsd:complexContent>
+      <xsd:extension base="platform:AbstractPlatformElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="PlatformRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="platform:AbstractPlatformRelationship">
+        <xsd:attribute ecore:reference="core:KDMEntity" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="platform:AbstractPlatformElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="PlatformEvent">
+    <xsd:complexContent>
+      <xsd:extension base="platform:AbstractPlatformElement">
+        <xsd:attribute name="kind" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="LockResource">
+    <xsd:complexContent>
+      <xsd:extension base="platform:PlatformResource"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DeploymentElement">
+    <xsd:complexContent>
+      <xsd:extension base="platform:AbstractPlatformElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DeployedSoftwareSystem">
+    <xsd:complexContent>
+      <xsd:extension base="platform:DeploymentElement">
+        <xsd:attribute ecore:ordered="false" ecore:reference="platform:DeployedComponent" name="groupedComponent">
+          <xsd:simpleType>
+            <xsd:list itemType="xsd:anyURI"/>
+          </xsd:simpleType>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Machine">
+    <xsd:complexContent>
+      <xsd:extension base="platform:DeploymentElement">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="deployedComponent" type="platform:DeployedComponent"/>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="deployedResource" type="platform:DeployedResource"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DeployedComponent">
+    <xsd:complexContent>
+      <xsd:extension base="platform:DeploymentElement">
+        <xsd:attribute ecore:ordered="false" ecore:reference="code:Module" name="groupedCode">
+          <xsd:simpleType>
+            <xsd:list itemType="xsd:anyURI"/>
+          </xsd:simpleType>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DeployedResource">
+    <xsd:complexContent>
+      <xsd:extension base="platform:DeploymentElement">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="platformElement" type="platform:PlatformResource"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Loads">
+    <xsd:complexContent>
+      <xsd:extension base="platform:AbstractPlatformRelationship">
+        <xsd:attribute ecore:reference="platform:DeployedComponent" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Spawns">
+    <xsd:complexContent>
+      <xsd:extension base="platform:AbstractPlatformRelationship">
+        <xsd:attribute ecore:reference="platform:RuntimeResource" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="RuntimeResource">
+    <xsd:complexContent>
+      <xsd:extension base="platform:PlatformResource"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Thread">
+    <xsd:complexContent>
+      <xsd:extension base="platform:RuntimeResource"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Process">
+    <xsd:complexContent>
+      <xsd:extension base="platform:RuntimeResource"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ReadsResource">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="platform:PlatformResource" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="WritesResource">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="platform:PlatformResource" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ManagesResource">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="platform:PlatformResource" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DefinedBy">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="code:CodeItem" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="StreamResource">
+    <xsd:complexContent>
+      <xsd:extension base="platform:PlatformResource"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ProducesPlatformEvent">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="platform:PlatformEvent" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+</xsd:schema>

@@ -8,6 +8,11 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.inject.Singleton;
+import javax.xml.XMLConstants;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 import org.apache.commons.lang3.Validate;
 import org.jdom2.Document;
@@ -19,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.xml.sax.SAXException;
 
 import com.archimatetool.model.impl.ArchimateElement;
 import com.archimatetool.model.impl.ArchimateRelationship;
@@ -31,15 +37,20 @@ import es.alarcos.archirev.model.enums.ModelViewEnum;
 @Service
 public class KdmExtractionService implements Serializable {
 
+
 	private static final long serialVersionUID = -4392305100176250199L;
 
 	static Logger LOGGER = LoggerFactory.getLogger(KdmExtractionService.class);
 	
-	private static final String NS_KDM = "http://kdm.omg.org/kdm";
+	private static final String KDM_ECORE = "target/ArchiRev/WEB-INF/classes/metamodels/kdm.ecore";
+	private static final String KDM_XSD_ROOT = "target/ArchiRev/WEB-INF/classes/metamodels/";
+	
+
+	private static final String NS_KDM = "http://www.omg.org/spec/KDM/20160201/kdm";
 	private static final String NS_XMI = "http://www.omg.org/XMI";
 	private static final String NS_XSI = "http://www.w3.org/2001/XMLSchema-instance";
-	private static final String NS_ACTION = "http://kdm.omg.org/action";
-	private static final String NS_CODE = "http://kdm.omg.org/code";
+	private static final String NS_ACTION = "http://www.omg.org/spec/KDM/20160201/action";
+	private static final String NS_CODE = "http://www.omg.org/spec/KDM/20160201/code";
 
 
 	private AbstractSourceCodeParser sourceCodeParser;
@@ -109,18 +120,46 @@ public class KdmExtractionService implements Serializable {
 			xmlOutput.output(kdmDocument, new FileWriter(kdmModel.getExportedPath()));
 
 			// TODO remove this local test
-			String xmlFileName = "C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\temp\\" + kdmModel.getName() + ".xml";
-			xmlOutput.output(kdmDocument, new FileWriter(xmlFileName));
+//			String xmlFileName = "C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\temp\\" + kdmModel.getName() + ".kdm";
+//			xmlOutput.output(kdmDocument, new FileWriter(xmlFileName));
 
-			// if (validateXmlFile(xmlFileName)) {
-			return new File(kdmModel.getExportedPath());
-			// }
+			//if (validateKdmFile(kdmModel.getExportedPath())) {
+				return new File(kdmModel.getExportedPath());
+			//}
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 		return null;
 
 	}
+
+	private boolean validateKdmFile(String kdmFileName) {
+				
+		StreamSource kdmFile = new StreamSource(new File(kdmFileName));
+		try {
+			SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			
+			javax.xml.transform.Source[] schemas = new javax.xml.transform.Source[5];
+			schemas[0] = new StreamSource(new File(KDM_XSD_ROOT+"KDM.core.xsd"));
+			schemas[1] = new StreamSource(new File(KDM_XSD_ROOT+"KDM.kdm.xsd"));
+			schemas[2] = new StreamSource(new File(KDM_XSD_ROOT+"KDM.code.xsd"));
+			schemas[3] = new StreamSource(new File(KDM_XSD_ROOT+"KDM.action.xsd"));
+			schemas[4] = new StreamSource(new File(KDM_XSD_ROOT+"XMI.xsd"));
+			
+			Schema schema = schemaFactory.newSchema(schemas);
+			Validator validator = schema.newValidator();
+			validator.validate(kdmFile);
+			LOGGER.debug(kdmFile.getSystemId() + " is valid");
+			return true;
+		} catch (SAXException e) {
+			LOGGER.error(kdmFile.getSystemId() + " is NOT valid reason:" + e);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	
 
 	private org.jdom2.Element createRootElement(final String name) {
 		Namespace nsKdm = Namespace.getNamespace("kdm", NS_KDM);
@@ -131,15 +170,15 @@ public class KdmExtractionService implements Serializable {
 
 
 		org.jdom2.Element eModel = new org.jdom2.Element("Segment", nsKdm);
-		eModel.addNamespaceDeclaration(nsKdm);
+		//eModel.setAttribute("version", "2.0", nsXmi);
 		eModel.addNamespaceDeclaration(nsXmi);
 		eModel.addNamespaceDeclaration(nsXsi);
-		eModel.addNamespaceDeclaration(nsAction);
 		eModel.addNamespaceDeclaration(nsCode);
+		eModel.addNamespaceDeclaration(nsAction);
+		eModel.addNamespaceDeclaration(nsKdm);
 		
-		eModel.setAttribute("version", "2.0", nsXmi);
 		//TODO fix with official KDM ecore metamodel
-		eModel.setAttribute("schemaLocation", "http://kdm.omg.org/action https://www.omg.org/spec/KDM/20160201/kdm.ecore#//action http://kdm.omg.org/code https://www.omg.org/spec/KDM/20160201/kdm.ecore#//code http://kdm.omg.org/kdm https://www.omg.org/spec/KDM/20160201/kdm.ecore#//kdm", nsXsi);
+		//eModel.setAttribute("schemaLocation", "http://kdm.omg.org/action https://www.omg.org/spec/KDM/20160201/kdm.ecore#//action http://kdm.omg.org/code https://www.omg.org/spec/KDM/20160201/kdm.ecore#//code http://kdm.omg.org/kdm https://www.omg.org/spec/KDM/20160201/kdm.ecore#//kdm", nsXsi);
 		eModel.setAttribute("name", name);
 	
 		org.jdom2.Element eCodeModel = new org.jdom2.Element("model");
@@ -184,7 +223,7 @@ public class KdmExtractionService implements Serializable {
 	private String addXmiIdentifier(org.jdom2.Element element) {
 		Namespace nsXmi = Namespace.getNamespace("xmi", NS_XMI);
 		String id = "id." + UUID.randomUUID();
-		element.setAttribute("identifier", id, nsXmi);
+		element.setAttribute("id", id, nsXmi);
 		return id;
 	}
 

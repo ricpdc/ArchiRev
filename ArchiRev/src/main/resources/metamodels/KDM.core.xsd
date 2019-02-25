@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:core="http://www.omg.org/spec/KDM/20160201/core" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:kdm="http://www.omg.org/spec/KDM/20160201/kdm" xmlns:source="http://www.omg.org/spec/KDM/20160201/source" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ecore:nsPrefix="core" ecore:package="KDM.core" targetNamespace="http://www.omg.org/spec/KDM/20160201/core">
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/source" schemaLocation="KDM.source.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/kdm" schemaLocation="KDM.kdm.xsd"/>
+  <xsd:element ecore:ignore="true" name="Element" type="core:Element"/>
+  <xsd:element ecore:ignore="true" name="AnnotatableElement" type="core:AnnotatableElement"/>
+  <xsd:element ecore:ignore="true" name="ExtendableElement" type="core:ExtendableElement"/>
+  <xsd:element ecore:ignore="true" name="ModelElement" type="core:ModelElement"/>
+  <xsd:element ecore:ignore="true" name="KDMEntity" type="core:KDMEntity"/>
+  <xsd:element ecore:ignore="true" name="KDMRelationship" type="core:KDMRelationship"/>
+  <xsd:element ecore:ignore="true" name="AnnotationElement" type="core:AnnotationElement"/>
+  <xsd:element ecore:ignore="true" name="ExtensionElement" type="core:ExtensionElement"/>
+  <xsd:element ecore:ignore="true" name="AggregatedRelationship" type="core:AggregatedRelationship"/>
+  <xsd:complexType abstract="true" ecore:interface="true" name="Element"/>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AnnotatableElement">
+    <xsd:complexContent>
+      <xsd:extension base="core:Element">
+        <xsd:sequence>
+          <xsd:element ecore:opposite="owner" ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="annotation" type="kdm:Annotation"/>
+          <xsd:element ecore:opposite="owner" ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="attribute" type="kdm:Attribute"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="ExtendableElement">
+    <xsd:complexContent>
+      <xsd:extension base="core:AnnotatableElement">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="taggedValue" type="kdm:ExtendedValue"/>
+        </xsd:sequence>
+        <xsd:attribute ecore:ordered="false" ecore:reference="kdm:Stereotype" name="stereotype">
+          <xsd:simpleType>
+            <xsd:list itemType="xsd:anyURI"/>
+          </xsd:simpleType>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="ModelElement">
+    <xsd:complexContent>
+      <xsd:extension base="core:ExtendableElement">
+        <xsd:sequence>
+          <xsd:element ecore:opposite="owner" ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="audit" type="kdm:Audit"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="KDMEntity">
+    <xsd:annotation>
+      <xsd:appinfo ecore:key="operations" source="http://www.eclipse.org/emf/2002/Ecore">
+        <operation name="createAggregation">
+          <parameter lowerBound="1" name="otherEntity" type="core:KDMEntity"/>
+        </operation>
+        <operation name="deleteAggregation">
+          <parameter lowerBound="1" name="aggregation" type="core:AggregatedRelationship"/>
+        </operation>
+        <operation name="getInbound" type="core:KDMRelationship" upperBound="-1"/>
+        <operation name="getOutbound" type="core:KDMRelationship" upperBound="-1"/>
+        <operation name="getOwnedRelation" type="core:KDMRelationship" upperBound="-1"/>
+        <operation name="getInAggregated" type="core:AggregatedRelationship" upperBound="-1"/>
+        <operation name="getOutAggregated" type="core:AggregatedRelationship" upperBound="-1"/>
+        <operation name="getOwner" type="core:KDMEntity"/>
+        <operation name="getOwnedElement" type="core:KDMEntity" upperBound="-1"/>
+        <operation name="getGroup" type="core:KDMEntity" upperBound="-1"/>
+        <operation name="getGroupedElement" type="core:KDMEntity" upperBound="-1"/>
+        <operation name="getModel" type="kdm:KDMModel"/>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="core:ModelElement">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="aggregatedRelation" type="core:AggregatedRelationship"/>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="source" type="source:SourceRef"/>
+          <xsd:element ecore:opposite="owner" ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="track" type="source:Track"/>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="KDMRelationship">
+    <xsd:annotation>
+      <xsd:appinfo ecore:key="operations" source="http://www.eclipse.org/emf/2002/Ecore">
+        <operation lowerBound="1" name="getTo" type="core:KDMEntity"/>
+        <operation lowerBound="1" name="getFrom" type="core:KDMEntity"/>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="core:ModelElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AnnotationElement">
+    <xsd:complexContent>
+      <xsd:extension base="core:Element"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="ExtensionElement">
+    <xsd:complexContent>
+      <xsd:extension base="core:AnnotatableElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="AggregatedRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="core:ModelElement">
+        <xsd:attribute ecore:reference="core:KDMEntity" name="from" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="core:KDMEntity" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:ordered="false" ecore:reference="core:KDMRelationship" name="relation">
+          <xsd:simpleType>
+            <xsd:list itemType="xsd:anyURI"/>
+          </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute name="density" type="core:Integer"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:simpleType ecore:instanceClass="java.lang.String" name="String">
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+  <xsd:simpleType ecore:instanceClass="java.lang.Boolean" name="Boolean">
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+  <xsd:simpleType ecore:instanceClass="java.lang.Integer" name="Integer">
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+</xsd:schema>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:core="http://www.omg.org/spec/KDM/20160201/core" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:kdm="http://www.omg.org/spec/KDM/20160201/kdm" xmlns:structure="http://www.omg.org/spec/KDM/20160201/structure" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ecore:nsPrefix="structure" ecore:package="KDM.structure" targetNamespace="http://www.omg.org/spec/KDM/20160201/structure">
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/kdm" schemaLocation="KDM.kdm.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/core" schemaLocation="KDM.core.xsd"/>
+  <xsd:element ecore:ignore="true" name="AbstractStructureElement" type="structure:AbstractStructureElement"/>
+  <xsd:element ecore:ignore="true" name="Subsystem" type="structure:Subsystem"/>
+  <xsd:element ecore:ignore="true" name="Layer" type="structure:Layer"/>
+  <xsd:element ecore:ignore="true" name="StructureModel" type="structure:StructureModel"/>
+  <xsd:element ecore:ignore="true" name="Component" type="structure:Component"/>
+  <xsd:element ecore:ignore="true" name="SoftwareSystem" type="structure:SoftwareSystem"/>
+  <xsd:element ecore:ignore="true" name="AbstractStructureRelationship" type="structure:AbstractStructureRelationship"/>
+  <xsd:element ecore:ignore="true" name="StructureRelationship" type="structure:StructureRelationship"/>
+  <xsd:element ecore:ignore="true" name="ArchitectureView" type="structure:ArchitectureView"/>
+  <xsd:element ecore:ignore="true" name="StructureElement" type="structure:StructureElement"/>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AbstractStructureElement">
+    <xsd:complexContent>
+      <xsd:extension base="core:KDMEntity">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="structureElement" type="structure:AbstractStructureElement"/>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="structureRelationship" type="structure:AbstractStructureRelationship"/>
+        </xsd:sequence>
+        <xsd:attribute ecore:ordered="false" ecore:reference="core:KDMEntity" name="implementation">
+          <xsd:simpleType>
+            <xsd:list itemType="xsd:anyURI"/>
+          </xsd:simpleType>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Subsystem">
+    <xsd:complexContent>
+      <xsd:extension base="structure:AbstractStructureElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Layer">
+    <xsd:complexContent>
+      <xsd:extension base="structure:AbstractStructureElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="StructureModel">
+    <xsd:complexContent>
+      <xsd:extension base="kdm:KDMModel">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="structureElement" type="structure:AbstractStructureElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Component">
+    <xsd:complexContent>
+      <xsd:extension base="structure:AbstractStructureElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="SoftwareSystem">
+    <xsd:complexContent>
+      <xsd:extension base="structure:AbstractStructureElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AbstractStructureRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="core:KDMRelationship"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="StructureRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="structure:AbstractStructureRelationship">
+        <xsd:attribute ecore:reference="core:KDMEntity" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="structure:AbstractStructureElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ArchitectureView">
+    <xsd:complexContent>
+      <xsd:extension base="structure:AbstractStructureElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="StructureElement">
+    <xsd:complexContent>
+      <xsd:extension base="structure:AbstractStructureElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+</xsd:schema>

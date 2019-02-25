@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:core="http://www.omg.org/spec/KDM/20160201/core" xmlns:kdm="http://www.omg.org/spec/KDM/20160201/kdm" xmlns:source="http://www.omg.org/spec/KDM/20160201/source" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.omg.org/spec/KDM/20160201/core">
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/source" schemaLocation="KDM.sourceXMI.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/kdm" schemaLocation="KDM.kdmXMI.xsd"/>
+  <xsd:import namespace="http://www.omg.org/XMI" schemaLocation="platform:/plugin/org.eclipse.emf.ecore/model/XMI.xsd"/>
+  <xsd:complexType abstract="true" name="Element">
+    <xsd:choice maxOccurs="unbounded" minOccurs="0">
+      <xsd:element ref="xmi:Extension"/>
+    </xsd:choice>
+    <xsd:attribute ref="xmi:id"/>
+    <xsd:attributeGroup ref="xmi:ObjectAttribs"/>
+  </xsd:complexType>
+  <xsd:element name="Element" type="core:Element"/>
+  <xsd:complexType abstract="true" name="AnnotatableElement">
+    <xsd:complexContent>
+      <xsd:extension base="core:Element">
+        <xsd:choice maxOccurs="unbounded" minOccurs="0">
+          <xsd:element name="annotation" type="kdm:Annotation"/>
+          <xsd:element name="attribute" type="kdm:Attribute"/>
+        </xsd:choice>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="AnnotatableElement" type="core:AnnotatableElement"/>
+  <xsd:complexType abstract="true" name="ExtendableElement">
+    <xsd:complexContent>
+      <xsd:extension base="core:AnnotatableElement">
+        <xsd:choice maxOccurs="unbounded" minOccurs="0">
+          <xsd:element name="stereotype" type="kdm:Stereotype"/>
+          <xsd:element name="taggedValue" type="kdm:ExtendedValue"/>
+        </xsd:choice>
+        <xsd:attribute name="stereotype" type="xsd:string"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="ExtendableElement" type="core:ExtendableElement"/>
+  <xsd:complexType abstract="true" name="ModelElement">
+    <xsd:complexContent>
+      <xsd:extension base="core:ExtendableElement">
+        <xsd:choice maxOccurs="unbounded" minOccurs="0">
+          <xsd:element name="audit" type="kdm:Audit"/>
+        </xsd:choice>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="ModelElement" type="core:ModelElement"/>
+  <xsd:complexType abstract="true" name="KDMEntity">
+    <xsd:complexContent>
+      <xsd:extension base="core:ModelElement">
+        <xsd:choice maxOccurs="unbounded" minOccurs="0">
+          <xsd:element name="aggregatedRelation" type="core:AggregatedRelationship"/>
+          <xsd:element name="source" type="source:SourceRef"/>
+          <xsd:element name="track" type="source:Track"/>
+        </xsd:choice>
+        <xsd:attribute name="name" type="xsd:string"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="KDMEntity" type="core:KDMEntity"/>
+  <xsd:complexType abstract="true" name="KDMRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="core:ModelElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="KDMRelationship" type="core:KDMRelationship"/>
+  <xsd:complexType abstract="true" name="AnnotationElement">
+    <xsd:complexContent>
+      <xsd:extension base="core:Element"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="AnnotationElement" type="core:AnnotationElement"/>
+  <xsd:complexType abstract="true" name="ExtensionElement">
+    <xsd:complexContent>
+      <xsd:extension base="core:AnnotatableElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="ExtensionElement" type="core:ExtensionElement"/>
+  <xsd:complexType name="AggregatedRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="core:ModelElement">
+        <xsd:choice maxOccurs="unbounded" minOccurs="0">
+          <xsd:element name="from" type="core:KDMEntity"/>
+          <xsd:element name="to" type="core:KDMEntity"/>
+          <xsd:element name="relation" type="core:KDMRelationship"/>
+        </xsd:choice>
+        <xsd:attribute name="density" type="xsd:string"/>
+        <xsd:attribute name="from" type="xsd:string"/>
+        <xsd:attribute name="to" type="xsd:string"/>
+        <xsd:attribute name="relation" type="xsd:string"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="AggregatedRelationship" type="core:AggregatedRelationship"/>
+</xsd:schema>

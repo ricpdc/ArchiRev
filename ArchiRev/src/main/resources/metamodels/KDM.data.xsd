@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:action="http://www.omg.org/spec/KDM/20160201/action" xmlns:code="http://www.omg.org/spec/KDM/20160201/code" xmlns:core="http://www.omg.org/spec/KDM/20160201/core" xmlns:data="http://www.omg.org/spec/KDM/20160201/data" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:kdm="http://www.omg.org/spec/KDM/20160201/kdm" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ecore:nsPrefix="data" ecore:package="KDM.data" targetNamespace="http://www.omg.org/spec/KDM/20160201/data">
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/code" schemaLocation="KDM.code.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/action" schemaLocation="KDM.action.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/core" schemaLocation="KDM.core.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/kdm" schemaLocation="KDM.kdm.xsd"/>
+  <xsd:element ecore:ignore="true" name="DataModel" type="data:DataModel"/>
+  <xsd:element ecore:ignore="true" name="AbstractDataElement" type="data:AbstractDataElement"/>
+  <xsd:element ecore:ignore="true" name="DataResource" type="data:DataResource"/>
+  <xsd:element ecore:ignore="true" name="IndexElement" type="data:IndexElement"/>
+  <xsd:element ecore:ignore="true" name="UniqueKey" type="data:UniqueKey"/>
+  <xsd:element ecore:ignore="true" name="Index" type="data:Index"/>
+  <xsd:element ecore:ignore="true" name="AbstractDataRelationship" type="data:AbstractDataRelationship"/>
+  <xsd:element ecore:ignore="true" name="KeyRelation" type="data:KeyRelation"/>
+  <xsd:element ecore:ignore="true" name="ReferenceKey" type="data:ReferenceKey"/>
+  <xsd:element ecore:ignore="true" name="DataContainer" type="data:DataContainer"/>
+  <xsd:element ecore:ignore="true" name="Catalog" type="data:Catalog"/>
+  <xsd:element ecore:ignore="true" name="RelationalSchema" type="data:RelationalSchema"/>
+  <xsd:element ecore:ignore="true" name="ColumnSet" type="data:ColumnSet"/>
+  <xsd:element ecore:ignore="true" name="RelationalTable" type="data:RelationalTable"/>
+  <xsd:element ecore:ignore="true" name="RelationalView" type="data:RelationalView"/>
+  <xsd:element ecore:ignore="true" name="RecordFile" type="data:RecordFile"/>
+  <xsd:element ecore:ignore="true" name="DataEvent" type="data:DataEvent"/>
+  <xsd:element ecore:ignore="true" name="XMLSchema" type="data:XMLSchema"/>
+  <xsd:element ecore:ignore="true" name="AbstractContentElement" type="data:AbstractContentElement"/>
+  <xsd:element ecore:ignore="true" name="ComplexContentType" type="data:ComplexContentType"/>
+  <xsd:element ecore:ignore="true" name="AllContent" type="data:AllContent"/>
+  <xsd:element ecore:ignore="true" name="SeqContent" type="data:SeqContent"/>
+  <xsd:element ecore:ignore="true" name="ChoiceContent" type="data:ChoiceContent"/>
+  <xsd:element ecore:ignore="true" name="ContentItem" type="data:ContentItem"/>
+  <xsd:element ecore:ignore="true" name="GroupContent" type="data:GroupContent"/>
+  <xsd:element ecore:ignore="true" name="ContentRestriction" type="data:ContentRestriction"/>
+  <xsd:element ecore:ignore="true" name="SimpleContentType" type="data:SimpleContentType"/>
+  <xsd:element ecore:ignore="true" name="ExtendedDataElement" type="data:ExtendedDataElement"/>
+  <xsd:element ecore:ignore="true" name="DataRelationship" type="data:DataRelationship"/>
+  <xsd:element ecore:ignore="true" name="MixedContent" type="data:MixedContent"/>
+  <xsd:element ecore:ignore="true" name="ContentReference" type="data:ContentReference"/>
+  <xsd:element ecore:ignore="true" name="DataAction" type="data:DataAction"/>
+  <xsd:element ecore:ignore="true" name="ReadsColumnSet" type="data:ReadsColumnSet"/>
+  <xsd:element ecore:ignore="true" name="ContentAttribute" type="data:ContentAttribute"/>
+  <xsd:element ecore:ignore="true" name="TypedBy" type="data:TypedBy"/>
+  <xsd:element ecore:ignore="true" name="ReferenceTo" type="data:ReferenceTo"/>
+  <xsd:element ecore:ignore="true" name="RestrictionOf" type="data:RestrictionOf"/>
+  <xsd:element ecore:ignore="true" name="ExtensionTo" type="data:ExtensionTo"/>
+  <xsd:element ecore:ignore="true" name="DatatypeOf" type="data:DatatypeOf"/>
+  <xsd:element ecore:ignore="true" name="HasContent" type="data:HasContent"/>
+  <xsd:element ecore:ignore="true" name="WritesColumnSet" type="data:WritesColumnSet"/>
+  <xsd:element ecore:ignore="true" name="ProducesDataEvent" type="data:ProducesDataEvent"/>
+  <xsd:element ecore:ignore="true" name="DataSegment" type="data:DataSegment"/>
+  <xsd:element ecore:ignore="true" name="ContentElement" type="data:ContentElement"/>
+  <xsd:element ecore:ignore="true" name="ManagesData" type="data:ManagesData"/>
+  <xsd:complexType name="DataModel">
+    <xsd:complexContent>
+      <xsd:extension base="kdm:KDMModel">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="dataElement" type="data:AbstractDataElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AbstractDataElement">
+    <xsd:complexContent>
+      <xsd:extension base="core:KDMEntity">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="dataRelation" type="data:AbstractDataRelationship"/>
+          <xsd:element ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="abstraction" type="action:ActionElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DataResource">
+    <xsd:complexContent>
+      <xsd:extension base="data:AbstractDataElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="IndexElement">
+    <xsd:complexContent>
+      <xsd:extension base="data:DataResource">
+        <xsd:attribute ecore:ordered="false" ecore:reference="code:ItemUnit" name="implementation">
+          <xsd:simpleType>
+            <xsd:list itemType="xsd:anyURI"/>
+          </xsd:simpleType>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="UniqueKey">
+    <xsd:complexContent>
+      <xsd:extension base="data:IndexElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Index">
+    <xsd:complexContent>
+      <xsd:extension base="data:IndexElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AbstractDataRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="core:KDMRelationship"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="KeyRelation">
+    <xsd:complexContent>
+      <xsd:extension base="data:AbstractDataRelationship">
+        <xsd:attribute ecore:reference="data:UniqueKey" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="data:ReferenceKey" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ReferenceKey">
+    <xsd:complexContent>
+      <xsd:extension base="data:IndexElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DataContainer">
+    <xsd:complexContent>
+      <xsd:extension base="data:DataResource">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="dataElement" type="data:DataResource"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Catalog">
+    <xsd:complexContent>
+      <xsd:extension base="data:DataContainer"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="RelationalSchema">
+    <xsd:complexContent>
+      <xsd:extension base="data:DataContainer">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="codeElement" type="code:CodeItem"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ColumnSet">
+    <xsd:complexContent>
+      <xsd:extension base="data:DataContainer">
+        <xsd:sequence>
+          <xsd:element ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="itemUnit" type="code:ItemUnit"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="RelationalTable">
+    <xsd:complexContent>
+      <xsd:extension base="data:ColumnSet"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="RelationalView">
+    <xsd:complexContent>
+      <xsd:extension base="data:ColumnSet"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="RecordFile">
+    <xsd:complexContent>
+      <xsd:extension base="data:ColumnSet"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DataEvent">
+    <xsd:complexContent>
+      <xsd:extension base="data:DataResource">
+        <xsd:attribute name="kind" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="XMLSchema">
+    <xsd:complexContent>
+      <xsd:extension base="data:AbstractDataElement">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="contentElement" type="data:AbstractContentElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AbstractContentElement">
+    <xsd:complexContent>
+      <xsd:extension base="data:AbstractDataElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ComplexContentType">
+    <xsd:complexContent>
+      <xsd:extension base="data:AbstractContentElement">
+        <xsd:sequence>
+          <xsd:element ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="contentElement" type="data:AbstractContentElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="AllContent">
+    <xsd:complexContent>
+      <xsd:extension base="data:ComplexContentType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="SeqContent">
+    <xsd:complexContent>
+      <xsd:extension base="data:ComplexContentType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ChoiceContent">
+    <xsd:complexContent>
+      <xsd:extension base="data:ComplexContentType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ContentItem">
+    <xsd:complexContent>
+      <xsd:extension base="data:AbstractContentElement">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="contentElement" type="data:AbstractContentElement"/>
+        </xsd:sequence>
+        <xsd:attribute ecore:reference="data:ComplexContentType" name="type" type="xsd:anyURI"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="GroupContent">
+    <xsd:complexContent>
+      <xsd:extension base="data:ContentItem"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ContentRestriction">
+    <xsd:complexContent>
+      <xsd:extension base="data:AbstractContentElement">
+        <xsd:attribute name="kind" type="core:String"/>
+        <xsd:attribute name="value" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="SimpleContentType">
+    <xsd:complexContent>
+      <xsd:extension base="data:ComplexContentType">
+        <xsd:attribute ecore:reference="data:ComplexContentType" name="type" type="xsd:anyURI"/>
+        <xsd:attribute name="kind" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ExtendedDataElement">
+    <xsd:complexContent>
+      <xsd:extension base="data:AbstractDataElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DataRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="data:AbstractDataRelationship">
+        <xsd:attribute ecore:reference="core:KDMEntity" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="data:AbstractDataElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="MixedContent">
+    <xsd:complexContent>
+      <xsd:extension base="data:ComplexContentType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ContentReference">
+    <xsd:complexContent>
+      <xsd:extension base="data:ContentItem"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DataAction">
+    <xsd:complexContent>
+      <xsd:extension base="data:AbstractDataElement">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="dataElement" type="data:DataEvent"/>
+        </xsd:sequence>
+        <xsd:attribute name="kind" type="core:String"/>
+        <xsd:attribute ecore:ordered="false" ecore:reference="action:ActionElement" name="implementation">
+          <xsd:simpleType>
+            <xsd:list itemType="xsd:anyURI"/>
+          </xsd:simpleType>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ReadsColumnSet">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="data:ColumnSet" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ContentAttribute">
+    <xsd:complexContent>
+      <xsd:extension base="data:ContentItem"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="TypedBy">
+    <xsd:complexContent>
+      <xsd:extension base="data:AbstractDataRelationship">
+        <xsd:attribute ecore:reference="data:ComplexContentType" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="data:ContentItem" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ReferenceTo">
+    <xsd:complexContent>
+      <xsd:extension base="data:AbstractDataRelationship">
+        <xsd:attribute ecore:reference="data:ContentItem" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="data:ContentItem" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="RestrictionOf">
+    <xsd:complexContent>
+      <xsd:extension base="data:AbstractDataRelationship">
+        <xsd:attribute ecore:reference="data:ComplexContentType" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="data:ComplexContentType" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ExtensionTo">
+    <xsd:complexContent>
+      <xsd:extension base="data:AbstractDataRelationship">
+        <xsd:attribute ecore:reference="data:ComplexContentType" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="data:ComplexContentType" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DatatypeOf">
+    <xsd:complexContent>
+      <xsd:extension base="data:AbstractDataRelationship">
+        <xsd:attribute ecore:reference="code:Datatype" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="data:ComplexContentType" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="HasContent">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="data:AbstractDataElement" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="WritesColumnSet">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="data:ColumnSet" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ProducesDataEvent">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="data:DataEvent" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DataSegment">
+    <xsd:complexContent>
+      <xsd:extension base="data:ColumnSet"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ContentElement">
+    <xsd:complexContent>
+      <xsd:extension base="data:ContentItem"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ManagesData">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="data:AbstractDataElement" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+</xsd:schema>

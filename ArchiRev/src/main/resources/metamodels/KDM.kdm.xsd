@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:core="http://www.omg.org/spec/KDM/20160201/core" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:kdm="http://www.omg.org/spec/KDM/20160201/kdm" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ecore:nsPrefix="kdm" ecore:package="KDM.kdm" targetNamespace="http://www.omg.org/spec/KDM/20160201/kdm">
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/core" schemaLocation="KDM.core.xsd"/>
+  <xsd:element ecore:ignore="true" name="FrameworkElement" type="kdm:FrameworkElement"/>
+  <xsd:element ecore:ignore="true" name="KDMModel" type="kdm:KDMModel"/>
+  <xsd:element ecore:ignore="true" name="Audit" type="kdm:Audit"/>
+  <xsd:element ecore:ignore="true" name="Segment" type="kdm:Segment"/>
+  <xsd:element ecore:ignore="true" name="Attribute" type="kdm:Attribute"/>
+  <xsd:element ecore:ignore="true" name="Annotation" type="kdm:Annotation"/>
+  <xsd:element ecore:ignore="true" name="TagDefinition" type="kdm:TagDefinition"/>
+  <xsd:element ecore:ignore="true" name="ExtendedValue" type="kdm:ExtendedValue"/>
+  <xsd:element ecore:ignore="true" name="Stereotype" type="kdm:Stereotype"/>
+  <xsd:element ecore:ignore="true" name="ExtensionFamily" type="kdm:ExtensionFamily"/>
+  <xsd:element ecore:ignore="true" name="TaggedRef" type="kdm:TaggedRef"/>
+  <xsd:element ecore:ignore="true" name="TaggedValue" type="kdm:TaggedValue"/>
+  <xsd:complexType abstract="true" ecore:interface="true" name="FrameworkElement">
+    <xsd:complexContent>
+      <xsd:extension base="core:ModelElement">
+        <xsd:sequence>
+          <xsd:element ecore:opposite="owner" ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="extensionFamily" type="kdm:ExtensionFamily"/>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="KDMModel">
+    <xsd:annotation>
+      <xsd:appinfo ecore:key="operations" source="http://www.eclipse.org/emf/2002/Ecore">
+        <operation name="getOwnedElement" type="core:KDMEntity" upperBound="-1"/>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="kdm:FrameworkElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Audit">
+    <xsd:complexContent>
+      <xsd:extension base="core:ExtendableElement">
+        <xsd:attribute name="description" type="core:String"/>
+        <xsd:attribute name="author" type="core:String"/>
+        <xsd:attribute name="date" type="core:String"/>
+        <xsd:attribute ecore:opposite="audit" ecore:reference="core:ModelElement" name="owner" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Segment">
+    <xsd:complexContent>
+      <xsd:extension base="kdm:FrameworkElement">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="segment" type="kdm:Segment"/>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="model" type="kdm:KDMModel"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Attribute">
+    <xsd:complexContent>
+      <xsd:extension base="core:AnnotationElement">
+        <xsd:attribute name="tag" type="core:String"/>
+        <xsd:attribute name="value" type="core:String"/>
+        <xsd:attribute ecore:opposite="attribute" ecore:reference="core:AnnotatableElement" name="owner" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Annotation">
+    <xsd:complexContent>
+      <xsd:extension base="core:AnnotationElement">
+        <xsd:attribute name="text" type="core:String"/>
+        <xsd:attribute ecore:opposite="annotation" ecore:reference="core:AnnotatableElement" name="owner" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="TagDefinition">
+    <xsd:complexContent>
+      <xsd:extension base="core:ExtensionElement">
+        <xsd:attribute ecore:opposite="tag" ecore:reference="kdm:Stereotype" name="owner" type="xsd:anyURI" use="required"/>
+        <xsd:attribute name="tag" type="core:String"/>
+        <xsd:attribute name="type" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="ExtendedValue">
+    <xsd:complexContent>
+      <xsd:extension base="core:ExtensionElement">
+        <xsd:attribute ecore:reference="kdm:TagDefinition" name="tag" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Stereotype">
+    <xsd:complexContent>
+      <xsd:extension base="core:ExtensionElement">
+        <xsd:sequence>
+          <xsd:element ecore:opposite="owner" ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="tag" type="kdm:TagDefinition"/>
+        </xsd:sequence>
+        <xsd:attribute ecore:opposite="stereotype" ecore:reference="kdm:ExtensionFamily" name="owner" type="xsd:anyURI" use="required"/>
+        <xsd:attribute name="name" type="core:String"/>
+        <xsd:attribute name="type" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ExtensionFamily">
+    <xsd:complexContent>
+      <xsd:extension base="core:ExtensionElement">
+        <xsd:sequence>
+          <xsd:element ecore:opposite="owner" ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="stereotype" type="kdm:Stereotype"/>
+        </xsd:sequence>
+        <xsd:attribute ecore:opposite="extensionFamily" ecore:reference="kdm:FrameworkElement" name="owner" type="xsd:anyURI" use="required"/>
+        <xsd:attribute name="name" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="TaggedRef">
+    <xsd:complexContent>
+      <xsd:extension base="kdm:ExtendedValue">
+        <xsd:attribute ecore:reference="core:ExtendableElement" name="reference" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="TaggedValue">
+    <xsd:complexContent>
+      <xsd:extension base="kdm:ExtendedValue">
+        <xsd:attribute name="value" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+</xsd:schema>

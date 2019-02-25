@@ -711,10 +711,10 @@ public class ArchimateExtractionService implements Serializable {
 			xmlOutput.output(doc, new FileWriter(model.getExportedPath()));
 
 			// TODO remove this local test
-			String xmlFileName = "C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\temp\\" + model.getName() + ".xml";
-			xmlOutput.output(doc, new FileWriter(xmlFileName));
+//			String xmlFileName = "C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\temp\\" + model.getName() + ".xml";
+//			xmlOutput.output(doc, new FileWriter(xmlFileName));
 
-			if (validateXmlFile(xmlFileName)) {
+			if (validateXmlFile(model.getExportedPath())) {
 				return new File(model.getExportedPath());
 			}
 		} catch (IOException ex) {

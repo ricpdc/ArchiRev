@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:action="http://www.omg.org/spec/KDM/20160201/action" xmlns:code="http://www.omg.org/spec/KDM/20160201/code" xmlns:core="http://www.omg.org/spec/KDM/20160201/core" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:kdm="http://www.omg.org/spec/KDM/20160201/kdm" xmlns:source="http://www.omg.org/spec/KDM/20160201/source" xmlns:ui="http://www.omg.org/spec/KDM/20160201/ui" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ecore:nsPrefix="ui" ecore:package="KDM.ui" targetNamespace="http://www.omg.org/spec/KDM/20160201/ui">
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/source" schemaLocation="KDM.source.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/kdm" schemaLocation="KDM.kdm.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/action" schemaLocation="KDM.action.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/code" schemaLocation="KDM.code.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/core" schemaLocation="KDM.core.xsd"/>
+  <xsd:element ecore:ignore="true" name="AbstractUIElement" type="ui:AbstractUIElement"/>
+  <xsd:element ecore:ignore="true" name="UIResource" type="ui:UIResource"/>
+  <xsd:element ecore:ignore="true" name="UIDisplay" type="ui:UIDisplay"/>
+  <xsd:element ecore:ignore="true" name="Screen" type="ui:Screen"/>
+  <xsd:element ecore:ignore="true" name="Report" type="ui:Report"/>
+  <xsd:element ecore:ignore="true" name="UIModel" type="ui:UIModel"/>
+  <xsd:element ecore:ignore="true" name="AbstractUIRelationship" type="ui:AbstractUIRelationship"/>
+  <xsd:element ecore:ignore="true" name="UILayout" type="ui:UILayout"/>
+  <xsd:element ecore:ignore="true" name="UIField" type="ui:UIField"/>
+  <xsd:element ecore:ignore="true" name="DisplaysImage" type="ui:DisplaysImage"/>
+  <xsd:element ecore:ignore="true" name="Displays" type="ui:Displays"/>
+  <xsd:element ecore:ignore="true" name="UIFlow" type="ui:UIFlow"/>
+  <xsd:element ecore:ignore="true" name="UIElement" type="ui:UIElement"/>
+  <xsd:element ecore:ignore="true" name="UIRelationship" type="ui:UIRelationship"/>
+  <xsd:element ecore:ignore="true" name="UIAction" type="ui:UIAction"/>
+  <xsd:element ecore:ignore="true" name="UIEvent" type="ui:UIEvent"/>
+  <xsd:element ecore:ignore="true" name="ReadsUI" type="ui:ReadsUI"/>
+  <xsd:element ecore:ignore="true" name="WritesUI" type="ui:WritesUI"/>
+  <xsd:element ecore:ignore="true" name="ManagesUI" type="ui:ManagesUI"/>
+  <xsd:element ecore:ignore="true" name="ProducesUIEvent" type="ui:ProducesUIEvent"/>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AbstractUIElement">
+    <xsd:complexContent>
+      <xsd:extension base="core:KDMEntity">
+        <xsd:sequence>
+          <xsd:element ecore:name="UIRelation" ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="UIRelation" type="ui:AbstractUIRelationship"/>
+          <xsd:element ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="abstraction" type="action:ActionElement"/>
+        </xsd:sequence>
+        <xsd:attribute ecore:ordered="false" ecore:reference="code:AbstractCodeElement" name="implementation">
+          <xsd:simpleType>
+            <xsd:list itemType="xsd:anyURI"/>
+          </xsd:simpleType>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="UIResource">
+    <xsd:complexContent>
+      <xsd:extension base="ui:AbstractUIElement">
+        <xsd:sequence>
+          <xsd:element ecore:name="UIElement" ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="UIElement" type="ui:AbstractUIElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="UIDisplay">
+    <xsd:complexContent>
+      <xsd:extension base="ui:UIResource"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Screen">
+    <xsd:complexContent>
+      <xsd:extension base="ui:UIDisplay"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Report">
+    <xsd:complexContent>
+      <xsd:extension base="ui:UIDisplay"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="UIModel">
+    <xsd:complexContent>
+      <xsd:extension base="kdm:KDMModel">
+        <xsd:sequence>
+          <xsd:element ecore:name="UIElement" ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="UIElement" type="ui:AbstractUIElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AbstractUIRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="core:KDMRelationship"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="UILayout">
+    <xsd:complexContent>
+      <xsd:extension base="ui:AbstractUIRelationship">
+        <xsd:attribute ecore:reference="ui:UIResource" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="ui:UIResource" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="UIField">
+    <xsd:complexContent>
+      <xsd:extension base="ui:UIResource"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DisplaysImage">
+    <xsd:complexContent>
+      <xsd:extension base="ui:AbstractUIRelationship">
+        <xsd:attribute ecore:reference="source:ImageFile" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Displays">
+    <xsd:complexContent>
+      <xsd:extension base="ui:AbstractUIRelationship">
+        <xsd:attribute ecore:reference="ui:UIResource" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="UIFlow">
+    <xsd:complexContent>
+      <xsd:extension base="ui:AbstractUIRelationship">
+        <xsd:attribute ecore:reference="ui:AbstractUIElement" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="ui:AbstractUIElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="UIElement">
+    <xsd:complexContent>
+      <xsd:extension base="ui:AbstractUIElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="UIRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="ui:AbstractUIRelationship">
+        <xsd:attribute ecore:reference="core:KDMEntity" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="ui:AbstractUIElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="UIAction">
+    <xsd:complexContent>
+      <xsd:extension base="ui:AbstractUIElement">
+        <xsd:sequence>
+          <xsd:element ecore:name="UIElement" ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="UIElement" type="ui:UIEvent"/>
+        </xsd:sequence>
+        <xsd:attribute name="kind" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="UIEvent">
+    <xsd:complexContent>
+      <xsd:extension base="ui:AbstractUIElement">
+        <xsd:attribute name="kind" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ReadsUI">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="ui:UIResource" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="WritesUI">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="ui:UIResource" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ManagesUI">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="ui:UIResource" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ProducesUIEvent">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="ui:UIEvent" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+</xsd:schema>

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:action="http://www.omg.org/spec/KDM/20160201/action" xmlns:code="http://www.omg.org/spec/KDM/20160201/code" xmlns:core="http://www.omg.org/spec/KDM/20160201/core" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ecore:nsPrefix="action" ecore:package="KDM.action" targetNamespace="http://www.omg.org/spec/KDM/20160201/action">
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/code" schemaLocation="KDM.code.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/core" schemaLocation="KDM.core.xsd"/>
+  <xsd:element ecore:ignore="true" name="AbstractActionRelationship" type="action:AbstractActionRelationship"/>
+  <xsd:element ecore:ignore="true" name="ActionElement" type="action:ActionElement"/>
+  <xsd:element ecore:ignore="true" name="ControlFlow" type="action:ControlFlow"/>
+  <xsd:element ecore:ignore="true" name="Calls" type="action:Calls"/>
+  <xsd:element ecore:ignore="true" name="Creates" type="action:Creates"/>
+  <xsd:element ecore:ignore="true" name="Reads" type="action:Reads"/>
+  <xsd:element ecore:ignore="true" name="Writes" type="action:Writes"/>
+  <xsd:element ecore:ignore="true" name="CompliesTo" type="action:CompliesTo"/>
+  <xsd:element ecore:ignore="true" name="Flow" type="action:Flow"/>
+  <xsd:element ecore:ignore="true" name="TrueFlow" type="action:TrueFlow"/>
+  <xsd:element ecore:ignore="true" name="FalseFlow" type="action:FalseFlow"/>
+  <xsd:element ecore:ignore="true" name="GuardedFlow" type="action:GuardedFlow"/>
+  <xsd:element ecore:ignore="true" name="UsesType" type="action:UsesType"/>
+  <xsd:element ecore:ignore="true" name="Addresses" type="action:Addresses"/>
+  <xsd:element ecore:ignore="true" name="ActionRelationship" type="action:ActionRelationship"/>
+  <xsd:element ecore:ignore="true" name="Throws" type="action:Throws"/>
+  <xsd:element ecore:ignore="true" name="Dispatches" type="action:Dispatches"/>
+  <xsd:element ecore:ignore="true" name="EntryFlow" type="action:EntryFlow"/>
+  <xsd:element ecore:ignore="true" name="BlockUnit" type="action:BlockUnit"/>
+  <xsd:element ecore:ignore="true" name="ExceptionUnit" type="action:ExceptionUnit"/>
+  <xsd:element ecore:ignore="true" name="TryUnit" type="action:TryUnit"/>
+  <xsd:element ecore:ignore="true" name="FinallyUnit" type="action:FinallyUnit"/>
+  <xsd:element ecore:ignore="true" name="CatchUnit" type="action:CatchUnit"/>
+  <xsd:element ecore:ignore="true" name="ExitFlow" type="action:ExitFlow"/>
+  <xsd:element ecore:ignore="true" name="ExceptionFlow" type="action:ExceptionFlow"/>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AbstractActionRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="core:KDMRelationship"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ActionElement">
+    <xsd:complexContent>
+      <xsd:extension base="code:AbstractCodeElement">
+        <xsd:sequence>
+          <xsd:element ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="actionRelation" type="action:AbstractActionRelationship"/>
+          <xsd:element ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="codeElement" type="code:AbstractCodeElement"/>
+        </xsd:sequence>
+        <xsd:attribute name="kind" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ControlFlow">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="action:ActionElement" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Calls">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="code:CodeItem" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Creates">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="code:Datatype" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Reads">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="code:DataElement" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Writes">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="code:DataElement" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="CompliesTo">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="code:CodeItem" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Flow">
+    <xsd:complexContent>
+      <xsd:extension base="action:ControlFlow"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="TrueFlow">
+    <xsd:complexContent>
+      <xsd:extension base="action:ControlFlow"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="FalseFlow">
+    <xsd:complexContent>
+      <xsd:extension base="action:ControlFlow"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="GuardedFlow">
+    <xsd:complexContent>
+      <xsd:extension base="action:ControlFlow"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="UsesType">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="code:Datatype" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Addresses">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="code:ComputationalObject" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ActionRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="core:KDMEntity" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Throws">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="code:DataElement" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Dispatches">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="code:DataElement" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="EntryFlow">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="action:ActionElement" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="code:AbstractCodeElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="BlockUnit">
+    <xsd:complexContent>
+      <xsd:extension base="action:ActionElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ExceptionUnit">
+    <xsd:complexContent>
+      <xsd:extension base="action:BlockUnit"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="TryUnit">
+    <xsd:complexContent>
+      <xsd:extension base="action:ExceptionUnit"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="FinallyUnit">
+    <xsd:complexContent>
+      <xsd:extension base="action:ExceptionUnit"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="CatchUnit">
+    <xsd:complexContent>
+      <xsd:extension base="action:ExceptionUnit"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ExitFlow">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="action:ActionElement" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ExceptionFlow">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="action:ActionElement" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+</xsd:schema>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:action="http://www.omg.org/spec/KDM/20160201/action" xmlns:code="http://www.omg.org/spec/KDM/20160201/code" xmlns:core="http://www.omg.org/spec/KDM/20160201/core" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:event="http://www.omg.org/spec/KDM/20160201/event" xmlns:kdm="http://www.omg.org/spec/KDM/20160201/kdm" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ecore:nsPrefix="event" ecore:package="KDM.event" targetNamespace="http://www.omg.org/spec/KDM/20160201/event">
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/code" schemaLocation="KDM.code.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/action" schemaLocation="KDM.action.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/core" schemaLocation="KDM.core.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/kdm" schemaLocation="KDM.kdm.xsd"/>
+  <xsd:element ecore:ignore="true" name="EventModel" type="event:EventModel"/>
+  <xsd:element ecore:ignore="true" name="AbstractEventElement" type="event:AbstractEventElement"/>
+  <xsd:element ecore:ignore="true" name="Event" type="event:Event"/>
+  <xsd:element ecore:ignore="true" name="AbstractEventRelationship" type="event:AbstractEventRelationship"/>
+  <xsd:element ecore:ignore="true" name="EventRelationship" type="event:EventRelationship"/>
+  <xsd:element ecore:ignore="true" name="EventResource" type="event:EventResource"/>
+  <xsd:element ecore:ignore="true" name="State" type="event:State"/>
+  <xsd:element ecore:ignore="true" name="Transition" type="event:Transition"/>
+  <xsd:element ecore:ignore="true" name="OnEntry" type="event:OnEntry"/>
+  <xsd:element ecore:ignore="true" name="OnExit" type="event:OnExit"/>
+  <xsd:element ecore:ignore="true" name="EventAction" type="event:EventAction"/>
+  <xsd:element ecore:ignore="true" name="ReadsState" type="event:ReadsState"/>
+  <xsd:element ecore:ignore="true" name="ProducesEvent" type="event:ProducesEvent"/>
+  <xsd:element ecore:ignore="true" name="ConsumesEvent" type="event:ConsumesEvent"/>
+  <xsd:element ecore:ignore="true" name="NextState" type="event:NextState"/>
+  <xsd:element ecore:ignore="true" name="InitialState" type="event:InitialState"/>
+  <xsd:element ecore:ignore="true" name="EventElement" type="event:EventElement"/>
+  <xsd:element ecore:ignore="true" name="HasState" type="event:HasState"/>
+  <xsd:complexType name="EventModel">
+    <xsd:complexContent>
+      <xsd:extension base="kdm:KDMModel">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="eventElement" type="event:AbstractEventElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AbstractEventElement">
+    <xsd:complexContent>
+      <xsd:extension base="core:KDMEntity">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="eventRelation" type="event:AbstractEventRelationship"/>
+          <xsd:element ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="abstraction" type="action:ActionElement"/>
+        </xsd:sequence>
+        <xsd:attribute ecore:ordered="false" ecore:reference="code:AbstractCodeElement" name="implementation">
+          <xsd:simpleType>
+            <xsd:list itemType="xsd:anyURI"/>
+          </xsd:simpleType>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Event">
+    <xsd:complexContent>
+      <xsd:extension base="event:AbstractEventElement">
+        <xsd:attribute name="kind" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AbstractEventRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="core:KDMRelationship"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="EventRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="event:AbstractEventRelationship">
+        <xsd:attribute ecore:reference="core:KDMEntity" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="event:AbstractEventElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="EventResource">
+    <xsd:complexContent>
+      <xsd:extension base="event:AbstractEventElement">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="eventElement" type="event:AbstractEventElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="State">
+    <xsd:complexContent>
+      <xsd:extension base="event:EventResource"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Transition">
+    <xsd:complexContent>
+      <xsd:extension base="event:EventResource"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="OnEntry">
+    <xsd:complexContent>
+      <xsd:extension base="event:Transition"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="OnExit">
+    <xsd:complexContent>
+      <xsd:extension base="event:Transition"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="EventAction">
+    <xsd:complexContent>
+      <xsd:extension base="event:AbstractEventElement">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="eventElement" type="event:Event"/>
+        </xsd:sequence>
+        <xsd:attribute name="kind" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ReadsState">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="event:State" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ProducesEvent">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="event:Event" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="ConsumesEvent">
+    <xsd:complexContent>
+      <xsd:extension base="event:AbstractEventRelationship">
+        <xsd:attribute ecore:reference="event:Event" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="event:Transition" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="NextState">
+    <xsd:complexContent>
+      <xsd:extension base="event:AbstractEventRelationship">
+        <xsd:attribute ecore:reference="event:State" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="event:Transition" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="InitialState">
+    <xsd:complexContent>
+      <xsd:extension base="event:State"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="EventElement">
+    <xsd:complexContent>
+      <xsd:extension base="event:AbstractEventElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="HasState">
+    <xsd:complexContent>
+      <xsd:extension base="action:AbstractActionRelationship">
+        <xsd:attribute ecore:reference="event:AbstractEventElement" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="action:ActionElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+</xsd:schema>

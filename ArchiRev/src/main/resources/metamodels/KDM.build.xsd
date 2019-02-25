@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:build="http://www.omg.org/spec/KDM/20160201/build" xmlns:core="http://www.omg.org/spec/KDM/20160201/core" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:kdm="http://www.omg.org/spec/KDM/20160201/kdm" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ecore:nsPrefix="build" ecore:package="KDM.build" targetNamespace="http://www.omg.org/spec/KDM/20160201/build">
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/kdm" schemaLocation="KDM.kdm.xsd"/>
+  <xsd:import namespace="http://www.omg.org/spec/KDM/20160201/core" schemaLocation="KDM.core.xsd"/>
+  <xsd:element ecore:ignore="true" name="AbstractBuildElement" type="build:AbstractBuildElement"/>
+  <xsd:element ecore:ignore="true" name="BuildResource" type="build:BuildResource"/>
+  <xsd:element ecore:ignore="true" name="BuildDescription" type="build:BuildDescription"/>
+  <xsd:element ecore:ignore="true" name="SymbolicLink" type="build:SymbolicLink"/>
+  <xsd:element ecore:ignore="true" name="AbstractBuildRelationship" type="build:AbstractBuildRelationship"/>
+  <xsd:element ecore:ignore="true" name="LinksTo" type="build:LinksTo"/>
+  <xsd:element ecore:ignore="true" name="Consumes" type="build:Consumes"/>
+  <xsd:element ecore:ignore="true" name="BuildModel" type="build:BuildModel"/>
+  <xsd:element ecore:ignore="true" name="BuildComponent" type="build:BuildComponent"/>
+  <xsd:element ecore:ignore="true" name="Supplier" type="build:Supplier"/>
+  <xsd:element ecore:ignore="true" name="Tool" type="build:Tool"/>
+  <xsd:element ecore:ignore="true" name="BuildElement" type="build:BuildElement"/>
+  <xsd:element ecore:ignore="true" name="BuildRelationship" type="build:BuildRelationship"/>
+  <xsd:element ecore:ignore="true" name="SuppliedBy" type="build:SuppliedBy"/>
+  <xsd:element ecore:ignore="true" name="BuildLibrary" type="build:BuildLibrary"/>
+  <xsd:element ecore:ignore="true" name="BuildStep" type="build:BuildStep"/>
+  <xsd:element ecore:ignore="true" name="Produces" type="build:Produces"/>
+  <xsd:element ecore:ignore="true" name="SupportedBy" type="build:SupportedBy"/>
+  <xsd:element ecore:ignore="true" name="BuildProduct" type="build:BuildProduct"/>
+  <xsd:element ecore:ignore="true" name="DescribedBy" type="build:DescribedBy"/>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AbstractBuildElement">
+    <xsd:complexContent>
+      <xsd:extension base="core:KDMEntity">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="buildRelation" type="build:AbstractBuildRelationship"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="BuildResource">
+    <xsd:complexContent>
+      <xsd:extension base="build:AbstractBuildElement">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="buildElement" type="build:AbstractBuildElement"/>
+        </xsd:sequence>
+        <xsd:attribute ecore:ordered="false" ecore:reference="core:KDMEntity" name="implementation">
+          <xsd:simpleType>
+            <xsd:list itemType="xsd:anyURI"/>
+          </xsd:simpleType>
+        </xsd:attribute>
+        <xsd:attribute ecore:ordered="false" ecore:reference="build:AbstractBuildElement" name="groupedBuild">
+          <xsd:simpleType>
+            <xsd:list itemType="xsd:anyURI"/>
+          </xsd:simpleType>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="BuildDescription">
+    <xsd:complexContent>
+      <xsd:extension base="build:BuildResource">
+        <xsd:attribute name="text" type="core:String"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="SymbolicLink">
+    <xsd:complexContent>
+      <xsd:extension base="build:AbstractBuildElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType abstract="true" ecore:interface="true" name="AbstractBuildRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="core:KDMRelationship"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="LinksTo">
+    <xsd:complexContent>
+      <xsd:extension base="build:AbstractBuildRelationship">
+        <xsd:attribute ecore:reference="build:AbstractBuildElement" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="build:SymbolicLink" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Consumes">
+    <xsd:complexContent>
+      <xsd:extension base="build:AbstractBuildRelationship">
+        <xsd:attribute ecore:reference="build:AbstractBuildElement" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="build:BuildStep" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="BuildModel">
+    <xsd:complexContent>
+      <xsd:extension base="kdm:KDMModel">
+        <xsd:sequence>
+          <xsd:element ecore:ordered="false" ecore:resolveProxies="true" maxOccurs="unbounded" minOccurs="0" name="buildElement" type="build:AbstractBuildElement"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="BuildComponent">
+    <xsd:complexContent>
+      <xsd:extension base="build:BuildResource"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Supplier">
+    <xsd:complexContent>
+      <xsd:extension base="build:AbstractBuildElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Tool">
+    <xsd:complexContent>
+      <xsd:extension base="build:AbstractBuildElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="BuildElement">
+    <xsd:complexContent>
+      <xsd:extension base="build:AbstractBuildElement"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="BuildRelationship">
+    <xsd:complexContent>
+      <xsd:extension base="build:AbstractBuildRelationship">
+        <xsd:attribute ecore:reference="core:KDMEntity" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="build:AbstractBuildElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="SuppliedBy">
+    <xsd:complexContent>
+      <xsd:extension base="build:AbstractBuildRelationship">
+        <xsd:attribute ecore:reference="build:Supplier" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="build:AbstractBuildElement" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="BuildLibrary">
+    <xsd:complexContent>
+      <xsd:extension base="build:BuildResource"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="BuildStep">
+    <xsd:complexContent>
+      <xsd:extension base="build:BuildResource"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="Produces">
+    <xsd:complexContent>
+      <xsd:extension base="build:AbstractBuildRelationship">
+        <xsd:attribute ecore:reference="build:AbstractBuildElement" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="build:BuildStep" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="SupportedBy">
+    <xsd:complexContent>
+      <xsd:extension base="build:AbstractBuildRelationship">
+        <xsd:attribute ecore:reference="build:Tool" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="build:BuildStep" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="BuildProduct">
+    <xsd:complexContent>
+      <xsd:extension base="build:BuildResource"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="DescribedBy">
+    <xsd:complexContent>
+      <xsd:extension base="build:AbstractBuildRelationship">
+        <xsd:attribute ecore:reference="build:BuildDescription" name="to" type="xsd:anyURI" use="required"/>
+        <xsd:attribute ecore:reference="build:BuildStep" name="from" type="xsd:anyURI" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+</xsd:schema>

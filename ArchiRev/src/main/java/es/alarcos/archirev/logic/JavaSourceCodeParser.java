@@ -17,6 +17,7 @@ import org.apache.bcel.classfile.ClassFormatException;
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.Constant;
 import org.apache.bcel.classfile.JavaClass;
+import org.jdom2.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedMultiValueMap;
@@ -163,6 +164,12 @@ public class JavaSourceCodeParser extends AbstractSourceCodeParser implements Se
 			}
 		}
 		return modelRelationshipsByClassName;
+	}
+
+	@Override
+	public Document generateCodeElements(Source zipSource, Document document) throws ZipException, IOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	
