@@ -75,6 +75,8 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 	private Hashtable<String, TreeNode> directories = new Hashtable<>();
 	private TreeNode treeRoot;
 
+	private MultiValueMap<String, ArchimateElement> modelElementsByClassName;
+
 	public CSharpSourceCodeParser(final String setup) {
 		super(setup);
 	}
@@ -135,11 +137,11 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 	
 	
 	@Override
-	public Document generateCodeElements(Source zipSource, Document document)
+	public Document generateKdmCodeElements(Source zipSource, Document document)
 			throws ZipException, IOException {
 		numberOfCsharpFiles = 0;
 		wrongFiles = new HashSet<>();
-		MultiValueMap<String, ArchimateElement> modelElementsByClassName = new LinkedMultiValueMap<>();
+		modelElementsByClassName = new LinkedMultiValueMap<>();
 
 		File tempZipFile = File.createTempFile("zipFile", ".tmp", null);
 		FileOutputStream fos = new FileOutputStream(tempZipFile);
@@ -184,7 +186,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			}
 		}
 		
-		processEntry(treeRoot, model);
+		processEntryToKdmCodeElement(treeRoot, model, zipFile);
 		
 //		while (entries.hasMoreElements()) {
 //			ZipEntry zipEntry = entries.nextElement();
@@ -216,25 +218,27 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		return document;
 	}
 
-	private void processEntry(TreeNode treeNode, Element element) {
+	private void processEntryToKdmCodeElement(TreeNode treeNode, Element element, ZipFile zipFile) throws IOException {
 		Namespace nsXsi = Namespace.getNamespace("xsi", NS_XSI);
-		if(treeNode.isLeaf()) {
-			//process c# file
-			Element fileE = new Element("codeElement");
-			fileE.setAttribute("type", "code:CompilationUnit", nsXsi);
-			addXmiIdentifier(fileE);
-			fileE.setAttribute("name", ((ZipEntry)treeNode.getData()).getName());
-			element.addContent(fileE);
-		}
-		else {
+		ZipEntry zipEntry = (ZipEntry)treeNode.getData();
+		if(!treeNode.isLeaf()) {
 			for (TreeNode childNode : treeNode.getChildren()) {
 				Element packageE = new Element("codeElement");
 				packageE.setAttribute("type", "code:Package", nsXsi);
 				addXmiIdentifier(packageE);
-				packageE.setAttribute("name", ((ZipEntry)treeNode.getData()).getName());
+				packageE.setAttribute("name", zipEntry.getName());
 				element.addContent(packageE);
-				processEntry(childNode, packageE);
+				processEntryToKdmCodeElement(childNode, packageE, zipFile);
 			}
+		}
+		else if(zipEntry.getName().endsWith(".cs")) {
+			//process c# file
+			Element compilationUnitE = new Element("codeElement");
+			compilationUnitE.setAttribute("type", "code:CompilationUnit", nsXsi);
+			addXmiIdentifier(compilationUnitE);
+			compilationUnitE.setAttribute("name", zipEntry.getName());
+			element.addContent(compilationUnitE);
+			parseCsharpFileForKdmGeneration(zipFile, zipEntry, compilationUnitE, modelElementsByClassName);
 		}
 	}
 	
@@ -341,6 +345,104 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 				} else {
 					LOGGER.debug(String.format("Not mapped annotation \"%s\" in class %s", classTag, zipEntryName));
 				}
+			}
+
+			msg += (Files.lines(tempFile.toPath()).count() + ";");
+			msg += ((System.nanoTime() - time) + ";");
+			time = System.nanoTime();
+
+			createModelElements(modelElementsByClassName, simpleClassName, uniqueElements, mappedSuperclass);
+
+			List<ArchimateElement> elementsCreated = modelElementsByClassName
+					.get(getSimpleClassName(zipEntry.getName()));
+			int numberOfElements = elementsCreated != null ? elementsCreated.size() : 0;
+			msg += (numberOfElements + ";");
+			msg += ((System.nanoTime() - time) + ";\n");
+			try {
+				Files.write(elementsLog.toPath(), msg.getBytes(), StandardOpenOption.APPEND);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		} else {
+			wrongFiles.add(zipEntryName);
+			for (SyntaxError syntaxError : listener.getSyntaxErrors()) {
+				LOGGER.error("\tSYNTACTIC ERROR: " + syntaxError);
+			}
+		}
+
+	}
+	
+	
+	private void parseCsharpFileForKdmGeneration(final ZipFile zipFile, final ZipEntry zipEntry,
+			Element element, final MultiValueMap<String, ArchimateElement> modelElementsByClassName) throws IOException {
+		long time = System.nanoTime();
+		String zipEntryName = zipEntry.getName();
+		String simpleClassName = getSimpleClassName(zipEntryName);
+
+		String msg = "" + zipEntryName + ";" + simpleClassName + ";";
+
+		for (String exclusion_tag : exclusions) {
+			if (simpleClassName.contains(exclusion_tag)) {
+				return;
+			}
+		}
+
+		File tempFile = getTempFileWithoutDirectives(zipFile, zipEntry);
+		if (Files.readAllBytes(tempFile.toPath()).length == 0) {
+			return;
+		}
+
+		ANTLRFileStream grammarInput = new ANTLRFileStream(tempFile.getAbsolutePath());
+		CSharpLexer lexer = new CSharpLexer(grammarInput);
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		CSharpParser parser = new CSharpParser(tokens);
+
+		SyntaxErrorListener listener = new SyntaxErrorListener();
+		parser.addErrorListener(listener);
+
+		delcaredTypeNames = new TreeSet<String>();
+
+		Compilation_unitContext compilation_unit = parser.compilation_unit();
+		for (int i = 0; i < compilation_unit.getChildCount(); i++) {
+			ParseTree tree = compilation_unit.getChild(i);
+			getDeclaredTypes(tree);
+		}
+
+		// LOGGER.info("Parsing.... " + zipEntryName);
+		if (listener.getSyntaxErrors().isEmpty()) {
+			Set<ArchimateElementEnum> uniqueElements = new HashSet<>();
+			boolean mappedSuperclass = false;
+			
+			Namespace nsXsi = Namespace.getNamespace("xsi", NS_XSI);
+			
+			List<String> declaredTypeTags = new ArrayList<>();
+			for (String className : delcaredTypeNames) {
+				declaredTypeTags.addAll(Arrays.asList(StringUtils.splitByCharacterTypeCamelCase(className)));
+				//<codeElement xsi:type="code:ClassUnit" name="class A" exportKind="unknown"/>
+				Element classE = new Element("codeElement");
+				classE.setAttribute("type", "code:ClassUnit", nsXsi);
+				classE.setAttribute("name", className);
+				classE.setAttribute("exportKind", "unknown");
+				//addXmiIdentifier(classE);
+				element.addContent(classE);
+			}
+
+			for (String classTag : declaredTypeTags) {
+//				List<ArchimateElementEnum> elementList = mapping.get(classTag);
+//				if (elementList != null) {
+//					uniqueElements.addAll(elementList);
+//					if (!mappedSuperclass && MAPPED_SUPERCLASS_ANNOTATION.equals(classTag)) {
+//						mappedSuperclass = true;
+//					}
+//				} else {
+//					LOGGER.debug(String.format("Not mapped annotation \"%s\" in class %s", classTag, zipEntryName));
+//				}
+				//<annotation text="dsafasfasfasdf"/>
+				
+				Element annotation = new Element("annotation");
+				annotation.setAttribute("text", classTag);
+				element.addContent(annotation);
 			}
 
 			msg += (Files.lines(tempFile.toPath()).count() + ";");

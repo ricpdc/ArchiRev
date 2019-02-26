@@ -167,7 +167,7 @@ public class JavaSourceCodeParser extends AbstractSourceCodeParser implements Se
 	}
 
 	@Override
-	public Document generateCodeElements(Source zipSource, Document document) throws ZipException, IOException {
+	public Document generateKdmCodeElements(Source zipSource, Document document) throws ZipException, IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}

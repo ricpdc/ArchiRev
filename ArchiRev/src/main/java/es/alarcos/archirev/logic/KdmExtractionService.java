@@ -98,7 +98,7 @@ public class KdmExtractionService implements Serializable {
 			org.jdom2.Element eModel = createRootElement(kdmModel.getName());
 			kdmDocument = new Document(eModel);
 			
-			kdmDocument = sourceCodeParser.generateCodeElements(source, kdmDocument);
+			kdmDocument = sourceCodeParser.generateKdmCodeElements(source, kdmDocument);
 			//modelRelationshipsByClassName = sourceCodeParser.computeModelRelationshipsByClassName(source, modelElementsByClassName);
 			kdmFile = generateKdmModel(kdmModel);
 			long time = System.nanoTime();

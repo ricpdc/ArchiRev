@@ -85,7 +85,7 @@ public abstract class AbstractSourceCodeParser implements Serializable {
 	public abstract MultiValueMap<String, ArchimateRelationship> computeModelRelationshipsByClassName(Source warSource,
 			MultiValueMap<String, ArchimateElement> modelElementsByClassName) throws ZipException, IOException;
 	
-	public abstract Document generateCodeElements(Source zipSource, Document document) throws ZipException, IOException;
+	public abstract Document generateKdmCodeElements(Source zipSource, Document document) throws ZipException, IOException;
 
 	protected ZipFile getZipFile(final File file) throws ZipException, IOException {
 		ZipFile zipFile = new ZipFile(file);
