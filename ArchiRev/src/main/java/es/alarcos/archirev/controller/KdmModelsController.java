@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import es.alarcos.archirev.logic.KdmExtractionService;
 import es.alarcos.archirev.model.Extraction;
 import es.alarcos.archirev.model.KdmModel;
 import es.alarcos.archirev.model.Project;
@@ -35,18 +34,12 @@ import es.alarcos.archirev.model.Project;
 @ViewScoped
 public class KdmModelsController extends AbstractController {
 
-	private static final String IMAGES_FAV_PNG = "images/fav.png";
-
 	private static final long serialVersionUID = 1220451072138440791L;
 
 	static Logger LOGGER = LoggerFactory.getLogger(KdmModelsController.class);
 
 	@Autowired
 	private SessionController sessionController;
-
-	@Autowired
-	private KdmExtractionService extractionService;
-
 
 	private KdmModel selectedModel;
 
@@ -153,6 +146,9 @@ public class KdmModelsController extends AbstractController {
 	}
 	
 	public String getContentForSelectedModel() {
+		if(selectedModel==null) {
+			return "";
+		}
 		byte[] encoded = null;
 		try {
 			encoded = Files.readAllBytes(Paths.get(selectedModel.getExportedPath()));
@@ -161,6 +157,10 @@ public class KdmModelsController extends AbstractController {
 			LOGGER.error("Error loading kdm file");
 		}
 		return encoded == null ? "" : new String(encoded, Charset.defaultCharset());
+	}
+	
+	public void setContentForSelectedModel(String value) {
+		return;
 	}
 
 }
