@@ -3,6 +3,7 @@ package es.alarcos.archirev.controller;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,7 +28,6 @@ import org.springframework.stereotype.Controller;
 import es.alarcos.archirev.logic.KdmExtractionService;
 import es.alarcos.archirev.model.Extraction;
 import es.alarcos.archirev.model.KdmModel;
-import es.alarcos.archirev.model.Model;
 import es.alarcos.archirev.model.Project;
 
 @ManagedBean(name = "modelsController")
@@ -145,10 +145,22 @@ public class KdmModelsController extends AbstractController {
 
 	public StreamedContent getExportedFile() {
 		return exportedFile;
+		
 	}
 
 	public void setExportedFile(StreamedContent exportedFile) {
 		this.exportedFile = exportedFile;
+	}
+	
+	public String getContentForSelectedModel() {
+		byte[] encoded = null;
+		try {
+			encoded = Files.readAllBytes(Paths.get(selectedModel.getExportedPath()));
+		} catch (IOException e) {
+			e.printStackTrace();
+			LOGGER.error("Error loading kdm file");
+		}
+		return encoded == null ? "" : new String(encoded, Charset.defaultCharset());
 	}
 
 }

@@ -11,6 +11,10 @@ function resizeDiagram() {
 		$("[id*='diagramScrollPanel']").width(0);
 		$("[id*='diagramScrollPanel']").width(
 				$("[id*='diagramSeparator']").width());
+		
+		$("[id*='kdmModelScrollPanel']").width(0);
+		$("[id*='kdmModelScrollPanel']").width(
+				$("[id*='kdmModelSeparator']").width());
 	} catch (ex) {
 		console.log(ex);
 	}

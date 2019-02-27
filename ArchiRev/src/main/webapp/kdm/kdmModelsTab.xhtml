@@ -2,7 +2,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
 
 	<p:tab title="KDM Models">
 
@@ -11,20 +12,14 @@
 			style="margin-bottom:10px; width:100%" width="100%">
 			<p:panelGrid style="width:100%; border: none;" columns="2"
 				columnClasses="modelsLeft, modelsRight">
-				<p:outputPanel>
+				<p:outputPanel >
 					<p:dataTable id="kdmModelsTableId" widgetVar="kdmModelsTable"
 						value="#{kdmModelsController.project.kdmModels}" var="model"
-						selectionMode="single" rowKey="#{model}"
-						scrollable="true"
-						scrollHeight="200">
+						selectionMode="single" rowKey="#{model}">
 						<p:ajax event="rowSelect"
 							listener="#{kdmModelsController.onSelectModel}"
 							update="mainForm:mainTabs:kdmModelPanelVisualizationPanel"
 							oncomplete="resizeDiagram()" />
-						<p:column style="width:16px">
-							<p:rowToggler />
-						</p:column>
-
 						<p:column headerText="Extracted KDM Models">
 							<h:outputText value=" #{model.name}" />
 						</p:column>
@@ -44,8 +39,10 @@
 					
 					<p:separator id="kdmModelSeparator" />
 					<p:scrollPanel id="kdmModelScrollPanel" mode="native"
-						style="width:800px;height:600px">
-						<p:outputLabel value="#{kdmModelsController.selectedModel.exportedPath}"/>
+						style="width:800px;height:300px">
+						<pe:codeMirror id="kdmViewer" mode="xml" theme="mdn-like" 
+							value="#{kdmModelsController.contentForSelectedModel}" keyMap="default"
+							lineNumbers="true" matchBrackets="true" />
 						
 					</p:scrollPanel>
 				</p:outputPanel>

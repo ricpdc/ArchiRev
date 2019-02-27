@@ -281,7 +281,7 @@ public class ExtractionController extends AbstractController {
 		Path filePath = null;
 		try {
 			filePath = Files.createFile(Paths.get(folder.getAbsolutePath() + File.separator + "p_"
-					+ getProject().getId() + "_kdm_" + model.getId() + "_" + UUID.randomUUID() + ".kdm"));
+					+ getProject().getId() + "_kdm_" + model.getExtraction().getName() + "_" + UUID.randomUUID() + ".kdm"));
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
 			return null;
