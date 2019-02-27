@@ -56,6 +56,11 @@ public class OpenProjectDialogController extends AbstractDialogController {
     	context.execute("PF('openProjectDialog').show()");
     }
     
+    public void openFirstProject() {
+    	Project project = projects.get(0);
+    	openProject(project);
+    }
+    
     public void openProject(final Project project) {
     	getSessionController().setProject(project);
     	extractionController.reload();

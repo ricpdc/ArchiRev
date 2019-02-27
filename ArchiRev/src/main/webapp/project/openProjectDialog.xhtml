@@ -40,14 +40,14 @@
 					</h:outputText>
 				</p:column>
 				<p:column style="width:90px;text-align: center">
-					<p:commandButton id="openProject" icon="ui-icon-folder-open"
+					<p:commandButton id="openProjectButton" icon="ui-icon-folder-open"
 						title="Open"
 						action="#{openProjectDialogController.openProject(project)}"
-						update="mainForm"
-						onclick="PF('blockUI').show()" 
+						update="mainForm" onclick="PF('blockUI').show()"
 						oncomplete="PF('blockUI').hide()" />
 					<p:commandButton id="deleteProject" icon="ui-icon-trash"
-						title="Remove" disabled="#{openProjectDialogController.isOpenProject(project)}"
+						title="Remove"
+						disabled="#{openProjectDialogController.isOpenProject(project)}"
 						action="#{openProjectDialogController.removeProject(project)}"
 						update="mainForm:panelProjectList">
 						<p:confirm header="Confirmation" message="Are you sure?"
@@ -62,6 +62,11 @@
 					</p:confirmDialog>
 				</p:column>
 			</p:dataTable>
+			<p:hotkey bind="ctrl+shift+a" oncomplete="openFirstProject();" />
+			<p:remoteCommand name="openFirstProject"
+				action="#{openProjectDialogController.openFirstProject()}"
+				update="mainForm" onclick="PF('blockUI').show()"
+				oncomplete="PF('blockUI').hide()" />
 		</p:outputPanel>
 	</p:dialog>
 </ui:composition>

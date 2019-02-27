@@ -15,11 +15,8 @@
             <f:facet name="footer">
 				<p:commandButton id="performLoginButtonId" value="Login" update="mainForm:messages, mainForm:toolbar"
 					actionListener="#{sessionController.login}"
-					oncomplete="handleLoginRequest(xhr, status, args)" />
-				
-			</f:facet> 
-			
-			 
+					oncomplete="handleLoginRequest(xhr, status, args)" />			
+			</f:facet> 		
         </h:panelGrid>
     </p:dialog>
  
