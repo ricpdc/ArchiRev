@@ -68,7 +68,7 @@ public class View extends AbstractEntity implements Serializable {
 		this.type = type;
 	}
 
-	public Model getModel() {
+	public ArchimateModel getModel() {
 		return model;
 	}
 

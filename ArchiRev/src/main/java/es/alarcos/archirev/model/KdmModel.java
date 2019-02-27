@@ -7,6 +7,7 @@ import javax.persistence.Table;
 @Table(name = "kdm_model")
 public class KdmModel extends Model {
 
-	private static final long serialVersionUID = -7476543110947979418L;
+	private static final long serialVersionUID = -4619154844057803686L;
+
 
 }

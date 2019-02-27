@@ -684,7 +684,7 @@ public class ArchimateExtractionService implements Serializable {
 
 	}
 
-	private File exportOpenExchangeFormat(Model model) {
+	private File exportOpenExchangeFormat(ArchimateModel model) {
 
 		try {
 

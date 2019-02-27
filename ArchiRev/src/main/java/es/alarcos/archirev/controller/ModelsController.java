@@ -148,7 +148,7 @@ public class ModelsController extends AbstractController {
 		setSelectedView(view);
 	}
 
-	private String createExportedFile(final Model model) {
+	private String createExportedFile(final ArchimateModel model) {
 		File folder = new File(getSessionController().getProperty("location.export"));
 		if (!folder.exists()) {
 			folder.mkdir();
@@ -196,7 +196,7 @@ public class ModelsController extends AbstractController {
 		this.sessionController = sessionController;
 	}
 
-	public Model getSelectedModel() {
+	public ArchimateModel getSelectedModel() {
 		return selectedModel;
 	}
 

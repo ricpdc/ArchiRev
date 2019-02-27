@@ -39,14 +39,14 @@ import es.alarcos.archirev.logic.KdmExtractionService;
 import es.alarcos.archirev.model.ArchimateModel;
 import es.alarcos.archirev.model.Extraction;
 import es.alarcos.archirev.model.KdmModel;
-import es.alarcos.archirev.model.Model;
 import es.alarcos.archirev.model.Project;
 import es.alarcos.archirev.model.Source;
 import es.alarcos.archirev.model.enums.ModelViewEnum;
 import es.alarcos.archirev.model.enums.SourceConcernEnum;
 import es.alarcos.archirev.model.enums.SourceEnum;
+import es.alarcos.archirev.persistency.ArchimateModelDao;
 import es.alarcos.archirev.persistency.ExtractionDao;
-import es.alarcos.archirev.persistency.ModelDao;
+import es.alarcos.archirev.persistency.ViewDao;
 
 @ManagedBean(name = "extractionController")
 @Controller
@@ -67,7 +67,10 @@ public class ExtractionController extends AbstractController {
 
 	@SuppressWarnings("unused")
 	@Autowired
-	private ModelDao modelDao;
+	private ViewDao modelDao;
+	
+	@Autowired
+	private ArchimateModelDao archimateModelDao;
 
 	@Autowired
 	private ArchimateExtractionService archimateExtractionService;
@@ -217,7 +220,7 @@ public class ExtractionController extends AbstractController {
 			archiMateModel.setModifiedAt(now);
 			archiMateModel.setModifiedBy(loggedUser);
 		}
-
+		
 		archiMateModel.setRootDiagramPath(getSessionController().getProperty("location.diagram"));
 
 		archimateExtractionService.extractArchimateModel(archiMateModel);
@@ -383,6 +386,14 @@ public class ExtractionController extends AbstractController {
 
 	public void setSelectedViews(List<ModelViewEnum> selectedViews) {
 		this.selectedViews = selectedViews;
+	}
+
+	public ArchimateModelDao getArchimateModelDao() {
+		return archimateModelDao;
+	}
+
+	public void setArchimateModelDao(ArchimateModelDao archimateModelDao) {
+		this.archimateModelDao = archimateModelDao;
 	}
 
 	

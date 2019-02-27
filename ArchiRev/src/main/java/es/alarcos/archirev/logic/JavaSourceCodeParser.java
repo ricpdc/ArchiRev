@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -168,6 +169,12 @@ public class JavaSourceCodeParser extends AbstractSourceCodeParser implements Se
 
 	@Override
 	public Document generateKdmCodeElements(Source zipSource, Document document) throws ZipException, IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Document generateKdmRelationships(Source zipSource, Document kdmDocument) throws ZipException, IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}

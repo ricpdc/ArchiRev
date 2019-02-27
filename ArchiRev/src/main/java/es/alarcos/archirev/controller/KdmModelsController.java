@@ -103,7 +103,7 @@ public class KdmModelsController extends AbstractController {
 		selectedModel = model;
 	}
 
-	private String createExportedFile(final Model model) {
+	private String createExportedFile(final KdmModel model) {
 		File folder = new File(getSessionController().getProperty("location.export"));
 		if (!folder.exists()) {
 			folder.mkdir();
@@ -135,7 +135,7 @@ public class KdmModelsController extends AbstractController {
 		this.sessionController = sessionController;
 	}
 
-	public Model getSelectedModel() {
+	public KdmModel getSelectedModel() {
 		return selectedModel;
 	}
 

@@ -7,11 +7,11 @@ import es.alarcos.archirev.model.View;
 
 @Repository
 @Component
-public class ModelDao extends AbstractDao<View> {
+public class ViewDao extends AbstractDao<View> {
 
 	private static final long serialVersionUID = 8335418223699404609L;
 
-	public ModelDao() {
+	public ViewDao() {
 		super();
 		setClazz(View.class);
 	}

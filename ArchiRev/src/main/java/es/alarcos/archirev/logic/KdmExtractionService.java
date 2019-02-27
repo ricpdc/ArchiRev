@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -23,11 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.xml.sax.SAXException;
-
-import com.archimatetool.model.impl.ArchimateElement;
-import com.archimatetool.model.impl.ArchimateRelationship;
 
 import es.alarcos.archirev.model.KdmModel;
 import es.alarcos.archirev.model.Source;
@@ -55,8 +53,7 @@ public class KdmExtractionService implements Serializable {
 
 	private AbstractSourceCodeParser sourceCodeParser;
 
-	private MultiValueMap<String, ArchimateElement> modelElementsByClassName = new LinkedMultiValueMap<>();
-	private MultiValueMap<String, ArchimateRelationship> modelRelationshipsByClassName = new LinkedMultiValueMap<>();
+	
 	private File kdmFile;
 
 	private Document kdmDocument;
@@ -92,14 +89,12 @@ public class KdmExtractionService implements Serializable {
 	}
 
 	private void extractKdmModelFromSourceCode(KdmModel kdmModel, Source source) {
-		modelElementsByClassName = new LinkedMultiValueMap<>();
-		modelRelationshipsByClassName = new LinkedMultiValueMap<>();
 		try {
 			org.jdom2.Element eModel = createRootElement(kdmModel.getName());
 			kdmDocument = new Document(eModel);
 			
 			kdmDocument = sourceCodeParser.generateKdmCodeElements(source, kdmDocument);
-			//modelRelationshipsByClassName = sourceCodeParser.computeModelRelationshipsByClassName(source, modelElementsByClassName);
+			kdmDocument = sourceCodeParser.generateKdmRelationships(source, kdmDocument);
 			kdmFile = generateKdmModel(kdmModel);
 			long time = System.nanoTime();
 			LOGGER.info(">Time> " + ModelViewEnum.ALL.getLabel() + ": " + (System.nanoTime() - time));

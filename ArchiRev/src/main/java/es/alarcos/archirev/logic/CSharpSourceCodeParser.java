@@ -9,14 +9,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.zip.ZipEntry;
@@ -24,6 +25,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.antlr.v4.runtime.ANTLRFileStream;
+import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.lang3.StringUtils;
@@ -76,6 +78,10 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 	private TreeNode treeRoot;
 
 	private MultiValueMap<String, ArchimateElement> modelElementsByClassName;
+	
+	private Map<String, String> kdmElementsIds;
+
+	private Map<String, Element> entriesToKdmElementMap;
 
 	public CSharpSourceCodeParser(final String setup) {
 		super(setup);
@@ -142,6 +148,8 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		numberOfCsharpFiles = 0;
 		wrongFiles = new HashSet<>();
 		modelElementsByClassName = new LinkedMultiValueMap<>();
+		kdmElementsIds = new HashMap<String, String>();
+		entriesToKdmElementMap = new HashMap<String, Element>();
 
 		File tempZipFile = File.createTempFile("zipFile", ".tmp", null);
 		FileOutputStream fos = new FileOutputStream(tempZipFile);
@@ -187,31 +195,6 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		}
 		
 		processEntryToKdmCodeElement(treeRoot, model, zipFile);
-		
-//		while (entries.hasMoreElements()) {
-//			ZipEntry zipEntry = entries.nextElement();
-//			if (zipEntry.isDirectory()) {
-//				Element packageEntry = new Element("package");
-//				packageEntry.setText(zipEntry.getName());
-//				model.addContent(packageEntry);
-//			}
-//
-//			if (!zipEntry.getName().endsWith(".cs")) {
-//				continue;
-//			}
-//
-//			try {
-//				Element fileEntry = new Element("csharp-file");
-//				fileEntry.setText(zipEntry.getName());
-//				model.addContent(fileEntry);
-//				parseCsharpFileAndGenerateKdm(zipFile, zipEntry, modelElementsByClassName, document);
-//				numberOfCsharpFiles++;
-//			} catch (Exception ex) {
-//				LOGGER.error(zipEntry.getName() + " cannot be parsed");
-//				// wrongFiles.add(zipEntry.getName());
-//			}
-//
-//		}
 
 		logStats();
 
@@ -225,7 +208,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			for (TreeNode childNode : treeNode.getChildren()) {
 				Element packageE = new Element("codeElement");
 				packageE.setAttribute("type", "code:Package", nsXsi);
-				addXmiIdentifier(packageE);
+				String id = addXmiIdentifier(packageE);
 				packageE.setAttribute("name", zipEntry.getName());
 				element.addContent(packageE);
 				processEntryToKdmCodeElement(childNode, packageE, zipFile);
@@ -235,7 +218,9 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			//process c# file
 			Element compilationUnitE = new Element("codeElement");
 			compilationUnitE.setAttribute("type", "code:CompilationUnit", nsXsi);
-			addXmiIdentifier(compilationUnitE);
+			String id = addXmiIdentifier(compilationUnitE);
+			kdmElementsIds.put(getSimpleClassName(zipEntry.getName()), id);
+			entriesToKdmElementMap.put(zipEntry.getName(), compilationUnitE);
 			compilationUnitE.setAttribute("name", zipEntry.getName());
 			element.addContent(compilationUnitE);
 			parseCsharpFileForKdmGeneration(zipFile, zipEntry, compilationUnitE, modelElementsByClassName);
@@ -438,7 +423,6 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 //				} else {
 //					LOGGER.debug(String.format("Not mapped annotation \"%s\" in class %s", classTag, zipEntryName));
 //				}
-				//<annotation text="dsafasfasfasdf"/>
 				
 				Element annotation = new Element("annotation");
 				annotation.setAttribute("text", classTag);
@@ -473,88 +457,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 
 	
 	
-	private void parseCsharpFileAndGenerateKdm(final ZipFile zipFile, final ZipEntry zipEntry,
-			final MultiValueMap<String, ArchimateElement> modelElementsByClassName, Document document) throws IOException {
-		long time = System.nanoTime();
-		String zipEntryName = zipEntry.getName();
-		String simpleClassName = getSimpleClassName(zipEntryName);
-
-		String msg = "" + zipEntryName + ";" + simpleClassName + ";";
-
-//		for (String exclusion_tag : exclusions) {
-//			if (simpleClassName.contains(exclusion_tag)) {
-//				return;
-//			}
-//		}
-
-		File tempFile = getTempFileWithoutDirectives(zipFile, zipEntry);
-		if (Files.readAllBytes(tempFile.toPath()).length == 0) {
-			return;
-		}
-
-		ANTLRFileStream grammarInput = new ANTLRFileStream(tempFile.getAbsolutePath());
-		CSharpLexer lexer = new CSharpLexer(grammarInput);
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		CSharpParser parser = new CSharpParser(tokens);
-
-		SyntaxErrorListener listener = new SyntaxErrorListener();
-		parser.addErrorListener(listener);
-
-		delcaredTypeNames = new TreeSet<String>();
-
-		Compilation_unitContext compilation_unit = parser.compilation_unit();
-		for (int i = 0; i < compilation_unit.getChildCount(); i++) {
-			ParseTree tree = compilation_unit.getChild(i);
-			getDeclaredTypes(tree);
-		}
-
-		// LOGGER.info("Parsing.... " + zipEntryName);
-		if (listener.getSyntaxErrors().isEmpty()) {
-			Set<ArchimateElementEnum> uniqueElements = new HashSet<>();
-			boolean mappedSuperclass = false;
-
-			List<String> declaredTypeTags = new ArrayList<>();
-			for (String className : delcaredTypeNames) {
-				declaredTypeTags.addAll(Arrays.asList(StringUtils.splitByCharacterTypeCamelCase(className)));
-			}
-
-			for (String classTag : declaredTypeTags) {
-				List<ArchimateElementEnum> elementList = mapping.get(classTag);
-				if (elementList != null) {
-					uniqueElements.addAll(elementList);
-					if (!mappedSuperclass && MAPPED_SUPERCLASS_ANNOTATION.equals(classTag)) {
-						mappedSuperclass = true;
-					}
-				} else {
-					LOGGER.debug(String.format("Not mapped annotation \"%s\" in class %s", classTag, zipEntryName));
-				}
-			}
-
-			msg += (Files.lines(tempFile.toPath()).count() + ";");
-			msg += ((System.nanoTime() - time) + ";");
-			time = System.nanoTime();
-
-			createModelElements(modelElementsByClassName, simpleClassName, uniqueElements, mappedSuperclass);
-
-			List<ArchimateElement> elementsCreated = modelElementsByClassName
-					.get(getSimpleClassName(zipEntry.getName()));
-			int numberOfElements = elementsCreated != null ? elementsCreated.size() : 0;
-			msg += (numberOfElements + ";");
-			msg += ((System.nanoTime() - time) + ";\n");
-			try {
-				Files.write(elementsLog.toPath(), msg.getBytes(), StandardOpenOption.APPEND);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-		} else {
-			wrongFiles.add(zipEntryName);
-			for (SyntaxError syntaxError : listener.getSyntaxErrors()) {
-				LOGGER.error("\tSYNTACTIC ERROR: " + syntaxError);
-			}
-		}
-
-	}
+	
 	
 	private File getTempFileWithoutDirectives(final ZipFile zipFile, final ZipEntry zipEntry) throws IOException {
 		File tempFile = File.createTempFile(zipFile.getName(), "-withoutDirectives.tmp");
@@ -683,6 +586,114 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 
 		return modelRelationshipsByClassName;
 	}
+	
+	
+	@Override
+	public Document generateKdmRelationships(Source zipSource, Document kdmDocument) throws ZipException, IOException {
+
+		numberOfCsharpFiles = 0;
+		wrongFiles = new HashSet<>();
+
+		File tempZipFile = File.createTempFile("zipFile", ".tmp", null);
+		FileOutputStream fos = new FileOutputStream(tempZipFile);
+		fos.write(zipSource.getFile());
+		fos.close();
+
+		ZipFile zipFile = getZipFile(tempZipFile);
+
+		relationshipsLog = new File("C:\\Temp\\relationships.txt");
+		if (relationshipsLog.exists()) {
+			relationshipsLog.delete();
+		}
+		relationshipsLog.createNewFile();
+		try {
+			Files.write(relationshipsLog.toPath(),
+					"path;name;linesOfCode;parsingTime;numberOfRelationships;relationshipsGeneratingTime\n".getBytes(),
+					StandardOpenOption.APPEND);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		@SuppressWarnings("unchecked")
+		Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zipFile.entries();
+		while (entries.hasMoreElements()) {
+			ZipEntry zipEntry = entries.nextElement();
+			if (zipEntry.isDirectory()) {
+				continue;
+			}
+			if (!zipEntry.getName().endsWith(".cs")) {
+				continue;
+			}
+			try {
+				Element element = entriesToKdmElementMap.get(zipEntry.getName());
+				processEntryToKdmRelationship(zipFile, zipEntry, kdmDocument, element);
+				numberOfCsharpFiles++;
+			} catch (Exception ex) {
+				LOGGER.error(zipEntry.getName() + " cannot be parsed");
+				ex.printStackTrace();
+			}
+		}
+		return kdmDocument;
+	}
+	
+	private void processEntryToKdmRelationship(final ZipFile zipFile, final ZipEntry zipEntry,
+			Document kdmDocumentm, Element element) throws IOException {
+		long time = System.nanoTime();
+		String msg = "" + zipEntry.getName() + ";" + getSimpleClassName(zipEntry.getName()) + ";";
+		File tempFile = getTempFileWithoutDirectives(zipFile, zipEntry);
+		if (Files.readAllBytes(tempFile.toPath()).length == 0) {
+			return;
+		}
+
+		ANTLRFileStream grammarInput = new ANTLRFileStream(tempFile.getAbsolutePath());
+		CSharpLexer lexer = new CSharpLexer(grammarInput);
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		CSharpParser parser = new CSharpParser(tokens);
+
+		SyntaxErrorListener listener = new SyntaxErrorListener();
+		parser.addErrorListener(listener);
+
+		callsToCallableUnits = new TreeSet<String>();
+		Compilation_unitContext compilation_unit = parser.compilation_unit();
+		for (int i = 0; i < compilation_unit.getChildCount(); i++) {
+			ParseTree tree = compilation_unit.getChild(i);
+			getCallToCallableUnits(tree);
+		}
+		Namespace nsXsi = Namespace.getNamespace("xsi", NS_XSI);
+		
+		String zipEntrySimpleName = getSimpleClassName(zipEntry.getName());
+		// LOGGER.info("Parsing.... " + zipEntryName);
+		if (listener.getSyntaxErrors().isEmpty()) {
+			Set<String> visitedRelationships = new HashSet<>();
+			msg += (Files.lines(tempFile.toPath()).count() + ";");
+			msg += ((System.nanoTime() - time) + ";");
+			time = System.nanoTime();
+			String from = kdmElementsIds.get(zipEntrySimpleName);
+			for (String referencedClass : callsToCallableUnits) {
+				String to = kdmElementsIds.get(referencedClass);
+				if(to != null) {
+					Element relationE = new Element("codeRelation");
+					relationE.setAttribute("type", "code:CodeRelationship", nsXsi);
+					relationE.setAttribute("from", from);
+					relationE.setAttribute("to", to);				
+					element.addContent(relationE);
+				}
+			}
+			
+			msg += ((System.nanoTime() - time) + ";\n");
+			try {
+				Files.write(relationshipsLog.toPath(), msg.getBytes(), StandardOpenOption.APPEND);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			wrongFiles.add(zipEntry.getName());
+			for (SyntaxError syntaxError : listener.getSyntaxErrors()) {
+				LOGGER.error("\tSYNTACTIC ERROR: " + syntaxError);
+			}
+		}
+	}
+
 
 	private void parserCsharpFileForRelationships(final ZipFile zipFile, final ZipEntry zipEntry,
 			final MultiValueMap<String, ArchimateElement> modelElementsByClassName,
