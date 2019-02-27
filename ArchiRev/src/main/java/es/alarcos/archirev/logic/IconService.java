@@ -16,8 +16,6 @@ public class IconService implements Serializable {
 
 	private static final long serialVersionUID = 8596009485095134469L;
 
-	private static Logger LOGGER = LoggerFactory.getLogger(IconService.class);
-
 	public static String getIcon(ArchimateConcept archimateConcept) {
 		return getIcon(archimateConcept.getClass().getSimpleName());
 	}

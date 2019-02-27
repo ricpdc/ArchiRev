@@ -25,7 +25,6 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.antlr.v4.runtime.ANTLRFileStream;
-import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.lang3.StringUtils;
@@ -142,6 +141,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Document generateKdmCodeElements(Source zipSource, Document document)
 			throws ZipException, IOException {
@@ -158,7 +158,6 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 
 		ZipFile zipFile = getZipFile(tempZipFile);
 
-		@SuppressWarnings("unchecked")
 		Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zipFile.entries();
 
 		elementsLog = new File("C:\\Temp\\elements-kdm.txt");
@@ -208,7 +207,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			for (TreeNode childNode : treeNode.getChildren()) {
 				Element packageE = new Element("codeElement");
 				packageE.setAttribute("type", "code:Package", nsXsi);
-				String id = addXmiIdentifier(packageE);
+				addXmiIdentifier(packageE);
 				packageE.setAttribute("name", zipEntry.getName());
 				element.addContent(packageE);
 				processEntryToKdmCodeElement(childNode, packageE, zipFile);
@@ -664,7 +663,6 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		String zipEntrySimpleName = getSimpleClassName(zipEntry.getName());
 		// LOGGER.info("Parsing.... " + zipEntryName);
 		if (listener.getSyntaxErrors().isEmpty()) {
-			Set<String> visitedRelationships = new HashSet<>();
 			msg += (Files.lines(tempFile.toPath()).count() + ";");
 			msg += ((System.nanoTime() - time) + ";");
 			time = System.nanoTime();

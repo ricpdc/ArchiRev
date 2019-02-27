@@ -2,9 +2,6 @@
 
 package es.alarcos.archirev.parser.csharp;
 
-import java.util.Stack;
-import java.util.HashSet;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 /**

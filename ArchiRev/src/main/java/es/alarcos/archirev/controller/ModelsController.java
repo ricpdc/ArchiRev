@@ -26,10 +26,9 @@ import org.springframework.stereotype.Controller;
 
 import es.alarcos.archirev.logic.ArchimateExtractionService;
 import es.alarcos.archirev.logic.IconService;
+import es.alarcos.archirev.model.ArchimateModel;
 import es.alarcos.archirev.model.Element;
 import es.alarcos.archirev.model.Extraction;
-import es.alarcos.archirev.model.Model;
-import es.alarcos.archirev.model.ArchimateModel;
 import es.alarcos.archirev.model.Project;
 import es.alarcos.archirev.model.Relationship;
 import es.alarcos.archirev.model.View;
@@ -50,9 +49,6 @@ public class ModelsController extends AbstractController {
 
 	@Autowired
 	private ArchimateExtractionService extractionService;
-
-	@Autowired
-	private IconService iconService;
 
 	private ArchimateModel selectedModel;
 	private View selectedView;
