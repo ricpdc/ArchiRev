@@ -9,6 +9,10 @@ import es.alarcos.archirev.model.KdmModel;
 @Component
 public class KdmModelDao extends AbstractDao<KdmModel> {
 
+
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = -3619685785339351977L;
 
 	public KdmModelDao() {

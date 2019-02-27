@@ -1,5 +1,7 @@
 package es.alarcos.archirev.controller;
 
+import java.io.Serializable;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
@@ -14,7 +16,9 @@ import es.alarcos.archirev.persistency.UserDao;
 
 @ManagedBean(name = "userLoginController")
 @Controller
-public class UserLoginController {
+public class UserLoginController implements Serializable {
+
+	private static final long serialVersionUID = -3191907711639448154L;
 
 	private String username;
 

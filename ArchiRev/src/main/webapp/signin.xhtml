@@ -1,0 +1,31 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dialog id="signinDialog" widgetVar="signinDialog" header="Sign In" resizable="false" >
+        <h:panelGrid columns="2" cellpadding="5" onkeypress="if (event.keyCode == 13) { document.getElementById('mainForm:performsigninButtonId').click(); return false; }">
+            <h:outputLabel for="signin-username" value="Username (*)" />
+            <p:inputText id="signin-username" value="#{signinController.username}" required="false" label="username" />
+ 
+            <h:outputLabel for="signin-password" value="Password (*)" />
+            <p:password id="signin-password" value="#{signinController.password}" required="false" label="password" />
+            
+            <h:outputLabel for="signin-repeated-password" value="Repeat Password (*)" />
+            <p:password id="signin-repeated-password" value="#{signinController.repeatedPassword}" required="false" label="repeated password" />
+            
+            <h:outputLabel for="signin-affiliation" value="Affiliation" />
+            <p:inputText id="signin-affiliation" value="#{signinController.affiliation}" required="false" label="affiliation" />
+            
+            <h:outputLabel for="signin-email" value="Email" />
+            <p:inputText id="signin-email" value="#{signinController.email}" required="false" label="email" />
+ 
+            <f:facet name="footer">
+				<p:commandButton id="performsigninButtonId" value="Join" update="mainForm:messages, mainForm:toolbar" icon="ui-icon-key"
+					actionListener="#{signinController.signin}" />			
+			</f:facet> 		
+        </h:panelGrid>
+    </p:dialog>
+ 
+</ui:composition>

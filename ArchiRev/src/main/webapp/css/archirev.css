@@ -37,3 +37,8 @@ dd label[class*='ui-widget'] {
 	width: 75% !important;
 	vertical-align: top;
 }
+
+[class*='ui-clock']  {
+	margin-right:20px !important;
+	font-size: small !important;
+}

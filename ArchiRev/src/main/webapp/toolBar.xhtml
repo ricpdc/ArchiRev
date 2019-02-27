@@ -20,16 +20,22 @@
 				class="ui-icon ui-icon-grip-dotted-vertical" />
 			</span>
 
-			<p:commandButton disabled="#{!userLoginController.loggedIn}" type="button" title="Save" icon="ui-icon-disk" />
-			<p:commandButton disabled="#{!userLoginController.loggedIn}" type="button" title="Delete" icon="ui-icon-trash" />
-			<p:commandButton disabled="#{!userLoginController.loggedIn}" type="button" title="Print" icon="ui-icon-print" />
+			<p:commandButton disabled="#{!userLoginController.loggedIn}" type="button" title="Save" icon="ui-icon-disk" rendered="false"/>
+			<p:commandButton disabled="#{!userLoginController.loggedIn}" type="button" title="Delete" icon="ui-icon-trash" rendered="false" />
+			<p:commandButton disabled="#{!userLoginController.loggedIn}" type="button" title="Print" icon="ui-icon-print" rendered="false" />
 		</f:facet>
 
 		<f:facet name="right">
-			<h:outputText value="Welcome, #{userLoginController.username}     " rendered="#{userLoginController.loggedIn}" style="" />
-			<p:commandButton id="logoutDialogButton" rendered="#{userLoginController.loggedIn}" title="Logout" value="Logout" icon="ui-icon-person"
+			
+			<p:clock id="clock-toolbar"/>
+			
+			<h:outputText value="User :  #{userLoginController.username}     " rendered="#{userLoginController.loggedIn}" style="margin-right: 40px; font-size:smaller" />
+			<p:commandButton id="logoutDialogButton" rendered="#{userLoginController.loggedIn}" title="Logout" value="Logout" icon="ui-icon-unlocked"
 				 action="#{sessionController.logout}" update="mainForm:toolbar" />
-			<p:commandButton id="loginDialogButton" rendered="#{!userLoginController.loggedIn}" title="Login" value="Login" icon="ui-icon-person"
+			<p:commandButton id="signInButton" rendered="#{!userLoginController.loggedIn}" title="Sign In" value="Sign In" icon="ui-icon-key"
+				 actionListener="#{signinController.showDialog()}" onClick="updateSignInDialog();"/>
+			<p:remoteCommand name="updateSignInDialog" actionListener="#{signinController.showDialog()}" oncomplete="PF('igninDialog').show();"/>
+			<p:commandButton id="loginDialogButton" rendered="#{!userLoginController.loggedIn}" title="Login" value="Login" icon="ui-icon-locked"
 				 onclick="PF('loginDialog').show();" />
 			<p:menuButton  disabled="#{!userLoginController.loggedIn}" value="Options" rendered="false">
 				<p:menuitem value="Save" actionListener="#{toolbarController.save}"

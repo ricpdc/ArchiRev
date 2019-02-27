@@ -4,11 +4,22 @@ import java.io.Serializable;
 
 import javax.inject.Singleton;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.archimatetool.model.impl.*;
+import com.archimatetool.model.impl.AccessRelationship;
+import com.archimatetool.model.impl.AggregationRelationship;
+import com.archimatetool.model.impl.ApplicationComponent;
+import com.archimatetool.model.impl.ApplicationFunction;
+import com.archimatetool.model.impl.ApplicationProcess;
+import com.archimatetool.model.impl.ApplicationService;
+import com.archimatetool.model.impl.ArchimateConcept;
+import com.archimatetool.model.impl.AssociationRelationship;
+import com.archimatetool.model.impl.CompositionRelationship;
+import com.archimatetool.model.impl.DataObject;
+import com.archimatetool.model.impl.RealizationRelationship;
+import com.archimatetool.model.impl.ServingRelationship;
+import com.archimatetool.model.impl.SpecializationRelationship;
+import com.archimatetool.model.impl.TriggeringRelationship;
 
 @Singleton
 @Service

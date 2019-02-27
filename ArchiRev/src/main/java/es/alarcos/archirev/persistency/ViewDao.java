@@ -9,7 +9,7 @@ import es.alarcos.archirev.model.View;
 @Component
 public class ViewDao extends AbstractDao<View> {
 
-	private static final long serialVersionUID = 8335418223699404609L;
+	private static final long serialVersionUID = -1453942088432592119L;
 
 	public ViewDao() {
 		super();

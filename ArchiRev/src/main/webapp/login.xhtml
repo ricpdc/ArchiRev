@@ -4,13 +4,13 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 
-	<p:dialog id="loginDialog" widgetVar="loginDialog" header="Login" resizable="false">
+	<p:dialog id="loginDialog" widgetVar="loginDialog" header="Login" resizable="false" >
         <h:panelGrid columns="2" cellpadding="5" onkeypress="if (event.keyCode == 13) { document.getElementById('mainForm:performLoginButtonId').click(); return false; }">
             <h:outputLabel for="username" value="Username:" />
-            <p:inputText id="username" value="#{userLoginController.username}" required="true" label="username" />
+            <p:inputText id="username" value="#{userLoginController.username}" required="false" label="username" />
  
             <h:outputLabel for="password" value="Password:" />
-            <p:password id="password" value="#{userLoginController.password}" required="true" label="password" />
+            <p:password id="password" value="#{userLoginController.password}" required="false" label="password" />
  
             <f:facet name="footer">
 				<p:commandButton id="performLoginButtonId" value="Login" update="mainForm:messages, mainForm:toolbar"

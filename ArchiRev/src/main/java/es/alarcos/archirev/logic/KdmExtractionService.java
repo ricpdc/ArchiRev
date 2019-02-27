@@ -31,9 +31,8 @@ import es.alarcos.archirev.model.enums.ModelViewEnum;
 @Singleton
 @Service
 public class KdmExtractionService implements Serializable {
-
-
-	private static final long serialVersionUID = -4392305100176250199L;
+	
+	private static final long serialVersionUID = 8291390372516503166L;
 
 	static Logger LOGGER = LoggerFactory.getLogger(KdmExtractionService.class);
 	

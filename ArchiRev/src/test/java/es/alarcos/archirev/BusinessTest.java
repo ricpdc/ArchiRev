@@ -93,9 +93,9 @@ import es.alarcos.archirev.logic.ArchimateElementEnum;
 import es.alarcos.archirev.logic.connector.ConnectorEnum;
 import es.alarcos.archirev.logic.layout.ExtendedHierarchicalLayout;
 import es.alarcos.archirev.logic.shape.ShapeEnum;
-import the.bytecode.club.bytecodeviewer.DecompilerSettings;
-import the.bytecode.club.bytecodeviewer.decompilers.CFRDecompiler.Settings;
-import the.bytecode.club.bytecodeviewer.decompilers.Decompiler;
+//import the.bytecode.club.bytecodeviewer.DecompilerSettings;
+//import the.bytecode.club.bytecodeviewer.decompilers.CFRDecompiler.Settings;
+//import the.bytecode.club.bytecodeviewer.decompilers.Decompiler;
 
 class BusinessTest {
 
@@ -672,9 +672,9 @@ class BusinessTest {
 		mxGraph graph = new mxGraph();
 		graph.getModel().beginUpdate();
 		try {
-			Namespace nsArchimate = Namespace.getNamespace(NS_ARCHIMATE);
-			Namespace nsDc = Namespace.getNamespace("dc", NS_ELEMENTS);
-			Namespace nsXsi = Namespace.getNamespace("xsi", NS_XSI);
+//			Namespace nsArchimate = Namespace.getNamespace(NS_ARCHIMATE);
+//			Namespace nsDc = Namespace.getNamespace("dc", NS_ELEMENTS);
+//			Namespace nsXsi = Namespace.getNamespace("xsi", NS_XSI);
 
 			Element eModel = createXmlRootElement(name);
 			Document doc = new Document(eModel);

@@ -19,6 +19,12 @@ public class User extends AbstractEntity {
 
 	@Column(name = "password")
 	private String password;
+	
+	@Column(name = "email")
+	private String email;
+	
+	@Column(name = "affiliation")
+	private String affiliation;
 
 	public User() {
 		super();
@@ -38,6 +44,22 @@ public class User extends AbstractEntity {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getAffiliation() {
+		return affiliation;
+	}
+
+	public void setAffiliation(String affiliation) {
+		this.affiliation = affiliation;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	
