@@ -4,5 +4,15 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd"
     version="2.2">
+    
+    <converter>
+	    <converter-id>timestampConverter</converter-id>
+	    <converter-class>es.alarcos.archirev.controller.converter.TimestampConverter</converter-class>
+	</converter>
+	
+	<converter>
+	    <converter-id>sourceConverter</converter-id>
+	    <converter-class>es.alarcos.archirev.controller.converter.PickListSourceConverter</converter-class>
+	</converter>
 
 </faces-config>
