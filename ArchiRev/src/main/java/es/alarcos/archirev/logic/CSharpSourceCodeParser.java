@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
@@ -331,7 +332,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 				}
 			}
 
-			msg += (Files.lines(tempFile.toPath()).count() + ";");
+			msg += (Files.lines(tempFile.toPath(), Charset.defaultCharset()).count() + ";");
 			msg += ((System.nanoTime() - time) + ";");
 			time = System.nanoTime();
 
@@ -428,7 +429,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 				element.addContent(annotation);
 			}
 
-			msg += (Files.lines(tempFile.toPath()).count() + ";");
+			msg += (Files.lines(tempFile.toPath(), Charset.defaultCharset()).count() + ";");
 			msg += ((System.nanoTime() - time) + ";");
 			time = System.nanoTime();
 
@@ -663,7 +664,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		String zipEntrySimpleName = getSimpleClassName(zipEntry.getName());
 		// LOGGER.info("Parsing.... " + zipEntryName);
 		if (listener.getSyntaxErrors().isEmpty()) {
-			msg += (Files.lines(tempFile.toPath()).count() + ";");
+			msg += (Files.lines(tempFile.toPath(), Charset.defaultCharset()).count() + ";");
 			msg += ((System.nanoTime() - time) + ";");
 			time = System.nanoTime();
 			String from = kdmElementsIds.get(zipEntrySimpleName);
@@ -722,7 +723,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		// LOGGER.info("Parsing.... " + zipEntryName);
 		if (listener.getSyntaxErrors().isEmpty()) {
 			Set<String> visitedRelationships = new HashSet<>();
-			msg += (Files.lines(tempFile.toPath()).count() + ";");
+			msg += (Files.lines(tempFile.toPath(), Charset.defaultCharset()).count() + ";");
 			msg += ((System.nanoTime() - time) + ";");
 			time = System.nanoTime();
 			for (String referencedClass : callsToCallableUnits) {
