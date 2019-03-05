@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.archimatetool</groupId>
+  <artifactId>com.archimatetool.model</artifactId>
+  <versioning>
+    <versions>
+      <version>4.2.0-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20190305145720</lastUpdated>
+  </versioning>
+</metadata>

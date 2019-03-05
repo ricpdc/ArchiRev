@@ -19,8 +19,18 @@
 		<java.version>1.8</java.version>
 		<start-class>es.alarcos.archirev.ArchiRevApplicationWar</start-class>
 	</properties>
+	
+	<repositories>
+	    <repository>
+	        <id>local-maven-repo</id>
+	        <url>file:///${project.basedir}/local-maven-repo</url>
+	    </repository>
+	</repositories>
 
 	<dependencies>
+	
+	
+		
 		<!-- Check if only some concrete libs are necesary to be imported -->
 		<dependency>
 			<groupId>the.bytecode.club</groupId>
@@ -36,16 +46,12 @@
 			<groupId>com.archimatetool</groupId>
 			<artifactId>com.archimatetool.model</artifactId>
 			<version>4.2.0-SNAPSHOT</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/resources/lib/com.archimatetool.model.jar</systemPath>
 		</dependency>
 
 		<dependency>
 			<groupId>com.mxgraph</groupId>
-			<artifactId>jgraphxl</artifactId>
+			<artifactId>jgraphx</artifactId>
 			<version>3.9.6</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/resources/lib/jgraphx.jar</systemPath>
 		</dependency>
 
 
