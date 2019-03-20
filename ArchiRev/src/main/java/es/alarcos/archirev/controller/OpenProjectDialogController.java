@@ -50,6 +50,7 @@ public class OpenProjectDialogController extends AbstractDialogController {
 	}
      
     public void onOpen() {
+    	sessionController.setActiveViewpoints(false);
     	projects = projectDao.findProjectsByUser(sessionController.getLoggedUser());
     	RequestContext context = RequestContext.getCurrentInstance();
     	context.update("mainForm:openProjectDialog");

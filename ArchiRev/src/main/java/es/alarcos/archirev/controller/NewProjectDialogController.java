@@ -40,6 +40,7 @@ public class NewProjectDialogController extends AbstractDialogController {
 
 	public void onOpen() {
 		sessionController.createEmptyProject();
+		sessionController.setActiveViewpoints(false);
 		RequestContext context = RequestContext.getCurrentInstance();
 		context.update("mainForm:newProjectDialog");
 		context.execute("PF('newProjectDialog').show()");

@@ -43,6 +43,9 @@ public class SessionController extends AbstractController {
 	private Project project;
 
 	private int activeTab;
+	private int activeViewpointsTab;
+	
+	private boolean activeViewpoints;
 
 	public SessionController() {
 		super();
@@ -63,6 +66,7 @@ public class SessionController extends AbstractController {
 	public boolean isActiveProject() {
 		return project != null && project.getId() != null;
 	}
+	
 
 	public void refreshProject() {
 		getProjectDao().refresh(project);
@@ -96,6 +100,12 @@ public class SessionController extends AbstractController {
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 	    ec.redirect(((HttpServletRequest) ec.getRequest()).getRequestURI());
 	}
+	
+	public void onToggleViewpoints() throws IOException {
+		activeViewpoints = !activeViewpoints;
+		refreshPage();
+	}
+	
 
 	public boolean isLoggedIn() {
 		return userLoginController.isLoggedIn();
@@ -140,6 +150,22 @@ public class SessionController extends AbstractController {
 
 	public String getProperty(String key) {
 		return env.getProperty(key);
+	}
+
+	public int getActiveViewpointsTab() {
+		return activeViewpointsTab;
+	}
+
+	public void setActiveViewpointsTab(int activeViewpointsTab) {
+		this.activeViewpointsTab = activeViewpointsTab;
+	}
+
+	public boolean isActiveViewpoints() {
+		return activeViewpoints;
+	}
+
+	public void setActiveViewpoints(boolean activeViewpoints) {
+		this.activeViewpoints = activeViewpoints;
 	}
 
 }

@@ -30,13 +30,19 @@
 
 		<p:tabView id="mainTabs" widgetVar="mainTabs"
 			activeIndex="#{sessionController.activeTab}" cache="false"
-			rendered="#{sessionController.activeProject}">
+			rendered="#{sessionController.activeProject and !sessionController.activeViewpoints}">
 			<p:ajax event="tabChange" listener="#{sessionController.onTabChange}"
 				oncomplete="resizeDiagram()" />
 			<ui:include src="sources/sourcesTab.xhtml" />
 			<ui:include src="extraction/extractionTab.xhtml" />
 			<ui:include src="kdm/kdmModelsTab.xhtml" />
 			<ui:include src="eamodels/eamodelsTab.xhtml" />
+		</p:tabView>
+		
+		<p:tabView id="viewpointsTabs" widgetVar="viewpointsTabs"
+			activeIndex="#{sessionController.activeViewpointsTab}" cache="false"
+			rendered="#{sessionController.activeViewpoints}">
+			<ui:include src="viewpoints/viewpointsTab.xhtml" />
 		</p:tabView>
 
 		<ui:include src="project/newProjectDialog.xhtml" />
