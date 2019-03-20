@@ -38,6 +38,19 @@ dd label[class*='ui-widget'] {
 	vertical-align: top;
 }
 
+.viewpointInfoLeft {
+	width: 10% !important;
+	vertical-align: top;
+	font-weight: bold;
+	font-size: 0.75em;
+}
+
+.viewpointInfoRight {
+	width: 90% !important;
+	vertical-align: top;
+	font-size: 0.75em;
+}
+
 [class*='ui-clock']  {
 	margin-right:20px !important;
 	font-size: small !important;
