@@ -13,11 +13,18 @@
 			<p:panelGrid style="width:100%; border: none;" columns="2">
 
 				<p:outputPanel>
-					<p:outputLabel value="views..."/>
+				
+					<p:dataTable id="availableViewpointsTable" widgetVar="availableViewpointsTable"
+						 value="#{viewpointController.availableViewpoints}" var="viewpoint">
+						 <p:column headerText="Name">
+						 	<h:outputText value="#{viewpoint.name}" />
+						 </p:column>
+						 <p:column headerText="Explanation">
+						 	<h:outputText value="#{viewpoint.explanation}" />
+						 </p:column>
+					</p:dataTable>
 				</p:outputPanel>
 			</p:panelGrid>
-
-
 
 		</p:panel>
 
