@@ -13,15 +13,50 @@
 			<p:panelGrid style="width:100%; border: none;" columns="2">
 
 				<p:outputPanel>
-				
-					<p:dataTable id="availableViewpointsTable" widgetVar="availableViewpointsTable"
-						 value="#{viewpointController.availableViewpoints}" var="viewpoint">
-						 <p:column headerText="Name">
-						 	<h:outputText value="#{viewpoint.name}" />
-						 </p:column>
-						 <p:column headerText="Explanation">
-						 	<h:outputText value="#{viewpoint.explanation}" />
-						 </p:column>
+
+					<p:dataTable id="availableViewpointsTable"
+						widgetVar="availableViewpointsTable"
+						value="#{viewpointController.availableViewpoints}" var="viewpoint">
+
+						<p:ajax event="rowToggle"
+							listener="#{viewpointController.onRowToggle}" />
+
+						<p:column style="width:16px">
+							<p:rowToggler />
+						</p:column>
+						<p:column headerText="Name" filterBy="#{viewpoint.name}" filterMatchMode="contains">
+							<h:outputText value="#{viewpoint.name}" />
+						</p:column>
+						<p:column headerText="Scope" filterBy="#{viewpoint.scope.name}"
+							filterMatchMode="in">
+							<f:facet name="filter">
+								<p:selectCheckboxMenu label="Scope"
+									onchange="PF('availableViewpointsTable').filter()" scrollHeight="120">
+									<f:selectItems value="#{viewpointController.scopeItems}" />
+								</p:selectCheckboxMenu>
+							</f:facet>
+							<h:outputText value="#{viewpoint.scope.name}" />
+						</p:column>
+
+
+						<p:rowExpansion>
+							<p:panelGrid columns="2"
+								style="width:100%; border:1px solid gray !important;"
+								columnClasses="viewpointInfoLeft, viewpointInfoRight">
+
+								<h:outputText value="Scope" />
+								<h:outputText value="#{viewpoint.scope.name}" />
+								<h:outputText value="Explanation" />
+								<h:outputText value="#{viewpoint.explanation}" />
+
+								<h:outputText value="Example" />
+								<p:graphicImage
+									value="#{viewpointController.getExampleImage(viewpoint.example)}"
+									stream="false" />
+
+							</p:panelGrid>
+						</p:rowExpansion>
+
 					</p:dataTable>
 				</p:outputPanel>
 			</p:panelGrid>
