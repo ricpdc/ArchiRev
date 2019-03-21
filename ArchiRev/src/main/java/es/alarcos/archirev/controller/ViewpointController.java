@@ -7,7 +7,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.model.SelectItem;
 
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.ToggleEvent;
@@ -19,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import es.alarcos.archirev.model.Scope;
 import es.alarcos.archirev.model.Viewpoint;
 import es.alarcos.archirev.persistency.ScopeDao;
 import es.alarcos.archirev.persistency.ViewpointDao;
@@ -59,7 +57,7 @@ public class ViewpointController extends AbstractController {
 		if (sessionController.isActiveViewpoints()) {
 			setAvailableViewpoints(viewpointDao.findAll());
 			scopeItems = scopeDao.getScopeNames();
-			
+
 			RequestContext.getCurrentInstance().update("mainForm:viewpointsTabs");
 		}
 	}

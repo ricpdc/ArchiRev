@@ -16,7 +16,8 @@
 
 					<p:dataTable id="availableViewpointsTable"
 						widgetVar="availableViewpointsTable"
-						value="#{viewpointController.availableViewpoints}" var="viewpoint">
+						value="#{viewpointController.availableViewpoints}" var="viewpoint"
+						sortBy="#{viewpoint.scope.id}">
 
 						<p:ajax event="rowToggle"
 							listener="#{viewpointController.onRowToggle}" />
@@ -24,11 +25,11 @@
 						<p:column style="width:16px">
 							<p:rowToggler />
 						</p:column>
-						<p:column headerText="Name" filterBy="#{viewpoint.name}" filterMatchMode="contains">
+						<p:column headerText="Name" filterBy="#{viewpoint.name}" filterMatchMode="contains" sortBy="#{viewpoint.scope.id}. #{viewpoint.name}">
 							<h:outputText value="#{viewpoint.name}" />
 						</p:column>
 						<p:column headerText="Scope" filterBy="#{viewpoint.scope.name}"
-							filterMatchMode="in">
+							filterMatchMode="in" sortBy="#{viewpoint.scope.id}">
 							<f:facet name="filter">
 								<p:selectCheckboxMenu label="Scope"
 									onchange="PF('availableViewpointsTable').filter()" scrollHeight="120">
@@ -45,10 +46,18 @@
 								columnClasses="viewpointInfoLeft, viewpointInfoRight">
 
 								<h:outputText value="Scope" />
-								<h:outputText value="#{viewpoint.scope.name}" />
+								<h:outputText rendered="#{empty viewpoint.layerAndAspect}" value="#{viewpoint.scope.name} (#{viewpoint.scope.description})" />
+								<h:outputText rendered="#{not empty viewpoint.layerAndAspect}" value="#{viewpoint.layerAndAspect}" />
 								<h:outputText value="Explanation" />
 								<h:outputText value="#{viewpoint.explanation}" />
-
+								
+								
+								<h:outputText rendered="#{viewpoint.category!=null}" value="Category" />
+								<h:outputText rendered="#{viewpoint.category!=null}" value="#{viewpoint.category.name} (#{viewpoint.category.description})" />
+								<h:outputText rendered="#{not empty viewpoint.perspective}" value="Perspective" />
+								<h:outputText rendered="#{not empty viewpoint.perspective}" value="#{viewpoint.perspective}" />
+								
+							
 								<h:outputText value="Example" />
 								<p:graphicImage
 									value="#{viewpointController.getExampleImage(viewpoint.example)}"
