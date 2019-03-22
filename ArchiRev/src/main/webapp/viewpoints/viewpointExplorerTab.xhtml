@@ -77,7 +77,15 @@
 							<h:outputText id="purposes" value="#{viewpoint.displayedPurposes}"  />
 							<pe:tooltip for="purposes" value="#{viewpoint.displayedPurposes}" header="Purposes" atPosition="bottom left"/>
 						</p:column>
-						
+
+						<p:column style="width:80px;text-align: center" headerText="Elements">
+							<p:commandButton update="mainForm:elementsDialog" title="Elements in the viewpoint"
+								oncomplete="PF('elementsDialog').show()" icon="ui-icon-search" >
+								<f:setPropertyActionListener value="#{viewpoint}"
+									target="#{viewpointController.selectedViewpoint}" />
+							</p:commandButton>
+						</p:column>
+
 						<p:rowExpansion>
 							<p:panelGrid columns="2"
 								style="width:100%; border:1px solid gray !important;"
@@ -103,7 +111,7 @@
 							
 								<h:outputText value="Example" />
 								<p:graphicImage
-									value="#{viewpointController.getExampleImage(viewpoint.example)}"
+									value="#{viewpointController.getImageFromBytes(viewpoint.example)}"
 									stream="false" />
 
 							</p:panelGrid>

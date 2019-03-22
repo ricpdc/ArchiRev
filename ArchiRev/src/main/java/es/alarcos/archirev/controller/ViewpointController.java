@@ -23,11 +23,13 @@ import org.springframework.stereotype.Controller;
 
 import es.alarcos.archirev.model.AbstractEntity;
 import es.alarcos.archirev.model.Viewpoint;
+import es.alarcos.archirev.model.ViewpointElement;
 import es.alarcos.archirev.persistency.ConcernDao;
 import es.alarcos.archirev.persistency.PurposeDao;
 import es.alarcos.archirev.persistency.ScopeDao;
 import es.alarcos.archirev.persistency.StakeholderDao;
 import es.alarcos.archirev.persistency.ViewpointDao;
+import es.alarcos.archirev.persistency.ViewpointElementDao;
 
 @ManagedBean(name = "viewpointController")
 @Controller
@@ -56,11 +58,18 @@ public class ViewpointController extends AbstractController {
 	@Autowired
 	private StakeholderDao stakeholderDao;
 
+	@Autowired
+	private ViewpointElementDao viewpointElementDao;
+
+	private Viewpoint selectedViewpoint;
+
 	private List<Viewpoint> availableViewpoints;
 	private List<String> scopeItems;
 	private List<String> stakeholdersItems;
 	private List<String> concernItems;
 	private List<String> purposeItems;
+	private List<String> elementItems;
+	private List<ViewpointElement> allElements;
 
 	public ViewpointController() {
 		super();
@@ -79,6 +88,8 @@ public class ViewpointController extends AbstractController {
 			stakeholdersItems = stakeholderDao.getStakeholdersNames();
 			concernItems = concernDao.getConcernNames();
 			purposeItems = purposeDao.getPurposeNames();
+			elementItems = viewpointElementDao.getElementNames();
+			allElements = viewpointElementDao.findAll();
 
 			RequestContext.getCurrentInstance().update("mainForm:viewpointsTabs");
 		}
@@ -98,8 +109,11 @@ public class ViewpointController extends AbstractController {
 		}
 	}
 
-	public StreamedContent getExampleImage(byte[] example) throws IOException {
-		return new DefaultStreamedContent(new ByteArrayInputStream(example), "image/png");
+	public StreamedContent getImageFromBytes(byte[] bytes) throws IOException {
+		if(bytes == null) {
+			return null;
+		}
+		return new DefaultStreamedContent(new ByteArrayInputStream(bytes), "image/png");
 	}
 
 	public List<String> getScopeItems() {
@@ -150,6 +164,35 @@ public class ViewpointController extends AbstractController {
 
 	public void setConcernItems(List<String> concernItems) {
 		this.concernItems = concernItems;
+	}
+
+	public List<String> getElementItems() {
+		return elementItems;
+	}
+
+	public void setElementItems(List<String> elementItems) {
+		this.elementItems = elementItems;
+	}
+
+	public Viewpoint getSelectedViewpoint() {
+		return selectedViewpoint;
+	}
+
+	public void setSelectedViewpoint(Viewpoint selectedViewpoint) {
+		this.selectedViewpoint = selectedViewpoint;
+	}
+
+	public List<ViewpointElement> getAllElements() {
+		return allElements;
+	}
+
+	public void setAllElements(List<ViewpointElement> allElements) {
+		this.allElements = allElements;
+	}
+
+	public boolean isElementValid(ViewpointElement element) {
+		
+		return selectedViewpoint != null && selectedViewpoint.getElements().contains(element);
 	}
 
 }

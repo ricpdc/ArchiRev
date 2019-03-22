@@ -47,7 +47,7 @@ public class Viewpoint extends AbstractEntity {
 	@JoinColumn(name = "scope")
 	private Scope scope;
 
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinTable(name = "av_viewpoint_stakeholder", joinColumns = {
 			@JoinColumn(name = "viewpoint_id", nullable = true) }, inverseJoinColumns = {
 					@JoinColumn(name = "stakeholder_id") })
@@ -64,6 +64,12 @@ public class Viewpoint extends AbstractEntity {
 			@JoinColumn(name = "viewpoint_id", nullable = true) }, inverseJoinColumns = {
 					@JoinColumn(name = "purpose_id") })
 	private List<Purpose> purposes = new ArrayList<>();
+	
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinTable(name = "av_viewpoint_element", joinColumns = {
+			@JoinColumn(name = "viewpoint_id", nullable = true) }, inverseJoinColumns = {
+					@JoinColumn(name = "element_id") })
+	private List<ViewpointElement> elements = new ArrayList<>();
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "category", table = "av_viewpoint_basic")
@@ -220,6 +226,14 @@ public class Viewpoint extends AbstractEntity {
 	@Transient
 	public String getDisplayedPurposes() {
 		return getStringList(purposes);
+	}
+
+	public List<ViewpointElement> getElements() {
+		return elements;
+	}
+
+	public void setElements(List<ViewpointElement> elements) {
+		this.elements = elements;
 	}	
 	
 
