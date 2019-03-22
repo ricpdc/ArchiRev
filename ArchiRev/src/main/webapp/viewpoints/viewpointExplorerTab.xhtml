@@ -5,10 +5,10 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 
-	<p:tab title="Viewpoints">
+	<p:tab title="Viewpoint Explorer">
 
 		<p:panel id="viewpointsPanel" widgetVar="viewpointsPanel"
-			header="Viewpoints" toggleable="true" toggleSpeed="500"
+			header="Viewpoint Explorer" toggleable="true" toggleSpeed="500"
 			style="margin-bottom:10px; width:100%" width="100%">
 
 			<p:panelGrid style="width:100%; border: none;" columns="2">
@@ -54,6 +54,30 @@
 							<pe:tooltip for="stakeholders" value="#{viewpoint.displayedStakeholders}" header="Stakeholders:" atPosition="bottom left"/>
 						</p:column>
 						
+						<p:column headerText="Concern" sortBy="#{viewpoint.displayedConcerns}" styleClass="truncate"
+								filterBy="#{viewpoint.concerns}" filterFunction="#{viewpointController.filterByName}" >
+							<f:facet name="filter">
+								<p:selectCheckboxMenu label="Concern"
+									onchange="PF('availableViewpointsTable').filter()" scrollHeight="400">
+									<f:selectItems value="#{viewpointController.concernItems}" />
+								</p:selectCheckboxMenu>
+							</f:facet>
+							<h:outputText id="concerns" value="#{viewpoint.displayedConcerns}"  />
+							<pe:tooltip for="concerns" value="#{viewpoint.displayedConcerns}" header="Concerns:" atPosition="bottom left"/>
+						</p:column>
+						
+						<p:column headerText="Purpose" sortBy="#{viewpoint.displayedPurposes}" styleClass="truncate"
+								filterBy="#{viewpoint.purposes}" filterFunction="#{viewpointController.filterByName}" >
+							<f:facet name="filter">
+								<p:selectCheckboxMenu label="Purpose"
+									onchange="PF('availableViewpointsTable').filter()" scrollHeight="400">
+									<f:selectItems value="#{viewpointController.purposeItems}" />
+								</p:selectCheckboxMenu>
+							</f:facet>
+							<h:outputText id="purposes" value="#{viewpoint.displayedPurposes}"  />
+							<pe:tooltip for="purposes" value="#{viewpoint.displayedPurposes}" header="Purposes" atPosition="bottom left"/>
+						</p:column>
+						
 						<p:rowExpansion>
 							<p:panelGrid columns="2"
 								style="width:100%; border:1px solid gray !important;"
@@ -71,7 +95,11 @@
 								<h:outputText rendered="#{viewpoint.category!=null}" value="#{viewpoint.category.name} (#{viewpoint.category.description})" />
 								
 								<h:outputText value="Stakeholders"  />
-								<h:outputText value="#{viewpoint.displayedStakeholders}"  />								
+								<h:outputText value="#{viewpoint.displayedStakeholders}"  />	
+								<h:outputText value="Concern"  />
+								<h:outputText value="#{viewpoint.displayedConcerns}"  />
+								<h:outputText value="Purpose"  />
+								<h:outputText value="#{viewpoint.displayedPurposes}"  />							
 							
 								<h:outputText value="Example" />
 								<p:graphicImage

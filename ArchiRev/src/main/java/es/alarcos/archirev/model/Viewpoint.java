@@ -52,6 +52,18 @@ public class Viewpoint extends AbstractEntity {
 			@JoinColumn(name = "viewpoint_id", nullable = true) }, inverseJoinColumns = {
 					@JoinColumn(name = "stakeholder_id") })
 	private List<Stakeholder> stakeholders = new ArrayList<>();
+	
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinTable(name = "av_viewpoint_concern", joinColumns = {
+			@JoinColumn(name = "viewpoint_id", nullable = true) }, inverseJoinColumns = {
+					@JoinColumn(name = "concern_id") })
+	private List<Concern> concerns = new ArrayList<>();
+	
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinTable(name = "av_viewpoint_purpose", joinColumns = {
+			@JoinColumn(name = "viewpoint_id", nullable = true) }, inverseJoinColumns = {
+					@JoinColumn(name = "purpose_id") })
+	private List<Purpose> purposes = new ArrayList<>();
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "category", table = "av_viewpoint_basic")
@@ -150,23 +162,65 @@ public class Viewpoint extends AbstractEntity {
 	public void setStakeholders(List<Stakeholder> stakeholders) {
 		this.stakeholders = stakeholders;
 	}
-
-	@Transient
-	public String getDisplayedStakeholders() {
-		if (stakeholders.isEmpty()) {
-			return "";
-		}
-		String res = stakeholders.get(0).getName();
-		
-		for (int i = 1; i < stakeholders.size(); i++) {
-			res += (", " + stakeholders.get(i).getName());
-		}
-		return res;
-	}
 	
 	@Transient
 	public void setDisplayedStakeholders(String value) {
 		return;
 	}
+
+	@Transient
+	public String getDisplayedStakeholders() {
+		return getStringList(stakeholders);
+	}
+	
+	
+	private String getStringList(List<? extends AbstractEntity> entities) {
+		if (entities.isEmpty()) {
+			return "";
+		}
+		String res = entities.get(0).getName();
+		
+		for (int i = 1; i < entities.size(); i++) {
+			res += (", " + entities.get(i).getName());
+		}
+		return res;
+	}
+
+	public List<Concern> getConcerns() {
+		return concerns;
+	}
+
+	public void setConcerns(List<Concern> concerns) {
+		this.concerns = concerns;
+	}
+	
+	@Transient
+	public void setDisplayedConcerns(String value) {
+		return;
+	}
+
+	@Transient
+	public String getDisplayedConcerns() {
+		return getStringList(concerns);
+	}
+
+	public List<Purpose> getPurposes() {
+		return purposes;
+	}
+
+	public void setPurposes(List<Purpose> purposes) {
+		this.purposes = purposes;
+	}
+	
+	@Transient
+	public void setDisplayedPurposes(String value) {
+		return;
+	}
+
+	@Transient
+	public String getDisplayedPurposes() {
+		return getStringList(purposes);
+	}	
+	
 
 }

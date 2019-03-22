@@ -23,6 +23,8 @@ import org.springframework.stereotype.Controller;
 
 import es.alarcos.archirev.model.AbstractEntity;
 import es.alarcos.archirev.model.Viewpoint;
+import es.alarcos.archirev.persistency.ConcernDao;
+import es.alarcos.archirev.persistency.PurposeDao;
 import es.alarcos.archirev.persistency.ScopeDao;
 import es.alarcos.archirev.persistency.StakeholderDao;
 import es.alarcos.archirev.persistency.ViewpointDao;
@@ -46,11 +48,19 @@ public class ViewpointController extends AbstractController {
 	private ScopeDao scopeDao;
 
 	@Autowired
+	private ConcernDao concernDao;
+
+	@Autowired
+	private PurposeDao purposeDao;
+
+	@Autowired
 	private StakeholderDao stakeholderDao;
 
 	private List<Viewpoint> availableViewpoints;
 	private List<String> scopeItems;
 	private List<String> stakeholdersItems;
+	private List<String> concernItems;
+	private List<String> purposeItems;
 
 	public ViewpointController() {
 		super();
@@ -67,6 +77,8 @@ public class ViewpointController extends AbstractController {
 			setAvailableViewpoints(viewpointDao.findAll());
 			scopeItems = scopeDao.getScopeNames();
 			stakeholdersItems = stakeholderDao.getStakeholdersNames();
+			concernItems = concernDao.getConcernNames();
+			purposeItems = purposeDao.getPurposeNames();
 
 			RequestContext.getCurrentInstance().update("mainForm:viewpointsTabs");
 		}
@@ -108,24 +120,36 @@ public class ViewpointController extends AbstractController {
 
 	@SuppressWarnings("unchecked")
 	public boolean filterByName(Object value, Object filter, Locale locale) {
-		List<String> filterList = (filter == null) ? null : new ArrayList<String>(Arrays.asList((String[])filter));
+		List<String> filterList = (filter == null) ? null : new ArrayList<String>(Arrays.asList((String[]) filter));
 		if (filterList == null || filterList.isEmpty()) {
 			return true;
 		}
-
 		if (value == null) {
 			return false;
 		}
-
 		List<AbstractEntity> valueList = (List<AbstractEntity>) value;
-
 		for (AbstractEntity entity : valueList) {
 			if (filterList.contains(entity.getName())) {
 				return true;
 			}
 		}
-
 		return false;
+	}
+
+	public List<String> getPurposeItems() {
+		return purposeItems;
+	}
+
+	public void setPurposeItems(List<String> purposeItems) {
+		this.purposeItems = purposeItems;
+	}
+
+	public List<String> getConcernItems() {
+		return concernItems;
+	}
+
+	public void setConcernItems(List<String> concernItems) {
+		this.concernItems = concernItems;
 	}
 
 }
