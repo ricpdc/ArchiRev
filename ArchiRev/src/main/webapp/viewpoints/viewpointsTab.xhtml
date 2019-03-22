@@ -2,7 +2,8 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui">
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
 
 	<p:tab title="Viewpoints">
 
@@ -25,21 +26,34 @@
 						<p:column style="width:16px">
 							<p:rowToggler />
 						</p:column>
-						<p:column headerText="Name" filterBy="#{viewpoint.name}" filterMatchMode="contains" sortBy="#{viewpoint.scope.id}. #{viewpoint.name}">
-							<h:outputText value="#{viewpoint.name}" />
+						<p:column headerText="Name" sortBy="#{viewpoint.scope.id}. #{viewpoint.name}" filterBy="#{viewpoint.name}" filterMatchMode="contains">
+							<h:outputText id="viewpointName" value="#{viewpoint.name}" />
+							<pe:tooltip for="viewpointName" value="#{viewpoint.explanation}" header="#{viewpoint.name} Viewpoint" atPosition="bottom left"/>
 						</p:column>
-						<p:column headerText="Scope" filterBy="#{viewpoint.scope.name}"
-							filterMatchMode="in" sortBy="#{viewpoint.scope.id}">
+						<p:column headerText="Scope" sortBy="#{viewpoint.scope.id}"
+								filterBy="#{viewpoint.scope.name}" filterMatchMode="in" >
 							<f:facet name="filter">
 								<p:selectCheckboxMenu label="Scope"
 									onchange="PF('availableViewpointsTable').filter()" scrollHeight="120">
 									<f:selectItems value="#{viewpointController.scopeItems}" />
 								</p:selectCheckboxMenu>
 							</f:facet>
-							<h:outputText value="#{viewpoint.scope.name}" />
+							<h:outputText id="scope" value="#{viewpoint.scope.name}" />
+							<pe:tooltip for="scope" value="#{viewpoint.scope.description}" header="#{viewpoint.scope.name}" atPosition="bottom left"/>
 						</p:column>
-
-
+						
+						<p:column headerText="Stakeholders" sortBy="#{viewpoint.displayedStakeholders}" styleClass="truncate"
+								filterBy="#{viewpoint.stakeholders}" filterFunction="#{viewpointController.filterByName}" >
+							<f:facet name="filter">
+								<p:selectCheckboxMenu label="Stakeholder"
+									onchange="PF('availableViewpointsTable').filter()" scrollHeight="400">
+									<f:selectItems value="#{viewpointController.stakeholdersItems}" />
+								</p:selectCheckboxMenu>
+							</f:facet>
+							<h:outputText id="stakeholders" value="#{viewpoint.displayedStakeholders}"  />
+							<pe:tooltip for="stakeholders" value="#{viewpoint.displayedStakeholders}" header="Stakeholders:" atPosition="bottom left"/>
+						</p:column>
+						
 						<p:rowExpansion>
 							<p:panelGrid columns="2"
 								style="width:100%; border:1px solid gray !important;"
@@ -47,16 +61,17 @@
 
 								<h:outputText value="Scope" />
 								<h:outputText rendered="#{empty viewpoint.layerAndAspect}" value="#{viewpoint.scope.name} (#{viewpoint.scope.description})" />
-								<h:outputText rendered="#{not empty viewpoint.layerAndAspect}" value="#{viewpoint.layerAndAspect}" />
+								<h:outputText rendered="#{not empty viewpoint.layerAndAspect}" value="#{viewpoint.scope.name} (#{viewpoint.layerAndAspect})" />
 								<h:outputText value="Explanation" />
 								<h:outputText value="#{viewpoint.explanation}" />
 								
-								
-								<h:outputText rendered="#{viewpoint.category!=null}" value="Category" />
-								<h:outputText rendered="#{viewpoint.category!=null}" value="#{viewpoint.category.name} (#{viewpoint.category.description})" />
 								<h:outputText rendered="#{not empty viewpoint.perspective}" value="Perspective" />
 								<h:outputText rendered="#{not empty viewpoint.perspective}" value="#{viewpoint.perspective}" />
+								<h:outputText rendered="#{viewpoint.category!=null}" value="Category" />
+								<h:outputText rendered="#{viewpoint.category!=null}" value="#{viewpoint.category.name} (#{viewpoint.category.description})" />
 								
+								<h:outputText value="Stakeholders"  />
+								<h:outputText value="#{viewpoint.displayedStakeholders}"  />								
 							
 								<h:outputText value="Example" />
 								<p:graphicImage

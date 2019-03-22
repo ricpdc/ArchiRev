@@ -55,3 +55,25 @@ dd label[class*='ui-widget'] {
 	margin-right:20px !important;
 	font-size: small !important;
 }
+
+
+
+.truncate  {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.qtip {
+	width: 800px !important;
+	-moz-border-radius: 5px !important;
+    -webkit-border-radius: 5px !important;
+    border-radius: 5px !important;
+    -webkit-box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.15) !important;
+    -moz-box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.15) !important;
+    box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.15) !important;
+}
+
+
+.ui-tooltip-content, .ui-tooltip-header {
+	font-size: 0.7em;
+}

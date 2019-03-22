@@ -1,9 +1,15 @@
 package es.alarcos.archirev.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
@@ -40,6 +46,12 @@ public class Viewpoint extends AbstractEntity {
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "scope")
 	private Scope scope;
+
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(name = "av_viewpoint_stakeholder", joinColumns = {
+			@JoinColumn(name = "viewpoint_id", nullable = true) }, inverseJoinColumns = {
+					@JoinColumn(name = "stakeholder_id") })
+	private List<Stakeholder> stakeholders = new ArrayList<>();
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "category", table = "av_viewpoint_basic")
@@ -113,10 +125,10 @@ public class Viewpoint extends AbstractEntity {
 		return ("t".equals(multipleLayers) ? "Multiple layers" : "Single layer") + " / "
 				+ ("t".equals(multipleAspects) ? "Multiple aspects" : "Single aspect");
 	}
-	
+
 	@Transient
 	public void setLayerAndAspect(String value) {
-		;
+		return;
 	}
 
 	public void setMultipleAspects(String multipleAspects) {
@@ -129,6 +141,32 @@ public class Viewpoint extends AbstractEntity {
 
 	public void setCategory(Category category) {
 		this.category = category;
+	}
+
+	public List<Stakeholder> getStakeholders() {
+		return stakeholders;
+	}
+
+	public void setStakeholders(List<Stakeholder> stakeholders) {
+		this.stakeholders = stakeholders;
+	}
+
+	@Transient
+	public String getDisplayedStakeholders() {
+		if (stakeholders.isEmpty()) {
+			return "";
+		}
+		String res = stakeholders.get(0).getName();
+		
+		for (int i = 1; i < stakeholders.size(); i++) {
+			res += (", " + stakeholders.get(i).getName());
+		}
+		return res;
+	}
+	
+	@Transient
+	public void setDisplayedStakeholders(String value) {
+		return;
 	}
 
 }
