@@ -1,0 +1,54 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<p:tab title="Viewpoint Simulator">
+
+		<p:panel id="viewpointsSimulatorPanel"
+			widgetVar="viewpointsSimulatorPanel" header="Viewpoint Simulator"
+			toggleable="true" toggleSpeed="500"
+			style="margin-bottom:10px; width:100%" width="100%">
+
+			<p:panelGrid style="width:100%; border: none; padding:0px;"
+				columns="2"
+				columnClasses="viewpointSimulatorLeft, viewpointSimulatorRight">
+				<p:panelGrid columns="1" style="padding:0px;">
+					<p:panelGrid style="padding:0px;">
+						<p:pickList id="artifactPickList" widgetVar="artifactPickList"
+							style="width:100%;"
+							value="#{viewpointController.artifactPickerList}" var="artifact"
+							itemValue="#{artifact}" itemLabel="#{artifact.name}"
+							showCheckbox="true" responsive="true" showSourceFilter="true"
+							showTargetFilter="true" filterMatchMode="contains" converter="entityConverter">
+							<f:facet name="sourceCaption">Available artifacts</f:facet>
+							<f:facet name="targetCaption">Input artifacts</f:facet>
+							<p:ajax event="transfer"
+								listener="#{viewpointController.onTransfer}" />
+						</p:pickList>
+					</p:panelGrid>
+					<p:panelGrid style="padding:0px;">
+						<p:pickList id="stakeholderPickList" widgetVar="stakeholderPickList"
+							style="width:100%;"
+							value="#{viewpointController.stakeholderPickerList}" var="stakeholder"
+							itemValue="#{stakeholder}" itemLabel="#{stakeholder.name}"
+							showCheckbox="true" responsive="true" showSourceFilter="true"
+							showTargetFilter="true" filterMatchMode="contains" converter="entityConverter">
+							<f:facet name="sourceCaption">Available roles</f:facet>
+							<f:facet name="targetCaption">Involved roless</f:facet>
+							<p:ajax event="transfer"
+								listener="#{viewpointController.onTransfer}" />
+						</p:pickList>
+					</p:panelGrid>
+				</p:panelGrid>
+				<p:outputPanel style="padding:0px;">
+					<h:outputText value="results" />
+				</p:outputPanel>
+			</p:panelGrid>
+
+		</p:panel>
+
+	</p:tab>
+</ui:composition>

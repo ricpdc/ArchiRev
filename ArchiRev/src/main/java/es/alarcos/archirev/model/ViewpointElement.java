@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,6 +16,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -31,6 +34,9 @@ public class ViewpointElement extends AbstractEntity {
 			@JoinColumn(name = "element_id", nullable = true) }, inverseJoinColumns = {
 					@JoinColumn(name = "viewpoint_id") })
 	private List<Viewpoint> viewpoints = new ArrayList<>();
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "element", fetch = FetchType.LAZY)
+	private List<MiningPoint> miningPoints = new ArrayList<>();
 
 	@Column(name = "icon")
 	private byte[] icon;
@@ -70,6 +76,14 @@ public class ViewpointElement extends AbstractEntity {
 
 	public void setIcon(byte[] icon) {
 		this.icon = icon;
+	}
+
+	public List<MiningPoint> getMiningPoints() {
+		return miningPoints;
+	}
+
+	public void setMiningPoints(List<MiningPoint> miningPoints) {
+		this.miningPoints = miningPoints;
 	}
 
 }

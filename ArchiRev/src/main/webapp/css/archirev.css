@@ -38,6 +38,18 @@ dd label[class*='ui-widget'] {
 	vertical-align: top;
 }
 
+.viewpointSimulatorLeft {
+	width: 35% !important;
+	vertical-align: top;
+	background
+}
+
+.viewpointSimulatorRight {
+	width: 65% !important;
+	vertical-align: top;
+}
+
+
 .viewpointInfoLeft {
 	width: 10% !important;
 	vertical-align: top;

@@ -11,8 +11,8 @@
 	</converter>
 	
 	<converter>
-	    <converter-id>sourceConverter</converter-id>
-	    <converter-class>es.alarcos.archirev.controller.converter.PickListSourceConverter</converter-class>
+	    <converter-id>entityConverter</converter-id>
+	    <converter-class>es.alarcos.archirev.controller.converter.PickListEntityConverter</converter-class>
 	</converter>
 
 </faces-config>

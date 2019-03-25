@@ -236,5 +236,15 @@ public class Viewpoint extends AbstractEntity {
 		this.elements = elements;
 	}	
 	
+	@Transient
+	public void setDisplayedElements(String value) {
+		return;
+	}
+
+	@Transient
+	public String getDisplayedElements() {
+		return getStringList(elements);
+	}
+	
 
 }

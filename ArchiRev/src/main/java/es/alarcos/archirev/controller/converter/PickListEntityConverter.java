@@ -8,23 +8,23 @@ import javax.faces.convert.FacesConverter;
 import org.primefaces.component.picklist.PickList;
 import org.primefaces.model.DualListModel;
 
-import es.alarcos.archirev.model.Source;
+import es.alarcos.archirev.model.AbstractEntity;
 
-@FacesConverter(value = "sourceConverter")
-public class PickListSourceConverter implements Converter {
+@FacesConverter(value = "entityConverter")
+public class PickListEntityConverter<E extends AbstractEntity> implements Converter {
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object getAsObject(FacesContext fc, UIComponent comp, String value) {
-		DualListModel<Source> model = (DualListModel<Source>) ((PickList) comp).getValue();
-		for (Source source : model.getSource()) {
-			if (String.valueOf(source.getId()).equals(value)) {
-				return source;
+		DualListModel<E> model = (DualListModel<E>) ((PickList) comp).getValue();
+		for (E entity : model.getSource()) {
+			if (String.valueOf(entity.getId()).equals(value)) {
+				return entity;
 			}
 		}
-		for (Source source : model.getTarget()) {
-			if (String.valueOf(source.getId()).equals(value)) {
-				return source;
+		for (E entity : model.getTarget()) {
+			if (String.valueOf(entity.getId()).equals(value)) {
+				return entity;
 			}
 		}
 		return null;
@@ -35,6 +35,6 @@ public class PickListSourceConverter implements Converter {
 		if (value == null) {
 			return "";
 		}
-		return String.valueOf(((Source) value).getId());
+		return String.valueOf(((E) value).getId());
 	}
 }

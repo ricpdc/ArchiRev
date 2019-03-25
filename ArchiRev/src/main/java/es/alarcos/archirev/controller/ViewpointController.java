@@ -13,7 +13,9 @@ import javax.faces.bean.ViewScoped;
 
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.ToggleEvent;
+import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.DualListModel;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.Visibility;
 import org.slf4j.Logger;
@@ -22,12 +24,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import es.alarcos.archirev.model.AbstractEntity;
+import es.alarcos.archirev.model.InputArtifact;
+import es.alarcos.archirev.model.Source;
+import es.alarcos.archirev.model.Stakeholder;
 import es.alarcos.archirev.model.Viewpoint;
 import es.alarcos.archirev.model.ViewpointElement;
 import es.alarcos.archirev.persistency.ConcernDao;
+import es.alarcos.archirev.persistency.InputArtifactDao;
 import es.alarcos.archirev.persistency.PurposeDao;
 import es.alarcos.archirev.persistency.ScopeDao;
 import es.alarcos.archirev.persistency.StakeholderDao;
+import es.alarcos.archirev.persistency.TechniqueDao;
 import es.alarcos.archirev.persistency.ViewpointDao;
 import es.alarcos.archirev.persistency.ViewpointElementDao;
 
@@ -60,6 +67,12 @@ public class ViewpointController extends AbstractController {
 
 	@Autowired
 	private ViewpointElementDao viewpointElementDao;
+	
+	@Autowired
+	private InputArtifactDao inputArtifactDao;
+	
+	@Autowired
+	private TechniqueDao techniqueDao;
 
 	private Viewpoint selectedViewpoint;
 
@@ -70,6 +83,9 @@ public class ViewpointController extends AbstractController {
 	private List<String> purposeItems;
 	private List<String> elementItems;
 	private List<ViewpointElement> allElements;
+	
+	private DualListModel<InputArtifact> artifactPickerList = new DualListModel<>(new ArrayList<InputArtifact>(), new ArrayList<InputArtifact>());
+	private DualListModel<Stakeholder> stakeholderPickerList = new DualListModel<>(new ArrayList<Stakeholder>(), new ArrayList<Stakeholder>());
 
 	public ViewpointController() {
 		super();
@@ -90,6 +106,9 @@ public class ViewpointController extends AbstractController {
 			purposeItems = purposeDao.getPurposeNames();
 			elementItems = viewpointElementDao.getElementNames();
 			allElements = viewpointElementDao.findAll();
+			
+			artifactPickerList = new DualListModel<>(inputArtifactDao.findAll(), new ArrayList<InputArtifact>());
+			stakeholderPickerList = new DualListModel<>(stakeholderDao.findAll(), new ArrayList<Stakeholder>());
 
 			RequestContext.getCurrentInstance().update("mainForm:viewpointsTabs");
 		}
@@ -149,6 +168,13 @@ public class ViewpointController extends AbstractController {
 		}
 		return false;
 	}
+	
+	public void onTransfer(TransferEvent event) {
+		StringBuilder builder = new StringBuilder();
+		for (Object item : event.getItems()) {
+			builder.append(((Source) item).getName()).append(",");
+		}
+	}
 
 	public List<String> getPurposeItems() {
 		return purposeItems;
@@ -194,5 +220,23 @@ public class ViewpointController extends AbstractController {
 		
 		return selectedViewpoint != null && selectedViewpoint.getElements().contains(element);
 	}
+
+	public DualListModel<InputArtifact> getArtifactPickerList() {
+		return artifactPickerList;
+	}
+
+	public void setArtifactPickerList(DualListModel<InputArtifact> artifactPickerList) {
+		this.artifactPickerList = artifactPickerList;
+	}
+
+	public DualListModel<Stakeholder> getStakeholderPickerList() {
+		return stakeholderPickerList;
+	}
+
+	public void setStackeholderPickerList(DualListModel<Stakeholder> stakeholderPickerList) {
+		this.stakeholderPickerList = stakeholderPickerList;
+	}
+	
+	
 
 }
