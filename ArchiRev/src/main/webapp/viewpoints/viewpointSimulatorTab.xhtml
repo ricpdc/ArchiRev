@@ -22,7 +22,8 @@
 							value="#{viewpointController.artifactPickerList}" var="artifact"
 							itemValue="#{artifact}" itemLabel="#{artifact.name}"
 							showCheckbox="true" responsive="true" showSourceFilter="true"
-							showTargetFilter="true" filterMatchMode="contains" converter="entityConverter">
+							showTargetFilter="true" filterMatchMode="contains"
+							converter="entityConverter">
 							<f:facet name="sourceCaption">Available artifacts</f:facet>
 							<f:facet name="targetCaption">Input artifacts</f:facet>
 							<p:ajax event="transfer"
@@ -30,12 +31,13 @@
 						</p:pickList>
 					</p:panelGrid>
 					<p:panelGrid style="padding:0px;">
-						<p:pickList id="stakeholderPickList" widgetVar="stakeholderPickList"
-							style="width:100%;"
-							value="#{viewpointController.stakeholderPickerList}" var="stakeholder"
-							itemValue="#{stakeholder}" itemLabel="#{stakeholder.name}"
-							showCheckbox="true" responsive="true" showSourceFilter="true"
-							showTargetFilter="true" filterMatchMode="contains" converter="entityConverter">
+						<p:pickList id="stakeholderPickList"
+							widgetVar="stakeholderPickList" style="width:100%;"
+							value="#{viewpointController.stakeholderPickerList}"
+							var="stakeholder" itemValue="#{stakeholder}"
+							itemLabel="#{stakeholder.name}" showCheckbox="true"
+							responsive="true" showSourceFilter="true" showTargetFilter="true"
+							filterMatchMode="contains" converter="entityConverter">
 							<f:facet name="sourceCaption">Available roles</f:facet>
 							<f:facet name="targetCaption">Involved roless</f:facet>
 							<p:ajax event="transfer"
@@ -44,7 +46,38 @@
 					</p:panelGrid>
 				</p:panelGrid>
 				<p:outputPanel style="padding:0px;">
-					<h:outputText value="results" />
+					<p:outputLabel value="Viewpoint Map" style="text-align: center; width:100% !important;"/>
+					
+					
+					<p:panelGrid id="viewpointMap" style="width: 100%; margin: 0px; border-collapse: separate; border-spacing:10px;">
+					
+						<p:row>
+							<p:column colspan="5">test</p:column>
+						</p:row>
+						<p:row>
+							<p:column rowspan="5">test</p:column>
+							<p:column colspan="3">test</p:column>
+							<p:column rowspan="5">test</p:column>
+						</p:row>
+						<p:row>
+							<p:column rowspan="3">test</p:column>
+							<p:column>test</p:column>
+							<p:column>test</p:column>
+						</p:row>
+						<p:row>
+							<p:column>test</p:column>
+							<p:column>test</p:column>
+						</p:row>
+						<p:row>
+							<p:column>test</p:column>
+							<p:column>test</p:column>
+						</p:row>
+						<p:row>
+							<p:column colspan="3">test</p:column>
+						</p:row>
+					</p:panelGrid>
+					
+
 				</p:outputPanel>
 			</p:panelGrid>
 

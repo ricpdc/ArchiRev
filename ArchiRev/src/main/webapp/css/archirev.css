@@ -6,7 +6,7 @@
 tr.activeProjectRow>td {
 	background-color: rgba(250, 212, 46, 0.50);
 }
- 
+
 /* dt .activeDiagram, dd .activeDiagram {
 	background-color: rgba(250, 212, 46, 0.50) !important;
 }
@@ -15,13 +15,11 @@ tr[class*='activeDiagram'] td {
 	background-color: rgba(250, 212, 46, 0.50) !important;
 }
 
-
 dd label[class*='ui-widget'] {
 	font-size: small !important;
 }
 
-.blockUIclass,
-#blockUIid {
+.blockUIclass, #blockUIid {
 	background-color: transparent !important;
 	border: none !important;
 	webkit-box-shadow: none !important;
@@ -49,7 +47,6 @@ dd label[class*='ui-widget'] {
 	vertical-align: top;
 }
 
-
 .viewpointInfoLeft {
 	width: 10% !important;
 	vertical-align: top;
@@ -63,42 +60,49 @@ dd label[class*='ui-widget'] {
 	font-size: 0.75em;
 }
 
-[class*='ui-clock']  {
-	margin-right:20px !important;
+[class*='ui-clock'] {
+	margin-right: 20px !important;
 	font-size: small !important;
 }
 
-
-
-.truncate  {
-    white-space: nowrap;
-    text-overflow: ellipsis;
+.truncate {
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 .qtip {
 	width: 800px !important;
 	-moz-border-radius: 5px !important;
-    -webkit-border-radius: 5px !important;
-    border-radius: 5px !important;
-    -webkit-box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.15) !important;
-    -moz-box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.15) !important;
-    box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.15) !important;
+	-webkit-border-radius: 5px !important;
+	border-radius: 5px !important;
+	-webkit-box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.15) !important;
+	-moz-box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.15) !important;
+	box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.15) !important;
 }
-
 
 .ui-tooltip-content, .ui-tooltip-header {
 	font-size: 0.7em;
 }
 
-div[id*='artifactPickList'] div[class*='ui-picklist-list-wrapper'],
-div[id*='stakeholderPickList'] div[class*='ui-picklist-list-wrapper'] {
+div[id*='artifactPickList'] div[class*='ui-picklist-list-wrapper'], div[id*='stakeholderPickList'] div[class*='ui-picklist-list-wrapper']
+	{
 	width: 270px !important;
 	font-size: 0.7em;
-	
 }
 
-div[id*='artifactPickList'] div[class*='ui-picklist-buttons'],
-div[id*='stakeholderPickList'] div[class*='ui-picklist-buttons'] {
+div[id*='artifactPickList'] div[class*='ui-picklist-buttons'], div[id*='stakeholderPickList'] div[class*='ui-picklist-buttons']
+	{
 	width: 40px !important;
+}
+
+[id*='viewpointMap'] tr {
+	height: 70px !important;
+}
+
+[id*='viewpointMap'] td {
+	border: 1px solid black !important;
+	text-align: center;
+	vertical-align: middle;
+	border-radius: 10px;
 }
 

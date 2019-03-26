@@ -14,6 +14,10 @@ import javax.faces.bean.ViewScoped;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.ToggleEvent;
 import org.primefaces.event.TransferEvent;
+import org.primefaces.model.DashboardColumn;
+import org.primefaces.model.DashboardModel;
+import org.primefaces.model.DefaultDashboardColumn;
+import org.primefaces.model.DefaultDashboardModel;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.StreamedContent;
@@ -34,7 +38,6 @@ import es.alarcos.archirev.persistency.InputArtifactDao;
 import es.alarcos.archirev.persistency.PurposeDao;
 import es.alarcos.archirev.persistency.ScopeDao;
 import es.alarcos.archirev.persistency.StakeholderDao;
-import es.alarcos.archirev.persistency.TechniqueDao;
 import es.alarcos.archirev.persistency.ViewpointDao;
 import es.alarcos.archirev.persistency.ViewpointElementDao;
 
@@ -70,9 +73,6 @@ public class ViewpointController extends AbstractController {
 	
 	@Autowired
 	private InputArtifactDao inputArtifactDao;
-	
-	@Autowired
-	private TechniqueDao techniqueDao;
 
 	private Viewpoint selectedViewpoint;
 
@@ -84,6 +84,7 @@ public class ViewpointController extends AbstractController {
 	private List<String> elementItems;
 	private List<ViewpointElement> allElements;
 	
+	
 	private DualListModel<InputArtifact> artifactPickerList = new DualListModel<>(new ArrayList<InputArtifact>(), new ArrayList<InputArtifact>());
 	private DualListModel<Stakeholder> stakeholderPickerList = new DualListModel<>(new ArrayList<Stakeholder>(), new ArrayList<Stakeholder>());
 
@@ -94,6 +95,9 @@ public class ViewpointController extends AbstractController {
 	@PostConstruct
 	public void init() {
 		super.init();
+		
+		
+		
 		reload();
 	}
 
@@ -236,7 +240,5 @@ public class ViewpointController extends AbstractController {
 	public void setStackeholderPickerList(DualListModel<Stakeholder> stakeholderPickerList) {
 		this.stakeholderPickerList = stakeholderPickerList;
 	}
-	
-	
 
 }
