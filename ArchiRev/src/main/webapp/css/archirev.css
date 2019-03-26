@@ -89,3 +89,16 @@ dd label[class*='ui-widget'] {
 .ui-tooltip-content, .ui-tooltip-header {
 	font-size: 0.7em;
 }
+
+div[id*='artifactPickList'] div[class*='ui-picklist-list-wrapper'],
+div[id*='stakeholderPickList'] div[class*='ui-picklist-list-wrapper'] {
+	width: 270px !important;
+	font-size: 0.7em;
+	
+}
+
+div[id*='artifactPickList'] div[class*='ui-picklist-buttons'],
+div[id*='stakeholderPickList'] div[class*='ui-picklist-buttons'] {
+	width: 40px !important;
+}
+
