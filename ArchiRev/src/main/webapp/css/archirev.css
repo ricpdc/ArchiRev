@@ -95,11 +95,17 @@ div[id*='artifactPickList'] div[class*='ui-picklist-buttons'], div[id*='stakehol
 	width: 40px !important;
 }
 
-[id*='viewpointMap'] tr {
+[id*='basicViewpointMap'] tr,
+[id*='strategyMap'] tr,
+[id*='motivationMap'] tr,
+[id*='implementationMigrationMap'] tr {
 	height: 70px !important;
 }
 
-[id*='viewpointMap'] td {
+[id*='basicViewpointMap'] td,
+[id*='strategyMap'] td,
+[id*='motivationMap'] td,
+[id*='implementationMigrationMap'] td {
 	border: 1px solid black !important;
 	text-align: center;
 	vertical-align: middle;

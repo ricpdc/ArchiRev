@@ -13,9 +13,9 @@
 			style="margin-bottom:10px; width:100%" width="100%">
 
 			<p:panelGrid style="width:100%; border: none; padding:0px;"
-				columns="2"
+				columns="1"
 				columnClasses="viewpointSimulatorLeft, viewpointSimulatorRight">
-				<p:panelGrid columns="1" style="padding:0px;">
+				<p:panelGrid columns="2" style="padding:0px;">
 					<p:panelGrid style="padding:0px;">
 						<p:pickList id="artifactPickList" widgetVar="artifactPickList"
 							style="width:100%;"
@@ -45,41 +45,132 @@
 						</p:pickList>
 					</p:panelGrid>
 				</p:panelGrid>
+				<p:separator />
 				<p:outputPanel style="padding:0px;">
-					<p:outputLabel value="Viewpoint Map" style="text-align: center; width:100% !important;"/>
-					
-					
-					<p:panelGrid id="viewpointMap" style="width: 100%; margin: 0px; border-collapse: separate; border-spacing:10px;">
-					
+					<p:outputLabel value="Viewpoint Map"
+						style="text-align: center; width:100% !important;" />
+
+
+					<p:panelGrid id="viewpointMap" style="width: 100%; margin: 0px;">
 						<p:row>
-							<p:column colspan="5">test</p:column>
+							<p:column colspan="2">
+								<p:panel toggleable="true" header="Strategy Viewpoints">
+									<p:panelGrid id="strategyMap"
+										style="width: 100%; margin: 0px; border-collapse: separate; border-spacing:10px;">
+										<p:row>
+											<p:column colspan="9">Strategy</p:column>
+										</p:row>
+										<p:row>
+											<p:column colspan="5">Capability Map</p:column>
+											<p:column colspan="4">Resource Map</p:column>
+										</p:row>
+									</p:panelGrid>
+								</p:panel>
+							</p:column>
+							<p:column rowspan="2">
+								<p:panel toggleable="true" header="Implementation and Migration">
+									<p:panelGrid id="implementationMigrationMap"
+										style="width: 100%; margin: 0px; border-collapse: separate; border-spacing:10px;">
+
+										<p:row>
+											<p:column colspan="2" rowspan="3">Project</p:column>
+										</p:row>
+										<p:row />
+										<p:row />
+										<p:row>
+											<p:column rowspan="10">Implementation<br/> and<br/> Migration</p:column>
+											<p:column rowspan="10">Migration</p:column>
+										</p:row>
+										<p:row />
+										<p:row />
+										<p:row />
+										<p:row />
+										<p:row />
+										<p:row />
+										<p:row />
+										<p:row />
+										<p:row />
+									</p:panelGrid>
+								</p:panel>
+							</p:column>
 						</p:row>
 						<p:row>
-							<p:column rowspan="5">test</p:column>
-							<p:column colspan="3">test</p:column>
-							<p:column rowspan="5">test</p:column>
-						</p:row>
-						<p:row>
-							<p:column rowspan="3">test</p:column>
-							<p:column>test</p:column>
-							<p:column>test</p:column>
-						</p:row>
-						<p:row>
-							<p:column>test</p:column>
-							<p:column>test</p:column>
-						</p:row>
-						<p:row>
-							<p:column>test</p:column>
-							<p:column>test</p:column>
-						</p:row>
-						<p:row>
-							<p:column colspan="3">test</p:column>
+							<p:column>
+								<p:panel toggleable="true" header="Basic Viewpoints">
+									<p:panelGrid id="basicViewpointMap"
+										style="width: 100%; margin: 0px; border-collapse: separate; border-spacing:10px;">
+
+										<p:row>
+											<p:column colspan="5">Organization</p:column>
+										</p:row>
+										<p:row>
+											<p:column rowspan="9">Layered</p:column>
+											<p:column colspan="2" rowspan="2">Product</p:column>
+											<p:column colspan="2" rowspan="3">Service<br /> Realization</p:column>
+										</p:row>
+										<p:row />
+										<p:row>
+											<p:column rowspan="4">Information<br /> Structure</p:column>
+											<p:column rowspan="2">Business<br /> Process<br /> Cooperation</p:column>
+										</p:row>
+										<p:row>
+											<p:column colspan="2" rowspan="2">Application<br /> Usage</p:column>
+										</p:row>
+										<p:row>
+											<p:column rowspan="2">Application<br /> Cooperation</p:column>
+										</p:row>
+										<p:row>
+											<p:column rowspan="3">Technology<br /> Usage</p:column>
+											<p:column rowspan="4">Implementation<br /> and<br /> Deployment</p:column>
+										</p:row>
+										<p:row>
+											<p:column colspan="2" rowspan="2">Technology</p:column>
+										</p:row>
+										<p:row />
+										<p:row>
+											<p:column colspan="3">Physical</p:column>
+										</p:row>
+									</p:panelGrid>
+								</p:panel>
+							</p:column>
+							<p:column>
+								<p:panel toggleable="true" header="Motivation Viewpoints">
+									<p:panelGrid id="motivationMap"
+										style="width: 100%; margin: 0px; border-collapse: separate; border-spacing:10px;">
+
+										<p:row>
+											<p:column rowspan="10">Outcome Realization</p:column>
+											<p:column>Stakeholder</p:column>
+											<p:column>Motivation</p:column>
+											<p:column>Goal<br /> Realization</p:column>
+										</p:row>
+										<p:row>
+											<p:column colspan="3" rowspan="9">Requirement<br />  Realization</p:column>
+										</p:row>
+										<p:row />
+										<p:row />
+										<p:row />
+										<p:row />
+										<p:row />
+										<p:row />
+										<p:row />
+										<p:row />
+									</p:panelGrid>
+								</p:panel>
+							</p:column>
 						</p:row>
 					</p:panelGrid>
-					
+
+
+
+
+
+
 
 				</p:outputPanel>
 			</p:panelGrid>
+
+
 
 		</p:panel>
 
