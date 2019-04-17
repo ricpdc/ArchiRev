@@ -1,0 +1,43 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:panelGrid columns="2"
+		style="width:100%; border:1px solid gray !important;"
+		columnClasses="viewpointInfoLeft, viewpointInfoRight">
+
+		<h:outputText value="Scope" />
+		<h:outputText rendered="#{empty viewpoint.layerAndAspect}"
+			value="#{viewpoint.scope.name} (#{viewpoint.scope.description})" />
+		<h:outputText rendered="#{not empty viewpoint.layerAndAspect}"
+			value="#{viewpoint.scope.name} (#{viewpoint.layerAndAspect})" />
+		<h:outputText value="Explanation" />
+		<h:outputText value="#{viewpoint.explanation}" />
+
+		<h:outputText rendered="#{not empty viewpoint.perspective}"
+			value="Perspective" />
+		<h:outputText rendered="#{not empty viewpoint.perspective}"
+			value="#{viewpoint.perspective}" />
+		<h:outputText rendered="#{viewpoint.category!=null}" value="Category" />
+		<h:outputText rendered="#{viewpoint.category!=null}"
+			value="#{viewpoint.category.name} (#{viewpoint.category.description})" />
+
+		<h:outputText value="Stakeholders" />
+		<h:outputText value="#{viewpoint.displayedStakeholders}" />
+		<h:outputText value="Concern" />
+		<h:outputText value="#{viewpoint.displayedConcerns}" />
+		<h:outputText value="Purpose" />
+		<h:outputText value="#{viewpoint.displayedPurposes}" />
+
+		<h:outputText value="Elements" />
+		<h:outputText value="#{viewpoint.displayedElements}" />
+
+		<h:outputText value="Example" />
+		<p:graphicImage
+			value="#{viewpointController.getImageFromBytes(viewpoint.example)}"
+			stream="false" />
+
+	</p:panelGrid>
+</ui:composition>

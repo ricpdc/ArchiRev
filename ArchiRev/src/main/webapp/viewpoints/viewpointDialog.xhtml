@@ -1,0 +1,15 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dialog
+		header="Info #{viewpointController.selectedViewpoint.name} viewpoint"
+		id="viewpointDialog" widgetVar="viewpointDialog" modal="true"
+		height="600" width="1000" closable="true" closeOnEscape="true">
+		<ui:include src="/viewpoints/viewpointDetail.xhtml">
+			<ui:param name="viewpoint" value="#{viewpointController.selectedViewpoint}" />
+		</ui:include>
+	</p:dialog>
+</ui:composition>

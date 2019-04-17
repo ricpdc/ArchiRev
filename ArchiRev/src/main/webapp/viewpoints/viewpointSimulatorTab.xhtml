@@ -58,11 +58,35 @@
 									<p:panelGrid id="strategyMap"
 										style="width: 100%; margin: 0px; border-collapse: separate; border-spacing:10px;">
 										<p:row>
-											<p:column colspan="9">Strategy</p:column>
+											<p:column colspan="9">
+												<p:commandLink id ="strategy" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Strategy')}">
+													Strategy
+												</p:commandLink>
+												<pe:tooltip for="strategy" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>												
+											</p:column>
 										</p:row>
 										<p:row>
-											<p:column colspan="5">Capability Map</p:column>
-											<p:column colspan="4">Resource Map</p:column>
+											<p:column colspan="5">
+												<p:commandLink id ="capabilityMap" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Capability Map')}">
+													Capability Map
+												</p:commandLink>
+												<pe:tooltip for="capabilityMap" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>
+											</p:column>
+											<p:column colspan="4">
+												<p:commandLink id ="resourceMap" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Resource Map')}">
+													Resource Map
+												</p:commandLink>
+												<pe:tooltip for="resourceMap" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>
+											</p:column>
 										</p:row>
 									</p:panelGrid>
 								</p:panel>
@@ -73,13 +97,37 @@
 										style="width: 100%; margin: 0px; border-collapse: separate; border-spacing:10px;">
 
 										<p:row>
-											<p:column colspan="2" rowspan="3">Project</p:column>
+											<p:column colspan="2" rowspan="3">
+												<p:commandLink id ="project" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Project')}">
+													Project
+												</p:commandLink>
+												<pe:tooltip for="project" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>
+											</p:column>
 										</p:row>
 										<p:row />
 										<p:row />
 										<p:row>
-											<p:column rowspan="10">Implementation<br/> and<br/> Migration</p:column>
-											<p:column rowspan="10">Migration</p:column>
+											<p:column rowspan="10">
+												<p:commandLink id ="implementationAndMigration" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Implementation and Migration')}">
+													Implementation<br /> and<br /> Migration
+												</p:commandLink>
+												<pe:tooltip for="implementationAndMigration" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>
+											</p:column>
+											<p:column rowspan="10">
+												<p:commandLink id ="migration" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Migration')}">
+													Migration
+												</p:commandLink>
+												<pe:tooltip for="migration" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>
+											</p:column>
 										</p:row>
 										<p:row />
 										<p:row />
@@ -99,36 +147,131 @@
 								<p:panel toggleable="true" header="Basic Viewpoints">
 									<p:panelGrid id="basicViewpointMap"
 										style="width: 100%; margin: 0px; border-collapse: separate; border-spacing:10px;">
-
 										<p:row>
-											<p:column colspan="5">Organization</p:column>
+											<p:column colspan="5">
+												<p:commandLink id ="organization" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Organization')}">
+													Organization
+												</p:commandLink>
+												<pe:tooltip for="organization" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>
+											</p:column>
 										</p:row>
 										<p:row>
-											<p:column rowspan="9">Layered</p:column>
-											<p:column colspan="2" rowspan="2">Product</p:column>
-											<p:column colspan="2" rowspan="3">Service<br /> Realization</p:column>
+											<p:column rowspan="9">
+												<p:commandLink id ="layered" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Layered')}">
+													Layered
+												</p:commandLink>
+												<pe:tooltip for="layered" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>
+											</p:column>
+											<p:column colspan="2" rowspan="2">
+												<p:commandLink id ="product" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Product')}">
+													Product
+												</p:commandLink>
+												<pe:tooltip for="product" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>
+											</p:column>
+											<p:column colspan="2" rowspan="3">
+												<p:commandLink id ="serviceRealization" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Service Realization')}">
+													Service<br /> Realization
+												</p:commandLink>
+												<pe:tooltip for="serviceRealization" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>											
+											</p:column>
 										</p:row>
 										<p:row />
 										<p:row>
-											<p:column rowspan="4">Information<br /> Structure</p:column>
-											<p:column rowspan="2">Business<br /> Process<br /> Cooperation</p:column>
+											<p:column rowspan="4">
+												<p:commandLink id ="informationStrcture" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Information Structure')}">
+													Information<br /> Structure
+												</p:commandLink>
+												<pe:tooltip for="informationStrcture" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>
+											</p:column>
+											<p:column rowspan="2">
+												<p:commandLink id ="bpCooperation" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Business Process Cooperation')}">
+													Business<br /> Process<br /> Cooperation
+												</p:commandLink>
+												<pe:tooltip for="bpCooperation" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>
+											</p:column>
 										</p:row>
 										<p:row>
-											<p:column colspan="2" rowspan="2">Application<br /> Usage</p:column>
+											<p:column colspan="2" rowspan="2">
+												<p:commandLink id ="appUsage" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Application Usage')}">
+													Application<br /> Usage
+												</p:commandLink>
+												<pe:tooltip for="appUsage" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>
+											</p:column>
 										</p:row>
 										<p:row>
-											<p:column rowspan="2">Application<br /> Cooperation</p:column>
+											<p:column rowspan="2">
+												<p:commandLink id ="appCoop" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Application Cooperation')}">
+													Application<br /> Cooperation
+												</p:commandLink>
+												<pe:tooltip for="appCoop" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>
+											</p:column>
 										</p:row>
 										<p:row>
-											<p:column rowspan="3">Technology<br /> Usage</p:column>
-											<p:column rowspan="4">Implementation<br /> and<br /> Deployment</p:column>
+											<p:column rowspan="3">
+												<p:commandLink id ="techUsage" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Technology Usage')}">
+													Technology<br /> Usage
+												</p:commandLink>
+												<pe:tooltip for="techUsage" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>
+											</p:column>
+											<p:column rowspan="4">
+												<p:commandLink id ="implementationAndDeployment" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Implementation and Deployment')}">
+													Implementation<br /> and<br /> Deployment
+												</p:commandLink>
+												<pe:tooltip for="implementationAndDeployment" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>
+											</p:column>
 										</p:row>
 										<p:row>
-											<p:column colspan="2" rowspan="2">Technology</p:column>
+											<p:column colspan="2" rowspan="2">
+												<p:commandLink id ="technology" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Technology')}">
+													Technology
+												</p:commandLink>
+												<pe:tooltip for="technology" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>
+											</p:column>
 										</p:row>
 										<p:row />
 										<p:row>
-											<p:column colspan="3">Physical</p:column>
+											<p:column colspan="3">
+												<p:commandLink id ="physical" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Physical')}">
+													Physical
+												</p:commandLink>
+												<pe:tooltip for="physical" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>
+											</p:column>
 										</p:row>
 									</p:panelGrid>
 								</p:panel>
@@ -139,13 +282,53 @@
 										style="width: 100%; margin: 0px; border-collapse: separate; border-spacing:10px;">
 
 										<p:row>
-											<p:column rowspan="10">Outcome Realization</p:column>
-											<p:column>Stakeholder</p:column>
-											<p:column>Motivation</p:column>
-											<p:column>Goal<br /> Realization</p:column>
+											<p:column rowspan="10">
+												<p:commandLink id ="outcome" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Outcome Realization')}">
+													Outcome Realization
+												</p:commandLink>
+												<pe:tooltip for="outcome" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>
+											</p:column>
+											<p:column>
+												<p:commandLink id ="stakeholder" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Stakeholder')}">
+													Stakeholder
+												</p:commandLink>
+												<pe:tooltip for="stakeholder" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>
+											</p:column>
+											<p:column>
+												<p:commandLink id ="motivation" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Motivation')}">
+													Motivation
+												</p:commandLink>
+												<pe:tooltip for="motivation" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>
+											</p:column>
+											<p:column>
+												<p:commandLink id ="goalRealization" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Goal Realization')}">
+													Goal<br /> Realization
+												</p:commandLink>
+												<pe:tooltip for="goalRealization" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>
+											</p:column>
 										</p:row>
 										<p:row>
-											<p:column colspan="3" rowspan="9">Requirement<br />  Realization</p:column>
+											<p:column colspan="3" rowspan="9">
+												<p:commandLink id ="requirement" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Requirement Realization')}">
+													Requirement<br />  Realization
+												</p:commandLink>
+												<pe:tooltip for="requirement" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
+													<span class="ui-icon ui-icon-search"/>
+													<h:outputText value="click for further information" />
+												</pe:tooltip>
+											</p:column>
 										</p:row>
 										<p:row />
 										<p:row />
@@ -160,19 +343,8 @@
 							</p:column>
 						</p:row>
 					</p:panelGrid>
-
-
-
-
-
-
-
 				</p:outputPanel>
 			</p:panelGrid>
-
-
-
 		</p:panel>
-
 	</p:tab>
 </ui:composition>

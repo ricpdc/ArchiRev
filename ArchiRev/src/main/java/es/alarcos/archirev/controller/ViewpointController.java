@@ -14,10 +14,6 @@ import javax.faces.bean.ViewScoped;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.ToggleEvent;
 import org.primefaces.event.TransferEvent;
-import org.primefaces.model.DashboardColumn;
-import org.primefaces.model.DashboardModel;
-import org.primefaces.model.DefaultDashboardColumn;
-import org.primefaces.model.DefaultDashboardModel;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.StreamedContent;
@@ -237,8 +233,26 @@ public class ViewpointController extends AbstractController {
 		return stakeholderPickerList;
 	}
 
-	public void setStackeholderPickerList(DualListModel<Stakeholder> stakeholderPickerList) {
+	public void setStakeholderPickerList(DualListModel<Stakeholder> stakeholderPickerList) {
 		this.stakeholderPickerList = stakeholderPickerList;
 	}
-
+	
+	public void showViewpointInfo(String viewpointName) {
+		LOGGER.info("Showing " + viewpointName);
+		
+		for (Viewpoint viewpoint : availableViewpoints) {
+			if(viewpoint.getName().equals(viewpointName)) {
+				selectedViewpoint = viewpoint;
+				break;
+			}
+		}
+		
+		if(selectedViewpoint!=null) {
+			RequestContext context = RequestContext.getCurrentInstance();
+			context.update("mainForm:viewpointDialog");
+			context.execute("PF('viewpointDialog').show()");
+		}
+		
+	}
+	
 }
