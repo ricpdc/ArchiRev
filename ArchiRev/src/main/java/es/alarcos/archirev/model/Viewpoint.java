@@ -74,6 +74,10 @@ public class Viewpoint extends AbstractEntity {
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "category", table = "av_viewpoint_basic")
 	private Category category;
+	
+	
+	@Transient
+	private double percentage;
 
 	public Viewpoint() {
 		super();
@@ -244,6 +248,16 @@ public class Viewpoint extends AbstractEntity {
 	@Transient
 	public String getDisplayedElements() {
 		return getStringList(elements);
+	}
+
+	@Transient
+	public double getPercentage() {
+		return percentage;
+	}
+
+	@Transient
+	public void setPercentage(double percentage) {
+		this.percentage = percentage;
 	}
 	
 

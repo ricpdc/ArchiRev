@@ -7,9 +7,18 @@
 	<p:dialog
 		header="Info #{viewpointController.selectedViewpoint.name} viewpoint"
 		id="viewpointDialog" widgetVar="viewpointDialog" modal="true"
-		height="600" width="1000" closable="true" closeOnEscape="true">
-		<ui:include src="/viewpoints/viewpointDetail.xhtml">
-			<ui:param name="viewpoint" value="#{viewpointController.selectedViewpoint}" />
-		</ui:include>
+		height="600" width="1200" closable="true" closeOnEscape="true">
+		
+		<p:panelGrid>
+			<p:outputLabel value="Element availability: #{viewpointController.selectedViewpoint.percentage}"/>
+		</p:panelGrid>
+		
+		<br/>
+		<p:separator/>
+		<p:panel header="General Viewpoint Information" toggleable="true" toggleTitle="Show general information for the viewpoint" collapsed="true">
+			<ui:include src="/viewpoints/viewpointDetail.xhtml">
+				<ui:param name="viewpoint" value="#{viewpointController.selectedViewpoint}" />
+			</ui:include>
+		</p:panel>
 	</p:dialog>
 </ui:composition>

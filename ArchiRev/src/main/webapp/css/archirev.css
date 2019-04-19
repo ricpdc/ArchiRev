@@ -112,3 +112,12 @@ div[id*='artifactPickList'] div[class*='ui-picklist-buttons'], div[id*='stakehol
 	border-radius: 10px;
 }
 
+a[class*='viewpointName'] {
+	text-decoration-line: none !important;
+	font-weight: bold !important;
+	font-size: small !important;
+}
+
+label[class*='viewpointPercentage'] {
+	font-size: x-small !important;
+}

@@ -15,7 +15,7 @@
 			<p:panelGrid style="width:100%; border: none; padding:0px;"
 				columns="1"
 				columnClasses="viewpointSimulatorLeft, viewpointSimulatorRight">
-				<p:panelGrid columns="2" style="padding:0px;">
+				<p:panelGrid columns="3" style="padding:0px;">
 					<p:panelGrid style="padding:0px;">
 						<p:pickList id="artifactPickList" widgetVar="artifactPickList"
 							style="width:100%;"
@@ -44,24 +44,27 @@
 								listener="#{viewpointController.onTransfer}" />
 						</p:pickList>
 					</p:panelGrid>
+					<p:panelGrid style="padding:0px;" columns="1">
+						<p:commandButton value="Compute" actionListener="#{viewpointController.simulateViewpoints}" update="mainForm:viewpointsTabs:viewpointMap"/>	
+					</p:panelGrid>
 				</p:panelGrid>
 				<p:separator />
 				<p:outputPanel style="padding:0px;">
-					<p:outputLabel value="Viewpoint Map"
-						style="text-align: center; width:100% !important;" />
 
-
-					<p:panelGrid id="viewpointMap" style="width: 100%; margin: 0px;">
+					<p:panelGrid id="viewpointMap" style="width: 100%; margin: 0px; font-size: small !important">
 						<p:row>
 							<p:column colspan="2">
 								<p:panel toggleable="true" header="Strategy Viewpoints">
 									<p:panelGrid id="strategyMap"
 										style="width: 100%; margin: 0px; border-collapse: separate; border-spacing:10px;">
 										<p:row>
-											<p:column colspan="9">
-												<p:commandLink id ="strategy" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Strategy')}">
+											<p:column colspan="9" style="background-color: hsl(#{viewpointController.getPercentage('Strategy')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="strategy" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Strategy')}">
 													Strategy
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Strategy')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="strategy" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
@@ -69,19 +72,25 @@
 											</p:column>
 										</p:row>
 										<p:row>
-											<p:column colspan="5">
-												<p:commandLink id ="capabilityMap" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Capability Map')}">
+											<p:column colspan="5" style="background-color: hsl(#{viewpointController.getPercentage('Capability Map')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="capabilityMap" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Capability Map')}">
 													Capability Map
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Capability Map')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="capabilityMap" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
 												</pe:tooltip>
 											</p:column>
-											<p:column colspan="4">
-												<p:commandLink id ="resourceMap" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Resource Map')}">
+											<p:column colspan="4" style="background-color: hsl(#{viewpointController.getPercentage('Resource Map')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="resourceMap" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Resource Map')}">
 													Resource Map
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Resource Map')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="resourceMap" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
@@ -97,10 +106,13 @@
 										style="width: 100%; margin: 0px; border-collapse: separate; border-spacing:10px;">
 
 										<p:row>
-											<p:column colspan="2" rowspan="3">
-												<p:commandLink id ="project" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Project')}">
+											<p:column colspan="2" rowspan="3" style="background-color: hsl(#{viewpointController.getPercentage('Project')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="project" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Project')}">
 													Project
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Project')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="project" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
@@ -110,19 +122,25 @@
 										<p:row />
 										<p:row />
 										<p:row>
-											<p:column rowspan="10">
-												<p:commandLink id ="implementationAndMigration" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Implementation and Migration')}">
+											<p:column rowspan="10" style="background-color: hsl(#{viewpointController.getPercentage('Implementation and Migration')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="implementationAndMigration" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Implementation and Migration')}">
 													Implementation<br /> and<br /> Migration
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Implementation and Migration')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="implementationAndMigration" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
 												</pe:tooltip>
 											</p:column>
-											<p:column rowspan="10">
-												<p:commandLink id ="migration" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Migration')}">
+											<p:column rowspan="10" style="background-color: hsl(#{viewpointController.getPercentage('Migration')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="migration" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Migration')}">
 													Migration
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Migration')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="migration" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
@@ -148,10 +166,13 @@
 									<p:panelGrid id="basicViewpointMap"
 										style="width: 100%; margin: 0px; border-collapse: separate; border-spacing:10px;">
 										<p:row>
-											<p:column colspan="5">
-												<p:commandLink id ="organization" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Organization')}">
+											<p:column colspan="5" style="background-color: hsl(#{viewpointController.getPercentage('Organization')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="organization" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Organization')}">
 													Organization
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Organization')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="organization" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
@@ -159,28 +180,37 @@
 											</p:column>
 										</p:row>
 										<p:row>
-											<p:column rowspan="9">
-												<p:commandLink id ="layered" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Layered')}">
+											<p:column rowspan="9" style="background-color: hsl(#{viewpointController.getPercentage('Layered')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="layered" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Layered')}">
 													Layered
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Layered')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="layered" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
 												</pe:tooltip>
 											</p:column>
-											<p:column colspan="2" rowspan="2">
-												<p:commandLink id ="product" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Product')}">
+											<p:column colspan="2" rowspan="2" style="background-color: hsl(#{viewpointController.getPercentage('Product')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="product" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Product')}">
 													Product
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Product')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="product" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
 												</pe:tooltip>
 											</p:column>
-											<p:column colspan="2" rowspan="3">
-												<p:commandLink id ="serviceRealization" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Service Realization')}">
+											<p:column colspan="2" rowspan="3" style="background-color: hsl(#{viewpointController.getPercentage('Service Realization')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="serviceRealization" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Service Realization')}">
 													Service<br /> Realization
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Service Realization')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="serviceRealization" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
@@ -189,19 +219,25 @@
 										</p:row>
 										<p:row />
 										<p:row>
-											<p:column rowspan="4">
-												<p:commandLink id ="informationStrcture" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Information Structure')}">
+											<p:column rowspan="4" style="background-color: hsl(#{viewpointController.getPercentage('Information Structure')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="informationStrcture" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Information Structure')}">
 													Information<br /> Structure
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Information Structure')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="informationStrcture" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
 												</pe:tooltip>
 											</p:column>
-											<p:column rowspan="2">
-												<p:commandLink id ="bpCooperation" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Business Process Cooperation')}">
+											<p:column rowspan="2" style="background-color: hsl(#{viewpointController.getPercentage('Business Process Cooperation')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="bpCooperation" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Business Process Cooperation')}">
 													Business<br /> Process<br /> Cooperation
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Business Process Cooperation')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="bpCooperation" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
@@ -209,10 +245,13 @@
 											</p:column>
 										</p:row>
 										<p:row>
-											<p:column colspan="2" rowspan="2">
-												<p:commandLink id ="appUsage" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Application Usage')}">
+											<p:column colspan="2" rowspan="2" style="background-color: hsl(#{viewpointController.getPercentage('Application Usage')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="appUsage" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Application Usage')}">
 													Application<br /> Usage
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Application Usage')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="appUsage" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
@@ -220,10 +259,13 @@
 											</p:column>
 										</p:row>
 										<p:row>
-											<p:column rowspan="2">
-												<p:commandLink id ="appCoop" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Application Cooperation')}">
+											<p:column rowspan="2" style="background-color: hsl(#{viewpointController.getPercentage('Application Cooperation')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="appCoop" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Application Cooperation')}">
 													Application<br /> Cooperation
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Application Cooperation')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="appCoop" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
@@ -231,19 +273,25 @@
 											</p:column>
 										</p:row>
 										<p:row>
-											<p:column rowspan="3">
-												<p:commandLink id ="techUsage" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Technology Usage')}">
+											<p:column rowspan="3" style="background-color: hsl(#{viewpointController.getPercentage('Technology Usage')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="techUsage" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Technology Usage')}">
 													Technology<br /> Usage
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Technology Usage')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="techUsage" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
 												</pe:tooltip>
 											</p:column>
-											<p:column rowspan="4">
-												<p:commandLink id ="implementationAndDeployment" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Implementation and Deployment')}">
+											<p:column rowspan="4" style="background-color: hsl(#{viewpointController.getPercentage('Implementation and Deployment')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="implementationAndDeployment" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Implementation and Deployment')}">
 													Implementation<br /> and<br /> Deployment
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Implementation and Deployment')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="implementationAndDeployment" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
@@ -251,10 +299,13 @@
 											</p:column>
 										</p:row>
 										<p:row>
-											<p:column colspan="2" rowspan="2">
-												<p:commandLink id ="technology" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Technology')}">
+											<p:column colspan="2" rowspan="2" style="background-color: hsl(#{viewpointController.getPercentage('Technology')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="technology" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Technology')}">
 													Technology
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Technology')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="technology" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
@@ -263,10 +314,13 @@
 										</p:row>
 										<p:row />
 										<p:row>
-											<p:column colspan="3">
-												<p:commandLink id ="physical" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Physical')}">
+											<p:column colspan="3" style="background-color: hsl(#{viewpointController.getPercentage('Physical')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="physical" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Physical')}">
 													Physical
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Physical')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="physical" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
@@ -282,37 +336,49 @@
 										style="width: 100%; margin: 0px; border-collapse: separate; border-spacing:10px;">
 
 										<p:row>
-											<p:column rowspan="10">
-												<p:commandLink id ="outcome" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Outcome Realization')}">
+											<p:column rowspan="10" style="background-color: hsl(#{viewpointController.getPercentage('Outcome Realization')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="outcome" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Outcome Realization')}">
 													Outcome Realization
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Outcome Realization')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="outcome" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
 												</pe:tooltip>
 											</p:column>
-											<p:column>
-												<p:commandLink id ="stakeholder" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Stakeholder')}">
+											<p:column style="background-color: hsl(#{viewpointController.getPercentage('Stakeholder')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="stakeholder" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Stakeholder')}">
 													Stakeholder
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Stakeholder')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="stakeholder" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
 												</pe:tooltip>
 											</p:column>
-											<p:column>
-												<p:commandLink id ="motivation" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Motivation')}">
+											<p:column style="background-color: hsl(#{viewpointController.getPercentage('Motivation')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="motivation" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Motivation')}">
 													Motivation
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Motivation')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="motivation" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
 												</pe:tooltip>
 											</p:column>
-											<p:column>
-												<p:commandLink id ="goalRealization" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Goal Realization')}">
+											<p:column style="background-color: hsl(#{viewpointController.getPercentage('Goal Realization')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="goalRealization" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Goal Realization')}">
 													Goal<br /> Realization
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Goal Realization')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="goalRealization" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />
@@ -320,10 +386,13 @@
 											</p:column>
 										</p:row>
 										<p:row>
-											<p:column colspan="3" rowspan="9">
-												<p:commandLink id ="requirement" style="text-decoration-line:none" actionListener="#{viewpointController.showViewpointInfo('Requirement Realization')}">
+											<p:column colspan="3" rowspan="9" style="background-color: hsl(#{viewpointController.getPercentage('Requirement Realization')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="requirement" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Requirement Realization')}">
 													Requirement<br />  Realization
 												</p:commandLink>
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Requirement Realization')*0.01}" >
+													<f:convertNumber pattern="0.0%" />
+												</p:outputLabel>
 												<pe:tooltip for="requirement" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >
 													<span class="ui-icon ui-icon-search"/>
 													<h:outputText value="click for further information" />

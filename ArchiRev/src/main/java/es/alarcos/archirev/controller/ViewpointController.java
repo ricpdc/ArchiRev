@@ -32,6 +32,7 @@ import es.alarcos.archirev.model.ViewpointElement;
 import es.alarcos.archirev.persistency.ConcernDao;
 import es.alarcos.archirev.persistency.InputArtifactDao;
 import es.alarcos.archirev.persistency.PurposeDao;
+import es.alarcos.archirev.persistency.QueriedViewpointDTO;
 import es.alarcos.archirev.persistency.ScopeDao;
 import es.alarcos.archirev.persistency.StakeholderDao;
 import es.alarcos.archirev.persistency.ViewpointDao;
@@ -80,6 +81,8 @@ public class ViewpointController extends AbstractController {
 	private List<String> elementItems;
 	private List<ViewpointElement> allElements;
 	
+	private boolean coloured;
+	
 	
 	private DualListModel<InputArtifact> artifactPickerList = new DualListModel<>(new ArrayList<InputArtifact>(), new ArrayList<InputArtifact>());
 	private DualListModel<Stakeholder> stakeholderPickerList = new DualListModel<>(new ArrayList<Stakeholder>(), new ArrayList<Stakeholder>());
@@ -91,8 +94,6 @@ public class ViewpointController extends AbstractController {
 	@PostConstruct
 	public void init() {
 		super.init();
-		
-		
 		
 		reload();
 	}
@@ -111,6 +112,8 @@ public class ViewpointController extends AbstractController {
 			stakeholderPickerList = new DualListModel<>(stakeholderDao.findAll(), new ArrayList<Stakeholder>());
 
 			RequestContext.getCurrentInstance().update("mainForm:viewpointsTabs");
+			
+			coloured=false;
 		}
 	}
 
@@ -254,5 +257,38 @@ public class ViewpointController extends AbstractController {
 		}
 		
 	}
+	
+	public double getPercentage(String viewpointName) {
+		for (Viewpoint viewpoint : availableViewpoints) {
+			if(viewpoint.getName().equals(viewpointName)) {
+				return viewpoint.getPercentage();
+			}
+		}
+		return 0;
+	}
+	
+	public void simulateViewpoints() {
+		List<QueriedViewpointDTO> listViewpointsByArtefacts = viewpointDao.listViewpointsMaxPercentageByArtefacts(artifactPickerList.getTarget());
+		for (Viewpoint viewpoint : availableViewpoints) {
+			viewpoint.setPercentage(0.0);
+			for (QueriedViewpointDTO viewpointDTO : listViewpointsByArtefacts) {
+				if(viewpointDTO.getId().equals(viewpoint.getId())) {
+					viewpoint.setPercentage(viewpointDTO.getPercentageElements());
+					break;
+				}
+			}
+		}
+		coloured=true;
+	}
+
+	public boolean isColoured() {
+		return coloured;
+	}
+
+	public void setColoured(boolean coloured) {
+		this.coloured = coloured;
+	}
+	
+	
 	
 }
