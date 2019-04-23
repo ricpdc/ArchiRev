@@ -7,17 +7,70 @@
 	<p:dialog
 		header="Info #{viewpointController.selectedViewpoint.name} viewpoint"
 		id="viewpointDialog" widgetVar="viewpointDialog" modal="true"
-		height="600" width="1200" closable="true" closeOnEscape="true">
-		
-		<p:panelGrid>
-			<p:outputLabel value="Element availability: #{viewpointController.selectedViewpoint.percentage}"/>
+		height="700" width="1200" closable="true" closeOnEscape="true">
+
+		<!-- <p:panelGrid columns="2">
+			<p:outputLabel value="Max Covered Elements: " />
+			<h:outputText
+				value="#{viewpointController.selectedViewpointDTO.maxNumElements}" />
+			<p:outputLabel value="Total Elements: " />
+			<h:outputText
+				value="#{viewpointController.selectedViewpointDTO.totalElements}" />
+			<p:outputLabel value="Max Percetage of covered elements: " />
+			<h:outputText
+				value="#{viewpointController.selectedViewpointDTO.maxPercentageElements}" />
+
+		</p:panelGrid> -->
+		<p:panelGrid columns="2">
+			<p:chart type="metergauge" model="#{viewpointController.meterPlot}"
+				style="width:400px;height:250px" />
+			<p:chart type="bar" model="#{viewpointController.bestTechniquesPlot}"
+				style="width:700px; height:250px" />
 		</p:panelGrid>
-		
-		<br/>
-		<p:separator/>
-		<p:panel header="General Viewpoint Information" toggleable="true" toggleTitle="Show general information for the viewpoint" collapsed="true">
+
+		<p:separator />
+		<p:dataTable
+			value="#{viewpointController.techniquesFromSelectedViewpoint}"
+			var="techniquePair" sortBy="#{techniquePair.right}"
+			sortOrder="descending" rows="5" paginator="true"
+			paginatorPosition="bottom"
+			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+			rowsPerPageTemplate="5,10,15">
+			<p:column headerText="Technique" sortBy="#{techniquePair.left}"
+				filterBy="#{techniquePair.left}" filterMatchMode="contains">
+				<h:outputText value="#{techniquePair.left}" />
+			</p:column>
+			<p:column headerText="Covered elements"
+				sortBy="#{techniquePair.right}">
+				<h:outputText value="#{techniquePair.right}" />
+			</p:column>
+			<p:column headerText="Percentage of covered elements"
+				sortBy="#{techniquePair.right}">
+				<h:outputText
+					value="#{techniquePair.right / viewpointController.selectedViewpointDTO.totalElements}">
+					<f:convertNumber pattern="0.0%" />
+				</h:outputText>
+			</p:column>
+
+			<p:column style="width:80px;text-align: center" headerText="Elements">
+				<p:commandButton update="mainForm:elementsTechniqueDialog"
+					actionListener="#{viewpointController.showElementsForTechnique(techniquePair.left)}"
+					title="Elements in the viewpoint covered by this technique"
+					oncomplete="PF('elementsTechniqueDialog').show()"
+					icon="ui-icon-search">
+				</p:commandButton>
+			</p:column>
+
+		</p:dataTable>
+
+		<br />
+		<p:separator />
+		<p:panel header="General Viewpoint Information" toggleable="true"
+			toggleTitle="Show general information for the viewpoint"
+			collapsed="true">
 			<ui:include src="/viewpoints/viewpointDetail.xhtml">
-				<ui:param name="viewpoint" value="#{viewpointController.selectedViewpoint}" />
+				<ui:param name="viewpoint"
+					value="#{viewpointController.selectedViewpoint}" />
 			</ui:include>
 		</p:panel>
 	</p:dialog>
