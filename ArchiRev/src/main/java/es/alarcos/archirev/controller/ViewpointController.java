@@ -141,10 +141,11 @@ public class ViewpointController extends AbstractController {
 			coloured = false;
 			queriedViewpointMap = new HashMap<String, QueriedViewpointDTO>();
 
-			artifactPickerList.setTarget(artifactPickerList.getSource());
-			simulateViewpoints();
+			stakeholderPickerList.setTarget(stakeholderPickerList.getSource());
+			simulateViewpointsByStakeholder();
 		}
 	}
+	
 
 	public List<Viewpoint> getAvailableViewpoints() {
 		return availableViewpoints;
@@ -344,7 +345,7 @@ public class ViewpointController extends AbstractController {
 		return 0.0;
 	}
 
-	public void simulateViewpoints() {
+	public void simulateViewpointsByArtifact() {
 		List<QueriedViewpointDTO> listViewpointsByArtefacts = viewpointDao
 				.listViewpointsMaxPercentageByArtefacts(artifactPickerList.getTarget());
 		queriedViewpointMap = new HashMap<String, QueriedViewpointDTO>();
@@ -357,6 +358,25 @@ public class ViewpointController extends AbstractController {
 			}
 		}
 		coloured = true;
+	}
+	
+	public void simulateViewpointsByStakeholder() {
+		List<QueriedViewpointDTO> listViewpointsByStakeholders = viewpointDao
+				.listViewpointsMaxPercentageByStakeholder(stakeholderPickerList.getTarget());
+		queriedViewpointMap = new HashMap<String, QueriedViewpointDTO>();
+		for (Viewpoint viewpoint : availableViewpoints) {
+			for (QueriedViewpointDTO viewpointDTO : listViewpointsByStakeholders) {
+				if (viewpointDTO.getId().equals(viewpoint.getId())) {
+					queriedViewpointMap.put(viewpoint.getName(), viewpointDTO);
+					break;
+				}
+			}
+		}
+		coloured = true;
+	}
+	
+	public void simulateViewpointsByArtifactAndStakeholder () {
+		;
 	}
 
 	public boolean isColoured() {

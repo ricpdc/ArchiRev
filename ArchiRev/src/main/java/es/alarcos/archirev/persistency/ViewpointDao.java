@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import es.alarcos.archirev.model.InputArtifact;
+import es.alarcos.archirev.model.Stakeholder;
 import es.alarcos.archirev.model.Viewpoint;
 
 @Repository
@@ -181,6 +182,51 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 		}
 
 		return viewpointDTO;
+	}
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<QueriedViewpointDTO> listViewpointsMaxPercentageByStakeholder(final List<Stakeholder> stakeholders) {
+		List<QueriedViewpointDTO> resultList = new ArrayList<>();
+
+		if (stakeholders == null || stakeholders.isEmpty()) {
+			return resultList;
+		}
+
+		String stringQuery = "select v.id, v.name as viewpoint, count(distinct e.name), (cast(count(distinct e.name) as real)*100) / ( " + 
+				"	select count(e2.name) as num_elements from av_viewpoint as v2, av_viewpoint_element as ve2, av_element as e2 " + 
+				"	where v2.id = ve2.viewpoint_id and ve2.element_id = e2.id and v2.id = v.id " + 
+				" ) as percentage " + 
+				" from av_viewpoint as v, av_viewpoint_element as ve, av_element as e, " + 
+				"		av_stakeholder_element se, av_stakeholder s  " + 
+				" where (v.id = ve.viewpoint_id and ve.element_id = e.id and e.id = se.element_id and se.stakeholder_id = s.id and s.id in (:stakeholderIds)) " + 
+				" group by v.id, viewpoint order by percentage desc";
+
+		try {
+			Query query = entityManager.createNativeQuery(stringQuery);
+
+			List<Long> stakeholderIds = stakeholders.stream().map(Stakeholder::getId).collect(Collectors.toList());
+
+			query.setParameter("stakeholderIds", stakeholderIds);
+
+			List<Object[]> resultSet = query.getResultList();
+
+			for (Object[] tuple : resultSet) {
+				QueriedViewpointDTO viewpoint = new QueriedViewpointDTO();
+				viewpoint.setId(((BigInteger) tuple[0]).longValue());
+				viewpoint.setName((String) tuple[1]);
+				viewpoint.setMaxNumElements(Integer.parseInt(tuple[2].toString()));
+				viewpoint.setMaxPercentageElements(Double.parseDouble(tuple[3].toString()));
+				resultList.add(viewpoint);
+			}
+
+		} catch (SQLGrammarException e) {
+			LOGGER.error(e.getMessage());
+			e.printStackTrace();
+		}
+
+		return resultList;
 	}
 
 }

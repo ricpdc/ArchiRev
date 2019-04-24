@@ -44,9 +44,16 @@
 								listener="#{viewpointController.onTransfer}" />
 						</p:pickList>
 					</p:panelGrid>
-					<p:panelGrid style="padding:0px;" columns="1">
-						<p:commandButton value="Compute" actionListener="#{viewpointController.simulateViewpoints}" update="mainForm:viewpointsTabs:viewpointMap"/>	
-					</p:panelGrid>
+					<p:panel header="Simulations" id="simulationButtonsPanel">
+						<p:panelGrid id="simulationButtonsTable" style="padding:0px;" columns="1">
+							<p:commandButton value="Automatic from Input Artifacts"
+								actionListener="#{viewpointController.simulateViewpointsByArtifact}" update="mainForm:viewpointsTabs:viewpointMap"/>	
+							<p:commandButton value="Manual by Stakeholders"
+								actionListener="#{viewpointController.simulateViewpointsByStakeholder}" update="mainForm:viewpointsTabs:viewpointMap"/>
+							<p:commandButton value="Semiautomatic (both)"
+								actionListener="#{viewpointController.simulateViewpointsByArtifactAndStakeholder}" update="mainForm:viewpointsTabs:viewpointMap"/>
+						</p:panelGrid>
+					</p:panel>
 				</p:panelGrid>
 				<p:separator />
 				<p:outputPanel style="padding:0px;">
@@ -386,11 +393,11 @@
 											</p:column>
 										</p:row>
 										<p:row>
-											<p:column colspan="3" rowspan="9" style="background-color: hsl(#{viewpointController.getPercentage('Requirement Realization')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
-												<p:commandLink id ="requirement" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Requirement Realization')}">
+											<p:column colspan="3" rowspan="9" style="background-color: hsl(#{viewpointController.getPercentage('Requirements Realization')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+												<p:commandLink id ="requirement" styleClass="viewpointName" actionListener="#{viewpointController.showViewpointInfo('Requirements Realization')}">
 													Requirement<br />  Realization
 												</p:commandLink>
-												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Requirement Realization')*0.01}" >
+												<br/><p:outputLabel styleClass="viewpointPercentage" value="#{not viewpointController.coloured ? '_' : viewpointController.getPercentage('Requirements Realization')*0.01}" >
 													<f:convertNumber pattern="0.0%" />
 												</p:outputLabel>
 												<pe:tooltip for="requirement" mouseTracking="true" myPosition="top left" adjustX="20" adjustY="20"   >

@@ -121,3 +121,8 @@ a[class*='viewpointName'] {
 label[class*='viewpointPercentage'] {
 	font-size: x-small !important;
 }
+
+
+[id*='simulationButtonsTable'] button {
+	width: 100% !important;
+}
