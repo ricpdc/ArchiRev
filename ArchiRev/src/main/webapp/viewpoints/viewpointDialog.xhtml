@@ -21,15 +21,15 @@
 				value="#{viewpointController.selectedViewpointDTO.maxPercentageElements}" />
 
 		</p:panelGrid> -->
-		<p:panelGrid columns="2">
+		<p:panelGrid columns="2" rendered="#{viewpointController.automaticSimulation}">
 			<p:chart type="metergauge" model="#{viewpointController.meterPlot}"
 				style="width:400px;height:250px" />
 			<p:chart type="bar" model="#{viewpointController.bestTechniquesPlot}"
 				style="width:700px; height:250px" />
 		</p:panelGrid>
 
-		<p:separator />
-		<p:dataTable
+		<p:separator  rendered="#{viewpointController.automaticSimulation}" />
+		<p:dataTable  rendered="#{viewpointController.automaticSimulation}"
 			value="#{viewpointController.techniquesFromSelectedViewpoint}"
 			var="techniquePair" sortBy="#{techniquePair.right}"
 			sortOrder="descending" rows="5" paginator="true"
@@ -62,6 +62,12 @@
 			</p:column>
 
 		</p:dataTable>
+		
+		<p:outputPanel id="panelElementStakeholderList" style="paddign:0px;border:none;" rendered="#{viewpointController.manualSimulation}">
+			<ui:include src="/viewpoints/elementsForTechniqueOrStakeholder.xhtml">
+				<ui:param name="container" value="stakeholderList" />
+			</ui:include>
+		</p:outputPanel>
 
 		<br />
 		<p:separator />

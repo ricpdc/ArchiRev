@@ -10,36 +10,9 @@
 		id="elementsTechniqueDialog" widgetVar="elementsTechniqueDialog" modal="true"
 		height="500" width="650" closable="true" closeOnEscape="true">
 		<p:outputPanel id="panelElementTechniqueList" style="paddign:0px;border:none;">
-			<p:dataTable id="elementsTechniqueTable" widgetVar="elementsTechniqueTable"
-				frozenRows="0" scrollRows="5" sortBy="#{element}"
-				value="#{viewpointController.selectedViewpoint.elements}" var="element">
-				<p:column style="text-align:center; width:30px">
-					<p:graphicImage
-						rendered="#{viewpointController.getImageFromBytes(element.icon) != null}"
-						value="#{viewpointController.getImageFromBytes(element.icon)}"
-						stream="false" />
-				</p:column>
-				<p:column headerText="Name" sortBy="#{element.name}" 
-					filterBy="#{element.name}" filterMatchMode="contains">
-					<h:outputText value="#{element.name}" />
-				</p:column>
-				<p:column headerText="Retrieved"
-					style="text-align:center; width: 180px !important;"
-					filterBy="#{viewpointController.isElementCovered(element)}"
-					filterMatchMode="equals">
-					<f:facet name="filter">
-						<p:selectOneButton onchange="PF('elementsTechniqueTable').filter()"
-							styleClass="custom-filter">
-							<f:converter converterId="javax.faces.Boolean" />
-							<f:selectItem itemLabel="All" itemValue="" />
-							<f:selectItem itemLabel="x" itemValue="true" />
-							<f:selectItem itemLabel="_" itemValue="false" />
-						</p:selectOneButton>
-					</f:facet>
-					<h:outputText
-						value="#{viewpointController.isElementCovered(element) ? 'x' : ''}" />
-				</p:column>
-			</p:dataTable>
+			<ui:include src="/viewpoints/elementsForTechniqueOrStakeholder.xhtml">
+				<ui:param name="container" value="techniqueList" />
+			</ui:include>
 		</p:outputPanel>
 	</p:dialog>
 </ui:composition>

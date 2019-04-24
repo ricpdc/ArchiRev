@@ -37,14 +37,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import com.archimatetool.model.impl.ArchimateElement;
-
 import es.alarcos.archirev.model.AbstractEntity;
 import es.alarcos.archirev.model.InputArtifact;
 import es.alarcos.archirev.model.Source;
 import es.alarcos.archirev.model.Stakeholder;
 import es.alarcos.archirev.model.Viewpoint;
 import es.alarcos.archirev.model.ViewpointElement;
+import es.alarcos.archirev.model.enums.ViewpointSimulationEnum;
 import es.alarcos.archirev.persistency.ConcernDao;
 import es.alarcos.archirev.persistency.InputArtifactDao;
 import es.alarcos.archirev.persistency.PurposeDao;
@@ -111,6 +110,8 @@ public class ViewpointController extends AbstractController {
 	private String selectedTechnique;
 
 	private ArrayList<String> elementsFromSelectedTechnique;
+	
+	private ViewpointSimulationEnum simulationType = ViewpointSimulationEnum.AUTOMATIC;
 
 	public ViewpointController() {
 		super();
@@ -281,22 +282,28 @@ public class ViewpointController extends AbstractController {
 
 	public void showViewpointInfo(String viewpointName) {
 		LOGGER.info("Showing " + viewpointName);
-
 		if (getPercentage(viewpointName) == 0.0) {
 			return;
 		}
-
 		for (Viewpoint viewpoint : availableViewpoints) {
 			if (viewpoint.getName().equals(viewpointName)) {
 				selectedViewpoint = viewpoint;
-				QueriedViewpointDTO updatedViewpointDTO = viewpointDao
-						.getViewpointPercentagesByArtefacts(artifactPickerList.getTarget(), getSelectedViewpointDTO());
-				queriedViewpointMap.put(viewpointName, updatedViewpointDTO);
 				break;
 			}
 		}
-		
-		loadTechniquesFromSelectedViewpointDTO();
+
+		switch(simulationType) {
+		case MANUAL:
+			break;
+		case HYBRID:
+			break;
+		case AUTOMATIC:
+		default:
+			QueriedViewpointDTO updatedViewpointDTO = viewpointDao
+			.getViewpointPercentagesByArtefacts(artifactPickerList.getTarget(), getSelectedViewpointDTO());
+				queriedViewpointMap.put(viewpointName, updatedViewpointDTO);
+			loadTechniquesFromSelectedViewpointDTO();
+		}
 
 		if (selectedViewpoint != null) {
 			RequestContext context = RequestContext.getCurrentInstance();
@@ -346,6 +353,7 @@ public class ViewpointController extends AbstractController {
 	}
 
 	public void simulateViewpointsByArtifact() {
+		simulationType = ViewpointSimulationEnum.AUTOMATIC;
 		List<QueriedViewpointDTO> listViewpointsByArtefacts = viewpointDao
 				.listViewpointsMaxPercentageByArtefacts(artifactPickerList.getTarget());
 		queriedViewpointMap = new HashMap<String, QueriedViewpointDTO>();
@@ -361,6 +369,7 @@ public class ViewpointController extends AbstractController {
 	}
 	
 	public void simulateViewpointsByStakeholder() {
+		simulationType = ViewpointSimulationEnum.MANUAL;
 		List<QueriedViewpointDTO> listViewpointsByStakeholders = viewpointDao
 				.listViewpointsMaxPercentageByStakeholder(stakeholderPickerList.getTarget());
 		queriedViewpointMap = new HashMap<String, QueriedViewpointDTO>();
@@ -376,7 +385,7 @@ public class ViewpointController extends AbstractController {
 	}
 	
 	public void simulateViewpointsByArtifactAndStakeholder () {
-		;
+		simulationType = ViewpointSimulationEnum.HYBRID;
 	}
 
 	public boolean isColoured() {
@@ -498,6 +507,24 @@ public class ViewpointController extends AbstractController {
 
 	public void setElementsFromSelectedTechnique(ArrayList<String> elementsFromSelectedTechnique) {
 		this.elementsFromSelectedTechnique = elementsFromSelectedTechnique;
+	}
+
+	public ViewpointSimulationEnum getSimulationType() {
+		return simulationType;
+	}
+
+	public void setSimulationType(ViewpointSimulationEnum simulationType) {
+		this.simulationType = simulationType;
+	}
+	
+	public boolean isManualSimulation() {
+		return ViewpointSimulationEnum.MANUAL.equals(simulationType);
+	}
+	public boolean isAutomaticSimulation() {
+		return ViewpointSimulationEnum.AUTOMATIC.equals(simulationType);
+	}
+	public boolean isHybridSimulation() {
+		return ViewpointSimulationEnum.HYBRID.equals(simulationType);
 	}
 
 
