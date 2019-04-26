@@ -93,7 +93,6 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 
 		} catch (SQLGrammarException e) {
 			LOGGER.error(e.getMessage());
-			e.printStackTrace();
 		}
 
 		return resultList;
@@ -135,7 +134,6 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 
 		} catch (SQLGrammarException e) {
 			LOGGER.error(e.getMessage());
-			e.printStackTrace();
 		}
 
 		return resultList;
@@ -178,7 +176,6 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 
 		} catch (SQLGrammarException e) {
 			LOGGER.error(e.getMessage());
-			e.printStackTrace();
 		}
 
 		return viewpointDTO;
@@ -223,7 +220,6 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 
 		} catch (SQLGrammarException e) {
 			LOGGER.error(e.getMessage());
-			e.printStackTrace();
 		}
 
 		return resultList;
@@ -268,7 +264,6 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 
 		} catch (SQLGrammarException e) {
 			LOGGER.error(e.getMessage());
-			e.printStackTrace();
 		}
 
 		return viewpointDTO;
