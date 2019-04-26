@@ -204,13 +204,6 @@ public class ViewpointController extends AbstractController {
 		return false;
 	}
 
-	public void onTransfer(TransferEvent event) {
-		StringBuilder builder = new StringBuilder();
-		for (Object item : event.getItems()) {
-			builder.append(((Source) item).getName()).append(",");
-		}
-	}
-
 	public List<String> getPurposeItems() {
 		return purposeItems;
 	}
@@ -476,6 +469,14 @@ public class ViewpointController extends AbstractController {
 	}
 
 	public BarChartModel getBestTechniquesPlot() {
+		return generateBestBarPlot(techniquesFromSelectedViewpoint, "techniques");
+	}
+	
+	public BarChartModel getBestStakeholderPlot() {
+		return generateBestBarPlot(stakeholdersFromSelectedViewpoint, "stakeholders");
+	}
+
+	private BarChartModel generateBestBarPlot(ArrayList<Pair<String, Integer>> listElements, String label) {
 		BarChartModel horizontalBarModel = new HorizontalBarChartModel();
 
 		if (getSelectedViewpointDTO() == null) {
@@ -483,24 +484,24 @@ public class ViewpointController extends AbstractController {
 		}
 
 		ChartSeries techniques = new ChartSeries();
-		techniques.setLabel("Techniques");
+		techniques.setLabel(label);
 
-		Collections.sort(techniquesFromSelectedViewpoint, new Comparator<Pair<String, Integer>>() {
+		Collections.sort(listElements, new Comparator<Pair<String, Integer>>() {
 			@Override
 			public int compare(Pair<String, Integer> o1, Pair<String, Integer> o2) {
 				return o1.getRight().compareTo(o2.getRight());
 			}
 		}.reversed());
 
-		for (int i = Math.min(6, techniquesFromSelectedViewpoint.size()); i > 0; i--) {
-			Pair<String, Integer> pair = techniquesFromSelectedViewpoint.get(i);
+		for (int i = Math.min(6, listElements.size()-1); i >= 0; i--) {
+			Pair<String, Integer> pair = listElements.get(i);
 			techniques.set(pair.getLeft(),
 					(double) (pair.getRight()) / getSelectedViewpointDTO().getTotalElements() * 100.00);
 		}
 
 		horizontalBarModel.addSeries(techniques);
 
-		horizontalBarModel.setTitle("Most valuable techniques");
+		horizontalBarModel.setTitle("Most valuable " + label);
 		horizontalBarModel.setStacked(true);
 
 		Axis xAxis = horizontalBarModel.getAxis(AxisType.X);
@@ -513,6 +514,9 @@ public class ViewpointController extends AbstractController {
 
 		return horizontalBarModel;
 	}
+	
+
+	
 
 	public ArrayList<Pair<String, Integer>> getTechniquesFromSelectedViewpoint() {
 		return techniquesFromSelectedViewpoint;

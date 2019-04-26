@@ -9,18 +9,6 @@
 		id="viewpointDialog" widgetVar="viewpointDialog" modal="true"
 		height="700" width="1200" closable="true" closeOnEscape="true">
 
-		<!-- <p:panelGrid columns="2">
-			<p:outputLabel value="Max Covered Elements: " />
-			<h:outputText
-				value="#{viewpointController.selectedViewpointDTO.maxNumElements}" />
-			<p:outputLabel value="Total Elements: " />
-			<h:outputText
-				value="#{viewpointController.selectedViewpointDTO.totalElements}" />
-			<p:outputLabel value="Max Percetage of covered elements: " />
-			<h:outputText
-				value="#{viewpointController.selectedViewpointDTO.maxPercentageElements}" />
-
-		</p:panelGrid> -->
 		<p:panelGrid columns="2" rendered="#{viewpointController.automaticSimulation}">
 			<p:chart type="metergauge" model="#{viewpointController.meterPlot}"
 				style="width:400px;height:250px" />
@@ -63,7 +51,14 @@
 
 		</p:dataTable>
 		
-		<p:outputPanel id="panelElementStakeholderList" style="paddign:0px;border:none;" rendered="#{viewpointController.manualSimulation}">
+		<p:panelGrid columns="2" rendered="#{viewpointController.manualSimulation}">
+			<p:chart type="metergauge" model="#{viewpointController.meterPlot}"
+				style="width:400px;height:250px" />
+			<p:chart type="bar" model="#{viewpointController.bestStakeholderPlot}"
+				style="width:700px; height:250px" />
+		</p:panelGrid>
+		<p:separator rendered="#{viewpointController.manualSimulation}"/>
+		<p:outputPanel rendered="#{viewpointController.manualSimulation}" id="panelElementStakeholderList" style="paddign:0px;border:none;">
 			<ui:include src="/viewpoints/elementsForStakeholder.xhtml">
 				<ui:param name="container" value="stakeholderList" />
 			</ui:include>
