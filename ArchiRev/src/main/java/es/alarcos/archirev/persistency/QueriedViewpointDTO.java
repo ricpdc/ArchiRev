@@ -13,6 +13,7 @@ public class QueriedViewpointDTO {
 	int totalElements;
 	double maxPercentageElements;
 	private Map<String, Set<String>> elementsByTechnique = new HashMap<String, Set<String>>();
+	private Map<String, Set<String>> elementsByStakeholder = new HashMap<String, Set<String>>();
 
 	public Long getId() {
 		return id;
@@ -70,6 +71,24 @@ public class QueriedViewpointDTO {
 
 	public void setElementsByTechnique(Map<String, Set<String>> elementsByTechnique) {
 		this.elementsByTechnique = elementsByTechnique;
+	}
+	
+	public void addElementByStakeholder(String stakeholder, String element) {
+		if (elementsByStakeholder == null) {
+			elementsByStakeholder = new HashMap<String, Set<String>>();
+		}
+		if (!elementsByStakeholder.containsKey(stakeholder)) {
+			elementsByStakeholder.put(stakeholder, new TreeSet<String>());
+		}
+		elementsByStakeholder.get(stakeholder).add(element);
+	}
+
+	public Map<String, Set<String>> getElementsByStakeholder() {
+		return elementsByStakeholder;
+	}
+
+	public void setElementsByStakeholder(Map<String, Set<String>> elementsByStakeholder) {
+		this.elementsByStakeholder = elementsByStakeholder;
 	}
 
 }

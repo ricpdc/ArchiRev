@@ -107,10 +107,12 @@ public class ViewpointController extends AbstractController {
 
 	private ArrayList<Pair<String, Integer>> techniquesFromSelectedViewpoint;
 
+	private ArrayList<Pair<String, Integer>> stakeholdersFromSelectedViewpoint;
+
 	private String selectedTechnique;
 
 	private ArrayList<String> elementsFromSelectedTechnique;
-	
+
 	private ViewpointSimulationEnum simulationType = ViewpointSimulationEnum.AUTOMATIC;
 
 	public ViewpointController() {
@@ -146,7 +148,6 @@ public class ViewpointController extends AbstractController {
 			simulateViewpointsByStakeholder();
 		}
 	}
-	
 
 	public List<Viewpoint> getAvailableViewpoints() {
 		return availableViewpoints;
@@ -249,8 +250,6 @@ public class ViewpointController extends AbstractController {
 		return queriedViewpointMap.get(selectedViewpoint.getName());
 	}
 
-	
-
 	public List<ViewpointElement> getAllElements() {
 		return allElements;
 	}
@@ -292,31 +291,35 @@ public class ViewpointController extends AbstractController {
 			}
 		}
 
-		switch(simulationType) {
+		switch (simulationType) {
 		case MANUAL:
+			queriedViewpointMap.put(viewpointName, viewpointDao.getViewpointPercentagesByStakeholders(
+					stakeholderPickerList.getTarget(), getSelectedViewpointDTO()));
+			loadStakeholdersFromSelectedViewpointDTO();
 			break;
 		case HYBRID:
 			break;
 		case AUTOMATIC:
 		default:
-			QueriedViewpointDTO updatedViewpointDTO = viewpointDao
-			.getViewpointPercentagesByArtefacts(artifactPickerList.getTarget(), getSelectedViewpointDTO());
-				queriedViewpointMap.put(viewpointName, updatedViewpointDTO);
+			queriedViewpointMap.put(viewpointName, viewpointDao
+					.getViewpointPercentagesByArtefacts(artifactPickerList.getTarget(), getSelectedViewpointDTO()));
 			loadTechniquesFromSelectedViewpointDTO();
 		}
 
 		if (selectedViewpoint != null) {
 			RequestContext context = RequestContext.getCurrentInstance();
 			context.update("mainForm:viewpointDialog");
+			context.update("mainForm:stakeholderList_elementsTechniqueTable");
 			context.execute("PF('viewpointDialog').show()");
 		}
 
 	}
-	
-	public void showElementsForTechnique (String techniqueName) {
+
+	public void showElementsForTechnique(String techniqueName) {
 		selectedTechnique = techniqueName;
-		setElementsFromSelectedTechnique(new ArrayList<String>(getSelectedViewpointDTO().getElementsByTechnique().get(selectedTechnique)));
-		
+		setElementsFromSelectedTechnique(
+				new ArrayList<String>(getSelectedViewpointDTO().getElementsByTechnique().get(selectedTechnique)));
+
 		if (selectedViewpoint != null) {
 			RequestContext context = RequestContext.getCurrentInstance();
 			context.update("mainForm:elementsTechniqueDialog");
@@ -324,24 +327,51 @@ public class ViewpointController extends AbstractController {
 		}
 
 	}
-	
-	public boolean isElementCovered (ViewpointElement element) {
-		return getElementsFromSelectedTechnique() != null && getElementsFromSelectedTechnique().contains(element.getName());
+
+	public boolean isElementCovered(ViewpointElement element) {
+		return getElementsFromSelectedTechnique() != null
+				&& getElementsFromSelectedTechnique().contains(element.getName());
 	}
-	
-	private List<Pair<String, Integer>> loadTechniquesFromSelectedViewpointDTO () {
-		setTechniquesFromSelectedViewpoint(new ArrayList<Pair<String, Integer>>());
-		if(getSelectedViewpointDTO()==null) {
-			return getTechniquesFromSelectedViewpoint();
+
+	public boolean isElementCoveredByStakeholder(ViewpointElement element, Stakeholder stakeholder) {
+		if (element!=null && getSelectedViewpointDTO() != null && getSelectedViewpointDTO().getElementsByStakeholder() != null
+				&& getSelectedViewpointDTO().getElementsByStakeholder().get(stakeholder.getName()) != null) {
+			return getSelectedViewpointDTO().getElementsByStakeholder().get(stakeholder.getName())
+					.contains(element.getName());
 		}
-		Set<String> keySet = getSelectedViewpointDTO().getElementsByTechnique().keySet();
-		if(keySet == null) {
-			return getTechniquesFromSelectedViewpoint();
+		return false;
+	}
+
+	private List<Pair<String, Integer>> loadStakeholdersFromSelectedViewpointDTO() {
+		stakeholdersFromSelectedViewpoint = new ArrayList<Pair<String, Integer>>();
+		if (getSelectedViewpointDTO() == null) {
+			return stakeholdersFromSelectedViewpoint;
+		}
+		Set<String> keySet = getSelectedViewpointDTO().getElementsByStakeholder().keySet();
+		if (keySet == null) {
+			return stakeholdersFromSelectedViewpoint;
 		}
 		for (String key : keySet) {
-			getTechniquesFromSelectedViewpoint().add(new ImmutablePair(key, getSelectedViewpointDTO().getElementsByTechnique().get(key).size()));
+			stakeholdersFromSelectedViewpoint.add(new ImmutablePair<String, Integer>(key,
+					getSelectedViewpointDTO().getElementsByStakeholder().get(key).size()));
 		}
-		return getTechniquesFromSelectedViewpoint();
+		return stakeholdersFromSelectedViewpoint;
+	}
+
+	private List<Pair<String, Integer>> loadTechniquesFromSelectedViewpointDTO() {
+		techniquesFromSelectedViewpoint = new ArrayList<Pair<String, Integer>>();
+		if (getSelectedViewpointDTO() == null) {
+			return techniquesFromSelectedViewpoint;
+		}
+		Set<String> keySet = getSelectedViewpointDTO().getElementsByTechnique().keySet();
+		if (keySet == null) {
+			return techniquesFromSelectedViewpoint;
+		}
+		for (String key : keySet) {
+			techniquesFromSelectedViewpoint.add(new ImmutablePair<String, Integer>(key,
+					getSelectedViewpointDTO().getElementsByTechnique().get(key).size()));
+		}
+		return techniquesFromSelectedViewpoint;
 	}
 
 	public double getPercentage(String viewpointName) {
@@ -367,7 +397,7 @@ public class ViewpointController extends AbstractController {
 		}
 		coloured = true;
 	}
-	
+
 	public void simulateViewpointsByStakeholder() {
 		simulationType = ViewpointSimulationEnum.MANUAL;
 		List<QueriedViewpointDTO> listViewpointsByStakeholders = viewpointDao
@@ -383,8 +413,8 @@ public class ViewpointController extends AbstractController {
 		}
 		coloured = true;
 	}
-	
-	public void simulateViewpointsByArtifactAndStakeholder () {
+
+	public void simulateViewpointsByArtifactAndStakeholder() {
 		simulationType = ViewpointSimulationEnum.HYBRID;
 	}
 
@@ -416,6 +446,7 @@ public class ViewpointController extends AbstractController {
 		double maxPercentageElements = getSelectedViewpointDTO().getMaxPercentageElements() / 100;
 
 		List<Number> intervals = new ArrayList<Number>() {
+			private static final long serialVersionUID = 2777521685350283999L;
 			{
 				add(Math.max((int) (totalElements * 0.15), 1));
 				add((int) (totalElements * 0.50));
@@ -443,47 +474,45 @@ public class ViewpointController extends AbstractController {
 
 		return meter;
 	}
-	
-    public BarChartModel getBestTechniquesPlot() {
-    	BarChartModel horizontalBarModel = new HorizontalBarChartModel();
-    	
-    	if (getSelectedViewpointDTO() == null) {
+
+	public BarChartModel getBestTechniquesPlot() {
+		BarChartModel horizontalBarModel = new HorizontalBarChartModel();
+
+		if (getSelectedViewpointDTO() == null) {
 			return horizontalBarModel;
 		}
- 
-        ChartSeries techniques = new ChartSeries();
-        techniques.setLabel("Techniques");
-        
-        
-        Collections.sort(techniquesFromSelectedViewpoint, new Comparator<Pair<String, Integer>>() {
+
+		ChartSeries techniques = new ChartSeries();
+		techniques.setLabel("Techniques");
+
+		Collections.sort(techniquesFromSelectedViewpoint, new Comparator<Pair<String, Integer>>() {
 			@Override
 			public int compare(Pair<String, Integer> o1, Pair<String, Integer> o2) {
 				return o1.getRight().compareTo(o2.getRight());
 			}
 		}.reversed());
-        
-        for (int i =  Math.min(6, techniquesFromSelectedViewpoint.size()); i > 0; i--) {
+
+		for (int i = Math.min(6, techniquesFromSelectedViewpoint.size()); i > 0; i--) {
 			Pair<String, Integer> pair = techniquesFromSelectedViewpoint.get(i);
-			techniques.set(pair.getLeft(), (double)(pair.getRight()) / getSelectedViewpointDTO().getTotalElements() * 100.00);
-		}    
- 
-        horizontalBarModel.addSeries(techniques);
- 
-        horizontalBarModel.setTitle("Most valuable techniques");
-        horizontalBarModel.setStacked(true);
- 
-        Axis xAxis = horizontalBarModel.getAxis(AxisType.X);
-        xAxis.setLabel("Percentage of covered elements");
-        xAxis.setMin(0);
-        xAxis.setMax(100);
-        horizontalBarModel.setAnimate(true);
-        horizontalBarModel.setMouseoverHighlight(true);
-        horizontalBarModel.setShowDatatip(true);
- 
-        Axis yAxis = horizontalBarModel.getAxis(AxisType.Y);
-        
-        return horizontalBarModel;
-    }
+			techniques.set(pair.getLeft(),
+					(double) (pair.getRight()) / getSelectedViewpointDTO().getTotalElements() * 100.00);
+		}
+
+		horizontalBarModel.addSeries(techniques);
+
+		horizontalBarModel.setTitle("Most valuable techniques");
+		horizontalBarModel.setStacked(true);
+
+		Axis xAxis = horizontalBarModel.getAxis(AxisType.X);
+		xAxis.setLabel("Percentage of covered elements");
+		xAxis.setMin(0);
+		xAxis.setMax(100);
+		horizontalBarModel.setAnimate(true);
+		horizontalBarModel.setMouseoverHighlight(true);
+		horizontalBarModel.setShowDatatip(true);
+
+		return horizontalBarModel;
+	}
 
 	public ArrayList<Pair<String, Integer>> getTechniquesFromSelectedViewpoint() {
 		return techniquesFromSelectedViewpoint;
@@ -516,17 +545,26 @@ public class ViewpointController extends AbstractController {
 	public void setSimulationType(ViewpointSimulationEnum simulationType) {
 		this.simulationType = simulationType;
 	}
-	
+
 	public boolean isManualSimulation() {
 		return ViewpointSimulationEnum.MANUAL.equals(simulationType);
 	}
+
 	public boolean isAutomaticSimulation() {
 		return ViewpointSimulationEnum.AUTOMATIC.equals(simulationType);
 	}
+
 	public boolean isHybridSimulation() {
 		return ViewpointSimulationEnum.HYBRID.equals(simulationType);
 	}
 
+	public ArrayList<Pair<String, Integer>> getStakeholdersFromSelectedViewpoint() {
+		return stakeholdersFromSelectedViewpoint;
+	}
 
+	public void setStakeholdersFromSelectedViewpoint(
+			ArrayList<Pair<String, Integer>> stakeholdersFromSelectedViewpoint) {
+		this.stakeholdersFromSelectedViewpoint = stakeholdersFromSelectedViewpoint;
+	}
 
 }

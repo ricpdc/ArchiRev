@@ -126,3 +126,9 @@ label[class*='viewpointPercentage'] {
 [id*='simulationButtonsTable'] button {
 	width: 100% !important;
 }
+
+
+a[class*='ui-panel-titlebar-icon']>span[class*='ui-icon ui-icon-plusthick'], 
+a[class*='ui-panel-titlebar-icon']>span[class*='ui-icon ui-icon-minusthick'] {
+	   background-image: url(images/ui-icons_469bdd_256x240.png);
+}

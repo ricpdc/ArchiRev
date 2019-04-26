@@ -229,4 +229,50 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 		return resultList;
 	}
 
+	
+	
+	@SuppressWarnings("unchecked")
+	public QueriedViewpointDTO getViewpointPercentagesByStakeholders(final List<Stakeholder> stakeholder,
+			QueriedViewpointDTO viewpointDTO) {
+
+		if (stakeholder == null || stakeholder.isEmpty()) {
+			return viewpointDTO;
+		}
+
+		String stringQuery = "select distinct s.id, s.name as stakeholder, e.name as element " + 
+				"	from av_viewpoint as v, av_viewpoint_element as ve, av_element as e, av_stakeholder_element se, av_stakeholder s " + 
+				"	where (v.id = ve.viewpoint_id and ve.element_id = e.id and e.id = se.element_id and se.stakeholder_id = s.id and s.id in (:stakeholderIds)) and v.id=:viewpointId " + 
+				"	order by s.id";
+
+		String stringQueryTotalElements = "select count(e.name) as num_elements from av_viewpoint as v, av_viewpoint_element as ve, av_element as e "
+				+ "		where v.id = ve.viewpoint_id and ve.element_id = e.id and v.id = :viewpointId";
+
+		try {
+			Query queryTotal = entityManager.createNativeQuery(stringQueryTotalElements);
+			queryTotal.setParameter("viewpointId", viewpointDTO.getId());
+			viewpointDTO.setTotalElements(Integer.parseInt(queryTotal.getSingleResult().toString()));
+
+			Query query = entityManager.createNativeQuery(stringQuery);
+
+			List<Long> stakeholderIds = stakeholder.stream().map(Stakeholder::getId).collect(Collectors.toList());
+			query.setParameter("stakeholderIds", stakeholderIds);
+			query.setParameter("viewpointId", viewpointDTO.getId());
+
+			List<Object[]> resultSet = query.getResultList();
+
+			viewpointDTO.setElementsByTechnique(new HashMap<String, Set<String>>());
+
+			for (Object[] tuple : resultSet) {
+				viewpointDTO.addElementByStakeholder((String) tuple[1], (String) tuple[2]);
+			}
+
+		} catch (SQLGrammarException e) {
+			LOGGER.error(e.getMessage());
+			e.printStackTrace();
+		}
+
+		return viewpointDTO;
+	}
+	
+	
 }

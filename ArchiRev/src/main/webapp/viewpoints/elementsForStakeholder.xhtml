@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dataTable id="#{container}_elementsTechniqueTable"
+		widgetVar="elementsTechniqueTable" frozenRows="0" scrollRows="5"
+		sortBy="#{element}"
+		value="#{viewpointController.selectedViewpoint.elements}"
+		var="element">
+		<p:column style="text-align:center; width:30px">
+			<p:graphicImage
+				rendered="#{viewpointController.getImageFromBytes(element.icon) != null}"
+				value="#{viewpointController.getImageFromBytes(element.icon)}"
+				stream="false" />
+		</p:column>
+		<p:column headerText="Name" sortBy="#{element.name}" style="text-align:center; width:300px"
+			filterBy="#{element.name}" filterMatchMode="contains">
+			<h:outputText value="#{element.name}" />
+		</p:column>
+		<p:columns value="#{viewpointController.stakeholderPickerList.target}" var="stakeholder" 
+			headerText="#{stakeholder.name}"
+				style="text-align:center; width: 180px !important;"
+				filterBy="#{viewpointController.isElementCoveredByStakeholder(element, stakeholder)}"
+				filterMatchMode="equals">
+				<f:facet name="filter">
+					<p:selectOneButton onchange="PF('elementsTechniqueTable').filter()"
+						styleClass="custom-filter">
+						<f:converter converterId="javax.faces.Boolean" />
+						<f:selectItem itemLabel="All" itemValue="" />
+						<f:selectItem itemLabel="x" itemValue="true" />
+						<f:selectItem itemLabel="_" itemValue="false" />
+					</p:selectOneButton>
+				</f:facet>
+				<h:outputText title="#{element.name}"
+					value="#{viewpointController.isElementCoveredByStakeholder(element, stakeholder) ? 'x' : ''}" />
+		</p:columns>
+	</p:dataTable>
+
+</ui:composition>
