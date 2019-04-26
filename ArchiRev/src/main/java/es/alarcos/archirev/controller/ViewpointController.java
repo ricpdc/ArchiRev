@@ -2,6 +2,7 @@ package es.alarcos.archirev.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +22,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.ToggleEvent;
-import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.StreamedContent;
@@ -39,7 +39,6 @@ import org.springframework.stereotype.Controller;
 
 import es.alarcos.archirev.model.AbstractEntity;
 import es.alarcos.archirev.model.InputArtifact;
-import es.alarcos.archirev.model.Source;
 import es.alarcos.archirev.model.Stakeholder;
 import es.alarcos.archirev.model.Viewpoint;
 import es.alarcos.archirev.model.ViewpointElement;
@@ -272,7 +271,7 @@ public class ViewpointController extends AbstractController {
 		this.stakeholderPickerList = stakeholderPickerList;
 	}
 
-	public void showViewpointInfo(String viewpointName) {
+	public void showViewpointInfoAutomatic(String viewpointName) {
 		LOGGER.info("Showing " + viewpointName);
 		if (getPercentage(viewpointName) == 0.0) {
 			return;
@@ -284,20 +283,34 @@ public class ViewpointController extends AbstractController {
 			}
 		}
 
-		switch (simulationType) {
-		case MANUAL:
-			queriedViewpointMap.put(viewpointName, viewpointDao.getViewpointPercentagesByStakeholders(
-					stakeholderPickerList.getTarget(), getSelectedViewpointDTO()));
-			loadStakeholdersFromSelectedViewpointDTO();
-			break;
-		case HYBRID:
-			break;
-		case AUTOMATIC:
-		default:
-			queriedViewpointMap.put(viewpointName, viewpointDao
-					.getViewpointPercentagesByArtefacts(artifactPickerList.getTarget(), getSelectedViewpointDTO()));
-			loadTechniquesFromSelectedViewpointDTO();
+		queriedViewpointMap.put(viewpointName, viewpointDao
+				.getViewpointPercentagesByArtefacts(artifactPickerList.getTarget(), getSelectedViewpointDTO()));
+		loadTechniquesFromSelectedViewpointDTO();
+
+		if (selectedViewpoint != null) {
+			RequestContext context = RequestContext.getCurrentInstance();
+			context.update("mainForm:viewpointDialog");
+			context.update("mainForm:stakeholderList_elementsTechniqueTable");
+			context.execute("PF('viewpointDialog').show()");
 		}
+
+	}
+
+	public void showViewpointInfoManual(String viewpointName) {
+		LOGGER.info("Showing " + viewpointName);
+		if (getPercentage(viewpointName) == 0.0) {
+			return;
+		}
+		for (Viewpoint viewpoint : availableViewpoints) {
+			if (viewpoint.getName().equals(viewpointName)) {
+				selectedViewpoint = viewpoint;
+				break;
+			}
+		}
+
+		queriedViewpointMap.put(viewpointName, viewpointDao
+				.getViewpointPercentagesByStakeholders(stakeholderPickerList.getTarget(), getSelectedViewpointDTO()));
+		loadStakeholdersFromSelectedViewpointDTO();
 
 		if (selectedViewpoint != null) {
 			RequestContext context = RequestContext.getCurrentInstance();
@@ -327,7 +340,8 @@ public class ViewpointController extends AbstractController {
 	}
 
 	public boolean isElementCoveredByStakeholder(ViewpointElement element, Stakeholder stakeholder) {
-		if (element!=null && getSelectedViewpointDTO() != null && getSelectedViewpointDTO().getElementsByStakeholder() != null
+		if (element != null && getSelectedViewpointDTO() != null
+				&& getSelectedViewpointDTO().getElementsByStakeholder() != null
 				&& getSelectedViewpointDTO().getElementsByStakeholder().get(stakeholder.getName()) != null) {
 			return getSelectedViewpointDTO().getElementsByStakeholder().get(stakeholder.getName())
 					.contains(element.getName());
@@ -365,6 +379,14 @@ public class ViewpointController extends AbstractController {
 					getSelectedViewpointDTO().getElementsByTechnique().get(key).size()));
 		}
 		return techniquesFromSelectedViewpoint;
+	}
+
+	public double getFormattedPercentageAutomatic(String viewpointName) {
+		return new BigDecimal(getPercentage(viewpointName)).setScale(1, BigDecimal.ROUND_FLOOR).doubleValue();
+	}
+
+	public double getFormattedPercentageManual(String viewpointName) {
+		return new BigDecimal(getPercentage(viewpointName)).setScale(1, BigDecimal.ROUND_FLOOR).doubleValue();
 	}
 
 	public double getPercentage(String viewpointName) {
@@ -408,6 +430,8 @@ public class ViewpointController extends AbstractController {
 	}
 
 	public void simulateViewpointsByArtifactAndStakeholder() {
+		simulateViewpointsByArtifact();
+		simulateViewpointsByStakeholder();
 		simulationType = ViewpointSimulationEnum.HYBRID;
 	}
 
@@ -471,7 +495,7 @@ public class ViewpointController extends AbstractController {
 	public BarChartModel getBestTechniquesPlot() {
 		return generateBestBarPlot(techniquesFromSelectedViewpoint, "techniques");
 	}
-	
+
 	public BarChartModel getBestStakeholderPlot() {
 		return generateBestBarPlot(stakeholdersFromSelectedViewpoint, "stakeholders");
 	}
@@ -493,7 +517,7 @@ public class ViewpointController extends AbstractController {
 			}
 		}.reversed());
 
-		for (int i = Math.min(6, listElements.size()-1); i >= 0; i--) {
+		for (int i = Math.min(6, listElements.size() - 1); i >= 0; i--) {
 			Pair<String, Integer> pair = listElements.get(i);
 			techniques.set(pair.getLeft(),
 					(double) (pair.getRight()) / getSelectedViewpointDTO().getTotalElements() * 100.00);
@@ -514,9 +538,6 @@ public class ViewpointController extends AbstractController {
 
 		return horizontalBarModel;
 	}
-	
-
-	
 
 	public ArrayList<Pair<String, Integer>> getTechniquesFromSelectedViewpoint() {
 		return techniquesFromSelectedViewpoint;

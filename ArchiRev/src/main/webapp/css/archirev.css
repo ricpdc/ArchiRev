@@ -112,15 +112,31 @@ div[id*='artifactPickList'] div[class*='ui-picklist-buttons'], div[id*='stakehol
 	border-radius: 10px;
 }
 
-a[class*='viewpointName'] {
+label[class*='viewpointName'] {
 	text-decoration-line: none !important;
 	font-weight: bold !important;
 	font-size: small !important;
+	
 }
 
-label[class*='viewpointPercentage'] {
-	font-size: x-small !important;
+button[class*='viewpointPercentage'] {
+	font-size: 8px !important;
+	text-decoration-line: none !important;
+	background: transparent !important;
+	text-shadow: none !important;
 }
+
+button[class*='viewpointPercentage']>span[class*='ui-button-text'] {
+	padding: .3em 0.3em .3em 1.5em
+}
+
+button[class*='viewpointPercentage']>span[class*='ui-button-icon-left'] {
+	margin-left: -6px;
+}
+
+
+
+
 
 
 [id*='simulationButtonsTable'] button {
