@@ -142,9 +142,6 @@ public class ViewpointController extends AbstractController {
 
 			coloured = false;
 			queriedViewpointMap = new HashMap<String, QueriedViewpointDTO>();
-
-			stakeholderPickerList.setTarget(stakeholderPickerList.getSource());
-			simulateViewpointsByStakeholder();
 		}
 	}
 
@@ -273,7 +270,7 @@ public class ViewpointController extends AbstractController {
 
 	public void showViewpointInfoAutomatic(String viewpointName) {
 		LOGGER.info("Showing " + viewpointName);
-		if (getPercentage(viewpointName) == 0.0) {
+		if (getPercentageAutomatic(viewpointName) == 0.0) {
 			return;
 		}
 		for (Viewpoint viewpoint : availableViewpoints) {
@@ -289,16 +286,16 @@ public class ViewpointController extends AbstractController {
 
 		if (selectedViewpoint != null) {
 			RequestContext context = RequestContext.getCurrentInstance();
-			context.update("mainForm:viewpointDialog");
+			context.update("mainForm:viewpointDialogAutomatic");
 			context.update("mainForm:stakeholderList_elementsTechniqueTable");
-			context.execute("PF('viewpointDialog').show()");
+			context.execute("PF('viewpointDialogAutomatic').show()");
 		}
 
 	}
 
 	public void showViewpointInfoManual(String viewpointName) {
 		LOGGER.info("Showing " + viewpointName);
-		if (getPercentage(viewpointName) == 0.0) {
+		if (getPercentageManual(viewpointName) == 0.0) {
 			return;
 		}
 		for (Viewpoint viewpoint : availableViewpoints) {
@@ -314,9 +311,9 @@ public class ViewpointController extends AbstractController {
 
 		if (selectedViewpoint != null) {
 			RequestContext context = RequestContext.getCurrentInstance();
-			context.update("mainForm:viewpointDialog");
+			context.update("mainForm:viewpointDialogManual");
 			context.update("mainForm:stakeholderList_elementsTechniqueTable");
-			context.execute("PF('viewpointDialog').show()");
+			context.execute("PF('viewpointDialogManual').show()");
 		}
 
 	}
@@ -382,19 +379,40 @@ public class ViewpointController extends AbstractController {
 	}
 
 	public double getFormattedPercentageAutomatic(String viewpointName) {
-		return new BigDecimal(getPercentage(viewpointName)).setScale(1, BigDecimal.ROUND_FLOOR).doubleValue();
+		return new BigDecimal(getPercentageAutomatic(viewpointName)).setScale(1, BigDecimal.ROUND_FLOOR).doubleValue();
 	}
 
 	public double getFormattedPercentageManual(String viewpointName) {
-		return new BigDecimal(getPercentage(viewpointName)).setScale(1, BigDecimal.ROUND_FLOOR).doubleValue();
+		return new BigDecimal(getPercentageManual(viewpointName)).setScale(1, BigDecimal.ROUND_FLOOR).doubleValue();
+	}
+
+	private double getPercentageAutomatic(String viewpointName) {
+		QueriedViewpointDTO queriedViewpointDTO = queriedViewpointMap.get(viewpointName);
+		if (queriedViewpointDTO != null) {
+			return queriedViewpointDTO.getMaxPercentageElementsAutomatic();
+		}
+		return 0.0;
+	}
+
+	private double getPercentageManual(String viewpointName) {
+		QueriedViewpointDTO queriedViewpointDTO = queriedViewpointMap.get(viewpointName);
+		if (queriedViewpointDTO != null) {
+			return queriedViewpointDTO.getMaxPercentageElementsManual();
+		}
+		return 0.0;
 	}
 
 	public double getPercentage(String viewpointName) {
-		QueriedViewpointDTO queriedViewpointDTO = queriedViewpointMap.get(viewpointName);
-		if (queriedViewpointDTO != null) {
-			return queriedViewpointDTO.getMaxPercentageElements();
+		switch (simulationType) {
+		case MANUAL:
+			return getPercentageManual(viewpointName);
+		case AUTOMATIC:
+			return getPercentageAutomatic(viewpointName);
+		case HYBRID:
+			return Math.max(getFormattedPercentageManual(viewpointName), getFormattedPercentageManual(viewpointName));
+		default:
+			return 0.0;
 		}
-		return 0.0;
 	}
 
 	public void simulateViewpointsByArtifact() {
@@ -451,27 +469,40 @@ public class ViewpointController extends AbstractController {
 		this.queriedViewpointMap = queriedViewpointMap;
 	}
 
-	public MeterGaugeChartModel getMeterPlot() {
-		if (getSelectedViewpointDTO() == null) {
+	public MeterGaugeChartModel getMeterPlotManual() {
+		return getMeterPlot(ViewpointSimulationEnum.MANUAL);
+	}
+
+	public MeterGaugeChartModel getMeterPlotAutomatic() {
+		return getMeterPlot(ViewpointSimulationEnum.AUTOMATIC);
+	}
+
+	public MeterGaugeChartModel getMeterPlot(ViewpointSimulationEnum type) {
+		QueriedViewpointDTO selectedViewpointDTO = getSelectedViewpointDTO();
+		if (selectedViewpointDTO == null) {
 			return new MeterGaugeChartModel();
 		}
 
 		MeterGaugeChartModel meter;
 
-		int totalElements = getSelectedViewpointDTO().getTotalElements();
-		int maxCoveredElements = getSelectedViewpointDTO().getMaxNumElements();
-		double maxPercentageElements = getSelectedViewpointDTO().getMaxPercentageElements() / 100;
+		int totalElements = 0;
+		int maxCoveredElements = 0;
+		double maxPercentageElements = 0;
+		if (ViewpointSimulationEnum.MANUAL.equals(type)) {
+			totalElements = selectedViewpointDTO.getTotalElementsManual();
+			maxCoveredElements = selectedViewpointDTO.getMaxNumElementsManual();
+			maxPercentageElements = selectedViewpointDTO.getMaxPercentageElementsManual() / 100;
+		} else if (ViewpointSimulationEnum.AUTOMATIC.equals(type)) {
+			totalElements = selectedViewpointDTO.getTotalElementsAutomatic();
+			maxCoveredElements = selectedViewpointDTO.getMaxNumElementsAutomatic();
+			maxPercentageElements = selectedViewpointDTO.getMaxPercentageElementsAutomatic() / 100;
+		}
 
-		List<Number> intervals = new ArrayList<Number>() {
-			private static final long serialVersionUID = 2777521685350283999L;
-			{
-				add(Math.max((int) (totalElements * 0.15), 1));
-				add((int) (totalElements * 0.50));
-				add((int) (totalElements * 0.85));
-				add((int) totalElements * 1);
-			}
-		};
-
+		List<Number> intervals = new ArrayList<Number>();
+		intervals.add(Math.max((int) (totalElements * 0.15), 1));
+		intervals.add((int) (totalElements * 0.50));
+		intervals.add((int) (totalElements * 0.85));
+		intervals.add((int) totalElements * 1);
 		meter = new MeterGaugeChartModel(maxCoveredElements, intervals);
 
 		meter.setTitle("Max. " + maxCoveredElements + " covered elements from " + totalElements);
@@ -493,19 +524,24 @@ public class ViewpointController extends AbstractController {
 	}
 
 	public BarChartModel getBestTechniquesPlot() {
-		return generateBestBarPlot(techniquesFromSelectedViewpoint, "techniques");
+		if (getSelectedViewpointDTO() == null) {
+			return new HorizontalBarChartModel();
+		}
+		return generateBestBarPlot(techniquesFromSelectedViewpoint, "techniques",
+				getSelectedViewpointDTO().getTotalElementsAutomatic());
 	}
 
 	public BarChartModel getBestStakeholderPlot() {
-		return generateBestBarPlot(stakeholdersFromSelectedViewpoint, "stakeholders");
+		if (getSelectedViewpointDTO() == null) {
+			return new HorizontalBarChartModel();
+		}
+		return generateBestBarPlot(stakeholdersFromSelectedViewpoint, "stakeholders",
+				getSelectedViewpointDTO().getTotalElementsManual());
 	}
 
-	private BarChartModel generateBestBarPlot(ArrayList<Pair<String, Integer>> listElements, String label) {
+	private BarChartModel generateBestBarPlot(ArrayList<Pair<String, Integer>> listElements, String label,
+			int totalElements) {
 		BarChartModel horizontalBarModel = new HorizontalBarChartModel();
-
-		if (getSelectedViewpointDTO() == null) {
-			return horizontalBarModel;
-		}
 
 		ChartSeries techniques = new ChartSeries();
 		techniques.setLabel(label);
@@ -519,8 +555,7 @@ public class ViewpointController extends AbstractController {
 
 		for (int i = Math.min(6, listElements.size() - 1); i >= 0; i--) {
 			Pair<String, Integer> pair = listElements.get(i);
-			techniques.set(pair.getLeft(),
-					(double) (pair.getRight()) / getSelectedViewpointDTO().getTotalElements() * 100.00);
+			techniques.set(pair.getLeft(), (double) (pair.getRight()) / totalElements * 100.00);
 		}
 
 		horizontalBarModel.addSeries(techniques);

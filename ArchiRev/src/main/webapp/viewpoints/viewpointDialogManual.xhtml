@@ -1,0 +1,39 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dialog
+		header="Info #{viewpointController.selectedViewpoint.name} viewpoint"
+		id="viewpointDialogManual" widgetVar="viewpointDialogManual"
+		modal="true" height="700" width="1200" closable="true"
+		closeOnEscape="true">
+
+		<p:panelGrid columns="2">
+			<p:chart type="metergauge" model="#{viewpointController.meterPlotManual}"
+				style="width:400px;height:250px" />
+			<p:chart type="bar"
+				model="#{viewpointController.bestStakeholderPlot}"
+				style="width:700px; height:250px" />
+		</p:panelGrid>
+		<p:separator />
+		<p:outputPanel id="panelElementStakeholderList"
+			style="paddign:0px;border:none;">
+			<ui:include src="/viewpoints/elementsForStakeholder.xhtml">
+				<ui:param name="container" value="stakeholderList" />
+			</ui:include>
+		</p:outputPanel>
+
+		<br />
+		<p:separator />
+		<p:panel header="General Viewpoint Information" toggleable="true"
+			toggleTitle="Show general information for the viewpoint"
+			collapsed="true">
+			<ui:include src="/viewpoints/viewpointDetail.xhtml">
+				<ui:param name="viewpoint"
+					value="#{viewpointController.selectedViewpoint}" />
+			</ui:include>
+		</p:panel>
+	</p:dialog>
+</ui:composition>

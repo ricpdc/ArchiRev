@@ -85,9 +85,9 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 				QueriedViewpointDTO viewpoint = new QueriedViewpointDTO();
 				viewpoint.setId(((BigInteger) tuple[0]).longValue());
 				viewpoint.setName((String) tuple[1]);
-				viewpoint.setMaxNumElements(Integer.parseInt(tuple[3].toString()));
-				viewpoint.setTotalElements(Integer.parseInt(tuple[4].toString()));
-				viewpoint.setMaxPercentageElements(Double.parseDouble(tuple[5].toString()));
+				viewpoint.setMaxNumElementsAutomatic(Integer.parseInt(tuple[3].toString()));
+				viewpoint.setTotalElementsAutomatic(Integer.parseInt(tuple[4].toString()));
+				viewpoint.setMaxPercentageElementsAutomatic(Double.parseDouble(tuple[5].toString()));
 				resultList.add(viewpoint);
 			}
 
@@ -127,8 +127,8 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 				QueriedViewpointDTO viewpoint = new QueriedViewpointDTO();
 				viewpoint.setId(((BigInteger) tuple[0]).longValue());
 				viewpoint.setName((String) tuple[1]);
-				viewpoint.setMaxNumElements(Integer.parseInt(tuple[2].toString()));
-				viewpoint.setMaxPercentageElements(Double.parseDouble(tuple[3].toString()));
+				viewpoint.setMaxNumElementsAutomatic(Integer.parseInt(tuple[2].toString()));
+				viewpoint.setMaxPercentageElementsAutomatic(Double.parseDouble(tuple[3].toString()));
 				resultList.add(viewpoint);
 			}
 
@@ -158,7 +158,7 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 		try {
 			Query queryTotal = entityManager.createNativeQuery(stringQueryTotalElements);
 			queryTotal.setParameter("viewpointId", viewpointDTO.getId());
-			viewpointDTO.setTotalElements(Integer.parseInt(queryTotal.getSingleResult().toString()));
+			viewpointDTO.setTotalElementsAutomatic(Integer.parseInt(queryTotal.getSingleResult().toString()));
 
 			Query query = entityManager.createNativeQuery(stringQuery);
 
@@ -213,8 +213,8 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 				QueriedViewpointDTO viewpoint = new QueriedViewpointDTO();
 				viewpoint.setId(((BigInteger) tuple[0]).longValue());
 				viewpoint.setName((String) tuple[1]);
-				viewpoint.setMaxNumElements(Integer.parseInt(tuple[2].toString()));
-				viewpoint.setMaxPercentageElements(Double.parseDouble(tuple[3].toString()));
+				viewpoint.setMaxNumElementsManual(Integer.parseInt(tuple[2].toString()));
+				viewpoint.setMaxPercentageElementsManual(Double.parseDouble(tuple[3].toString()));
 				resultList.add(viewpoint);
 			}
 
@@ -246,7 +246,7 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 		try {
 			Query queryTotal = entityManager.createNativeQuery(stringQueryTotalElements);
 			queryTotal.setParameter("viewpointId", viewpointDTO.getId());
-			viewpointDTO.setTotalElements(Integer.parseInt(queryTotal.getSingleResult().toString()));
+			viewpointDTO.setTotalElementsManual(Integer.parseInt(queryTotal.getSingleResult().toString()));
 
 			Query query = entityManager.createNativeQuery(stringQuery);
 

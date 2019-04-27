@@ -9,9 +9,12 @@ public class QueriedViewpointDTO {
 
 	Long id;
 	String name;
-	int maxNumElements;
-	int totalElements;
-	double maxPercentageElements;
+	int maxNumElementsAutomatic;
+	int totalElementsAutomatic;
+	double maxPercentageElementsAutomatic;
+	int maxNumElementsManual;
+	int totalElementsManual;
+	double maxPercentageElementsManual;
 	private Map<String, Set<String>> elementsByTechnique = new HashMap<String, Set<String>>();
 	private Map<String, Set<String>> elementsByStakeholder = new HashMap<String, Set<String>>();
 
@@ -31,28 +34,28 @@ public class QueriedViewpointDTO {
 		this.name = name;
 	}
 
-	public int getMaxNumElements() {
-		return maxNumElements;
+	public int getMaxNumElementsAutomatic() {
+		return maxNumElementsAutomatic;
 	}
 
-	public void setMaxNumElements(int maxNumElements) {
-		this.maxNumElements = maxNumElements;
+	public void setMaxNumElementsAutomatic(int maxNumElementsAutomatic) {
+		this.maxNumElementsAutomatic = maxNumElementsAutomatic;
 	}
 
-	public int getTotalElements() {
-		return totalElements;
+	public int getTotalElementsAutomatic() {
+		return totalElementsAutomatic;
 	}
 
-	public void setTotalElements(int totalElements) {
-		this.totalElements = totalElements;
+	public void setTotalElementsAutomatic(int totalElements) {
+		this.totalElementsAutomatic = totalElements;
 	}
 
-	public double getMaxPercentageElements() {
-		return maxPercentageElements;
+	public double getMaxPercentageElementsAutomatic() {
+		return maxPercentageElementsAutomatic;
 	}
 
-	public void setMaxPercentageElements(double maxPercentageElements) {
-		this.maxPercentageElements = maxPercentageElements;
+	public void setMaxPercentageElementsAutomatic(double maxPercentageElementsAutomatic) {
+		this.maxPercentageElementsAutomatic = maxPercentageElementsAutomatic;
 	}
 
 	public void addElementByTechnique(String technique, String element) {
@@ -89,6 +92,30 @@ public class QueriedViewpointDTO {
 
 	public void setElementsByStakeholder(Map<String, Set<String>> elementsByStakeholder) {
 		this.elementsByStakeholder = elementsByStakeholder;
+	}
+
+	public int getMaxNumElementsManual() {
+		return maxNumElementsManual;
+	}
+
+	public void setMaxNumElementsManual(int maxNumElementsManual) {
+		this.maxNumElementsManual = maxNumElementsManual;
+	}
+
+	public int getTotalElementsManual() {
+		return totalElementsManual;
+	}
+
+	public void setTotalElementsManual(int totalElementsManual) {
+		this.totalElementsManual = totalElementsManual;
+	}
+
+	public double getMaxPercentageElementsManual() {
+		return maxPercentageElementsManual;
+	}
+
+	public void setMaxPercentageElementsManual(double maxPercentageElementsManual) {
+		this.maxPercentageElementsManual = maxPercentageElementsManual;
 	}
 
 }
