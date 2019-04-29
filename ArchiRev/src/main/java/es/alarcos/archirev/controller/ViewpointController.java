@@ -114,6 +114,8 @@ public class ViewpointController extends AbstractController {
 
 	private ViewpointSimulationEnum simulationType = ViewpointSimulationEnum.AUTOMATIC;
 
+	private List<Long> queriedElementIds;
+
 	public ViewpointController() {
 		super();
 	}
@@ -142,6 +144,7 @@ public class ViewpointController extends AbstractController {
 
 			coloured = false;
 			queriedViewpointMap = new HashMap<String, QueriedViewpointDTO>();
+			queriedElementIds = null;
 		}
 	}
 
@@ -305,8 +308,9 @@ public class ViewpointController extends AbstractController {
 			}
 		}
 
-		queriedViewpointMap.put(viewpointName, viewpointDao
-				.getViewpointPercentagesByStakeholders(stakeholderPickerList.getTarget(), getSelectedViewpointDTO()));
+		queriedViewpointMap.put(viewpointName,
+				viewpointDao.getViewpointPercentagesByStakeholders(stakeholderPickerList.getTarget(),
+						getSelectedViewpointDTO(), (isHybridSimulation() ? queriedElementIds : null)));
 		loadStakeholdersFromSelectedViewpointDTO();
 
 		if (selectedViewpoint != null) {
@@ -409,7 +413,7 @@ public class ViewpointController extends AbstractController {
 		case AUTOMATIC:
 			return getPercentageAutomatic(viewpointName);
 		case HYBRID:
-			return Math.max(getFormattedPercentageManual(viewpointName), getFormattedPercentageManual(viewpointName));
+			return getPercentageAutomatic(viewpointName) +  getFormattedPercentageManual(viewpointName);
 		default:
 			return 0.0;
 		}
@@ -433,8 +437,9 @@ public class ViewpointController extends AbstractController {
 
 	public void simulateViewpointsByStakeholder() {
 		simulationType = ViewpointSimulationEnum.MANUAL;
+		queriedElementIds = null;
 		List<QueriedViewpointDTO> listViewpointsByStakeholders = viewpointDao
-				.listViewpointsMaxPercentageByStakeholder(stakeholderPickerList.getTarget());
+				.listViewpointsMaxPercentageByStakeholder(stakeholderPickerList.getTarget(), null, null);
 		queriedViewpointMap = new HashMap<String, QueriedViewpointDTO>();
 		for (Viewpoint viewpoint : availableViewpoints) {
 			for (QueriedViewpointDTO viewpointDTO : listViewpointsByStakeholders) {
@@ -448,9 +453,33 @@ public class ViewpointController extends AbstractController {
 	}
 
 	public void simulateViewpointsByArtifactAndStakeholder() {
-		simulateViewpointsByArtifact();
-		simulateViewpointsByStakeholder();
 		simulationType = ViewpointSimulationEnum.HYBRID;
+		List<QueriedViewpointDTO> listViewpointsByArtefacts = viewpointDao
+				.listViewpointsMaxPercentageByArtefacts(artifactPickerList.getTarget());
+		queriedViewpointMap = new HashMap<String, QueriedViewpointDTO>();
+		for (Viewpoint viewpoint : availableViewpoints) {
+			for (QueriedViewpointDTO viewpointDTO : listViewpointsByArtefacts) {
+				if (viewpointDTO.getId().equals(viewpoint.getId())) {
+					queriedViewpointMap.put(viewpoint.getName(), viewpointDTO);
+					break;
+				}
+			}
+		}
+
+		queriedElementIds = viewpointDao.getCoveredElementsByArtifacts(artifactPickerList.getTarget());
+
+		List<QueriedViewpointDTO> listViewpointsByStakeholders = viewpointDao.listViewpointsMaxPercentageByStakeholder(
+				stakeholderPickerList.getTarget(), queriedElementIds, queriedViewpointMap);
+
+		for (Viewpoint viewpoint : availableViewpoints) {
+			for (QueriedViewpointDTO viewpointDTO : listViewpointsByStakeholders) {
+				if (viewpointDTO.getId().equals(viewpoint.getId())) {
+					queriedViewpointMap.put(viewpoint.getName(), viewpointDTO);
+					break;
+				}
+			}
+		}
+		coloured = true;
 	}
 
 	public boolean isColoured() {
@@ -625,6 +654,14 @@ public class ViewpointController extends AbstractController {
 	public void setStakeholdersFromSelectedViewpoint(
 			ArrayList<Pair<String, Integer>> stakeholdersFromSelectedViewpoint) {
 		this.stakeholdersFromSelectedViewpoint = stakeholdersFromSelectedViewpoint;
+	}
+
+	public List<Long> getQueriedElementIds() {
+		return queriedElementIds;
+	}
+
+	public void setQueriedElementIds(List<Long> queriedElementIds) {
+		this.queriedElementIds = queriedElementIds;
 	}
 
 }

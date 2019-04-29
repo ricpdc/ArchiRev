@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -139,6 +140,37 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 		return resultList;
 	}
 
+	public List<Long> getCoveredElementsByArtifacts(final List<InputArtifact> artefacts) {
+		List<Long> elementIds = new ArrayList<>();
+
+		if (artefacts == null || artefacts.isEmpty()) {
+			return elementIds;
+		}
+
+		String stringQuery = "select distinct e.id "
+				+ " from av_viewpoint as v, av_viewpoint_element as ve, av_element as e, av_mining_point as m, av_input_artifact as a, av_technique as t "
+				+ " where v.id = ve.viewpoint_id and ve.element_id = e.id and m.element_id = e.id and m.input_id = a.id and a.id in (:artefactsIds) and m.technique_id=t.id "
+				+ " order by e.id";
+
+		try {
+			Query query = entityManager.createNativeQuery(stringQuery);
+
+			List<Long> artefactsIds = artefacts.stream().map(InputArtifact::getId).collect(Collectors.toList());
+			query.setParameter("artefactsIds", artefactsIds);
+
+			List<BigInteger> resultSet = query.getResultList();
+
+			for (BigInteger id : resultSet) {
+				elementIds.add(id.longValue());
+			}
+
+		} catch (SQLGrammarException e) {
+			LOGGER.error(e.getMessage());
+		}
+
+		return elementIds;
+	}
+
 	@SuppressWarnings("unchecked")
 	public QueriedViewpointDTO getViewpointPercentagesByArtefacts(final List<InputArtifact> artefacts,
 			QueriedViewpointDTO viewpointDTO) {
@@ -180,25 +212,24 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 
 		return viewpointDTO;
 	}
-	
-	
-	
+
 	@SuppressWarnings("unchecked")
-	public List<QueriedViewpointDTO> listViewpointsMaxPercentageByStakeholder(final List<Stakeholder> stakeholders) {
+	public List<QueriedViewpointDTO> listViewpointsMaxPercentageByStakeholder(final List<Stakeholder> stakeholders,
+			final List<Long> elementIds, final Map<String, QueriedViewpointDTO> queriedViewpointMap) {
 		List<QueriedViewpointDTO> resultList = new ArrayList<>();
 
 		if (stakeholders == null || stakeholders.isEmpty()) {
 			return resultList;
 		}
 
-		String stringQuery = "select v.id, v.name as viewpoint, count(distinct e.name), (cast(count(distinct e.name) as real)*100) / ( " + 
-				"	select count(e2.name) as num_elements from av_viewpoint as v2, av_viewpoint_element as ve2, av_element as e2 " + 
-				"	where v2.id = ve2.viewpoint_id and ve2.element_id = e2.id and v2.id = v.id " + 
-				" ) as percentage " + 
-				" from av_viewpoint as v, av_viewpoint_element as ve, av_element as e, " + 
-				"		av_stakeholder_element se, av_stakeholder s  " + 
-				" where (v.id = ve.viewpoint_id and ve.element_id = e.id and e.id = se.element_id and se.stakeholder_id = s.id and s.id in (:stakeholderIds)) " + 
-				" group by v.id, viewpoint order by percentage desc";
+		String stringQuery = "select v.id, v.name as viewpoint, count(distinct e.name), (cast(count(distinct e.name) as real)*100) / ( "
+				+ "	select count(e2.name) as num_elements from av_viewpoint as v2, av_viewpoint_element as ve2, av_element as e2 "
+				+ "	where v2.id = ve2.viewpoint_id and ve2.element_id = e2.id and v2.id = v.id " + " ) as percentage "
+				+ " from av_viewpoint as v, av_viewpoint_element as ve, av_element as e, "
+				+ "		av_stakeholder_element se, av_stakeholder s  "
+				+ " where (v.id = ve.viewpoint_id and ve.element_id = e.id and e.id = se.element_id and se.stakeholder_id = s.id and s.id in (:stakeholderIds)) "
+				+ (elementIds != null && !elementIds.isEmpty() ? " and e.id not in (:elementIds) " : " ")
+				+ " group by v.id, viewpoint order by percentage desc";
 
 		try {
 			Query query = entityManager.createNativeQuery(stringQuery);
@@ -207,12 +238,21 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 
 			query.setParameter("stakeholderIds", stakeholderIds);
 
+			if (elementIds != null && !elementIds.isEmpty()) {
+				query.setParameter("elementIds", elementIds);
+			}
+
 			List<Object[]> resultSet = query.getResultList();
 
 			for (Object[] tuple : resultSet) {
-				QueriedViewpointDTO viewpoint = new QueriedViewpointDTO();
+				String viewpointName = (String) tuple[1];
+
+				QueriedViewpointDTO viewpoint = (queriedViewpointMap != null
+						&& queriedViewpointMap.get(viewpointName) != null) ? queriedViewpointMap.get(viewpointName)
+								: new QueriedViewpointDTO();
+
 				viewpoint.setId(((BigInteger) tuple[0]).longValue());
-				viewpoint.setName((String) tuple[1]);
+				viewpoint.setName(viewpointName);
 				viewpoint.setMaxNumElementsManual(Integer.parseInt(tuple[2].toString()));
 				viewpoint.setMaxPercentageElementsManual(Double.parseDouble(tuple[3].toString()));
 				resultList.add(viewpoint);
@@ -225,20 +265,19 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 		return resultList;
 	}
 
-	
-	
 	@SuppressWarnings("unchecked")
 	public QueriedViewpointDTO getViewpointPercentagesByStakeholders(final List<Stakeholder> stakeholder,
-			QueriedViewpointDTO viewpointDTO) {
+			QueriedViewpointDTO viewpointDTO, List<Long> elementIds) {
 
 		if (stakeholder == null || stakeholder.isEmpty()) {
 			return viewpointDTO;
 		}
 
-		String stringQuery = "select distinct s.id, s.name as stakeholder, e.name as element " + 
-				"	from av_viewpoint as v, av_viewpoint_element as ve, av_element as e, av_stakeholder_element se, av_stakeholder s " + 
-				"	where (v.id = ve.viewpoint_id and ve.element_id = e.id and e.id = se.element_id and se.stakeholder_id = s.id and s.id in (:stakeholderIds)) and v.id=:viewpointId " + 
-				"	order by s.id";
+		String stringQuery = "select distinct s.id, s.name as stakeholder, e.name as element "
+				+ "	from av_viewpoint as v, av_viewpoint_element as ve, av_element as e, av_stakeholder_element se, av_stakeholder s "
+				+ "	where (v.id = ve.viewpoint_id and ve.element_id = e.id and e.id = se.element_id and se.stakeholder_id = s.id and s.id in (:stakeholderIds)) and v.id=:viewpointId "
+				+ (elementIds != null && !elementIds.isEmpty() ? " and e.id not in (:elementIds) " : " ")
+				+ "	order by s.id";
 
 		String stringQueryTotalElements = "select count(e.name) as num_elements from av_viewpoint as v, av_viewpoint_element as ve, av_element as e "
 				+ "		where v.id = ve.viewpoint_id and ve.element_id = e.id and v.id = :viewpointId";
@@ -253,6 +292,9 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 			List<Long> stakeholderIds = stakeholder.stream().map(Stakeholder::getId).collect(Collectors.toList());
 			query.setParameter("stakeholderIds", stakeholderIds);
 			query.setParameter("viewpointId", viewpointDTO.getId());
+			if (elementIds != null && !elementIds.isEmpty()) {
+				query.setParameter("elementIds", elementIds);
+			}
 
 			List<Object[]> resultSet = query.getResultList();
 
@@ -268,6 +310,5 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 
 		return viewpointDTO;
 	}
-	
-	
+
 }
