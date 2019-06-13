@@ -36,6 +36,11 @@ public class AbstractDao<T extends AbstractEntity> implements Serializable {
 	public List<T> findAll() {
 		return entityManager.createQuery("from " + clazz.getName()).getResultList();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<T> findAllOrderById() {
+		return entityManager.createQuery("from " + clazz.getName() + " order by id").getResultList();
+	}
 
 	public void persist(T entity) {
 		Timestamp now = new Timestamp(new Date().getTime());

@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import es.alarcos.archirev.logic.bestplan.GeneticAlgorithmBestPlanService;
 import es.alarcos.archirev.model.AbstractEntity;
 import es.alarcos.archirev.model.InputArtifact;
 import es.alarcos.archirev.model.Stakeholder;
@@ -84,6 +85,9 @@ public class ViewpointController extends AbstractController {
 
 	@Autowired
 	private InputArtifactDao inputArtifactDao;
+	
+	@Autowired
+	private GeneticAlgorithmBestPlanService bestPlanService;
 
 	private Viewpoint selectedViewpoint;
 
@@ -481,6 +485,13 @@ public class ViewpointController extends AbstractController {
 		}
 		coloured = true;
 	}
+	
+	public void computeBestPlan() {
+		bestPlanService.setArtifacts(artifactPickerList.getTarget());
+		bestPlanService.setStakeholders(stakeholderPickerList.getTarget());		
+		bestPlanService.computeBestPlan();
+	}
+	
 
 	public boolean isColoured() {
 		return coloured;

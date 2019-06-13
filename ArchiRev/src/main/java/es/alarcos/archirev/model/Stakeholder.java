@@ -60,5 +60,15 @@ public class Stakeholder extends AbstractEntity {
 	public void setViewpoints(List<Viewpoint> viewpoints) {
 		this.viewpoints = viewpoints;
 	}
+	
+	@Override
+	public int compareTo(AbstractEntity o) {
+		if (o == null || o.getId() == null) {
+			return 1;
+		} else if (getId() == null) {
+			return -1;
+		}
+		return getId().compareTo(o.getId());
+	}
 
 }

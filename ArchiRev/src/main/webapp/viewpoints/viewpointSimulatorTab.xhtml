@@ -49,6 +49,9 @@
 								actionListener="#{viewpointController.simulateViewpointsByStakeholder}" update="mainForm:viewpointsTabs:viewpointMap"/>
 							<p:commandButton value="Semiautomatic (both)"
 								actionListener="#{viewpointController.simulateViewpointsByArtifactAndStakeholder}" update="mainForm:viewpointsTabs:viewpointMap"/>
+							<p:separator/>
+							<p:commandButton value="Best Plan"
+								actionListener="#{viewpointController.computeBestPlan}" update="mainForm:viewpointsTabs:viewpointMap"/>
 						</p:panelGrid>
 					</p:panel>
 				</p:panelGrid>
