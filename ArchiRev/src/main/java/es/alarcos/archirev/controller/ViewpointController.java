@@ -37,7 +37,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import es.alarcos.archirev.logic.bestplan.GeneticAlgorithmBestPlanService;
+import es.alarcos.archirev.logic.bestplan.BestPlan;
+import es.alarcos.archirev.logic.bestplan.BestPlanService;
 import es.alarcos.archirev.model.AbstractEntity;
 import es.alarcos.archirev.model.InputArtifact;
 import es.alarcos.archirev.model.Stakeholder;
@@ -85,19 +86,25 @@ public class ViewpointController extends AbstractController {
 
 	@Autowired
 	private InputArtifactDao inputArtifactDao;
-	
+
 	@Autowired
-	private GeneticAlgorithmBestPlanService bestPlanService;
+	private BestPlanService bestPlanService;
 
 	private Viewpoint selectedViewpoint;
+	
+	private boolean[] activeViewpoint;
 
 	private List<Viewpoint> availableViewpoints;
+	private List<Viewpoint> selectedViewpoints;
 	private List<String> scopeItems;
 	private List<String> stakeholdersItems;
 	private List<String> concernItems;
 	private List<String> purposeItems;
 	private List<String> elementItems;
 	private List<ViewpointElement> allElements;
+
+	private String priorityBestPlan;
+	private String maximizationBestPlan;
 
 	private boolean coloured;
 
@@ -120,6 +127,8 @@ public class ViewpointController extends AbstractController {
 
 	private List<Long> queriedElementIds;
 
+	private BestPlan bestPlan;
+
 	public ViewpointController() {
 		super();
 	}
@@ -133,7 +142,7 @@ public class ViewpointController extends AbstractController {
 
 	public void reload() {
 		if (sessionController.isActiveViewpoints()) {
-			setAvailableViewpoints(viewpointDao.findAll());
+			availableViewpoints = viewpointDao.findAllOrderById();
 			scopeItems = scopeDao.getScopeNames();
 			stakeholdersItems = stakeholderDao.getStakeholdersNames();
 			concernItems = concernDao.getConcernNames();
@@ -144,21 +153,46 @@ public class ViewpointController extends AbstractController {
 			artifactPickerList = new DualListModel<>(inputArtifactDao.findAll(), new ArrayList<InputArtifact>());
 			stakeholderPickerList = new DualListModel<>(stakeholderDao.findAll(), new ArrayList<Stakeholder>());
 
+			initializeActiveViewpoints();
+			
 			RequestContext.getCurrentInstance().update("mainForm:viewpointsTabs");
 
 			coloured = false;
 			queriedViewpointMap = new HashMap<String, QueriedViewpointDTO>();
 			queriedElementIds = null;
+
+			loadDefaultSetup();
+		}
+	}
+	
+	private void initializeActiveViewpoints() {
+		selectedViewpoints = new ArrayList<>();
+		activeViewpoint = new boolean[availableViewpoints.size()+1];
+		
+		for (Viewpoint viewpoint : availableViewpoints) {
+			activeViewpoint[viewpoint.getId().intValue()] = true;
+			selectedViewpoints.add(viewpoint);
+		}
+	}
+	
+	
+	public void toggleActiveValue(String viewpointName) {
+		for (Viewpoint viewpoint : availableViewpoints) {
+			if(viewpointName.equals(viewpoint.getName())) {
+				if(activeViewpoint[viewpoint.getId().intValue()]) {
+					if(! selectedViewpoints.contains(viewpoint)) {
+						selectedViewpoints.add(viewpoint);
+					}
+				}
+				else {
+					selectedViewpoints.remove(viewpoint);
+				}
+				break;
+			}
 		}
 	}
 
-	public List<Viewpoint> getAvailableViewpoints() {
-		return availableViewpoints;
-	}
-
-	public void setAvailableViewpoints(List<Viewpoint> availableViewpoints) {
-		this.availableViewpoints = availableViewpoints;
-	}
+	
 
 	public void onRowToggle(ToggleEvent event) {
 		if (event.getVisibility().equals(Visibility.VISIBLE)) {
@@ -280,7 +314,7 @@ public class ViewpointController extends AbstractController {
 		if (getPercentageAutomatic(viewpointName) == 0.0) {
 			return;
 		}
-		for (Viewpoint viewpoint : availableViewpoints) {
+		for (Viewpoint viewpoint : selectedViewpoints) {
 			if (viewpoint.getName().equals(viewpointName)) {
 				selectedViewpoint = viewpoint;
 				break;
@@ -305,7 +339,7 @@ public class ViewpointController extends AbstractController {
 		if (getPercentageManual(viewpointName) == 0.0) {
 			return;
 		}
-		for (Viewpoint viewpoint : availableViewpoints) {
+		for (Viewpoint viewpoint : selectedViewpoints) {
 			if (viewpoint.getName().equals(viewpointName)) {
 				selectedViewpoint = viewpoint;
 				break;
@@ -417,7 +451,7 @@ public class ViewpointController extends AbstractController {
 		case AUTOMATIC:
 			return getPercentageAutomatic(viewpointName);
 		case HYBRID:
-			return getPercentageAutomatic(viewpointName) +  getFormattedPercentageManual(viewpointName);
+			return getPercentageAutomatic(viewpointName) + getFormattedPercentageManual(viewpointName);
 		default:
 			return 0.0;
 		}
@@ -426,9 +460,9 @@ public class ViewpointController extends AbstractController {
 	public void simulateViewpointsByArtifact() {
 		simulationType = ViewpointSimulationEnum.AUTOMATIC;
 		List<QueriedViewpointDTO> listViewpointsByArtefacts = viewpointDao
-				.listViewpointsMaxPercentageByArtefacts(artifactPickerList.getTarget());
+				.listViewpointsMaxPercentageByArtefacts(artifactPickerList.getTarget(), selectedViewpoints);
 		queriedViewpointMap = new HashMap<String, QueriedViewpointDTO>();
-		for (Viewpoint viewpoint : availableViewpoints) {
+		for (Viewpoint viewpoint : selectedViewpoints) {
 			for (QueriedViewpointDTO viewpointDTO : listViewpointsByArtefacts) {
 				if (viewpointDTO.getId().equals(viewpoint.getId())) {
 					queriedViewpointMap.put(viewpoint.getName(), viewpointDTO);
@@ -443,9 +477,9 @@ public class ViewpointController extends AbstractController {
 		simulationType = ViewpointSimulationEnum.MANUAL;
 		queriedElementIds = null;
 		List<QueriedViewpointDTO> listViewpointsByStakeholders = viewpointDao
-				.listViewpointsMaxPercentageByStakeholder(stakeholderPickerList.getTarget(), null, null);
+				.listViewpointsMaxPercentageByStakeholder(stakeholderPickerList.getTarget(), selectedViewpoints, null, null);
 		queriedViewpointMap = new HashMap<String, QueriedViewpointDTO>();
-		for (Viewpoint viewpoint : availableViewpoints) {
+		for (Viewpoint viewpoint : selectedViewpoints) {
 			for (QueriedViewpointDTO viewpointDTO : listViewpointsByStakeholders) {
 				if (viewpointDTO.getId().equals(viewpoint.getId())) {
 					queriedViewpointMap.put(viewpoint.getName(), viewpointDTO);
@@ -459,9 +493,9 @@ public class ViewpointController extends AbstractController {
 	public void simulateViewpointsByArtifactAndStakeholder() {
 		simulationType = ViewpointSimulationEnum.HYBRID;
 		List<QueriedViewpointDTO> listViewpointsByArtefacts = viewpointDao
-				.listViewpointsMaxPercentageByArtefacts(artifactPickerList.getTarget());
+				.listViewpointsMaxPercentageByArtefacts(artifactPickerList.getTarget(), selectedViewpoints);
 		queriedViewpointMap = new HashMap<String, QueriedViewpointDTO>();
-		for (Viewpoint viewpoint : availableViewpoints) {
+		for (Viewpoint viewpoint : selectedViewpoints) {
 			for (QueriedViewpointDTO viewpointDTO : listViewpointsByArtefacts) {
 				if (viewpointDTO.getId().equals(viewpoint.getId())) {
 					queriedViewpointMap.put(viewpoint.getName(), viewpointDTO);
@@ -473,9 +507,9 @@ public class ViewpointController extends AbstractController {
 		queriedElementIds = viewpointDao.getCoveredElementsByArtifacts(artifactPickerList.getTarget());
 
 		List<QueriedViewpointDTO> listViewpointsByStakeholders = viewpointDao.listViewpointsMaxPercentageByStakeholder(
-				stakeholderPickerList.getTarget(), queriedElementIds, queriedViewpointMap);
+				stakeholderPickerList.getTarget(), selectedViewpoints, queriedElementIds, queriedViewpointMap);
 
-		for (Viewpoint viewpoint : availableViewpoints) {
+		for (Viewpoint viewpoint : selectedViewpoints) {
 			for (QueriedViewpointDTO viewpointDTO : listViewpointsByStakeholders) {
 				if (viewpointDTO.getId().equals(viewpoint.getId())) {
 					queriedViewpointMap.put(viewpoint.getName(), viewpointDTO);
@@ -485,13 +519,18 @@ public class ViewpointController extends AbstractController {
 		}
 		coloured = true;
 	}
-	
+
 	public void computeBestPlan() {
+		// Input
 		bestPlanService.setArtifacts(artifactPickerList.getTarget());
-		bestPlanService.setStakeholders(stakeholderPickerList.getTarget());		
-		bestPlanService.computeBestPlan();
+		bestPlanService.setStakeholders(stakeholderPickerList.getTarget());
+		bestPlanService.setSelectedViewpoints(selectedViewpoints);
+		// Parameters
+		bestPlanService.setMaximizationBestPlan(maximizationBestPlan);
+		bestPlanService.setPriorityBestPlan(priorityBestPlan);
+		// Run genetic algorithm
+		bestPlan = bestPlanService.computeBestPlan();
 	}
-	
 
 	public boolean isColoured() {
 		return coloured;
@@ -614,6 +653,32 @@ public class ViewpointController extends AbstractController {
 		return horizontalBarModel;
 	}
 
+
+	
+
+	
+
+	public void saveSetup() {
+		closeSetupDialog();
+	}
+
+	public void resetSetup() {
+		loadDefaultSetup();
+		RequestContext context = RequestContext.getCurrentInstance();
+		context.update("mainForm:setupBestPlanDialog");
+	}
+
+	private void loadDefaultSetup() {
+		priorityBestPlan = BestPlanService.PRIO_AUTOMATIC;
+		maximizationBestPlan = BestPlanService.MAX_PERFORMANCE;
+	}
+
+	private void closeSetupDialog() {
+		RequestContext context = RequestContext.getCurrentInstance();
+		context.update("mainForm:setupBestPlanDialog");
+		context.execute("PF('setupBestPlanDialog').hide()");
+	}
+
 	public ArrayList<Pair<String, Integer>> getTechniquesFromSelectedViewpoint() {
 		return techniquesFromSelectedViewpoint;
 	}
@@ -673,6 +738,46 @@ public class ViewpointController extends AbstractController {
 
 	public void setQueriedElementIds(List<Long> queriedElementIds) {
 		this.queriedElementIds = queriedElementIds;
+	}
+
+	public BestPlan getBestPlan() {
+		return bestPlan;
+	}
+
+	public void setBestPlan(BestPlan bestPlan) {
+		this.bestPlan = bestPlan;
+	}
+
+	public String getMaximizationBestPlan() {
+		return maximizationBestPlan;
+	}
+
+	public void setMaximizationBestPlan(String maximizationBestPlan) {
+		this.maximizationBestPlan = maximizationBestPlan;
+	}
+
+	public String getPriorityBestPlan() {
+		return priorityBestPlan;
+	}
+
+	public void setPriorityBestPlan(String priorityBestPlan) {
+		this.priorityBestPlan = priorityBestPlan;
+	}
+	
+	public List<Viewpoint> getAvailableViewpoints() {
+		return availableViewpoints;
+	}
+
+	public void setAvailableViewpoints(List<Viewpoint> availableViewpoints) {
+		this.availableViewpoints = availableViewpoints;
+	}
+
+	public boolean[] getActiveViewpoint() {
+		return activeViewpoint;
+	}
+
+	public void setActiveViewpoint(boolean[] activeViewpoint) {
+		this.activeViewpoint = activeViewpoint;
 	}
 
 }

@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dialog
+		header="Configuratio for computing the best plan for viewpoint generation"
+		id="setupBestPlanDialog" widgetVar="setupBestPlanDialog" modal="true"
+		height="240" width="670" closable="true" closeOnEscape="true">
+		<p:outputPanel id="stupBestPlanDialogPanel"
+			style="paddign:0px;border:none;">
+
+			<h:panelGrid columns="1" style="margin-bottom:10px" cellpadding="5">
+				<p:selectOneRadio id="priority"
+					value="#{viewpointController.priorityBestPlan}" layout="grid"
+					columns="1">
+					<f:selectItem id="prioAutomatic" itemLabel="prioritize automatic"
+						itemValue="PRIO_AUTOMATIC" />
+					<f:selectItem itemLabel="prioritize manual" itemValue="PRIO_MANUAL" />
+					<f:selectItem itemLabel="best" itemValue="PRIO_BEST" />
+				</p:selectOneRadio>
+			</h:panelGrid>
+
+			<h:panelGrid columns="1" style="margin-bottom:10px" cellpadding="5">
+				<p:selectOneRadio id="maximization"
+					value="#{viewpointController.maximizationBestPlan}" layout="grid"
+					columns="1">
+					<f:selectItem itemLabel="maximize overall performance"
+						itemValue="MAX_PERFORMANCE" />
+					<f:selectItem itemLabel="maximize fully completed viewpoints"
+						itemValue="MAX_COMPLETED_VIEWPOINTS" />
+				</p:selectOneRadio>
+			</h:panelGrid>
+
+			<p:commandButton id="setupBestPlanResetButton" value="Reset"
+				style="float:right"
+				actionListener="#{viewpointController.resetSetup()}" />
+			<p:commandButton id="setupBestPlanSaveButton" value="Save"
+				style="float:right"
+				actionListener="#{viewpointController.saveSetup()}" />
+
+		</p:outputPanel>
+	</p:dialog>
+</ui:composition>

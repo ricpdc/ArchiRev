@@ -100,7 +100,7 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<QueriedViewpointDTO> listViewpointsMaxPercentageByArtefacts(final List<InputArtifact> artefacts) {
+	public List<QueriedViewpointDTO> listViewpointsMaxPercentageByArtefacts(final List<InputArtifact> artefacts, List<Viewpoint> selectedViewpoints) {
 		List<QueriedViewpointDTO> resultList = new ArrayList<>();
 
 		if (artefacts == null || artefacts.isEmpty()) {
@@ -112,15 +112,17 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 				+ "		where v2.id = ve2.viewpoint_id and ve2.element_id = e2.id and v2.id = v.id "
 				+ "	) as percentage "
 				+ "	from av_viewpoint as v, av_viewpoint_element as ve, av_element as e, av_mining_point as m, av_input_artifact as a, av_technique as t "
-				+ "	where v.id = ve.viewpoint_id and ve.element_id = e.id and m.element_id = e.id and m.input_id = a.id and a.id in (:artefactsIds) and m.technique_id=t.id "
+				+ "	where v.id = ve.viewpoint_id and v.id in :filteredViewpointIds and ve.element_id = e.id and m.element_id = e.id and m.input_id = a.id and a.id in (:artefactsIds) and m.technique_id=t.id "
 				+ "	group by v.id, viewpoint" + "	order by percentage desc";
 
 		try {
 			Query query = entityManager.createNativeQuery(stringQuery);
 
 			List<Long> artefactsIds = artefacts.stream().map(InputArtifact::getId).collect(Collectors.toList());
-
 			query.setParameter("artefactsIds", artefactsIds);
+
+			List<Long> filteredViewpointIds = selectedViewpoints.stream().map(Viewpoint::getId).collect(Collectors.toList());
+			query.setParameter("filteredViewpointIds", filteredViewpointIds);
 
 			List<Object[]> resultSet = query.getResultList();
 
@@ -215,7 +217,7 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 
 	@SuppressWarnings("unchecked")
 	public List<QueriedViewpointDTO> listViewpointsMaxPercentageByStakeholder(final List<Stakeholder> stakeholders,
-			final List<Long> elementIds, final Map<String, QueriedViewpointDTO> queriedViewpointMap) {
+			List<Viewpoint> selectedViewpoints, final List<Long> elementIds, final Map<String, QueriedViewpointDTO> queriedViewpointMap) {
 		List<QueriedViewpointDTO> resultList = new ArrayList<>();
 
 		if (stakeholders == null || stakeholders.isEmpty()) {
@@ -227,7 +229,7 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 				+ "	where v2.id = ve2.viewpoint_id and ve2.element_id = e2.id and v2.id = v.id " + " ) as percentage "
 				+ " from av_viewpoint as v, av_viewpoint_element as ve, av_element as e, "
 				+ "		av_stakeholder_element se, av_stakeholder s  "
-				+ " where (v.id = ve.viewpoint_id and ve.element_id = e.id and e.id = se.element_id and se.stakeholder_id = s.id and s.id in (:stakeholderIds)) "
+				+ " where (v.id in :filteredViewpointIds and v.id = ve.viewpoint_id and ve.element_id = e.id and e.id = se.element_id and se.stakeholder_id = s.id and s.id in (:stakeholderIds)) "
 				+ (elementIds != null && !elementIds.isEmpty() ? " and e.id not in (:elementIds) " : " ")
 				+ " group by v.id, viewpoint order by percentage desc";
 
@@ -235,8 +237,10 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 			Query query = entityManager.createNativeQuery(stringQuery);
 
 			List<Long> stakeholderIds = stakeholders.stream().map(Stakeholder::getId).collect(Collectors.toList());
-
 			query.setParameter("stakeholderIds", stakeholderIds);
+			
+			List<Long> filteredViewpointIds = selectedViewpoints.stream().map(Viewpoint::getId).collect(Collectors.toList());
+			query.setParameter("filteredViewpointIds", filteredViewpointIds);
 
 			if (elementIds != null && !elementIds.isEmpty()) {
 				query.setParameter("elementIds", elementIds);

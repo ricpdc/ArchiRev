@@ -50,9 +50,16 @@
 							<p:commandButton value="Semiautomatic (both)"
 								actionListener="#{viewpointController.simulateViewpointsByArtifactAndStakeholder}" update="mainForm:viewpointsTabs:viewpointMap"/>
 							<p:separator/>
-							<p:commandButton value="Best Plan"
-								actionListener="#{viewpointController.computeBestPlan}" update="mainForm:viewpointsTabs:viewpointMap"/>
-						</p:panelGrid>
+							<p:outputPanel id="bestPlanButtons" style="padding:0px;">
+								<p:commandButton id="setupBestPlanButton" value="" icon="ui-icon-gear" style="width: 11% !important; height: 33.5px !important; float:left"
+									onclick="PF('setupBestPlanDialog').show();"  />
+								<p:commandButton value="Best Plan" style="width: 76% !important"
+									actionListener="#{viewpointController.computeBestPlan}" update="mainForm:viewpointsTabs:viewpointMap, mainForm:viewpointsTabs:lastBestPlanButton, mainForm:bestPlanDialog"
+									onclick="PF('blockUI').show();" oncomplete="PF('blockUI').hide(); PF('bestPlanDialog').show();"  />
+								<p:commandButton id="lastBestPlanButton" value="" icon="ui-icon-document" disabled="#{viewpointController.bestPlan == null}" style="width: 11% !important; height: 33.5px !important; float:right"
+									onclick="PF('bestPlanDialog').show();"  />
+							</p:outputPanel>
+						</p:panelGrid>						
 					</p:panel>
 				</p:panelGrid>
 				<p:separator />
@@ -65,8 +72,12 @@
 									<p:panelGrid id="strategyMap"
 										style="width: 100%; margin: 0px; border-collapse: separate; border-spacing:10px;">
 										<p:row>
-											<p:column colspan="9" style="background-color: hsl(#{viewpointController.getPercentage('Strategy')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column colspan="9" style="background-color: hsl(#{viewpointController.getPercentage('Strategy')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[17] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Strategy"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[17]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="#{viewpointName}"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -78,8 +89,12 @@
 											</p:column>
 										</p:row>
 										<p:row>
-											<p:column colspan="5" style="background-color: hsl(#{viewpointController.getPercentage('Capability Map')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column colspan="5" style="background-color: hsl(#{viewpointController.getPercentage('Capability Map')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[18] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Capability Map"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[18]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="Capability&lt;br/&gt;Map" escape="false"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -89,8 +104,12 @@
 													value="#{not viewpointController.coloured ? '_' : viewpointController.getFormattedPercentageManual(viewpointName)} %" 
 													actionListener="#{viewpointController.showViewpointInfoManual(viewpointName)}" />
 											</p:column>
-											<p:column colspan="4" style="background-color: hsl(#{viewpointController.getPercentage('Resource Map')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column colspan="4" style="background-color: hsl(#{viewpointController.getPercentage('Resource Map')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[20] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Resource Map"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[20]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="Resource&lt;br/&gt;Map" escape="false"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -110,8 +129,12 @@
 										style="width: 100%; margin: 0px; border-collapse: separate; border-spacing:10px;">
 
 										<p:row>
-											<p:column colspan="2" rowspan="3" style="background-color: hsl(#{viewpointController.getPercentage('Project')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column colspan="2" rowspan="3" style="background-color: hsl(#{viewpointController.getPercentage('Project')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[21] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Project"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[21]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="#{viewpointName}"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -125,8 +148,12 @@
 										<p:row />
 										<p:row />
 										<p:row>
-											<p:column rowspan="10" style="background-color: hsl(#{viewpointController.getPercentage('Implementation and Migration')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column rowspan="10" style="background-color: hsl(#{viewpointController.getPercentage('Implementation and Migration')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[23] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Implementation and Migration"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[23]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="Implementation&lt;br/&gt;and&lt;br/&gt;Migration" escape="false"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -136,8 +163,12 @@
 													value="#{not viewpointController.coloured ? '_' : viewpointController.getFormattedPercentageManual(viewpointName)} %" 
 													actionListener="#{viewpointController.showViewpointInfoManual(viewpointName)}" />
 											</p:column>
-											<p:column rowspan="10" style="background-color: hsl(#{viewpointController.getPercentage('Migration')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column rowspan="10" style="background-color: hsl(#{viewpointController.getPercentage('Migration')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[22] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Migration"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[22]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="#{viewpointName}"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -167,8 +198,12 @@
 									<p:panelGrid id="basicViewpointMap"
 										style="width: 100%; margin: 0px; border-collapse: separate; border-spacing:10px;">
 										<p:row>
-											<p:column colspan="5" style="background-color: hsl(#{viewpointController.getPercentage('Organization')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column colspan="5" style="background-color: hsl(#{viewpointController.getPercentage('Organization')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[1] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Organization"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[1]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="#{viewpointName}"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -180,8 +215,12 @@
 											</p:column>
 										</p:row>
 										<p:row>
-											<p:column rowspan="9" style="background-color: hsl(#{viewpointController.getPercentage('Layered')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column rowspan="9" style="background-color: hsl(#{viewpointController.getPercentage('Layered')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[12] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Layered"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[12]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="#{viewpointName}"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -191,8 +230,12 @@
 													value="#{not viewpointController.coloured ? '_' : viewpointController.getFormattedPercentageManual(viewpointName)} %" 
 													actionListener="#{viewpointController.showViewpointInfoManual(viewpointName)}" />
 											</p:column>
-											<p:column colspan="2" rowspan="2" style="background-color: hsl(#{viewpointController.getPercentage('Product')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column colspan="2" rowspan="2" style="background-color: hsl(#{viewpointController.getPercentage('Product')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[3] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Product"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[3]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="#{viewpointName}"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -202,8 +245,12 @@
 													value="#{not viewpointController.coloured ? '_' : viewpointController.getFormattedPercentageManual(viewpointName)} %" 
 													actionListener="#{viewpointController.showViewpointInfoManual(viewpointName)}" />
 											</p:column>
-											<p:column colspan="2" rowspan="3" style="background-color: hsl(#{viewpointController.getPercentage('Service Realization')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column colspan="2" rowspan="3" style="background-color: hsl(#{viewpointController.getPercentage('Service Realization')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[10] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Service Realization"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[10]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="Service&lt;br/&gt;Realization" escape="false"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -216,8 +263,12 @@
 										</p:row>
 										<p:row />
 										<p:row>
-											<p:column rowspan="4" style="background-color: hsl(#{viewpointController.getPercentage('Information Structure')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column rowspan="4" style="background-color: hsl(#{viewpointController.getPercentage('Information Structure')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[9] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Information Structure"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[9]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="Information&lt;br/&gt;Structure" escape="false"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -227,8 +278,12 @@
 													value="#{not viewpointController.coloured ? '_' : viewpointController.getFormattedPercentageManual(viewpointName)} %" 
 													actionListener="#{viewpointController.showViewpointInfoManual(viewpointName)}" />
 											</p:column>
-											<p:column rowspan="2" style="background-color: hsl(#{viewpointController.getPercentage('Business Process Cooperation')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column rowspan="2" style="background-color: hsl(#{viewpointController.getPercentage('Business Process Cooperation')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[2] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Business Process Cooperation"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[2]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="Business&lt;br/&gt;Process&lt;br/&gt;Cooperation" escape="false"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -240,8 +295,12 @@
 											</p:column>
 										</p:row>
 										<p:row>
-											<p:column colspan="2" rowspan="2" style="background-color: hsl(#{viewpointController.getPercentage('Application Usage')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column colspan="2" rowspan="2" style="background-color: hsl(#{viewpointController.getPercentage('Application Usage')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[5] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Application Usage"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[5]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="Application&lt;br/&gt;Usage" escape="false"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -253,8 +312,12 @@
 											</p:column>
 										</p:row>
 										<p:row>
-											<p:column rowspan="2" style="background-color: hsl(#{viewpointController.getPercentage('Application Cooperation')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column rowspan="2" style="background-color: hsl(#{viewpointController.getPercentage('Application Cooperation')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[4] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Application Cooperation"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[4]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="Application&lt;br/&gt;Cooperation" escape="false"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -266,8 +329,12 @@
 											</p:column>
 										</p:row>
 										<p:row>
-											<p:column rowspan="3" style="background-color: hsl(#{viewpointController.getPercentage('Technology Usage')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column rowspan="3" style="background-color: hsl(#{viewpointController.getPercentage('Technology Usage')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[8] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Technology Usage"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[8]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="Technology&lt;br/&gt;Usage" escape="false"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -277,8 +344,12 @@
 													value="#{not viewpointController.coloured ? '_' : viewpointController.getFormattedPercentageManual(viewpointName)} %" 
 													actionListener="#{viewpointController.showViewpointInfoManual(viewpointName)}" />
 											</p:column>
-											<p:column rowspan="4" style="background-color: hsl(#{viewpointController.getPercentage('Implementation and Deployment')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column rowspan="4" style="background-color: hsl(#{viewpointController.getPercentage('Implementation and Deployment')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[6] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Implementation and Deployment"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[6]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="Implementation&lt;br/&gt;and&lt;br/&gt;Deployment" escape="false"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -290,8 +361,12 @@
 											</p:column>
 										</p:row>
 										<p:row>
-											<p:column colspan="2" rowspan="2" style="background-color: hsl(#{viewpointController.getPercentage('Technology')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column colspan="2" rowspan="2" style="background-color: hsl(#{viewpointController.getPercentage('Technology')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[7] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Technology"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[7]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="#{viewpointName}"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -304,8 +379,12 @@
 										</p:row>
 										<p:row />
 										<p:row>
-											<p:column colspan="3" style="background-color: hsl(#{viewpointController.getPercentage('Physical')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column colspan="3" style="background-color: hsl(#{viewpointController.getPercentage('Physical')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[11] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Physical"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[11]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="#{viewpointName}"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -325,8 +404,12 @@
 										style="width: 100%; margin: 0px; border-collapse: separate; border-spacing:10px;">
 
 										<p:row>
-											<p:column rowspan="10" style="background-color: hsl(#{viewpointController.getPercentage('Outcome Realization')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column rowspan="10" style="background-color: hsl(#{viewpointController.getPercentage('Outcome Realization')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[19] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Outcome Realization"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[19]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="Outcome&lt;br/&gt;Realization" escape="false"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -336,8 +419,12 @@
 													value="#{not viewpointController.coloured ? '_' : viewpointController.getFormattedPercentageManual(viewpointName)} %" 
 													actionListener="#{viewpointController.showViewpointInfoManual(viewpointName)}" />
 											</p:column>
-											<p:column style="background-color: hsl(#{viewpointController.getPercentage('Stakeholder')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column style="background-color: hsl(#{viewpointController.getPercentage('Stakeholder')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[13] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Stakeholder"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[13]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="#{viewpointName}"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -347,8 +434,12 @@
 													value="#{not viewpointController.coloured ? '_' : viewpointController.getFormattedPercentageManual(viewpointName)} %" 
 													actionListener="#{viewpointController.showViewpointInfoManual(viewpointName)}" />
 											</p:column>
-											<p:column style="background-color: hsl(#{viewpointController.getPercentage('Motivation')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column style="background-color: hsl(#{viewpointController.getPercentage('Motivation')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[16] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Motivation"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[16]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="#{viewpointName}"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -358,8 +449,12 @@
 													value="#{not viewpointController.coloured ? '_' : viewpointController.getFormattedPercentageManual(viewpointName)} %" 
 													actionListener="#{viewpointController.showViewpointInfoManual(viewpointName)}" />
 											</p:column>
-											<p:column style="background-color: hsl(#{viewpointController.getPercentage('Goal Realization')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column style="background-color: hsl(#{viewpointController.getPercentage('Goal Realization')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[14] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Goal Realization"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[14]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="Goal&lt;br/&gt;Realization" escape="false"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 
@@ -371,8 +466,12 @@
 											</p:column>
 										</p:row>
 										<p:row>
-											<p:column colspan="3" rowspan="9" style="background-color: hsl(#{viewpointController.getPercentage('Requirements Realization')}, 100%, 65%, #{viewpointController.coloured ? '1' : '0'});">
+											<p:column colspan="3" rowspan="9" style="background-color: hsl(#{viewpointController.getPercentage('Requirements Realization')}, 100%, 65%, #{viewpointController.coloured and viewpointController.activeViewpoint[15] ? '1' : '0'});">
 												<c:set var="viewpointName" value="Requirements Realization"/>
+												<p:inputSwitch value="#{viewpointController.activeViewpoint[15]}" style="width: 38px; height: 13px; font-size: 6pt" >
+													<p:ajax listener="#{viewpointController.toggleActiveValue(viewpointName)}"/>
+												</p:inputSwitch>
+												<br/>
 												<p:outputLabel styleClass="viewpointName" value="Requirements&lt;br/&gt;Realization" escape="false"/>
 												<br/>
 												<p:commandButton icon="ui-icon-gear" rendered="#{viewpointController.automaticSimulation or viewpointController.hybridSimulation}" styleClass="viewpointPercentage" 

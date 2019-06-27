@@ -42,8 +42,8 @@
 		<p:tabView id="viewpointsTabs" widgetVar="viewpointsTabs"
 			activeIndex="#{sessionController.activeViewpointsTab}" cache="false"
 			rendered="#{sessionController.activeViewpoints}">
-			<ui:include src="viewpoints/viewpointExplorerTab.xhtml" />
 			<ui:include src="viewpoints/viewpointSimulatorTab.xhtml" />
+			<ui:include src="viewpoints/viewpointExplorerTab.xhtml" />
 		</p:tabView>
 
 		<ui:include src="project/newProjectDialog.xhtml" />
@@ -57,6 +57,8 @@
 		<ui:include src="viewpoints/elementsForTechniqueDialog.xhtml"/>
 		<ui:include src="viewpoints/viewpointDialogManual.xhtml"/>
 		<ui:include src="viewpoints/viewpointDialogAutomatic.xhtml"/>
+		<ui:include src="viewpoints/bestPlanDialog.xhtml"/>
+		<ui:include src="viewpoints/setupBestPlanDialog.xhtml"/>
 		
 		<p:hotkey bind="ctrl+l" oncomplete="document.getElementById('mainForm:loginDialogButton').click();"/>
 		<p:hotkey bind="ctrl+m" oncomplete="document.getElementById('mainForm:openProjectButtonId').click();"/>

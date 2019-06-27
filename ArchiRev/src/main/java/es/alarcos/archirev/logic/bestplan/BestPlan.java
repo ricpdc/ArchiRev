@@ -6,8 +6,9 @@ import es.alarcos.archirev.model.InputArtifact;
 import es.alarcos.archirev.model.Stakeholder;
 
 public class BestPlan {
-	List<InputArtifact> artifacts;
-	List<Stakeholder> stakeholders;
+	private List<InputArtifact> artifacts;
+	private List<Stakeholder> stakeholders;
+	private String errorMessage;
 
 	public BestPlan() {
 
@@ -33,5 +34,13 @@ public class BestPlan {
 
 	public void setStakeholders(List<Stakeholder> stakeholders) {
 		this.stakeholders = stakeholders;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
 	}
 }
