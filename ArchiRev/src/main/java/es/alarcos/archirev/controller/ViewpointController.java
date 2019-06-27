@@ -322,7 +322,7 @@ public class ViewpointController extends AbstractController {
 		}
 
 		queriedViewpointMap.put(viewpointName, viewpointDao
-				.getViewpointPercentagesByArtefacts(artifactPickerList.getTarget(), getSelectedViewpointDTO()));
+				.getViewpointPercentagesByArtefacts(bestPlan!=null ? bestPlan.getArtifacts() : artifactPickerList.getTarget(), getSelectedViewpointDTO()));
 		loadTechniquesFromSelectedViewpointDTO();
 
 		if (selectedViewpoint != null) {
@@ -347,7 +347,7 @@ public class ViewpointController extends AbstractController {
 		}
 
 		queriedViewpointMap.put(viewpointName,
-				viewpointDao.getViewpointPercentagesByStakeholders(stakeholderPickerList.getTarget(),
+				viewpointDao.getViewpointPercentagesByStakeholders(bestPlan!=null ? bestPlan.getStakeholders() : stakeholderPickerList.getTarget(),
 						getSelectedViewpointDTO(), (isHybridSimulation() ? queriedElementIds : null)));
 		loadStakeholdersFromSelectedViewpointDTO();
 
@@ -458,9 +458,13 @@ public class ViewpointController extends AbstractController {
 	}
 
 	public void simulateViewpointsByArtifact() {
+		simulateViewpointsByArtifact(artifactPickerList.getTarget());
+	}
+	
+	private void simulateViewpointsByArtifact(List<InputArtifact> artifacts) {
 		simulationType = ViewpointSimulationEnum.AUTOMATIC;
 		List<QueriedViewpointDTO> listViewpointsByArtefacts = viewpointDao
-				.listViewpointsMaxPercentageByArtefacts(artifactPickerList.getTarget(), selectedViewpoints);
+				.listViewpointsMaxPercentageByArtefacts(artifacts, selectedViewpoints);
 		queriedViewpointMap = new HashMap<String, QueriedViewpointDTO>();
 		for (Viewpoint viewpoint : selectedViewpoints) {
 			for (QueriedViewpointDTO viewpointDTO : listViewpointsByArtefacts) {
@@ -474,10 +478,14 @@ public class ViewpointController extends AbstractController {
 	}
 
 	public void simulateViewpointsByStakeholder() {
+		simulateViewpointsByStakeholder(stakeholderPickerList.getTarget());
+	}
+	
+	private void simulateViewpointsByStakeholder(final List<Stakeholder> stakeholders) {
 		simulationType = ViewpointSimulationEnum.MANUAL;
 		queriedElementIds = null;
 		List<QueriedViewpointDTO> listViewpointsByStakeholders = viewpointDao
-				.listViewpointsMaxPercentageByStakeholder(stakeholderPickerList.getTarget(), selectedViewpoints, null, null);
+				.listViewpointsMaxPercentageByStakeholder(stakeholders, selectedViewpoints, null, null);
 		queriedViewpointMap = new HashMap<String, QueriedViewpointDTO>();
 		for (Viewpoint viewpoint : selectedViewpoints) {
 			for (QueriedViewpointDTO viewpointDTO : listViewpointsByStakeholders) {
@@ -489,11 +497,15 @@ public class ViewpointController extends AbstractController {
 		}
 		coloured = true;
 	}
-
+	
 	public void simulateViewpointsByArtifactAndStakeholder() {
+		simulateViewpointsByArtifactAndStakeholder(artifactPickerList.getTarget(), stakeholderPickerList.getTarget());
+	}
+
+	public void simulateViewpointsByArtifactAndStakeholder(List<InputArtifact> artifacts, List<Stakeholder> stakeholders) {
 		simulationType = ViewpointSimulationEnum.HYBRID;
 		List<QueriedViewpointDTO> listViewpointsByArtefacts = viewpointDao
-				.listViewpointsMaxPercentageByArtefacts(artifactPickerList.getTarget(), selectedViewpoints);
+				.listViewpointsMaxPercentageByArtefacts(artifacts, selectedViewpoints);
 		queriedViewpointMap = new HashMap<String, QueriedViewpointDTO>();
 		for (Viewpoint viewpoint : selectedViewpoints) {
 			for (QueriedViewpointDTO viewpointDTO : listViewpointsByArtefacts) {
@@ -504,10 +516,10 @@ public class ViewpointController extends AbstractController {
 			}
 		}
 
-		queriedElementIds = viewpointDao.getCoveredElementsByArtifacts(artifactPickerList.getTarget());
+		queriedElementIds = viewpointDao.getCoveredElementsByArtifacts(bestPlan!=null ? bestPlan.getArtifacts() : artifactPickerList.getTarget());
 
 		List<QueriedViewpointDTO> listViewpointsByStakeholders = viewpointDao.listViewpointsMaxPercentageByStakeholder(
-				stakeholderPickerList.getTarget(), selectedViewpoints, queriedElementIds, queriedViewpointMap);
+				stakeholders, selectedViewpoints, queriedElementIds, queriedViewpointMap);
 
 		for (Viewpoint viewpoint : selectedViewpoints) {
 			for (QueriedViewpointDTO viewpointDTO : listViewpointsByStakeholders) {
@@ -530,6 +542,13 @@ public class ViewpointController extends AbstractController {
 		bestPlanService.setPriorityBestPlan(priorityBestPlan);
 		// Run genetic algorithm
 		bestPlan = bestPlanService.computeBestPlan();
+		
+		computeHeatMapForBestPlan () ;
+	}
+
+	private void computeHeatMapForBestPlan() {
+		//TODO after sort and filtering by technique is computed it should be fixed by adding such filters to the db query to improve accuracy
+		simulateViewpointsByArtifactAndStakeholder(bestPlan.getArtifacts(), bestPlan.getStakeholders());
 	}
 
 	public boolean isColoured() {
