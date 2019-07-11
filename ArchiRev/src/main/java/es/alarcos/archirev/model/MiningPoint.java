@@ -23,7 +23,7 @@ public class MiningPoint extends AbstractEntity {
 	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "technique_id")
-	private Technique technique;;
+	private Technique technique;
 	
 	
 	public MiningPoint() {

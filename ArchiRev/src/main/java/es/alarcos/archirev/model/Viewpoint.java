@@ -10,6 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SecondaryTable;
@@ -21,6 +23,7 @@ import javax.persistence.Transient;
 @Table(name = "av_viewpoint")
 @SecondaryTables({
 		@SecondaryTable(name = "av_viewpoint_basic", pkJoinColumns = @PrimaryKeyJoinColumn(name = "viewpoint_id", referencedColumnName = "id")) })
+@NamedQueries({ @NamedQuery(name = "Viewpoint.getTotalElements", query = "SELECT count(e) FROM Viewpoint v JOIN v.elements e WHERE v.id=:viewpointId ") })
 public class Viewpoint extends AbstractEntity {
 
 	private static final long serialVersionUID = 326421301169883035L;

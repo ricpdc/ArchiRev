@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kdm:Segment xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:code="http://www.omg.org/spec/KDM/20160201/code" xmlns:kdm="http://www.omg.org/spec/KDM/20160201/kdm" name="Segmento1">
+  <model xsi:type="code:CodeModel" name="Modelo1">
+    <codeElement xsi:type="code:Package" name="level1">
+      <codeElement xsi:type="code:Package" name="level1.level2">
+        <codeElement xsi:type="code:CompilationUnit" name="level1.level2.FileA.java">
+          <annotation text="Controller"/>
+          <codeRelation xsi:type="code:CodeRelationship" to="//@model.0/@codeElement.0/@codeElement.0/@codeElement.1" from="//@model.0/@codeElement.0/@codeElement.0/@codeElement.0"/>
+          <codeElement xsi:type="code:ClassUnit" name="A1" exportKind="unknown"/>
+        </codeElement>
+        <codeElement xsi:type="code:CompilationUnit" name="level1.level2.FileB.java">
+          <annotation text="Service"/>
+          <codeElement xsi:type="code:ClassUnit" name="B1" exportKind="unknown"/>
+        </codeElement>
+      </codeElement>
+    </codeElement>
+  </model>
+</kdm:Segment>
