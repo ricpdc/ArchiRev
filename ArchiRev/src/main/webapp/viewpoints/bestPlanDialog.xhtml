@@ -9,17 +9,21 @@
 		height="500" width="650" closable="true" closeOnEscape="true">
 		<p:outputPanel id="bestPlanDialogPanel"
 			style="paddign:0px;border:none;">
-			<p:outputLabel rendered="#{not empty viewpointController.bestPlan.errorMessage}" value="#{viewpointController.bestPlan.errorMessage}" />
+			<p:outputLabel
+				rendered="#{not empty viewpointController.bestPlan.errorMessage}"
+				value="#{viewpointController.bestPlan.errorMessage}" />
 			<p:dataList
 				rendered="#{empty viewpointController.bestPlan.errorMessage}"
 				value="#{viewpointController.artifactPickerList.target}"
 				emptyMessage="There are no selected artifacts" var="artifact"
-				itemType="none">				
+				itemType="none">
 				<f:facet name="header">
             		Input Artifacts
         		</f:facet>
-        		<p:outputLabel styleClass="ui-icon ui-icon-#{viewpointController.bestPlan.artifacts.contains(artifact) ? 'star' : 'cancel'}" style="float:left;margin-right:10px;margin-top:3px;"/>
-        		<p:outputLabel value="#{artifact.name}" style="display:inline-block"/>
+				<p:outputLabel
+					styleClass="ui-icon ui-icon-#{viewpointController.bestPlan.artifacts.contains(artifact) ? 'star' : 'cancel'}"
+					style="float:left;margin-right:10px;margin-top:3px;" />
+				<p:outputLabel value="#{artifact.name}" style="display:inline-block" />
 			</p:dataList>
 			<p:dataList
 				rendered="#{empty viewpointController.bestPlan.errorMessage}"
@@ -29,9 +33,21 @@
 				<f:facet name="header">
             		Stakeholders
         		</f:facet>
-        		<p:outputLabel styleClass="ui-icon ui-icon-#{viewpointController.bestPlan.stakeholders.contains(stakeholder) ? 'star' : 'cancel'}" style="float:left;margin-right:10px;margin-top:3px;"/>
-        		<p:outputLabel value="#{stakeholder.name}" style="display:inline-block"/>
+				<p:outputLabel
+					styleClass="ui-icon ui-icon-#{viewpointController.bestPlan.stakeholders.contains(stakeholder) ? 'star' : 'cancel'}"
+					style="float:left;margin-right:10px;margin-top:3px;" />
+				<p:outputLabel value="#{stakeholder.name}"
+					style="display:inline-block" />
 			</p:dataList>
+
+			<p:panel></p:panel>
+
+
+			<p:commandButton id="genStatsButton" value="Genetic Algorithm Stats" type="button" />
+		    <p:overlayPanel id="genStatsPanel" for="genStatsButton" hideEffect="fade" dynamic="true" style="width:800px" modal="true">
+		        <h:outputText value="#{viewpointController.bestPlan.escapedStatistics}" escape="false"/>
+		    </p:overlayPanel>
+		    
 		</p:outputPanel>
 	</p:dialog>
 </ui:composition>

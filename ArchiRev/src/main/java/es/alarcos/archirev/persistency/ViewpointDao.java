@@ -1,6 +1,5 @@
 package es.alarcos.archirev.persistency;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import es.alarcos.archirev.model.InputArtifact;
-import es.alarcos.archirev.model.Project;
 import es.alarcos.archirev.model.Stakeholder;
 import es.alarcos.archirev.model.Technique;
 import es.alarcos.archirev.model.Viewpoint;
@@ -51,7 +49,7 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 
 		for (Object[] tuple : resultSet) {
 			QueriedViewpointDTO viewpoint = new QueriedViewpointDTO();
-			viewpoint.setId(((BigInteger) tuple[0]).longValue());
+			viewpoint.setId(((Integer) tuple[0]).longValue());
 			viewpoint.setName((String) tuple[1]);
 			resultList.add(viewpoint);
 		}
@@ -89,7 +87,7 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 
 			for (Object[] tuple : resultSet) {
 				QueriedViewpointDTO viewpoint = new QueriedViewpointDTO();
-				viewpoint.setId(((BigInteger) tuple[0]).longValue());
+				viewpoint.setId(((Integer) tuple[0]).longValue());
 				viewpoint.setName((String) tuple[1]);
 				viewpoint.setMaxNumElementsAutomatic(Integer.parseInt(tuple[3].toString()));
 				viewpoint.setTotalElementsAutomatic(Integer.parseInt(tuple[4].toString()));
@@ -133,7 +131,7 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 
 			for (Object[] tuple : resultSet) {
 				QueriedViewpointDTO viewpoint = new QueriedViewpointDTO();
-				viewpoint.setId(((BigInteger) tuple[0]).longValue());
+				viewpoint.setId(((Integer) tuple[0]).longValue());
 				viewpoint.setName((String) tuple[1]);
 				viewpoint.setMaxNumElementsAutomatic(Integer.parseInt(tuple[2].toString()));
 				viewpoint.setMaxPercentageElementsAutomatic(Double.parseDouble(tuple[3].toString()));
@@ -166,11 +164,7 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 			List<Long> artefactsIds = artefacts.stream().map(InputArtifact::getId).collect(Collectors.toList());
 			query.setParameter("artefactsIds", artefactsIds);
 
-			List<BigInteger> resultSet = query.getResultList();
-
-			for (BigInteger id : resultSet) {
-				elementIds.add(id.longValue());
-			}
+			elementIds = query.getResultList();
 
 		} catch (SQLGrammarException e) {
 			LOGGER.error(e.getMessage());
@@ -189,7 +183,7 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 			return elements;
 		}
 
-		String stringQuery = "select e.id " + 
+		String stringQuery = "select distinct e.id " + 
 				" from av_viewpoint as v, av_viewpoint_element as ve, av_element as e, av_mining_point as m, av_input_artifact as a, av_technique as t " + 
 				" where v.id = ve.viewpoint_id and v.id = (:viewpointId) and ve.element_id = e.id and m.element_id = e.id and m.input_id = a.id and a.id = :artefactId and m.technique_id=t.id and t.id = :techniqueId "
 				+ (alreadyCoveredElements != null && !alreadyCoveredElements.isEmpty() ? " and e.id not in (:elementIds) " : " ");
@@ -204,11 +198,8 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 				query.setParameter("elementIds", alreadyCoveredElements);
 			}
 
-			List<BigInteger> resultSet = query.getResultList();
-			for (BigInteger id : resultSet) {
-				elements.add(id.longValue());
-			}
-				
+			elements = query.getResultList();
+							
 		} catch (SQLGrammarException e) {
 			LOGGER.error(e.getMessage());
 		}
@@ -232,7 +223,7 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 			return elements;
 		}
 
-		String stringQuery = "select e.id " + 
+		String stringQuery = "select distinct e.id " + 
 				"from av_viewpoint as v, av_viewpoint_element as ve, av_element as e, av_stakeholder_element se, av_stakeholder s  " + 
 				"where v.id = :viewpointId  and v.id = ve.viewpoint_id and ve.element_id = e.id and e.id = se.element_id and se.stakeholder_id = s.id and s.id = :stakeholderId "
 				+ (alreadyCoveredElements != null && !alreadyCoveredElements.isEmpty() ? " and e.id not in (:elementIds) " : " ");
@@ -246,10 +237,7 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 				query.setParameter("elementIds", alreadyCoveredElements);
 			}
 
-			List<BigInteger> resultSet = query.getResultList();
-			for (BigInteger id : resultSet) {
-				elements.add(id.longValue());
-			}
+			elements = query.getResultList();
 				
 		} catch (SQLGrammarException e) {
 			LOGGER.error(e.getMessage());
@@ -383,7 +371,7 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 						&& queriedViewpointMap.get(viewpointName) != null) ? queriedViewpointMap.get(viewpointName)
 								: new QueriedViewpointDTO();
 
-				viewpoint.setId(((BigInteger) tuple[0]).longValue());
+				viewpoint.setId(((Integer) tuple[0]).longValue());
 				viewpoint.setName(viewpointName);
 				viewpoint.setMaxNumElementsManual(Integer.parseInt(tuple[2].toString()));
 				viewpoint.setMaxPercentageElementsManual(Double.parseDouble(tuple[3].toString()));

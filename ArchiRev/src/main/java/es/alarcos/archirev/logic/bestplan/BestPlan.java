@@ -2,13 +2,19 @@ package es.alarcos.archirev.logic.bestplan;
 
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import es.alarcos.archirev.model.InputArtifact;
 import es.alarcos.archirev.model.Stakeholder;
+import es.alarcos.archirev.model.Technique;
+import io.jenetics.engine.EvolutionStatistics;
 
 public class BestPlan {
 	private List<InputArtifact> artifacts;
 	private List<Stakeholder> stakeholders;
+	private List<Pair<InputArtifact, Technique>> artifactTechniques;
 	private String errorMessage;
+	private EvolutionStatistics<Double, ?> statistics;
 
 	public BestPlan() {
 
@@ -42,5 +48,25 @@ public class BestPlan {
 
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
+	}
+
+	public EvolutionStatistics<Double, ?> getStatistics() {
+		return statistics;
+	}
+	
+	public String getEscapedStatistics () {
+		return getStatistics().toString().replaceAll("\\n", "&lt;br /&gt;");
+	}
+
+	public void setStatistics(EvolutionStatistics<Double, ?> statistics) {
+		this.statistics = statistics;
+	}
+
+	public List<Pair<InputArtifact, Technique>> getArtifactTechniques() {
+		return artifactTechniques;
+	}
+
+	public void setArtifactTechniques(List<Pair<InputArtifact, Technique>> artifactTechniques) {
+		this.artifactTechniques = artifactTechniques;
 	}
 }

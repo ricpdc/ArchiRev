@@ -29,9 +29,13 @@ import io.jenetics.Genotype;
 import io.jenetics.IntegerChromosome;
 import io.jenetics.IntegerGene;
 import io.jenetics.Mutator;
-import io.jenetics.UniformCrossover;
+import io.jenetics.RouletteWheelSelector;
+import io.jenetics.SinglePointCrossover;
+import io.jenetics.TournamentSelector;
 import io.jenetics.engine.Engine;
 import io.jenetics.engine.EvolutionResult;
+import io.jenetics.engine.EvolutionStatistics;
+import io.jenetics.engine.Limits;
 import io.jenetics.util.Factory;
 
 @Singleton
@@ -54,6 +58,7 @@ public class BestPlanService {
 	private String maximizationBestPlan;
 	private String priorityBestPlan;
 	private List<Pair<InputArtifact, Technique>> artifactTechniquePairs;
+	private Map<Viewpoint, Integer> viewpointSizeMap;
 
 	@Autowired
 	private ViewpointDao viewpointDao;
@@ -69,9 +74,7 @@ public class BestPlanService {
 		super();
 		this.artifacts = artifacts;
 		this.stakeholders = stakeholders;
-
 		this.artifactTechniquePairs = techniqueDao.getTechniqueListByArtifact(artifacts);
-
 	}
 
 	@PostConstruct
@@ -83,6 +86,8 @@ public class BestPlanService {
 		BestPlan bestPlan = new BestPlan();
 		try {
 
+			loadCachedData();
+
 			Factory<Genotype<IntegerGene>> gtf = Genotype.of(IntegerChromosome.of(0, 1, artifactTechniquePairs.size()),
 					IntegerChromosome.of(0, 1, stakeholders.size()));
 
@@ -91,25 +96,47 @@ public class BestPlanService {
 			// System.out.println("Before the evolution:\n" + newInstance + "-->" +
 			// eval(newInstance));
 
-			Engine<IntegerGene, Double> engine = Engine.builder(this::fitness, gtf).maximizing()
-					.alterers(new UniformCrossover<>(0.6), new Mutator<>(0.3)).build();
+			Engine<IntegerGene, Double> engine = Engine.builder(this::fitness, gtf)
+					.populationSize(50)
+					  .survivorsSelector(new TournamentSelector<>(5))
+					  .offspringSelector(new RouletteWheelSelector<>())
+					  .alterers(new Mutator<>(0.115), new SinglePointCrossover<>(0.16))
+					  .maximizing()
+					  .build();
+			
+			EvolutionStatistics<Double, ?> statistics = EvolutionStatistics.ofNumber();
 
-			Genotype<IntegerGene> result = engine.stream().limit(100).collect(EvolutionResult.toBestGenotype());
+			Genotype<IntegerGene> result = engine.stream()
+					.limit(Limits.bySteadyFitness(5))
+					.limit(20)
+					.peek(statistics)
+					.peek(er -> System.out.println("BEST>> " + er.getBestPhenotype()))
+					.collect(EvolutionResult.toBestGenotype());
 
+			System.out.println(statistics);
 			System.out.println("After the evolution:\n" + result + "-->" + fitness(result));
 
-			List<Pair<InputArtifact,Technique>> decodeArtifactTechniquePairs = decodeArtifactTechniquePairs(result);
+			List<Pair<InputArtifact, Technique>> decodeArtifactTechniquePairs = decodeArtifactTechniquePairs(result);
 			List<InputArtifact> includedArtifacts = new ArrayList<>(decodeArtifactTechniquePairs.stream()
 					.map(Pair<InputArtifact, Technique>::getLeft).collect(Collectors.toSet()));
-			
+
 			bestPlan.setArtifacts(includedArtifacts);
 			bestPlan.setStakeholders(decodeStakeholders(result));
+			bestPlan.setArtifactTechniques(decodeArtifactTechniquePairs(result));
+			bestPlan.setStatistics(statistics);
 		} catch (Exception ex) {
 			LOGGER.error("Error computing best plan with genetic algorithm: ", ex);
 			bestPlan.setErrorMessage(ex.getMessage());
 		}
 		return bestPlan;
 
+	}
+
+	private void loadCachedData() {
+		viewpointSizeMap = new HashMap<>();
+		for (Viewpoint viewpoint : selectedViewpoints) {
+			viewpointSizeMap.put(viewpoint, viewpoint.getElements().size());
+		}
 	}
 
 	private Double fitness(Genotype<IntegerGene> genotype) {
@@ -121,6 +148,7 @@ public class BestPlanService {
 
 		Set<InputArtifact> includedArtifacts = includedArtifactTechniquePairs.stream()
 				.map(Pair<InputArtifact, Technique>::getLeft).collect(Collectors.toSet());
+		Set<Long> totalCoveredElements;
 
 		// metrics for computing fitness value
 		int totalArtifacts = artifacts.size();
@@ -145,91 +173,8 @@ public class BestPlanService {
 				/ totalCombined;
 
 		
-		//compute only automatic
-		Map<Viewpoint, Set<Long>> elementsCoveredByViewpointArtifact = new HashMap<>();
-		Map<Viewpoint, Double> percentageCoveredByViewpointArtifact = new HashMap<>();
-
-		Set<Long> totalCoveredElements;
-		for (Viewpoint viewpoint : selectedViewpoints) {
-			totalCoveredElements = new HashSet<>();
-			
-			for (Pair<InputArtifact, Technique> pair : includedArtifactTechniquePairs) {
-				totalCoveredElements.addAll(viewpointDao.getCoveredElements(viewpoint, pair, null));
-			}
-
-			elementsCoveredByViewpointArtifact.put(viewpoint, totalCoveredElements);
-			final long totalElementsByViewpoint = viewpointDao.getTotalElementsByViewpoint(viewpoint);
-			final double percentage = (double) totalCoveredElements.size() / totalElementsByViewpoint;
-			percentageTotalArtifacts += percentage;
-			percentageCoveredByViewpointArtifact.put(viewpoint, percentage);
-			if (totalCoveredElements.size() == totalElementsByViewpoint) {
-				percentageCompletedViewpointArtifacts++;
-			}
-		}
-		percentageCompletedViewpointArtifacts = percentageCompletedViewpointArtifacts / selectedViewpoints.size();
-		percentageMeanArtifacts = percentageTotalArtifacts / includedArtifactTechniquePairs.size();
-
 		
-		
-		
-		//compute only manual
-		Map<Viewpoint, Set<Long>> elementsCoveredByViewpointStakeholder = new HashMap<>();
-		Map<Viewpoint, Double> percentageCoveredByViewpointStakeholder = new HashMap<>();
-
-		for (Viewpoint viewpoint : selectedViewpoints) {
-			totalCoveredElements = new HashSet<>();
-			
-			for(Stakeholder stakeholder : includedStakeholders) {
-				totalCoveredElements.addAll(viewpointDao.getCoveredElements(viewpoint, stakeholder, null));
-			}
-			
-			elementsCoveredByViewpointStakeholder.put(viewpoint, totalCoveredElements);
-			final long totalElementsByViewpoint = viewpointDao.getTotalElementsByViewpoint(viewpoint);
-			final double percentage = (double) totalCoveredElements.size() / totalElementsByViewpoint;
-			percentageTotalStakeholders += percentage;
-			percentageCoveredByViewpointStakeholder.put(viewpoint, percentage);
-			if (totalCoveredElements.size() == totalElementsByViewpoint) {
-				percentageCompletedViewpointStakeholders++;
-			}
-		}
-		
-		percentageCompletedViewpointStakeholders = percentageCompletedViewpointStakeholders / selectedViewpoints.size();
-		percentageMeanStakeholders = percentageTotalStakeholders / includedStakeholders.size();
-		
-		
-		
-		//compute for combined (automatic and then manual)
-		Map<Viewpoint, Set<Long>> elementsCoveredByViewpointCombined = new HashMap<>();
-		Map<Viewpoint, Double> percentageCoveredByViewpointCombined = new HashMap<>();
-		
-		Set<Long> alreadyCovered;
-		for (Viewpoint viewpoint : selectedViewpoints) {
-			alreadyCovered = elementsCoveredByViewpointArtifact.get(viewpoint);	
-			totalCoveredElements = new HashSet<>();
-			totalCoveredElements.addAll(alreadyCovered);
-			
-			for(Stakeholder stakeholder : includedStakeholders) {
-				totalCoveredElements.addAll(viewpointDao.getCoveredElements(viewpoint, stakeholder, alreadyCovered));
-			}
-			
-			elementsCoveredByViewpointCombined.put(viewpoint, totalCoveredElements);
-			final long totalElementsByViewpoint = viewpointDao.getTotalElementsByViewpoint(viewpoint);
-			final double percentage = (double) totalCoveredElements.size() / totalElementsByViewpoint;
-			percentageTotalCombined += percentage;
-			percentageCoveredByViewpointCombined.put(viewpoint, percentage);
-			if (totalCoveredElements.size() == totalElementsByViewpoint) {
-				percentageCompletedViewpointCombined++;
-			}
-		}
-		
-		percentageCompletedViewpointCombined= percentageCompletedViewpointCombined / selectedViewpoints.size();
-		percentageMeanCombined = percentageTotalCombined / (includedArtifactTechniquePairs.size() + includedStakeholders.size());
-
-		
-		
-
-		// aggregate values into a single fitness value
-
+		//compute weigths
 		// weigths
 		double w1 = 0.0;
 		double w2 = 0.0;
@@ -274,16 +219,92 @@ public class BestPlanService {
 			w6 = MEDIUM;
 			w9 = MEDIUM;
 		}
+		
+		
+		
+		// compute only automatic
+		Map<Viewpoint, Set<Long>> elementsCoveredByViewpointArtifact = new HashMap<>();
+		if(w1 > 0 || w7 > 0 || w3 > 0 || w9 > 0) {
+			for (Viewpoint viewpoint : selectedViewpoints) {
+				totalCoveredElements = new HashSet<>();
+				
+				for (Pair<InputArtifact, Technique> pair : includedArtifactTechniquePairs) {
+					totalCoveredElements.addAll(viewpointDao.getCoveredElements(viewpoint, pair, null));
+				}
+	
+				elementsCoveredByViewpointArtifact.put(viewpoint, totalCoveredElements);
+				final long totalElementsByViewpoint = viewpointSizeMap.get(viewpoint).longValue();
+				final double percentage = (double) totalCoveredElements.size() / totalElementsByViewpoint;
+				percentageTotalArtifacts += percentage;
+				if (totalCoveredElements.size() == totalElementsByViewpoint) {
+					percentageCompletedViewpointArtifacts++;
+				}
+			}
+			percentageCompletedViewpointArtifacts = percentageCompletedViewpointArtifacts / selectedViewpoints.size();
+			percentageMeanArtifacts = percentageTotalArtifacts / includedArtifactTechniquePairs.size();
+		}
+		
+		
+		
+		//compute only manual
+		if(w2 > 0 || w8 > 0) {
+			for (Viewpoint viewpoint : selectedViewpoints) {
+				totalCoveredElements = new HashSet<>();
+				
+				for(Stakeholder stakeholder : includedStakeholders) {
+					totalCoveredElements.addAll(viewpointDao.getCoveredElements(viewpoint, stakeholder, null));
+				}
+				
+				final long totalElementsByViewpoint = viewpointSizeMap.get(viewpoint).longValue();
+				final double percentage = (double) totalCoveredElements.size() / totalElementsByViewpoint;
+				percentageTotalStakeholders += percentage;
+				if (totalCoveredElements.size() == totalElementsByViewpoint) {
+					percentageCompletedViewpointStakeholders++;
+				}
+			}
+			
+			percentageCompletedViewpointStakeholders = percentageCompletedViewpointStakeholders / selectedViewpoints.size();
+			percentageMeanStakeholders = percentageTotalStakeholders / includedStakeholders.size();
+		}	
+		
+		
+		//compute for combined (automatic and then manual)
+		if(w3 > 0 || w9 > 0) {
+			Set<Long> alreadyCovered;
+			for (Viewpoint viewpoint : selectedViewpoints) {
+				alreadyCovered = elementsCoveredByViewpointArtifact.get(viewpoint);	
+				totalCoveredElements = new HashSet<>();
+				totalCoveredElements.addAll(alreadyCovered);
+				
+				for(Stakeholder stakeholder : includedStakeholders) {
+					totalCoveredElements.addAll(viewpointDao.getCoveredElements(viewpoint, stakeholder, alreadyCovered));
+				}
+	
+				final long totalElementsByViewpoint = viewpointSizeMap.get(viewpoint).longValue();
+				final double percentage = (double) totalCoveredElements.size() / totalElementsByViewpoint;
+				percentageTotalCombined += percentage;
+				if (totalCoveredElements.size() == totalElementsByViewpoint) {
+					percentageCompletedViewpointCombined++;
+				}
+			}
 
+			percentageCompletedViewpointCombined = percentageCompletedViewpointCombined / selectedViewpoints.size();
+			percentageMeanCombined = percentageTotalCombined
+					/ (includedArtifactTechniquePairs.size() + includedStakeholders.size());
+		}
+
+		
+		
+		
+		// aggregate values into a single fitness value
 		fitness = w1 * percentageMeanArtifacts + w2 * percentageMeanStakeholders + w3 * percentageMeanCombined
 				+ w4 * percentageNotUsedArtefacts + w5 * percentageNotUsedStakeholders + w6 * percentageNotUsedCombined
 				+ w7 * percentageCompletedViewpointArtifacts + w8 * percentageCompletedViewpointStakeholders
 				+ w9 * percentageCompletedViewpointCombined;
 
+		time = System.currentTimeMillis() - time;
 
-		time = System.currentTimeMillis()-time;
-		
-		LOGGER.info("Fitness (in "+time+" ms): " + fitness);
+		LOGGER.info("Fitness (in " + time + " ms): " + fitness);
 
 		return fitness;
 	}
