@@ -108,7 +108,7 @@ public class BestPlanService {
 
 			Genotype<IntegerGene> result = engine.stream()
 					.limit(Limits.bySteadyFitness(5))
-					.limit(20)
+					.limit(1)
 					.peek(statistics)
 					.peek(er -> System.out.println("BEST>> " + er.getBestPhenotype()))
 					.collect(EvolutionResult.toBestGenotype());

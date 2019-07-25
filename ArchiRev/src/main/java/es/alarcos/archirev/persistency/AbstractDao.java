@@ -24,7 +24,7 @@ public class AbstractDao<T extends AbstractEntity> implements Serializable {
 	@PersistenceContext
 	protected EntityManager entityManager;
 
-	public final void setClazz(Class<T> clazzToSet) {
+	public void setClazz(Class<T> clazzToSet) {
 		this.clazz = clazzToSet;
 	}
 

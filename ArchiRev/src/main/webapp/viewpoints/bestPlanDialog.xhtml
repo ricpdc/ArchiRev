@@ -6,7 +6,7 @@
 
 	<p:dialog header="The Best Plan for Viewpoint generation"
 		id="bestPlanDialog" widgetVar="bestPlanDialog" modal="true"
-		height="500" width="650" closable="true" closeOnEscape="true">
+		height="600" width="900" closable="true" closeOnEscape="true">
 		<p:outputPanel id="bestPlanDialogPanel"
 			style="paddign:0px;border:none;">
 			<p:outputLabel
@@ -40,14 +40,17 @@
 					style="display:inline-block" />
 			</p:dataList>
 
-			<p:panel></p:panel>
+			<p:panel id="genStatsPanel" toggleable="true" collapsed="true"
+				header="Genetic Algorithm Stats">
+				<h:outputText
+					value="#{viewpointController.bestPlan.statistics.toString().replaceAll('\\n', '&lt;br /&gt;')}"
+					escape="false"
+					style="white-space: pre-wrap; word-wrap: break-word; font-family: monospace; font-size: 10pt;" />
+			</p:panel>
 
 
-			<p:commandButton id="genStatsButton" value="Genetic Algorithm Stats" type="button" />
-		    <p:overlayPanel id="genStatsPanel" for="genStatsButton" hideEffect="fade" dynamic="true" style="width:800px" modal="true">
-		        <h:outputText value="#{viewpointController.bestPlan.escapedStatistics}" escape="false"/>
-		    </p:overlayPanel>
-		    
+
 		</p:outputPanel>
+		
 	</p:dialog>
 </ui:composition>

@@ -2,6 +2,7 @@ package es.alarcos.archirev.logic.bestplan;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import es.alarcos.archirev.model.InputArtifact;
@@ -54,9 +55,7 @@ public class BestPlan {
 		return statistics;
 	}
 	
-	public String getEscapedStatistics () {
-		return getStatistics().toString().replaceAll("\\n", "&lt;br /&gt;");
-	}
+	
 
 	public void setStatistics(EvolutionStatistics<Double, ?> statistics) {
 		this.statistics = statistics;
