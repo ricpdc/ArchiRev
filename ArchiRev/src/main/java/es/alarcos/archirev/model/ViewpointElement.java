@@ -25,7 +25,8 @@ import org.primefaces.model.StreamedContent;
 
 @Entity
 @Table(name = "av_element")
-@NamedQueries({ @NamedQuery(name = "ViewpointElement.getNames", query = "SELECT e.name FROM ViewpointElement e") })
+@NamedQueries({ @NamedQuery(name = "ViewpointElement.getNames", query = "SELECT e.name FROM ViewpointElement e"),
+	@NamedQuery(name = "ViewpointElement.getElementsById", query = "SELECT e FROM ViewpointElement e WHERE e.id IN (:elementIds)")})
 public class ViewpointElement extends AbstractEntity {
 	private static final long serialVersionUID = -4082736150716056520L;
 

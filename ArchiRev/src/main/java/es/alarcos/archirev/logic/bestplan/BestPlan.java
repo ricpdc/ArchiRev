@@ -1,8 +1,8 @@
 package es.alarcos.archirev.logic.bestplan;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import es.alarcos.archirev.model.InputArtifact;
@@ -16,15 +16,10 @@ public class BestPlan {
 	private List<Pair<InputArtifact, Technique>> artifactTechniques;
 	private String errorMessage;
 	private EvolutionStatistics<Double, ?> statistics;
+	private List<PlanStep> steps;
 
 	public BestPlan() {
-
-	}
-
-	public BestPlan(List<InputArtifact> artifacts, List<Stakeholder> stakeholders) {
-		super();
-		this.artifacts = artifacts;
-		this.stakeholders = stakeholders;
+		steps = new ArrayList<>();
 	}
 
 	public List<InputArtifact> getArtifacts() {
@@ -67,5 +62,17 @@ public class BestPlan {
 
 	public void setArtifactTechniques(List<Pair<InputArtifact, Technique>> artifactTechniques) {
 		this.artifactTechniques = artifactTechniques;
+	}
+
+	public List<PlanStep> getSteps() {
+		return steps;
+	}
+
+	public void setSteps(List<PlanStep> steps) {
+		this.steps = steps;
+	}
+	
+	public void addStep(PlanStep step) {
+		this.steps.add(step);
 	}
 }

@@ -176,24 +176,28 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 	
 	
 	@SuppressWarnings("unchecked")
-	public List<Long> getCoveredElements(final Viewpoint viewpoint, final Pair<InputArtifact, Technique> artefactTechniquePair, final Collection<Long> alreadyCoveredElements) {
-		List<Long> elements = new ArrayList<>();
+	public List<Integer> getCoveredElements(final Viewpoint viewpoint, final Pair<InputArtifact, Technique> artefactTechniquePair, final Collection<Long> alreadyCoveredElements) {
+		List<Integer> elements = new ArrayList<>();
 
-		if (viewpoint == null || artefactTechniquePair == null) {
+		if (artefactTechniquePair == null) {
 			return elements;
 		}
 
 		String stringQuery = "select distinct e.id " + 
-				" from av_viewpoint as v, av_viewpoint_element as ve, av_element as e, av_mining_point as m, av_input_artifact as a, av_technique as t " + 
-				" where v.id = ve.viewpoint_id and v.id = (:viewpointId) and ve.element_id = e.id and m.element_id = e.id and m.input_id = a.id and a.id = :artefactId and m.technique_id=t.id and t.id = :techniqueId "
+				" from av_viewpoint as v, av_viewpoint_element as ve, av_element as e, av_mining_point as m, av_input_artifact as a, av_technique as t "  
+				+ " where v.id = ve.viewpoint_id and ve.element_id = e.id and m.element_id = e.id and m.input_id = a.id "
+				+ " and a.id = :artefactId and m.technique_id=t.id and t.id = :techniqueId "
+				+ (viewpoint !=null ? " and v.id = (:viewpointId) " : " ")
 				+ (alreadyCoveredElements != null && !alreadyCoveredElements.isEmpty() ? " and e.id not in (:elementIds) " : " ");
 
 		try {
 			Query query = entityManager.createNativeQuery(stringQuery);
 
-			query.setParameter("viewpointId", viewpoint.getId());
 			query.setParameter("artefactId", artefactTechniquePair.getLeft().getId());
 			query.setParameter("techniqueId", artefactTechniquePair.getRight().getId());
+			if(viewpoint != null) {
+				query.setParameter("viewpointId", viewpoint.getId());
+			}
 			if(alreadyCoveredElements != null && !alreadyCoveredElements.isEmpty()) {
 				query.setParameter("elementIds", alreadyCoveredElements);
 			}
@@ -216,26 +220,29 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 		
 		
 	@SuppressWarnings("unchecked")
-	public List<Long> getCoveredElements(final Viewpoint viewpoint, final Stakeholder stakeholder, final Collection<Long> alreadyCoveredElements) {
-		List<Long> elements = new ArrayList<>();
+	public List<Integer> getCoveredElements(final Viewpoint viewpoint, final Stakeholder stakeholder, final Collection<Integer> alreadyCoveredElements) {
+		List<Integer> elements = new ArrayList<>();
 
-		if (viewpoint == null || stakeholder == null) {
+		if (stakeholder == null) {
 			return elements;
 		}
 
 		String stringQuery = "select distinct e.id " + 
 				"from av_viewpoint as v, av_viewpoint_element as ve, av_element as e, av_stakeholder_element se, av_stakeholder s  " + 
-				"where v.id = :viewpointId  and v.id = ve.viewpoint_id and ve.element_id = e.id and e.id = se.element_id and se.stakeholder_id = s.id and s.id = :stakeholderId "
+				"where v.id = ve.viewpoint_id and ve.element_id = e.id and e.id = se.element_id and se.stakeholder_id = s.id and s.id = :stakeholderId "
+				+ (viewpoint!= null ? " and v.id = :viewpointId " : " ")
 				+ (alreadyCoveredElements != null && !alreadyCoveredElements.isEmpty() ? " and e.id not in (:elementIds) " : " ");
 
 		try {
 			Query query = entityManager.createNativeQuery(stringQuery);
 			
-			query.setParameter("viewpointId", viewpoint.getId());
-			query.setParameter("stakeholderId", stakeholder.getId());
+			if(viewpoint!=null) {
+				query.setParameter("viewpointId", viewpoint.getId());
+			}
 			if(alreadyCoveredElements != null && !alreadyCoveredElements.isEmpty()) {
 				query.setParameter("elementIds", alreadyCoveredElements);
 			}
+			query.setParameter("stakeholderId", stakeholder.getId());
 
 			elements = query.getResultList();
 				
