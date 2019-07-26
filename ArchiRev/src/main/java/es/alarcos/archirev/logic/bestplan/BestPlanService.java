@@ -250,6 +250,7 @@ public class BestPlanService {
 				sortedMapManual.remove(localOptimalManual.getKey());
 			}
 
+			step.setOrder(bestPlan.getSteps().size() +1);
 			bestPlan.addStep(step);
 
 			if (sortedMapAutomatic.isEmpty() && sortedMapManual.isEmpty()) {

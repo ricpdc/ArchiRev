@@ -7,8 +7,9 @@ import es.alarcos.archirev.model.Stakeholder;
 import es.alarcos.archirev.model.Technique;
 import es.alarcos.archirev.model.ViewpointElement;
 
-public class PlanStep {
+public class PlanStep implements Comparable<PlanStep> {
 
+	private int order;
 	private InputArtifact artifact;
 	private Technique technique;
 	private Stakeholder stakeholder;
@@ -55,10 +56,26 @@ public class PlanStep {
 		this.refinedElements = refinedElements;
 	}
 
-	@Override
-	public String toString() {
-		return String.format("PlanStep [artifact=%s, technique=%s, stakeholder=%s, elements=%s, refinedElements=%s]",
-				artifact, technique, stakeholder, elements, refinedElements);
+
+	public int getOrder() {
+		return order;
 	}
 
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("PlanStep %d. [artifact=%s, technique=%s, stakeholder=%s, elements=%s, refinedElements=%s]",
+				order, artifact, technique, stakeholder, elements, refinedElements);
+	}
+
+	@Override
+	public int compareTo(PlanStep o) {
+		if(o == null) {
+			return 1;
+		}
+		return Integer.compare(this.getOrder(), o.getOrder());
+	}
 }

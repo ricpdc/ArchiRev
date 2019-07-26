@@ -7,50 +7,73 @@
 	<p:dialog header="The Best Plan for Viewpoint generation"
 		id="bestPlanDialog" widgetVar="bestPlanDialog" modal="true"
 		height="600" width="900" closable="true" closeOnEscape="true">
-		<p:outputPanel id="bestPlanDialogPanel"
-			style="paddign:0px;border:none;">
-			<p:outputLabel
+		<p:outputLabel
 				rendered="#{not empty viewpointController.bestPlan.errorMessage}"
 				value="#{viewpointController.bestPlan.errorMessage}" />
-			<p:dataList
-				rendered="#{empty viewpointController.bestPlan.errorMessage}"
-				value="#{viewpointController.artifactPickerList.target}"
-				emptyMessage="There are no selected artifacts" var="artifact"
-				itemType="none">
-				<f:facet name="header">
-            		Input Artifacts
-        		</f:facet>
-				<p:outputLabel
-					styleClass="ui-icon ui-icon-#{viewpointController.bestPlan.artifacts.contains(artifact) ? 'star' : 'cancel'}"
-					style="float:left;margin-right:10px;margin-top:3px;" />
-				<p:outputLabel value="#{artifact.name}" style="display:inline-block" />
-			</p:dataList>
-			<p:dataList
-				rendered="#{empty viewpointController.bestPlan.errorMessage}"
-				value="#{viewpointController.stakeholderPickerList.target}"
-				emptyMessage="There are no selected stakeholders" var="stakeholder"
-				itemType="none">
-				<f:facet name="header">
-            		Stakeholders
-        		</f:facet>
-				<p:outputLabel
-					styleClass="ui-icon ui-icon-#{viewpointController.bestPlan.stakeholders.contains(stakeholder) ? 'star' : 'cancel'}"
-					style="float:left;margin-right:10px;margin-top:3px;" />
-				<p:outputLabel value="#{stakeholder.name}"
-					style="display:inline-block" />
-			</p:dataList>
+		<p:outputPanel id="bestPlanDialogPanel" rendered="#{empty viewpointController.bestPlan.errorMessage}"
+			style="paddign:0px;border:none;">
+			
+
+			<p:panel id="stepsPanel" toggleable="true" >
+				<p:dataTable value="#{viewpointController.bestPlan.steps}" var="step" rowKey="#{step.order}">
+					<p:column headerText="Step">
+						<h:outputText value="#{step.order}"/>
+					</p:column>
+					<p:column headerText="Artifact">
+						<h:outputText value="#{step.artifact.name}"/>
+					</p:column>
+					<p:column headerText="Technique">
+						<h:outputText value="#{step.technique.name}"/>
+					</p:column>
+					<p:column headerText="Stakeholder">
+						<h:outputText value="#{step.stakeholder.name}"/>
+					</p:column>
+					<p:column headerText="Elements">
+						<h:outputText value="#{step.elements.toArray()}"/>
+					</p:column>
+					<p:column headerText="Refined Elements">
+						<h:outputText value="#{step.refinedElements.toArray()}"/>
+					</p:column>
+				</p:dataTable>
+			</p:panel>
+
+			<p:panel id="inputArtifactPanel" toggleable="true" collapsed="true"
+				header="Input Artifacts">
+				<p:dataList					
+					value="#{viewpointController.artifactPickerList.target}"
+					emptyMessage="There are no selected artifacts" var="artifact"
+					itemType="none">
+					<p:outputLabel
+						styleClass="ui-icon ui-icon-#{viewpointController.bestPlan.artifacts.contains(artifact) ? 'star' : 'cancel'}"
+						style="float:left;margin-right:10px;margin-top:3px; #{viewpointController.bestPlan.artifacts.contains(artifact) ? '' : 'font-color:gray !important;'}" />
+					<p:outputLabel value="#{artifact.name}"
+						style="display:inline-block" />
+				</p:dataList>
+			</p:panel>
+			<p:panel id="stakeholderPanel" toggleable="true" collapsed="true"
+				header="Stakeholders">
+				<p:dataList
+					value="#{viewpointController.stakeholderPickerList.target}"
+					emptyMessage="There are no selected stakeholders" var="stakeholder"
+					itemType="none">
+					<p:outputLabel
+						styleClass="ui-icon ui-icon-#{viewpointController.bestPlan.stakeholders.contains(stakeholder) ? 'star' : 'cancel'}"
+						style="float:left;margin-right:10px;margin-top:3px; #{viewpointController.bestPlan.artifacts.contains(artifact) ? '' : 'font-color:gray !important;'}" />
+					<p:outputLabel value="#{stakeholder.name}"
+						style="display:inline-block" />
+				</p:dataList>
+			</p:panel>
 
 			<p:panel id="genStatsPanel" toggleable="true" collapsed="true"
 				header="Genetic Algorithm Stats">
 				<h:outputText
 					value="#{viewpointController.bestPlan.statistics.toString().replaceAll('\\n', '&lt;br /&gt;')}"
 					escape="false"
-					style="white-space: pre-wrap; word-wrap: break-word; font-family: monospace; font-size: 10pt;" />
+					style="white-space: pre-wrap; word-wrap: break-word; font-family: monospace; font-size: 13pt;" />
 			</p:panel>
 
 
-
 		</p:outputPanel>
-		
+
 	</p:dialog>
 </ui:composition>
