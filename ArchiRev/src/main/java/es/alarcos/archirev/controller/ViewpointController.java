@@ -102,6 +102,7 @@ public class ViewpointController extends AbstractController {
 	private List<String> purposeItems;
 	private List<String> elementItems;
 	private List<ViewpointElement> allElements;
+	private List<ViewpointElement> selectedBestPlanElements;
 
 	private String priorityBestPlan;
 	private String maximizationBestPlan;
@@ -797,6 +798,14 @@ public class ViewpointController extends AbstractController {
 
 	public void setActiveViewpoint(boolean[] activeViewpoint) {
 		this.activeViewpoint = activeViewpoint;
+	}
+
+	public List<ViewpointElement> getSelectedBestPlanElements() {
+		return selectedBestPlanElements;
+	}
+
+	public void setSelectedBestPlanElements(List<ViewpointElement> selectedBestPlanElements) {
+		this.selectedBestPlanElements = selectedBestPlanElements;
 	}
 
 }

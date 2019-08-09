@@ -1,5 +1,6 @@
 package es.alarcos.archirev.logic.bestplan;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import es.alarcos.archirev.model.InputArtifact;
@@ -15,6 +16,7 @@ public class PlanStep implements Comparable<PlanStep> {
 	private Stakeholder stakeholder;
 	private List<ViewpointElement> elements;
 	private List<ViewpointElement> refinedElements;
+	private List<PlanStep> alternativeSteps;
 
 	public InputArtifact getArtifact() {
 		return artifact;
@@ -65,10 +67,28 @@ public class PlanStep implements Comparable<PlanStep> {
 		this.order = order;
 	}
 
-	@Override
-	public String toString() {
-		return String.format("PlanStep %d. [artifact=%s, technique=%s, stakeholder=%s, elements=%s, refinedElements=%s]",
-				order, artifact, technique, stakeholder, elements, refinedElements);
+	public String getDescription() {
+		String step = "";
+		
+		if(isAutomatic()) {
+			step = "Apply \'" + technique.getName() + "\' to \'" + artifact.getName() + "\'";
+		}
+		else {
+			step = "Manual modelling by \'" + stakeholder.getName() + "\'";
+		}
+		return step;
+	}
+	
+	public boolean isAutomatic() {
+		return stakeholder == null && artifact != null;
+	}
+	
+	public boolean isManual() {
+		return !isAutomatic();
+	}
+	
+	public void setDescription(String description) {
+		return;
 	}
 
 	@Override
@@ -77,5 +97,27 @@ public class PlanStep implements Comparable<PlanStep> {
 			return 1;
 		}
 		return Integer.compare(this.getOrder(), o.getOrder());
+	}
+
+	public List<PlanStep> getAlternativeSteps() {
+		return alternativeSteps;
+	}
+
+	public void setAlternativeSteps(List<PlanStep> alternativeSteps) {
+		this.alternativeSteps = alternativeSteps;
+	}
+	
+	public void addAlternativeStep(PlanStep alternativeStep) {
+		if(alternativeSteps==null) {
+			alternativeSteps = new ArrayList<PlanStep> ();
+		}
+		alternativeSteps.add(alternativeStep);		
+	}
+
+	@Override
+	public String toString() {
+		return String.format(
+				"PlanStep [order=%s, artifact=%s, technique=%s, stakeholder=%s, elements=%s, refinedElements=%s, alternativeSteps=%s]",
+				order, artifact, technique, stakeholder, elements, refinedElements, alternativeSteps);
 	}
 }

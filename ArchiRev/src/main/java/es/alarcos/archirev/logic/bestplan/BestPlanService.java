@@ -189,6 +189,9 @@ public class BestPlanService {
 		Set<Integer> visitedElements = new HashSet<>();
 
 		boolean stepsStop = false;
+
+		PlanStep previousStep = null;
+
 		while (!stepsStop) {
 
 			Entry<Pair<InputArtifact, Technique>, List<Integer>> localOptimalAutomatic = null;
@@ -204,22 +207,21 @@ public class BestPlanService {
 			PlanStep step = new PlanStep();
 
 			int uniqueAutomaticElementIds = 0;
-			if(localOptimalAutomatic!=null && !localOptimalAutomatic.getValue().isEmpty()) {
+			if (localOptimalAutomatic != null && !localOptimalAutomatic.getValue().isEmpty()) {
 				uniqueAutomaticElementIds = localOptimalAutomatic.getValue().stream().filter(e -> {
 					return !visitedElements.contains(e);
 				}).collect(Collectors.toList()).size();
 			}
 
 			int uniqueManualElementIds = 0;
-			if(localOptimalManual!=null && !localOptimalManual.getValue().isEmpty()) {
+			if (localOptimalManual != null && !localOptimalManual.getValue().isEmpty()) {
 				uniqueManualElementIds = localOptimalManual.getValue().stream().filter(e -> {
 					return !visitedElements.contains(e);
 				}).collect(Collectors.toList()).size();
 			}
 
-			if ((localOptimalAutomatic != null && localOptimalManual == null)
-					|| (localOptimalAutomatic != null && localOptimalManual != null
-							&& uniqueAutomaticElementIds >= uniqueManualElementIds)) {
+			if ((localOptimalAutomatic != null && localOptimalManual == null) || (localOptimalAutomatic != null
+					&& localOptimalManual != null && uniqueAutomaticElementIds >= uniqueManualElementIds)) {
 				step.setArtifact(localOptimalAutomatic.getKey().getLeft());
 				step.setTechnique(localOptimalAutomatic.getKey().getRight());
 				localOptimalAutomatic.getValue().removeAll(visitedElements);
@@ -228,9 +230,8 @@ public class BestPlanService {
 				step.setElements(elements);
 
 				sortedMapAutomatic.remove(localOptimalAutomatic.getKey());
-			} else if ((localOptimalManual != null && localOptimalAutomatic == null)
-					|| (localOptimalManual != null && localOptimalAutomatic != null
-							&& uniqueManualElementIds > uniqueAutomaticElementIds)) {
+			} else if ((localOptimalManual != null && localOptimalAutomatic == null) || (localOptimalManual != null
+					&& localOptimalAutomatic != null && uniqueManualElementIds > uniqueAutomaticElementIds)) {
 				step.setStakeholder(localOptimalManual.getKey());
 
 				List<Integer> allElements = localOptimalManual.getValue();
@@ -250,8 +251,17 @@ public class BestPlanService {
 				sortedMapManual.remove(localOptimalManual.getKey());
 			}
 
-			step.setOrder(bestPlan.getSteps().size() +1);
-			bestPlan.addStep(step);
+			if ((step.getArtifact() != null && uniqueAutomaticElementIds == 0)
+					|| (step.getStakeholder() != null && uniqueManualElementIds == 0)) {
+				// no new elements -> alternative step
+				if (previousStep != null) {
+					previousStep.addAlternativeStep(step);
+				}
+			} else {
+				step.setOrder(bestPlan.getSteps().size() + 1);
+				bestPlan.addStep(step);
+				previousStep = step;
+			}
 
 			if (sortedMapAutomatic.isEmpty() && sortedMapManual.isEmpty()) {
 				stepsStop = true;

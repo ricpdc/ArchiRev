@@ -1,0 +1,27 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dialog
+		header="Elements"
+		id="elementsBestPlanDialog" widgetVar="elementsBestPlanDialog" modal="true"
+		height="500" width="650" closable="true" closeOnEscape="true">
+		<p:outputPanel id="panelBestPlanElementList" style="paddign:0px;border:none;">
+			<p:dataTable id="elementsBestPlanTable" widgetVar="elementsBestPlanTable" scrollRows="5" sortBy="#{element}"
+				value="#{viewpointController.selectedBestPlanElements}" var="element">
+				<p:column style="text-align:center; width:30px">
+					<p:graphicImage
+						rendered="#{viewpointController.getImageFromBytes(element.icon) != null}"
+						value="#{viewpointController.getImageFromBytes(element.icon)}"
+						stream="false" />
+				</p:column>
+				<p:column headerText="Name" sortBy="#{element.name}" 
+					filterBy="#{element.name}" filterMatchMode="contains">
+					<h:outputText value="#{element.name}" />
+				</p:column>
+			</p:dataTable>
+		</p:outputPanel>
+	</p:dialog>
+</ui:composition>

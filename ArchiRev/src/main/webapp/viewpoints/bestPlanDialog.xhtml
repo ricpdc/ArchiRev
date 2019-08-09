@@ -16,24 +16,41 @@
 
 			<p:panel id="stepsPanel" toggleable="true" >
 				<p:dataTable value="#{viewpointController.bestPlan.steps}" var="step" rowKey="#{step.order}">
-					<p:column headerText="Step">
+					<p:column style="width:15px">
+			            <p:rowToggler rendered="#{not empty step.alternativeSteps}" />
+			        </p:column>
+					<p:column headerText="Step" style="text-align: center" width="30">
 						<h:outputText value="#{step.order}"/>
 					</p:column>
-					<p:column headerText="Artifact">
-						<h:outputText value="#{step.artifact.name}"/>
+					<p:column style="text-align: center" width="10">
+						<p:outputLabel
+							styleClass="ui-icon ui-icon-#{step.isAutomatic() ? 'gear' : 'person'}" />
 					</p:column>
-					<p:column headerText="Technique">
-						<h:outputText value="#{step.technique.name}"/>
+					<p:column headerText="Description" width="300">
+						<h:outputText value="#{step.description}"/>
 					</p:column>
-					<p:column headerText="Stakeholder">
-						<h:outputText value="#{step.stakeholder.name}"/>
+					<p:column headerText="Elements" style="text-align: center" width="45">
+						<p:commandButton rendered="#{step.elements != null and not empty step.elements}" update="mainForm:elementsBestPlanDialog" title="Elements covered automatically"
+							oncomplete="PF('elementsBestPlanDialog').show()" icon="ui-icon-search" >
+							<f:setPropertyActionListener value="#{step.elements}"
+								target="#{viewpointController.selectedBestPlanElements}" />
+						</p:commandButton>
 					</p:column>
-					<p:column headerText="Elements">
-						<h:outputText value="#{step.elements.toArray()}"/>
+					<p:column headerText="Refined Elements" style="text-align: center" width="45">
+						<p:commandButton rendered="#{step.refinedElements != null and not empty step.refinedElements}" update="mainForm:elementsBestPlanDialog" title="Refined elements manually"
+							oncomplete="PF('elementsBestPlanDialog').show()" icon="ui-icon-search" >
+							<f:setPropertyActionListener value="#{step.refinedElements}"
+								target="#{viewpointController.selectedBestPlanElements}" />
+						</p:commandButton>
 					</p:column>
-					<p:column headerText="Refined Elements">
-						<h:outputText value="#{step.refinedElements.toArray()}"/>
-					</p:column>
+					<p:rowExpansion>
+						<p:dataList value="#{step.alternativeSteps}" var="alternativeStep" style="width:100%;">
+							<p:outputLabel
+								styleClass="ui-icon ui-icon-#{step.isAutomatic() ? 'gear' : 'person'}"
+								style="float:left;margin-right:10px;margin-top:3px;" />
+							<p:outputLabel value="#{alternativeStep.description}" style="display:inline-block" />
+						</p:dataList>
+					</p:rowExpansion>
 				</p:dataTable>
 			</p:panel>
 
@@ -44,10 +61,10 @@
 					emptyMessage="There are no selected artifacts" var="artifact"
 					itemType="none">
 					<p:outputLabel
-						styleClass="ui-icon ui-icon-#{viewpointController.bestPlan.artifacts.contains(artifact) ? 'star' : 'cancel'}"
-						style="float:left;margin-right:10px;margin-top:3px; #{viewpointController.bestPlan.artifacts.contains(artifact) ? '' : 'font-color:gray !important;'}" />
+						styleClass="#{viewpointController.bestPlan.artifacts.contains(artifact) ? 'ui-icon ui-icon-star' : ''}"
+						style="float:left;margin-right:#{viewpointController.bestPlan.artifacts.contains(artifact) ? '10' : '26'}px;margin-top:3px;" />
 					<p:outputLabel value="#{artifact.name}"
-						style="display:inline-block" />
+						style="display:inline-block; #{viewpointController.bestPlan.artifacts.contains(artifact) ? '' : 'color: lightgray !important;'}" />
 				</p:dataList>
 			</p:panel>
 			<p:panel id="stakeholderPanel" toggleable="true" collapsed="true"
@@ -57,10 +74,10 @@
 					emptyMessage="There are no selected stakeholders" var="stakeholder"
 					itemType="none">
 					<p:outputLabel
-						styleClass="ui-icon ui-icon-#{viewpointController.bestPlan.stakeholders.contains(stakeholder) ? 'star' : 'cancel'}"
-						style="float:left;margin-right:10px;margin-top:3px; #{viewpointController.bestPlan.artifacts.contains(artifact) ? '' : 'font-color:gray !important;'}" />
+						styleClass="#{viewpointController.bestPlan.stakeholders.contains(stakeholder) ? 'ui-icon ui-icon-star' : ''}"
+						style="float:left;margin-right:#{viewpointController.bestPlan.stakeholders.contains(stakeholder) ? '10' : '26'}px;margin-top:3px;" />
 					<p:outputLabel value="#{stakeholder.name}"
-						style="display:inline-block" />
+						style="display:inline-block; #{viewpointController.bestPlan.stakeholders.contains(stakeholder) ? '' : 'color: lightgray !important;'}" />
 				</p:dataList>
 			</p:panel>
 
