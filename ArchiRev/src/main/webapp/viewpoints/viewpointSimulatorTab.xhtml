@@ -54,9 +54,9 @@
 							<p:outputPanel id="bestPlanButtons" style="padding:0px;">
 								<p:commandButton id="setupBestPlanButton" value="" icon="ui-icon-gear" style="width: 11% !important; height: 33.5px !important; float:left"
 									onclick="PF('setupBestPlanDialog').show();"  />
-								<p:commandButton value="Best Plan" style="width: 76% !important"
+								<p:commandButton value="Best Plan" style="width: 76% !important" async="true"
 									actionListener="#{viewpointController.computeBestPlan}" update="mainForm:viewpointsTabs:viewpointMap, mainForm:viewpointsTabs:lastBestPlanButton, mainForm:bestPlanDialog"
-									onclick="PF('blockUI').show();" oncomplete="PF('blockUI').hide(); PF('bestPlanDialog').show();"  />
+									onclick="PF('progressDialog').show(); PF('progressBar').start(); PF('progressPoll').start();" oncomplete="PF('progressDialog').hide(); PF('progressBar').cancel(); PF('progressPoll').stop();  PF('bestPlanDialog').show();"  />
 								<p:commandButton id="lastBestPlanButton" value="" icon="ui-icon-document" disabled="#{viewpointController.bestPlan == null}" style="width: 11% !important; height: 33.5px !important; float:right"
 									onclick="PF('bestPlanDialog').show();" update="mainForm:viewpointsTabs:viewpointMap"  />
 							</p:outputPanel>

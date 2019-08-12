@@ -34,6 +34,7 @@ import io.jenetics.Genotype;
 import io.jenetics.IntegerChromosome;
 import io.jenetics.IntegerGene;
 import io.jenetics.Mutator;
+import io.jenetics.Phenotype;
 import io.jenetics.RouletteWheelSelector;
 import io.jenetics.SinglePointCrossover;
 import io.jenetics.TournamentSelector;
@@ -41,11 +42,18 @@ import io.jenetics.engine.Engine;
 import io.jenetics.engine.EvolutionResult;
 import io.jenetics.engine.EvolutionStatistics;
 import io.jenetics.engine.Limits;
+import io.jenetics.stat.DoubleMomentStatistics;
 import io.jenetics.util.Factory;
 
 @Singleton
 @Service
 public class BestPlanService {
+
+	private static final int POPULATION_SIZE = 10;
+	private static final int MAX_GENERATIONS = 5;
+	private static final int STEADY_FITNESS_LIMIT = 5;
+	private static final double MUTATOR_RATE = 0.115;
+	private static final double SINGLE_POINT_CROSSOVER = 0.16;
 
 	static Logger LOGGER = LoggerFactory.getLogger(BestPlanService.class);
 
@@ -57,13 +65,20 @@ public class BestPlanService {
 
 	private List<InputArtifact> artifacts;
 	private List<Stakeholder> stakeholders;
-	private List<Technique> techniques;
 	private List<Viewpoint> selectedViewpoints;
+	
+	private boolean emptyArtifacts;
+	private boolean emptyStakeholders;
 
 	private String maximizationBestPlan;
 	private String priorityBestPlan;
 	private List<Pair<InputArtifact, Technique>> artifactTechniquePairs;
 	private Map<Viewpoint, Integer> viewpointSizeMap;
+	
+	private Phenotype<IntegerGene, Double> bestPhenotype;
+	private List<EvolutionResult <IntegerGene, Double>> evolution;
+	
+	private int progress;
 
 	@Autowired
 	private ViewpointDao viewpointDao;
@@ -82,42 +97,60 @@ public class BestPlanService {
 		super();
 		this.artifacts = artifacts;
 		this.stakeholders = stakeholders;
-		this.artifactTechniquePairs = techniqueDao.getTechniqueListByArtifact(artifacts);
+		if(!emptyArtifacts) {
+			Collections.sort(this.artifacts);
+			artifactTechniquePairs = techniqueDao.getTechniqueListByArtifact(artifacts);
+		}
+		if(!emptyStakeholders) {
+			Collections.sort(this.stakeholders);
+		}
 	}
 
 	@PostConstruct
 	public void init() {
-		techniques = techniqueDao.findAll();
+		progress = 0;
 	}
 
 	public BestPlan computeBestPlan() {
 		BestPlan bestPlan = new BestPlan();
+		progress = 0;
+		bestPhenotype = null;
+		evolution = new ArrayList<>();
 		try {
 
 			loadCachedData();
 
-			Factory<Genotype<IntegerGene>> gtf = Genotype.of(IntegerChromosome.of(0, 1, artifactTechniquePairs.size()),
+			Factory<Genotype<IntegerGene>> gtf = null;
+			if((artifacts!=null && !artifacts.isEmpty()) && (stakeholders!=null && !stakeholders.isEmpty())) {
+				gtf = Genotype.of(IntegerChromosome.of(0, 1, artifactTechniquePairs.size()),
 					IntegerChromosome.of(0, 1, stakeholders.size()));
+			}
+			else if((artifacts!=null && !artifacts.isEmpty()) && (stakeholders==null || stakeholders.isEmpty())) {
+				gtf = Genotype.of(IntegerChromosome.of(0, 1, artifactTechniquePairs.size()));
+			}
+			else if((artifacts==null || artifacts.isEmpty()) && (stakeholders!=null && !stakeholders.isEmpty())) {
+				gtf = Genotype.of(IntegerChromosome.of(0, 1, stakeholders.size()));
+			}
 
-			// Genotype<IntegerGene> newInstance = gtf.newInstance();
-			// eval(newInstance);
-			// System.out.println("Before the evolution:\n" + newInstance + "-->" +
-			// eval(newInstance));
-
-			Engine<IntegerGene, Double> engine = Engine.builder(this::fitness, gtf).populationSize(50)
+			Engine<IntegerGene, Double> engine = Engine.builder(this::fitness, gtf).populationSize(POPULATION_SIZE)
 					.survivorsSelector(new TournamentSelector<>(5)).offspringSelector(new RouletteWheelSelector<>())
-					.alterers(new Mutator<>(0.115), new SinglePointCrossover<>(0.16)).maximizing().build();
+					.alterers(new Mutator<>(MUTATOR_RATE), new SinglePointCrossover<>(SINGLE_POINT_CROSSOVER)).maximizing().build();
 
-			EvolutionStatistics<Double, ?> statistics = EvolutionStatistics.ofNumber();
+			EvolutionStatistics<Double, DoubleMomentStatistics> statistics = EvolutionStatistics.ofNumber();
 
-			Genotype<IntegerGene> result = engine.stream().limit(Limits.bySteadyFitness(5)).limit(1).peek(statistics)
+			Genotype<IntegerGene> result = engine.stream()
+					.limit(Limits.bySteadyFitness(STEADY_FITNESS_LIMIT))
+					.limit(MAX_GENERATIONS)
+					.peek(statistics)
 					.peek(er -> System.out.println("BEST>> " + er.getBestPhenotype()))
+					.peek(this::update)
 					.collect(EvolutionResult.toBestGenotype());
 
 			System.out.println(statistics);
 			System.out.println("After the evolution:\n" + result + "-->" + fitness(result));
 
 			bestPlan = handleResult(result, statistics);
+			progress = 0;
 		} catch (Exception ex) {
 			LOGGER.error("Error computing best plan with genetic algorithm: ", ex);
 			bestPlan.setErrorMessage(ex.getMessage());
@@ -128,63 +161,69 @@ public class BestPlanService {
 
 	private BestPlan handleResult(Genotype<IntegerGene> result, EvolutionStatistics<Double, ?> statistics) {
 		BestPlan bestPlan = new BestPlan();
-
-		// set bestPlan data
-		final List<Pair<InputArtifact, Technique>> includedArtifactTechniquePairs = decodeArtifactTechniquePairs(
-				result);
-		final List<InputArtifact> includedArtifacts = new ArrayList<>(includedArtifactTechniquePairs.stream()
-				.map(Pair<InputArtifact, Technique>::getLeft).collect(Collectors.toSet()));
-		final List<Stakeholder> includedStakeholders = decodeStakeholders(result);
-
-		bestPlan.setArtifacts(includedArtifacts);
-		bestPlan.setStakeholders(includedStakeholders);
-		bestPlan.setArtifactTechniques(includedArtifactTechniquePairs);
 		bestPlan.setStatistics(statistics);
 
-		// compute maps for best plan data
+		Map<Pair<InputArtifact, Technique>, List<Integer>> sortedMapAutomatic  = null;
+		Map<Stakeholder, List<Integer>> sortedMapManual = null;
+		
+		// set bestPlan data
+		if(!emptyArtifacts) {
+			final List<Pair<InputArtifact, Technique>> includedArtifactTechniquePairs = decodeArtifactTechniquePairs(
+				result);
+			final List<InputArtifact> includedArtifacts = new ArrayList<>(includedArtifactTechniquePairs.stream()
+				.map(Pair<InputArtifact, Technique>::getLeft).collect(Collectors.toSet()));
+			bestPlan.setArtifacts(includedArtifacts);
+			bestPlan.setArtifactTechniques(includedArtifactTechniquePairs);
+			
+			Map<Pair<InputArtifact, Technique>, List<Integer>> coveredElementsAutomatic = new HashMap<>();
+			
+			for (Pair<InputArtifact, Technique> pair : includedArtifactTechniquePairs) {
+				coveredElementsAutomatic.put(pair, viewpointDao.getCoveredElements(null, pair, null));
+			}
 
-		Map<Pair<InputArtifact, Technique>, List<Integer>> coveredElementsAutomatic = new HashMap<>();
+			Comparator<? super Entry<Pair<InputArtifact, Technique>, List<Integer>>> pairComparator = new Comparator<Entry<Pair<InputArtifact, Technique>, List<Integer>>>() {
+				public int compare(Entry<Pair<InputArtifact, Technique>, List<Integer>> obj1,
+						Entry<Pair<InputArtifact, Technique>, List<Integer>> obj2) {
+					if (obj1.getValue().size() < obj2.getValue().size()) {
+						return 1;
+					} else if (obj1.getValue().size() > obj2.getValue().size()) {
+						return -1;
+					} else {
+						return 0;
+					}
+				}
+			};
+			sortedMapAutomatic = coveredElementsAutomatic.entrySet()
+					.stream().sorted(pairComparator)
+					.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2, LinkedHashMap::new));
+		}
+		
+		if(!emptyStakeholders) {
+			final List<Stakeholder> includedStakeholders = decodeStakeholders(result);
+			bestPlan.setStakeholders(includedStakeholders);
 
-		for (Pair<InputArtifact, Technique> pair : includedArtifactTechniquePairs) {
-			coveredElementsAutomatic.put(pair, viewpointDao.getCoveredElements(null, pair, null));
+			Map<Stakeholder, List<Integer>> coveredElementsManual = new HashMap<>();
+			
+			for (Stakeholder stakeholder : includedStakeholders) {
+				coveredElementsManual.put(stakeholder, viewpointDao.getCoveredElements(null, stakeholder, null));
+			}
+			
+			Comparator<? super Entry<Stakeholder, List<Integer>>> stakeholderComparator = new Comparator<Entry<Stakeholder, List<Integer>>>() {
+				public int compare(Entry<Stakeholder, List<Integer>> obj1, Entry<Stakeholder, List<Integer>> obj2) {
+					if (obj1.getValue().size() < obj2.getValue().size()) {
+						return 1;
+					} else if (obj1.getValue().size() > obj2.getValue().size()) {
+						return -1;
+					} else {
+						return 0;
+					}
+				}
+			};
+			sortedMapManual = coveredElementsManual.entrySet().stream()
+					.sorted(stakeholderComparator)
+					.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2, LinkedHashMap::new));
 		}
 
-		Map<Stakeholder, List<Integer>> coveredElementsManual = new HashMap<>();
-
-		for (Stakeholder stakeholder : includedStakeholders) {
-			coveredElementsManual.put(stakeholder, viewpointDao.getCoveredElements(null, stakeholder, null));
-		}
-
-		Comparator<? super Entry<Pair<InputArtifact, Technique>, List<Integer>>> pairComparator = new Comparator<Entry<Pair<InputArtifact, Technique>, List<Integer>>>() {
-			public int compare(Entry<Pair<InputArtifact, Technique>, List<Integer>> obj1,
-					Entry<Pair<InputArtifact, Technique>, List<Integer>> obj2) {
-				if (obj1.getValue().size() < obj2.getValue().size()) {
-					return 1;
-				} else if (obj1.getValue().size() > obj2.getValue().size()) {
-					return -1;
-				} else {
-					return 0;
-				}
-			}
-		};
-		Map<Pair<InputArtifact, Technique>, List<Integer>> sortedMapAutomatic = coveredElementsAutomatic.entrySet()
-				.stream().sorted(pairComparator)
-				.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2, LinkedHashMap::new));
-
-		Comparator<? super Entry<Stakeholder, List<Integer>>> stakeholderComparator = new Comparator<Entry<Stakeholder, List<Integer>>>() {
-			public int compare(Entry<Stakeholder, List<Integer>> obj1, Entry<Stakeholder, List<Integer>> obj2) {
-				if (obj1.getValue().size() < obj2.getValue().size()) {
-					return 1;
-				} else if (obj1.getValue().size() > obj2.getValue().size()) {
-					return -1;
-				} else {
-					return 0;
-				}
-			}
-		};
-		Map<Stakeholder, List<Integer>> sortedMapManual = coveredElementsManual.entrySet().stream()
-				.sorted(stakeholderComparator)
-				.collect(Collectors.toMap(e -> e.getKey(), e -> e.getValue(), (e1, e2) -> e2, LinkedHashMap::new));
 
 		Set<Integer> visitedElements = new HashSet<>();
 
@@ -195,12 +234,12 @@ public class BestPlanService {
 		while (!stepsStop) {
 
 			Entry<Pair<InputArtifact, Technique>, List<Integer>> localOptimalAutomatic = null;
-			if (!sortedMapAutomatic.isEmpty()) {
+			if (!emptyArtifacts && !sortedMapAutomatic.isEmpty()) {
 				localOptimalAutomatic = sortedMapAutomatic.entrySet().iterator().next();
 			}
 
 			Entry<Stakeholder, List<Integer>> localOptimalManual = null;
-			if (!sortedMapManual.isEmpty()) {
+			if (!emptyStakeholders && !sortedMapManual.isEmpty()) {
 				localOptimalManual = sortedMapManual.entrySet().iterator().next();
 			}
 
@@ -263,7 +302,7 @@ public class BestPlanService {
 				previousStep = step;
 			}
 
-			if (sortedMapAutomatic.isEmpty() && sortedMapManual.isEmpty()) {
+			if ((sortedMapAutomatic==null || sortedMapAutomatic.isEmpty()) && (sortedMapManual==null || sortedMapManual.isEmpty())) {
 				stepsStop = true;
 			}
 		}
@@ -282,34 +321,39 @@ public class BestPlanService {
 		long time = System.currentTimeMillis();
 		double fitness = 0;
 
-		List<Pair<InputArtifact, Technique>> includedArtifactTechniquePairs = decodeArtifactTechniquePairs(genotype);
-		List<Stakeholder> includedStakeholders = decodeStakeholders(genotype);
+		List<Pair<InputArtifact, Technique>> includedArtifactTechniquePairs = null;
+		List<Stakeholder> includedStakeholders = null;
+		Set<InputArtifact> includedArtifacts = null;
+		if(!emptyArtifacts) {
+			includedArtifactTechniquePairs = decodeArtifactTechniquePairs(genotype);
+			includedArtifacts = includedArtifactTechniquePairs.stream()
+					.map(Pair<InputArtifact, Technique>::getLeft).collect(Collectors.toSet());
+		}
+		if(!emptyStakeholders) {
+			includedStakeholders = decodeStakeholders(genotype);
+		}
 
-		Set<InputArtifact> includedArtifacts = includedArtifactTechniquePairs.stream()
-				.map(Pair<InputArtifact, Technique>::getLeft).collect(Collectors.toSet());
 		Set<Integer> totalCoveredElements;
 
 		// metrics for computing fitness value
 		int totalArtifacts = artifacts.size();
-		int totalStakeholders = stakeholders.size();
-		int totalCombined = totalArtifacts + totalStakeholders;
-
 		double percentageTotalArtifacts = 0;
-		double percentageTotalStakeholders = 0;
-		double percentageTotalCombined = 0;
-
 		double percentageMeanArtifacts = 0;
-		double percentageMeanStakeholders = 0;
-		double percentageMeanCombined = 0;
-
 		double percentageCompletedViewpointArtifacts = 0;
-		double percentageCompletedViewpointStakeholders = 0;
-		double percentageCompletedViewpointCombined = 0;
+		double percentageNotUsedArtefacts = !emptyArtifacts ? (totalArtifacts - includedArtifacts.size()) / totalArtifacts : 0;
 
-		double percentageNotUsedArtefacts = (totalArtifacts - includedArtifacts.size()) / totalArtifacts;
-		double percentageNotUsedStakeholders = (totalStakeholders - includedStakeholders.size()) / totalCombined;
-		double percentageNotUsedCombined = (totalCombined - includedArtifacts.size() - includedStakeholders.size())
-				/ totalCombined;
+		int totalStakeholders = stakeholders.size();
+		double percentageTotalStakeholders = 0;
+		double percentageMeanStakeholders = 0;
+		double percentageCompletedViewpointStakeholders = 0;
+		double percentageNotUsedStakeholders = !emptyStakeholders ? (totalStakeholders - includedStakeholders.size()) / totalStakeholders : 0;
+
+		int totalCombined = totalArtifacts + totalStakeholders;
+		double percentageTotalCombined = 0;
+		double percentageMeanCombined = 0;
+		double percentageCompletedViewpointCombined = 0;
+		double percentageNotUsedCombined = (!emptyArtifacts && !emptyStakeholders) ? (totalCombined - includedArtifacts.size() - includedStakeholders.size())/ totalCombined : 0;
+
 
 		// compute weigths
 		// weigths
@@ -359,7 +403,7 @@ public class BestPlanService {
 
 		// compute only automatic
 		Map<Viewpoint, Set<Integer>> elementsCoveredByViewpointArtifact = new HashMap<>();
-		if (w1 > 0 || w7 > 0 || w3 > 0 || w9 > 0) {
+		if (!emptyArtifacts && (w1 > 0 || w7 > 0 || w3 > 0 || w9 > 0)) {
 			for (Viewpoint viewpoint : selectedViewpoints) {
 				totalCoveredElements = new HashSet<>();
 
@@ -380,7 +424,7 @@ public class BestPlanService {
 		}
 
 		// compute only manual
-		if (w2 > 0 || w8 > 0) {
+		if (!emptyStakeholders && (w2 > 0 || w8 > 0)) {
 			for (Viewpoint viewpoint : selectedViewpoints) {
 				totalCoveredElements = new HashSet<>();
 
@@ -402,7 +446,7 @@ public class BestPlanService {
 		}
 
 		// compute for combined (automatic and then manual)
-		if (w3 > 0 || w9 > 0) {
+		if ((!emptyArtifacts && !emptyStakeholders) && (w3 > 0 || w9 > 0)) {
 			Set<Integer> alreadyCovered;
 			for (Viewpoint viewpoint : selectedViewpoints) {
 				alreadyCovered = elementsCoveredByViewpointArtifact.get(viewpoint);
@@ -438,6 +482,15 @@ public class BestPlanService {
 		LOGGER.info("Fitness (in " + time + " ms): " + fitness);
 
 		return fitness;
+	}
+	
+	public void update (final EvolutionResult <IntegerGene, Double> result) {
+		if(bestPhenotype == null || bestPhenotype.compareTo(result.getBestPhenotype())<0) {
+			bestPhenotype = result.getBestPhenotype();
+			LOGGER.info(result.getGeneration() + ": Found best phenotype: " + bestPhenotype);
+		}
+		evolution.add(result);
+		progress = (int) (100 * result.getGeneration() / MAX_GENERATIONS);
 	}
 
 	public void computeOptimalWorkflow(BestPlan bestPlan) {
@@ -478,7 +531,7 @@ public class BestPlanService {
 	}
 
 	private List<Stakeholder> decodeStakeholders(Genotype<IntegerGene> genotype) {
-		Chromosome<IntegerGene> chromosomeStakeholders = genotype.get(1);
+		Chromosome<IntegerGene> chromosomeStakeholders = genotype.get(emptyArtifacts ? 0 : 1);
 		List<Stakeholder> includedStakeholders = new ArrayList<>();
 		for (int s = 0; s < chromosomeStakeholders.length(); s++) {
 			if (chromosomeStakeholders.getGene(s).intValue() == 1) {
@@ -494,9 +547,11 @@ public class BestPlanService {
 
 	public void setArtifacts(List<InputArtifact> artifacts) {
 		this.artifacts = artifacts;
-		Collections.sort(this.artifacts);
-
-		artifactTechniquePairs = techniqueDao.getTechniqueListByArtifact(artifacts);
+		emptyArtifacts = (artifacts==null || artifacts.isEmpty());
+		if(!emptyArtifacts) {
+			Collections.sort(this.artifacts);
+			artifactTechniquePairs = techniqueDao.getTechniqueListByArtifact(artifacts);
+		}
 	}
 
 	public List<Stakeholder> getStakeholders() {
@@ -505,7 +560,10 @@ public class BestPlanService {
 
 	public void setStakeholders(List<Stakeholder> stakeholders) {
 		this.stakeholders = stakeholders;
-		Collections.sort(this.stakeholders);
+		emptyStakeholders = (stakeholders==null || stakeholders.isEmpty());
+		if(!emptyStakeholders) {
+			Collections.sort(this.stakeholders);
+		}
 	}
 
 	public String getMaximizationBestPlan() {
@@ -530,6 +588,30 @@ public class BestPlanService {
 
 	public void setSelectedViewpoints(List<Viewpoint> selectedViewpoints) {
 		this.selectedViewpoints = selectedViewpoints;
+	}
+
+	public int getProgress() {
+		return progress;
+	}
+
+	public void setProgress(int progress) {
+		this.progress = progress;
+	}
+
+	public Phenotype<IntegerGene, Double> getBestPhenotype() {
+		return bestPhenotype;
+	}
+
+	public void setBestPhenotype(Phenotype<IntegerGene, Double> bestPhenotype) {
+		this.bestPhenotype = bestPhenotype;
+	}
+
+	public List<EvolutionResult <IntegerGene, Double>> getEvolution() {
+		return evolution;
+	}
+
+	public void setEvolution(List<EvolutionResult <IntegerGene, Double>> evolution) {
+		this.evolution = evolution;
 	}
 
 }

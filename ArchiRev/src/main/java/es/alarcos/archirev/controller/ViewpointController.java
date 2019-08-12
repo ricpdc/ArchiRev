@@ -32,6 +32,8 @@ import org.primefaces.model.chart.BarChartModel;
 import org.primefaces.model.chart.ChartSeries;
 import org.primefaces.model.chart.HorizontalBarChartModel;
 import org.primefaces.model.chart.MeterGaugeChartModel;
+import org.primefaces.model.chart.LineChartModel;
+import org.primefaces.model.chart.OhlcChartSeries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +55,10 @@ import es.alarcos.archirev.persistency.ScopeDao;
 import es.alarcos.archirev.persistency.StakeholderDao;
 import es.alarcos.archirev.persistency.ViewpointDao;
 import es.alarcos.archirev.persistency.ViewpointElementDao;
+import io.jenetics.IntegerGene;
+import io.jenetics.engine.EvolutionResult;
+import io.jenetics.engine.EvolutionStatistics;
+import io.jenetics.stat.DoubleMomentStatistics;
 
 @ManagedBean(name = "viewpointController")
 @Controller
@@ -91,7 +97,7 @@ public class ViewpointController extends AbstractController {
 	private BestPlanService bestPlanService;
 
 	private Viewpoint selectedViewpoint;
-	
+
 	private boolean[] activeViewpoint;
 
 	private List<Viewpoint> availableViewpoints;
@@ -129,6 +135,8 @@ public class ViewpointController extends AbstractController {
 	private List<Long> queriedElementIds;
 
 	private BestPlan bestPlan;
+	
+	private LineChartModel bestPlanEvolutionPlot;
 
 	public ViewpointController() {
 		super();
@@ -155,7 +163,7 @@ public class ViewpointController extends AbstractController {
 			stakeholderPickerList = new DualListModel<>(stakeholderDao.findAll(), new ArrayList<Stakeholder>());
 
 			initializeActiveViewpoints();
-			
+
 			RequestContext.getCurrentInstance().update("mainForm:viewpointsTabs");
 
 			coloured = false;
@@ -163,37 +171,34 @@ public class ViewpointController extends AbstractController {
 			queriedElementIds = null;
 
 			loadDefaultSetup();
+			updateBestPlanEvolutionPlot();
 		}
 	}
-	
+
 	private void initializeActiveViewpoints() {
 		selectedViewpoints = new ArrayList<>();
-		activeViewpoint = new boolean[availableViewpoints.size()+1];
-		
+		activeViewpoint = new boolean[availableViewpoints.size() + 1];
+
 		for (Viewpoint viewpoint : availableViewpoints) {
 			activeViewpoint[viewpoint.getId().intValue()] = true;
 			selectedViewpoints.add(viewpoint);
 		}
 	}
-	
-	
+
 	public void toggleActiveValue(String viewpointName) {
 		for (Viewpoint viewpoint : availableViewpoints) {
-			if(viewpointName.equals(viewpoint.getName())) {
-				if(activeViewpoint[viewpoint.getId().intValue()]) {
-					if(! selectedViewpoints.contains(viewpoint)) {
+			if (viewpointName.equals(viewpoint.getName())) {
+				if (activeViewpoint[viewpoint.getId().intValue()]) {
+					if (!selectedViewpoints.contains(viewpoint)) {
 						selectedViewpoints.add(viewpoint);
 					}
-				}
-				else {
+				} else {
 					selectedViewpoints.remove(viewpoint);
 				}
 				break;
 			}
 		}
 	}
-
-	
 
 	public void onRowToggle(ToggleEvent event) {
 		if (event.getVisibility().equals(Visibility.VISIBLE)) {
@@ -322,8 +327,10 @@ public class ViewpointController extends AbstractController {
 			}
 		}
 
-		queriedViewpointMap.put(viewpointName, viewpointDao
-				.getViewpointPercentagesByArtefacts(bestPlan!=null ? bestPlan.getArtifacts() : artifactPickerList.getTarget(), getSelectedViewpointDTO()));
+		queriedViewpointMap.put(viewpointName,
+				viewpointDao.getViewpointPercentagesByArtefacts(
+						bestPlan != null ? bestPlan.getArtifacts() : artifactPickerList.getTarget(),
+						getSelectedViewpointDTO()));
 		loadTechniquesFromSelectedViewpointDTO();
 
 		if (selectedViewpoint != null) {
@@ -348,7 +355,8 @@ public class ViewpointController extends AbstractController {
 		}
 
 		queriedViewpointMap.put(viewpointName,
-				viewpointDao.getViewpointPercentagesByStakeholders(bestPlan!=null ? bestPlan.getStakeholders() : stakeholderPickerList.getTarget(),
+				viewpointDao.getViewpointPercentagesByStakeholders(
+						bestPlan != null ? bestPlan.getStakeholders() : stakeholderPickerList.getTarget(),
 						getSelectedViewpointDTO(), (isHybridSimulation() ? queriedElementIds : null)));
 		loadStakeholdersFromSelectedViewpointDTO();
 
@@ -461,7 +469,7 @@ public class ViewpointController extends AbstractController {
 	public void simulateViewpointsByArtifact() {
 		simulateViewpointsByArtifact(artifactPickerList.getTarget());
 	}
-	
+
 	private void simulateViewpointsByArtifact(List<InputArtifact> artifacts) {
 		simulationType = ViewpointSimulationEnum.AUTOMATIC;
 		List<QueriedViewpointDTO> listViewpointsByArtefacts = viewpointDao
@@ -481,7 +489,7 @@ public class ViewpointController extends AbstractController {
 	public void simulateViewpointsByStakeholder() {
 		simulateViewpointsByStakeholder(stakeholderPickerList.getTarget());
 	}
-	
+
 	private void simulateViewpointsByStakeholder(final List<Stakeholder> stakeholders) {
 		simulationType = ViewpointSimulationEnum.MANUAL;
 		queriedElementIds = null;
@@ -498,12 +506,13 @@ public class ViewpointController extends AbstractController {
 		}
 		coloured = true;
 	}
-	
+
 	public void simulateViewpointsByArtifactAndStakeholder() {
 		simulateViewpointsByArtifactAndStakeholder(artifactPickerList.getTarget(), stakeholderPickerList.getTarget());
 	}
 
-	public void simulateViewpointsByArtifactAndStakeholder(List<InputArtifact> artifacts, List<Stakeholder> stakeholders) {
+	public void simulateViewpointsByArtifactAndStakeholder(List<InputArtifact> artifacts,
+			List<Stakeholder> stakeholders) {
 		simulationType = ViewpointSimulationEnum.HYBRID;
 		List<QueriedViewpointDTO> listViewpointsByArtefacts = viewpointDao
 				.listViewpointsMaxPercentageByArtefacts(artifacts, selectedViewpoints);
@@ -517,7 +526,8 @@ public class ViewpointController extends AbstractController {
 			}
 		}
 
-		queriedElementIds = viewpointDao.getCoveredElementsByArtifacts(bestPlan!=null ? bestPlan.getArtifacts() : artifactPickerList.getTarget());
+		queriedElementIds = viewpointDao.getCoveredElementsByArtifacts(
+				bestPlan != null ? bestPlan.getArtifacts() : artifactPickerList.getTarget());
 
 		List<QueriedViewpointDTO> listViewpointsByStakeholders = viewpointDao.listViewpointsMaxPercentageByStakeholder(
 				stakeholders, selectedViewpoints, queriedElementIds, queriedViewpointMap);
@@ -544,11 +554,67 @@ public class ViewpointController extends AbstractController {
 		// Run genetic algorithm
 		bestPlan = bestPlanService.computeBestPlan();
 		
-		computeHeatMapForBestPlan () ;
+		generateEvolutionStats();
+
+		computeHeatMapForBestPlan();
+		updateBestPlanEvolutionPlot();
+	}
+
+	private void generateEvolutionStats() {
+		// TODO generate a CSV or similar from evolution data
+		List<EvolutionResult<IntegerGene,Double>> evolution = bestPlanService.getEvolution();
+		
+		
+	}
+
+	public Integer getProgressForBestPlan() {
+		int progress = bestPlanService.getProgress();
+		if (progress > 100) {
+			progress = 100;
+		}
+		return new Integer(progress);
+	}
+
+	public void setProgressForBestPlan(Integer progress) {
+		return;
+	}
+	
+	public double getBestPhenotypeValue () {
+		double value = bestPlanService.getBestPhenotype() != null ? bestPlanService.getBestPhenotype().getFitness() : 0.0;
+		return new BigDecimal(value).setScale(4, BigDecimal.ROUND_FLOOR).doubleValue();
+	}
+	
+	public void updateBestPlanEvolutionPlot() {
+		bestPlanEvolutionPlot = new LineChartModel();
+		ChartSeries max = new ChartSeries();
+		ChartSeries min = new ChartSeries();
+		bestPlanEvolutionPlot.addSeries(max);
+		bestPlanEvolutionPlot.addSeries(min);
+		
+		max.setLabel("max");
+		min.setLabel("min");
+
+		bestPlanEvolutionPlot.setTitle("Genetic Algorithm Evolution");
+		bestPlanEvolutionPlot.getAxis(AxisType.X).setLabel("Generations");
+		bestPlanEvolutionPlot.getAxis(AxisType.Y).setLabel("Fitness");
+		
+		bestPlanEvolutionPlot.setShowPointLabels(true);
+		bestPlanEvolutionPlot.setLegendPosition("e");
+
+		if(bestPlanService.getEvolution() == null) {
+			return;
+		}
+		
+		for (int i = 0; i < bestPlanService.getEvolution().size(); i++) {
+			EvolutionResult <IntegerGene, Double> generation = bestPlanService.getEvolution().get(i);
+			max.set(i+1, generation.getBestFitness());
+			min.set(i+1, generation.getWorstFitness());
+		}
 	}
 
 	private void computeHeatMapForBestPlan() {
-		//TODO after sort and filtering by technique is computed it should be fixed by adding such filters to the db query to improve accuracy
+		// TODO after sort and filtering by technique is computed it should be fixed by
+		// adding such filters to the db query to improve accuracy
 		simulateViewpointsByArtifactAndStakeholder(bestPlan.getArtifacts(), bestPlan.getStakeholders());
 	}
 
@@ -673,11 +739,6 @@ public class ViewpointController extends AbstractController {
 		return horizontalBarModel;
 	}
 
-
-	
-
-	
-
 	public void saveSetup() {
 		closeSetupDialog();
 	}
@@ -783,7 +844,7 @@ public class ViewpointController extends AbstractController {
 	public void setPriorityBestPlan(String priorityBestPlan) {
 		this.priorityBestPlan = priorityBestPlan;
 	}
-	
+
 	public List<Viewpoint> getAvailableViewpoints() {
 		return availableViewpoints;
 	}
@@ -806,6 +867,14 @@ public class ViewpointController extends AbstractController {
 
 	public void setSelectedBestPlanElements(List<ViewpointElement> selectedBestPlanElements) {
 		this.selectedBestPlanElements = selectedBestPlanElements;
+	}
+
+	public LineChartModel getBestPlanEvolutionPlot() {
+		return bestPlanEvolutionPlot;
+	}
+
+	public void setBestPlanEvolutionPlot(LineChartModel bestPlanEvolutionPlot) {
+		this.bestPlanEvolutionPlot = bestPlanEvolutionPlot;
 	}
 
 }

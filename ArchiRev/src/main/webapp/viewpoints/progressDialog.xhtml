@@ -1,0 +1,22 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:dialog header="Performing genetic algorithm..." id="progressDialog"
+		widgetVar="progressDialog" modal="true" height="400" width="600"
+		closable="false" style="text-align:center">
+		<img src="images/loading_icon.gif" height="250" />
+		<br />
+		<br />
+		<p:progressBar widgetVar="progressBar" ajax="true"
+			value="#{viewpointController.progressForBestPlan}"
+			labelTemplate="{value}%" styleClass="animated" global="false" />
+		<p:poll id="progressPoll" widgetVar="progressPoll" autoStart="false"
+			interval="1" update="txtBestPhenotype" />
+		<h:outputText id="txtBestPhenotype"
+			value="Better fitness result: #{viewpointController.getBestPhenotypeValue()}" />
+
+	</p:dialog>
+</ui:composition>
