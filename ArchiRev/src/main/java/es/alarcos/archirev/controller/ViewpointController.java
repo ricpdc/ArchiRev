@@ -886,4 +886,12 @@ public class ViewpointController extends AbstractController {
 		this.bestPlanEvolutionPlot = bestPlanEvolutionPlot;
 	}
 
+	public BestPlanService getBestPlanService() {
+		return bestPlanService;
+	}
+
+	public void setBestPlanService(BestPlanService bestPlanService) {
+		this.bestPlanService = bestPlanService;
+	}
+
 }

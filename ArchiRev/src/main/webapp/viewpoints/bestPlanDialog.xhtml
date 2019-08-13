@@ -83,7 +83,7 @@
 
 			<p:panel id="genStatsPanel" toggleable="true" collapsed="false"
 				header="Genetic Algorithm Stats">
-				<p:chart rendered="#{viewpointController.bestPlan != null}" id="bestPlanEvolutionPlot" type="line" model="#{viewpointController.bestPlanEvolutionPlot}" style="height:300px"/>
+				<p:chart rendered="#{viewpointController.bestPlanService.evolution != null}" id="bestPlanEvolutionPlot" type="line" model="#{viewpointController.bestPlanEvolutionPlot}" style="height:300px"/>
 				<h:outputText
 					value="#{viewpointController.bestPlan.statistics.toString().replaceAll('\\n', '&lt;br /&gt;')}"
 					escape="false"
