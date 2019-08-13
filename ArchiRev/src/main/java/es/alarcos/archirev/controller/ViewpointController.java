@@ -553,11 +553,13 @@ public class ViewpointController extends AbstractController {
 		bestPlanService.setPriorityBestPlan(priorityBestPlan);
 		// Run genetic algorithm
 		bestPlan = bestPlanService.computeBestPlan();
-		
-		generateEvolutionStats();
 
-		computeHeatMapForBestPlan();
-		updateBestPlanEvolutionPlot();
+		if(bestPlan != null) {
+			generateEvolutionStats();
+
+			computeHeatMapForBestPlan();
+			updateBestPlanEvolutionPlot();
+		}
 	}
 
 	private void generateEvolutionStats() {

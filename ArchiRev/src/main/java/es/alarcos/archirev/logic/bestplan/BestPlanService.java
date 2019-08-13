@@ -131,6 +131,9 @@ public class BestPlanService {
 			else if((artifacts==null || artifacts.isEmpty()) && (stakeholders!=null && !stakeholders.isEmpty())) {
 				gtf = Genotype.of(IntegerChromosome.of(0, 1, stakeholders.size()));
 			}
+			else {
+				return null;
+			}
 
 			Engine<IntegerGene, Double> engine = Engine.builder(this::fitness, gtf).populationSize(POPULATION_SIZE)
 					.survivorsSelector(new TournamentSelector<>(5)).offspringSelector(new RouletteWheelSelector<>())
