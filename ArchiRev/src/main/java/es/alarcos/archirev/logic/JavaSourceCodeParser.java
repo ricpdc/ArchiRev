@@ -32,7 +32,7 @@ public class JavaSourceCodeParser extends AbstractSourceCodeParser implements Se
 
 	private static final long serialVersionUID = -7546016897450591834L;
 
-	private static Logger LOGGER = LoggerFactory.getLogger(JavaSourceCodeParser.class);
+	private static Logger logger = LoggerFactory.getLogger(JavaSourceCodeParser.class);
 
 	public JavaSourceCodeParser(final String setup) {
 		super(setup);
@@ -66,10 +66,10 @@ public class JavaSourceCodeParser extends AbstractSourceCodeParser implements Se
 			JavaClass javaClass = null;
 			try {
 				javaClass = cp.parse();
-				LOGGER.debug("Entry: " + entry.getName());
-				// LOGGER.debug("javaClass: " + javaClass);
+				logger.debug("Entry: " + entry.getName());
+				// logger.debug("javaClass: " + javaClass);
 			} catch (ClassFormatException | IOException e) {
-				LOGGER.error(entry.getName() + " cannot be parsed");
+				logger.error(entry.getName() + " cannot be parsed");
 				javaClass = null;
 				continue;
 			}
@@ -88,7 +88,7 @@ public class JavaSourceCodeParser extends AbstractSourceCodeParser implements Se
 						mappedSuperclass = true;
 					}
 				} else {
-					LOGGER.debug(String.format("Not mapped annotation \"%s\" in class %s", annotationType,
+					logger.debug(String.format("Not mapped annotation \"%s\" in class %s", annotationType,
 							javaClass.getClassName()));
 				}
 			}
@@ -131,7 +131,7 @@ public class JavaSourceCodeParser extends AbstractSourceCodeParser implements Se
 			try {
 				javaClass = cp.parse();
 			} catch (ClassFormatException | IOException e) {
-				LOGGER.error(entry.getName() + " cannot be parsed");
+				logger.error(entry.getName() + " cannot be parsed");
 				javaClass = null;
 				continue;
 			}
@@ -146,7 +146,7 @@ public class JavaSourceCodeParser extends AbstractSourceCodeParser implements Se
 					if (constant.getTag() == 7) {
 						String referencedClass = javaClass.getConstantPool().constantToString(constant);
 						if (modelElementsByClassName.containsKey(referencedClass)) {
-							// LOGGER.debug(String.format("[%s] --> %s", javaClass.getClassName(),
+							// logger.debug(String.format("[%s] --> %s", javaClass.getClassName(),
 							// referencedClass));
 
 							List<ArchimateElement> sourceElements = modelElementsByClassName

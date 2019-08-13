@@ -21,7 +21,7 @@ import es.alarcos.archirev.persistency.ProjectDao;
 public class NewProjectDialogController extends AbstractDialogController {
 
 	private static final long serialVersionUID = 3286211947397473903L;
-	static Logger LOGGER = LoggerFactory.getLogger(NewProjectDialogController.class);
+	static Logger logger = LoggerFactory.getLogger(NewProjectDialogController.class);
 
 	@Autowired
 	private SessionController sessionController;

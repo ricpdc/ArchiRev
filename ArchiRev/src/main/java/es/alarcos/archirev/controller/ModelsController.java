@@ -42,7 +42,7 @@ public class ModelsController extends AbstractController {
 
 	private static final long serialVersionUID = 1220451072138440791L;
 
-	static Logger LOGGER = LoggerFactory.getLogger(ModelsController.class);
+	static Logger logger = LoggerFactory.getLogger(ModelsController.class);
 
 	@Autowired
 	private SessionController sessionController;
@@ -85,7 +85,7 @@ public class ModelsController extends AbstractController {
 			imageBytes = Files.readAllBytes(new File(selectedView.getSanitizedImagePath()).toPath());
 			return new DefaultStreamedContent(new ByteArrayInputStream(imageBytes), "image/png");
 		} catch (IOException e) {
-			LOGGER.error("Error rendering the model diagram");
+			logger.error("Error rendering the model diagram");
 		}
 		return null;
 	}
@@ -117,7 +117,7 @@ public class ModelsController extends AbstractController {
 			try {
 				xmlFileBytes = Files.readAllBytes(new File(selectedModel.getSanitizedExportedPath()).toPath());
 			} catch (IOException e) {
-				LOGGER.error(e.getMessage());
+				logger.error(e.getMessage());
 			}
 			exportedFile = new DefaultStreamedContent(new ByteArrayInputStream(xmlFileBytes), "text/xml",
 				selectedModel.getName() + ".xml");
@@ -133,7 +133,7 @@ public class ModelsController extends AbstractController {
 	
 	public void onSelectModel(SelectEvent event) {
 		ArchimateModel model = (ArchimateModel) event.getObject();
-		LOGGER.info("Selected model: " + model);
+		logger.info("Selected model: " + model);
 		selectedModel = model;
 		if(selectedModel!=null) {
 			selectedView = selectedModel.getDefaultView();
@@ -142,7 +142,7 @@ public class ModelsController extends AbstractController {
 	
 	public void onSelectView(SelectEvent event) {
 		View view = (View) event.getObject();
-		LOGGER.info("Selected view: " + view);
+		logger.info("Selected view: " + view);
 		setSelectedView(view);
 	}
 
@@ -156,7 +156,7 @@ public class ModelsController extends AbstractController {
 			filePath = Files.createFile(Paths.get(folder.getAbsolutePath() + File.separator + "p_"
 					+ getProject().getId() + "_e_" + model.getId() + "_" + UUID.randomUUID() + ".xml"));
 		} catch (IOException e) {
-			LOGGER.error(e.getMessage());
+			logger.error(e.getMessage());
 			return null;
 		}
 		return filePath.toString();

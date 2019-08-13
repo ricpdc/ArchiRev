@@ -67,7 +67,7 @@ public class ViewpointController extends AbstractController {
 
 	private static final long serialVersionUID = -7943630748807472984L;
 
-	private static Logger LOGGER = LoggerFactory.getLogger(ViewpointController.class);
+	private static Logger logger = LoggerFactory.getLogger(ViewpointController.class);
 
 	@Autowired
 	private SessionController sessionController;
@@ -202,7 +202,7 @@ public class ViewpointController extends AbstractController {
 
 	public void onRowToggle(ToggleEvent event) {
 		if (event.getVisibility().equals(Visibility.VISIBLE)) {
-			LOGGER.debug("Expanded: " + ((Viewpoint) event.getData()).getName());
+			logger.debug("Expanded: " + ((Viewpoint) event.getData()).getName());
 		}
 	}
 
@@ -316,7 +316,7 @@ public class ViewpointController extends AbstractController {
 	}
 
 	public void showViewpointInfoAutomatic(String viewpointName) {
-		LOGGER.info("Showing " + viewpointName);
+		logger.info("Showing " + viewpointName);
 		if (getPercentageAutomatic(viewpointName) == 0.0) {
 			return;
 		}
@@ -343,7 +343,7 @@ public class ViewpointController extends AbstractController {
 	}
 
 	public void showViewpointInfoManual(String viewpointName) {
-		LOGGER.info("Showing " + viewpointName);
+		logger.info("Showing " + viewpointName);
 		if (getPercentageManual(viewpointName) == 0.0) {
 			return;
 		}
@@ -430,11 +430,11 @@ public class ViewpointController extends AbstractController {
 	}
 
 	public double getFormattedPercentageAutomatic(String viewpointName) {
-		return new BigDecimal(getPercentageAutomatic(viewpointName)).setScale(1, BigDecimal.ROUND_FLOOR).doubleValue();
+		return BigDecimal.valueOf(getPercentageAutomatic(viewpointName)).setScale(1, BigDecimal.ROUND_FLOOR).doubleValue();
 	}
 
 	public double getFormattedPercentageManual(String viewpointName) {
-		return new BigDecimal(getPercentageManual(viewpointName)).setScale(1, BigDecimal.ROUND_FLOOR).doubleValue();
+		return BigDecimal.valueOf(getPercentageManual(viewpointName)).setScale(1, BigDecimal.ROUND_FLOOR).doubleValue();
 	}
 
 	private double getPercentageAutomatic(String viewpointName) {
@@ -606,7 +606,7 @@ public class ViewpointController extends AbstractController {
 			csvWriter.flush();
 			csvWriter.close();
 		}catch(IOException ioe) {
-			LOGGER.error("Error generating genetic stats");
+			logger.error("Error generating genetic stats");
 			ioe.printStackTrace();
 		}
 		finally {
@@ -636,7 +636,7 @@ public class ViewpointController extends AbstractController {
 	
 	public double getBestPhenotypeValue () {
 		double value = bestPlanService.getBestPhenotype() != null ? bestPlanService.getBestPhenotype().getFitness() : 0.0;
-		return new BigDecimal(value).setScale(4, BigDecimal.ROUND_FLOOR).doubleValue();
+		return BigDecimal.valueOf(value).setScale(4, BigDecimal.ROUND_FLOOR).doubleValue();
 	}
 	
 	public void updateBestPlanEvolutionPlot() {

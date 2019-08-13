@@ -24,7 +24,7 @@ public class OpenProjectDialogController extends AbstractDialogController {
 
 	private static final long serialVersionUID = -8824006940847003401L;
 
-	static Logger LOGGER = LoggerFactory.getLogger(OpenProjectDialogController.class);
+	static Logger logger = LoggerFactory.getLogger(OpenProjectDialogController.class);
 
 	@Autowired
 	private SessionController sessionController;

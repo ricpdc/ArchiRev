@@ -35,7 +35,7 @@ public class KdmExtractionService implements Serializable {
 	
 	private static final long serialVersionUID = 8291390372516503166L;
 
-	static Logger LOGGER = LoggerFactory.getLogger(KdmExtractionService.class);
+	static Logger logger = LoggerFactory.getLogger(KdmExtractionService.class);
 	
 	private static final String KDM_XSD_ROOT = "target/ArchiRev/WEB-INF/classes/metamodels/";
 	
@@ -93,7 +93,7 @@ public class KdmExtractionService implements Serializable {
 			kdmDocument = sourceCodeParser.generateKdmRelationships(source, kdmDocument);
 			kdmFile = generateKdmModel(kdmModel);
 			long time = System.nanoTime();
-			LOGGER.info(">Time> " + ModelViewEnum.ALL.getLabel() + ": " + (System.nanoTime() - time));
+			logger.info(">Time> " + ModelViewEnum.ALL.getLabel() + ": " + (System.nanoTime() - time));
 		} catch (NoClassDefFoundError | IOException e) {
 			e.printStackTrace();
 		}
@@ -136,10 +136,10 @@ public class KdmExtractionService implements Serializable {
 			Schema schema = schemaFactory.newSchema(schemas);
 			Validator validator = schema.newValidator();
 			validator.validate(kdmFile);
-			LOGGER.debug(kdmFile.getSystemId() + " is valid");
+			logger.debug(kdmFile.getSystemId() + " is valid");
 			return true;
 		} catch (SAXException e) {
-			LOGGER.error(kdmFile.getSystemId() + " is NOT valid reason:" + e);
+			logger.error(kdmFile.getSystemId() + " is NOT valid reason:" + e);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

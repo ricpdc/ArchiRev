@@ -44,7 +44,7 @@ public abstract class AbstractSourceCodeParser implements Serializable {
 
 	private static final long serialVersionUID = -714549315038788426L;
 
-	private static Logger LOGGER = LoggerFactory.getLogger(AbstractSourceCodeParser.class);
+	private static Logger logger = LoggerFactory.getLogger(AbstractSourceCodeParser.class);
 
 	protected static final String MAPPED_SUPERCLASS_ANNOTATION = "MappedSuperclass";
 
@@ -200,11 +200,11 @@ public abstract class AbstractSourceCodeParser implements Serializable {
 					mapPrioritizedRelationship
 							.put((Class<? extends ArchimateElement>) Class.forName(SETUP_CLASS_ROOT + from), tupleMap);
 				} catch (ClassNotFoundException e) {
-					LOGGER.warn("Extraction setup is not valid" + e.getMessage());
+					logger.warn("Extraction setup is not valid" + e.getMessage());
 				}
 			}
 		} catch (Exception ex) {
-			LOGGER.error("Extraction setup is not valid" + ex.getMessage());
+			logger.error("Extraction setup is not valid" + ex.getMessage());
 		}
 	}
 

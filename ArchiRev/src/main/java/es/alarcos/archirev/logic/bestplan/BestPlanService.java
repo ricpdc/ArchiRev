@@ -57,7 +57,7 @@ public class BestPlanService implements Serializable {
 	private static final double MUTATOR_RATE = 0.15;
 	private static final double SINGLE_POINT_CROSSOVER = 0.20;
 
-	static Logger LOGGER = LoggerFactory.getLogger(BestPlanService.class);
+	static Logger logger = LoggerFactory.getLogger(BestPlanService.class);
 
 	public static final String PRIO_AUTOMATIC = "PRIO_AUTOMATIC";
 	public static final String PRIO_MANUAL = "PRIO_MANUAL";
@@ -157,7 +157,7 @@ public class BestPlanService implements Serializable {
 			bestPlan = handleResult(result, statistics);
 			progress = 0;
 		} catch (Exception ex) {
-			LOGGER.error("Error computing best plan with genetic algorithm: ", ex);
+			logger.error("Error computing best plan with genetic algorithm: ", ex);
 			bestPlan.setErrorMessage(ex.getMessage());
 		}
 		return bestPlan;
@@ -448,7 +448,7 @@ public class BestPlanService implements Serializable {
 
 		time = System.currentTimeMillis() - time;
 
-		LOGGER.info("Fitness (in " + time + " ms): " + fitness);
+		logger.info("Fitness (in " + time + " ms): " + fitness);
 
 		return fitness;
 	}
@@ -569,7 +569,7 @@ public class BestPlanService implements Serializable {
 	public void update (final EvolutionResult <IntegerGene, Double> result) {
 		if(bestPhenotype == null || bestPhenotype.compareTo(result.getBestPhenotype())<0) {
 			bestPhenotype = result.getBestPhenotype();
-			LOGGER.info(result.getGeneration() + ": Found best phenotype: " + bestPhenotype);
+			logger.info(result.getGeneration() + ": Found best phenotype: " + bestPhenotype);
 		}
 		evolution.add(result);
 		progress = (int) (100 * result.getGeneration() / MAX_GENERATIONS);

@@ -59,7 +59,7 @@ public class SourcesController extends AbstractController {
 
 	private static final long serialVersionUID = -1637522119751630382L;
 
-	static Logger LOGGER = LoggerFactory.getLogger(SourcesController.class);
+	static Logger logger = LoggerFactory.getLogger(SourcesController.class);
 
 	@Autowired
 	private SessionController sessionController;
@@ -109,12 +109,12 @@ public class SourcesController extends AbstractController {
 	public void onSelectSourceConcern(final AjaxBehaviorEvent event) {
 		sourceType = null;
 		SourceConcernEnum concern = (SourceConcernEnum) ((UIOutput) event.getSource()).getValue();
-		LOGGER.info("Selected concern: " + concern);
+		logger.info("Selected concern: " + concern);
 	}
 
 	public void onSelectSourceType(final AjaxBehaviorEvent event) {
 		SourceEnum type = (SourceEnum) ((UIOutput) event.getSource()).getValue();
-		LOGGER.info("Selected type: " + type);
+		logger.info("Selected type: " + type);
 		allowTypes = "/(\\.|\\/)("+StringUtils.join(type.getExtensions(), "|")+")$/";
 	}
 
@@ -175,7 +175,7 @@ public class SourcesController extends AbstractController {
 					+ getProject().getId() + "_" + fileName + "_" + UUID.randomUUID() + "." + fileExtension));
 			Files.copy(input, filePath, StandardCopyOption.REPLACE_EXISTING);
 		} catch (IOException e) {
-			LOGGER.error(e.getMessage());
+			logger.error(e.getMessage());
 			return null;
 		}
 
@@ -184,7 +184,7 @@ public class SourcesController extends AbstractController {
 
 	public void onRowToggle(ToggleEvent event) {
 		selectedSource = (Source) event.getData();
-		LOGGER.info("Source expanded: " + selectedSource);
+		logger.info("Source expanded: " + selectedSource);
 		computeSourceRoot();
 	}
 
@@ -200,7 +200,7 @@ public class SourcesController extends AbstractController {
 			zipFile = new ZipFile(tempWarFile);
 
 		} catch (IOException e) {
-			LOGGER.error(e.getMessage());
+			logger.error(e.getMessage());
 			return;
 		}
 		finally {
@@ -246,7 +246,7 @@ public class SourcesController extends AbstractController {
 	}
 
 	public void selectNode(ZipEntry node) {
-		LOGGER.info(node.getName() + " selected!");
+		logger.info(node.getName() + " selected!");
 		selectedNode = node;
 		computeDocumentText();
 		RequestContext.getCurrentInstance().update("mainForm:mainTabs:documentViewerDialogId");
@@ -280,7 +280,7 @@ public class SourcesController extends AbstractController {
 				break;
 			}
 		} catch (IOException e) {
-			LOGGER.error(e.getMessage());
+			logger.error(e.getMessage());
 			e.printStackTrace();
 			return;
 		}
@@ -297,7 +297,7 @@ public class SourcesController extends AbstractController {
 		try {
 			javaClass = cp.parse();
 		} catch (ClassFormatException | IOException e) {
-			LOGGER.error(entry.getName() + " cannot be parsed");
+			logger.error(entry.getName() + " cannot be parsed");
 			javaClass = null;
 			return "Error parsing file!";
 		}

@@ -80,7 +80,7 @@ public class ArchimateExtractionService implements Serializable {
 
 	private static final long serialVersionUID = -4392305100176250199L;
 
-	static Logger LOGGER = LoggerFactory.getLogger(ArchimateExtractionService.class);
+	static Logger logger = LoggerFactory.getLogger(ArchimateExtractionService.class);
 
 	private static final String DEFAULT_LANG = "en";
 	private static final String SCHEMA_LOCATION = "http://www.opengroup.org/xsd/archimate/3.0/ http://www.opengroup.org/xsd/archimate/3.0/archimate3_Diagram.xsd http://purl.org/dc/elements/1.1/ http://dublincore.org/schemas/xmls/qdc/2008/02/11/dc.xsd";
@@ -142,7 +142,7 @@ public class ArchimateExtractionService implements Serializable {
 			if (components.get(i).size() > MIN_NUM_NODES_FOR_GRAPH_COMPONENT_VIEW) {
 				long time = System.nanoTime();
 				generateModelViewForComponent(viewType, model, graph, components.get(i), "_" + (i + 1));
-				LOGGER.info(">Time> " + viewType.getLabel() + "_" + (i+1) + ": " + (System.nanoTime() - time));
+				logger.info(">Time> " + viewType.getLabel() + "_" + (i+1) + ": " + (System.nanoTime() - time));
 			}
 		}
 	}
@@ -184,7 +184,7 @@ public class ArchimateExtractionService implements Serializable {
 					modelElementsByClassName);
 			long time = System.nanoTime();
 			generateModelAndDefaultView(model);
-			LOGGER.info(">Time> " + ModelViewEnum.ALL.getLabel() + ": " + (System.nanoTime() - time));
+			logger.info(">Time> " + ModelViewEnum.ALL.getLabel() + ": " + (System.nanoTime() - time));
 			for (ModelViewEnum viewType : model.getExtraction().getSelectedViews()) {
 				if (viewType.equals(ModelViewEnum.ALL)) {
 					continue;
@@ -193,7 +193,7 @@ public class ArchimateExtractionService implements Serializable {
 				} else {
 					time = System.nanoTime();
 					generateModelView(viewType, model);
-					LOGGER.info(">Time> " + viewType.getLabel() + ": " + (System.nanoTime() - time));
+					logger.info(">Time> " + viewType.getLabel() + ": " + (System.nanoTime() - time));
 				}
 			}
 		} catch (NoClassDefFoundError | IOException e) {
@@ -216,8 +216,8 @@ public class ArchimateExtractionService implements Serializable {
 			Set<Relationship> relationships = new TreeSet<>();
 
 			for (Entry<String, List<ArchimateElement>> entry : modelElementsByClassName.entrySet()) {
-				// LOGGER.info("");
-				// LOGGER.info(entry.getKey());
+				// logger.info("");
+				// logger.info(entry.getKey());
 
 				Collections.sort(entry.getValue(), new Comparator<ArchimateElement>() {
 					@Override
@@ -259,7 +259,7 @@ public class ArchimateExtractionService implements Serializable {
 					elements.add(new Element(model, archimateElement));
 					// nodes.put(archimateElement, node);
 
-					// LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + " (\"" +
+					// logger.info("\t" + archimateElement.getClass().getSimpleName() + " (\"" +
 					// archimateElement.getName()
 					// + "\")");
 				}
@@ -270,8 +270,8 @@ public class ArchimateExtractionService implements Serializable {
 			List<String> visitedEdges = new ArrayList<>();
 			graphEdgesMap = new HashMap<>();
 			for (Entry<String, List<ArchimateRelationship>> entry : modelRelationshipsByClassName.entrySet()) {
-				LOGGER.info("");
-				LOGGER.info(entry.getKey());
+				logger.info("");
+				logger.info(entry.getKey());
 
 				for (ArchimateRelationship archimateRelationship : entry.getValue()) {
 
@@ -293,7 +293,7 @@ public class ArchimateExtractionService implements Serializable {
 						visitedEdges.add(edgeId);
 						graphEdgesMap.put(archimateRelationship, edge);
 
-						LOGGER.info("\t" + archimateRelationship.getId());
+						logger.info("\t" + archimateRelationship.getId());
 					}
 				}
 			}
@@ -495,8 +495,8 @@ public class ArchimateExtractionService implements Serializable {
 			parent = graph.getDefaultParent();
 			List<String> visitedEdges = new ArrayList<>();
 			for (Entry<String, List<ArchimateRelationship>> entry : modelRelationshipsByClassName.entrySet()) {
-				LOGGER.info("");
-				LOGGER.info(entry.getKey());
+				logger.info("");
+				logger.info(entry.getKey());
 
 				for (ArchimateRelationship archimateRelationship : entry.getValue()) {
 
@@ -909,10 +909,10 @@ public class ArchimateExtractionService implements Serializable {
 			Schema schema = schemaFactory.newSchema(schemaFile);
 			Validator validator = schema.newValidator();
 			validator.validate(xmlFile);
-			LOGGER.debug(xmlFile.getSystemId() + " is valid");
+			logger.debug(xmlFile.getSystemId() + " is valid");
 			return true;
 		} catch (SAXException e) {
-			LOGGER.error(xmlFile.getSystemId() + " is NOT valid reason:" + e);
+			logger.error(xmlFile.getSystemId() + " is NOT valid reason:" + e);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -966,7 +966,7 @@ public class ArchimateExtractionService implements Serializable {
 					+ UUID.randomUUID() + ".png"));
 
 		} catch (IOException e) {
-			LOGGER.error(e.getMessage());
+			logger.error(e.getMessage());
 			return null;
 		}
 		return filePath.toString();

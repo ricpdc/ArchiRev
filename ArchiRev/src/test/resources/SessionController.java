@@ -10,7 +10,7 @@ public class es.alarcos.archirev.controller.SessionController
 extends es.alarcos.archirev.controller.AbstractController
  {
     private static final long serialVersionUID = -3842898392480923141L;
-    static org.slf4j.Logger LOGGER = org.slf4j.LoggerFactory.getLogger(es.alarcos.archirev.controller.NewProjectDialogController.class);
+    static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(es.alarcos.archirev.controller.NewProjectDialogController.class);
     @org.springframework.beans.factory.annotation.Autowired
     private es.alarcos.archirev.persistency.ProjectDao projectDao;
     private es.alarcos.archirev.model.Project project = new es.alarcos.archirev.model.Project();

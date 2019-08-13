@@ -24,7 +24,7 @@ public class TechniqueDao extends AbstractDao<Technique> {
 
 	private static final long serialVersionUID = -672166759371530731L;
 	
-	static Logger LOGGER = LoggerFactory.getLogger(TechniqueDao.class);
+	static Logger logger = LoggerFactory.getLogger(TechniqueDao.class);
 
 	public TechniqueDao() {
 		super();
@@ -60,7 +60,7 @@ public class TechniqueDao extends AbstractDao<Technique> {
 //			}
 //			
 //		} catch (SQLGrammarException e) {
-//			LOGGER.error(e.getMessage());
+//			logger.error(e.getMessage());
 //		}
 //
 //		return techniqueMapByArtifact;
@@ -90,7 +90,7 @@ public class TechniqueDao extends AbstractDao<Technique> {
 			}
 			
 		} catch (SQLGrammarException e) {
-			LOGGER.error(e.getMessage());
+			logger.error(e.getMessage());
 		}
 
 		return techniqueMapByArtifact;

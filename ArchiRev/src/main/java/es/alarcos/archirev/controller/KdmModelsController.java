@@ -36,7 +36,7 @@ public class KdmModelsController extends AbstractController {
 
 	private static final long serialVersionUID = 1220451072138440791L;
 
-	static Logger LOGGER = LoggerFactory.getLogger(KdmModelsController.class);
+	static Logger logger = LoggerFactory.getLogger(KdmModelsController.class);
 
 	@Autowired
 	private SessionController sessionController;
@@ -85,7 +85,7 @@ public class KdmModelsController extends AbstractController {
 			try {
 				xmlFileBytes = Files.readAllBytes(new File(selectedModel.getSanitizedExportedPath()).toPath());
 			} catch (IOException e) {
-				LOGGER.error(e.getMessage());
+				logger.error(e.getMessage());
 			}
 			exportedFile = new DefaultStreamedContent(new ByteArrayInputStream(xmlFileBytes), "text/xml",
 					new File(selectedModel.getSanitizedExportedPath()).getName());
@@ -94,7 +94,7 @@ public class KdmModelsController extends AbstractController {
 
 	public void onSelectModel(SelectEvent event) {
 		KdmModel model = (KdmModel) event.getObject();
-		LOGGER.info("Selected model: " + model);
+		logger.info("Selected model: " + model);
 		selectedModel = model;
 	}
 
@@ -108,7 +108,7 @@ public class KdmModelsController extends AbstractController {
 			filePath = Files.createFile(Paths.get(folder.getAbsolutePath() + File.separator + "p_"
 					+ getProject().getId() + "_e_" + model.getId() + "_" + UUID.randomUUID() + ".xml"));
 		} catch (IOException e) {
-			LOGGER.error(e.getMessage());
+			logger.error(e.getMessage());
 			return null;
 		}
 		return filePath.toString();
@@ -156,7 +156,7 @@ public class KdmModelsController extends AbstractController {
 			encoded = Files.readAllBytes(Paths.get(selectedModel.getExportedPath()));
 		} catch (IOException e) {
 			e.printStackTrace();
-			LOGGER.error("Error loading kdm file");
+			logger.error("Error loading kdm file");
 		}
 		return encoded == null ? "" : new String(encoded, Charset.defaultCharset());
 	}

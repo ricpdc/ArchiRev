@@ -34,7 +34,7 @@ public enum ConnectorEnum {
 	
 	// @formatter:on
 
-	static Logger LOGGER = LoggerFactory.getLogger(ConnectorEnum.class);
+	static Logger logger = LoggerFactory.getLogger(ConnectorEnum.class);
 
 	private Class<? extends ArchimateRelationship> modelRelationship;
 	private Class<? extends AbstractArchiMateConnector> connectorShape;
@@ -87,7 +87,7 @@ public enum ConnectorEnum {
 			return constructor.newInstance();
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException e) {
-			LOGGER.error("The instance for " + connectorShape.getSimpleName() + " cannot be created");
+			logger.error("The instance for " + connectorShape.getSimpleName() + " cannot be created");
 			return new mxRectangleShape();
 		}
 	}

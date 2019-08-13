@@ -59,7 +59,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 
 	private static final long serialVersionUID = 4197712088221134990L;
 
-	private static Logger LOGGER = LoggerFactory.getLogger(CSharpSourceCodeParser.class);
+	private static Logger logger = LoggerFactory.getLogger(CSharpSourceCodeParser.class);
 
 	private int numberOfCsharpFiles;
 	private Set<String> wrongFiles;
@@ -131,7 +131,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 				parseCsharpFile(zipFile, zipEntry, modelElementsByClassName);
 				numberOfCsharpFiles++;
 			} catch (Exception ex) {
-				LOGGER.error(zipEntry.getName() + " cannot be parsed");
+				logger.error(zipEntry.getName() + " cannot be parsed");
 				// wrongFiles.add(zipEntry.getName());
 			}
 
@@ -243,31 +243,31 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 	
 
 	private void logStats() {
-		LOGGER.info("\n\n\nAnlyzed files: " + numberOfCsharpFiles);
-		LOGGER.info("\n\n\nWrong files: " + wrongFiles.size());
+		logger.info("\n\n\nAnlyzed files: " + numberOfCsharpFiles);
+		logger.info("\n\n\nWrong files: " + wrongFiles.size());
 
 		for (String fileName : wrongFiles) {
-			LOGGER.info(fileName);
+			logger.info(fileName);
 		}
 
-		LOGGER.info("\n\n\n" + classes.size() + " Different unique classes:\n");
+		logger.info("\n\n\n" + classes.size() + " Different unique classes:\n");
 		for (String clazz : classes) {
-			LOGGER.info(clazz);
+			logger.info(clazz);
 		}
 
-		LOGGER.info("\n\n\n" + enums.size() + " Different unique enums:\n");
+		logger.info("\n\n\n" + enums.size() + " Different unique enums:\n");
 		for (String en : enums) {
-			LOGGER.info(en);
+			logger.info(en);
 		}
 
-		LOGGER.info("\n\n\n" + interfaces.size() + " Different unique interfaces:\n");
+		logger.info("\n\n\n" + interfaces.size() + " Different unique interfaces:\n");
 		for (String inter : interfaces) {
-			LOGGER.info(inter);
+			logger.info(inter);
 		}
 
-		LOGGER.info("\n\n\n" + structs.size() + " Different unique structs:\n");
+		logger.info("\n\n\n" + structs.size() + " Different unique structs:\n");
 		for (String st : structs) {
-			LOGGER.info(st);
+			logger.info(st);
 		}
 
 		System.out.println("\n\n\n" + delegates.size() + " Different unique delegates:\n");
@@ -311,7 +311,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			getDeclaredTypes(tree);
 		}
 
-		// LOGGER.info("Parsing.... " + zipEntryName);
+		// logger.info("Parsing.... " + zipEntryName);
 		if (listener.getSyntaxErrors().isEmpty()) {
 			Set<ArchimateElementEnum> uniqueElements = new HashSet<>();
 			boolean mappedSuperclass = false;
@@ -329,7 +329,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 						mappedSuperclass = true;
 					}
 				} else {
-					LOGGER.debug(String.format("Not mapped annotation \"%s\" in class %s", classTag, zipEntryName));
+					logger.debug(String.format("Not mapped annotation \"%s\" in class %s", classTag, zipEntryName));
 				}
 			}
 
@@ -355,7 +355,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		} else {
 			wrongFiles.add(zipEntryName);
 			for (SyntaxError syntaxError : listener.getSyntaxErrors()) {
-				LOGGER.error("\tSYNTACTIC ERROR: " + syntaxError);
+				logger.error("\tSYNTACTIC ERROR: " + syntaxError);
 			}
 		}
 
@@ -397,7 +397,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			getDeclaredTypes(tree);
 		}
 
-		// LOGGER.info("Parsing.... " + zipEntryName);
+		// logger.info("Parsing.... " + zipEntryName);
 		if (listener.getSyntaxErrors().isEmpty()) {
 			Set<ArchimateElementEnum> uniqueElements = new HashSet<>();
 			boolean mappedSuperclass = false;
@@ -424,7 +424,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 //						mappedSuperclass = true;
 //					}
 //				} else {
-//					LOGGER.debug(String.format("Not mapped annotation \"%s\" in class %s", classTag, zipEntryName));
+//					logger.debug(String.format("Not mapped annotation \"%s\" in class %s", classTag, zipEntryName));
 //				}
 				
 				Element annotation = new Element("annotation");
@@ -454,7 +454,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		} else {
 			wrongFiles.add(zipEntryName);
 			for (SyntaxError syntaxError : listener.getSyntaxErrors()) {
-				LOGGER.error("\tSYNTACTIC ERROR: " + syntaxError);
+				logger.error("\tSYNTACTIC ERROR: " + syntaxError);
 			}
 		}
 
@@ -483,21 +483,21 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 				}
 			}
 		} catch (IOException ioe) {
-			LOGGER.error("Exception while reading input " + ioe);
+			logger.error("Exception while reading input " + ioe);
 		} finally {
 			// close the streams using close method
 			try {
 				if (br != null) {
 					br.close();
 				}
-				if (is != null) {
-					is.close();
-				}
 				if (fw != null) {
 					fw.close();
 				}
+				if (is != null) {
+					is.close();
+				}
 			} catch (IOException ioe) {
-				LOGGER.error("Error while closing stream: " + ioe);
+				logger.error("Error while closing stream: " + ioe);
 			}
 		}
 		return tempFile;
@@ -588,7 +588,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 						modelRelationshipsByClassName);
 				numberOfCsharpFiles++;
 			} catch (Exception ex) {
-				LOGGER.error(zipEntry.getName() + " cannot be parsed");
+				logger.error(zipEntry.getName() + " cannot be parsed");
 				ex.printStackTrace();
 			}
 
@@ -639,7 +639,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 				processEntryToKdmRelationship(zipFile, zipEntry, kdmDocument, element);
 				numberOfCsharpFiles++;
 			} catch (Exception ex) {
-				LOGGER.error(zipEntry.getName() + " cannot be parsed");
+				logger.error(zipEntry.getName() + " cannot be parsed");
 				ex.printStackTrace();
 			}
 		}
@@ -672,7 +672,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		Namespace nsXsi = Namespace.getNamespace("xsi", NS_XSI);
 		
 		String zipEntrySimpleName = getSimpleClassName(zipEntry.getName());
-		// LOGGER.info("Parsing.... " + zipEntryName);
+		// logger.info("Parsing.... " + zipEntryName);
 		if (listener.getSyntaxErrors().isEmpty()) {
 			try(Stream<String> lines = Files.lines(tempFile.toPath(), Charset.defaultCharset())) {
 				msg += (lines.count() + ";");
@@ -700,7 +700,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		} else {
 			wrongFiles.add(zipEntry.getName());
 			for (SyntaxError syntaxError : listener.getSyntaxErrors()) {
-				LOGGER.error("\tSYNTACTIC ERROR: " + syntaxError);
+				logger.error("\tSYNTACTIC ERROR: " + syntaxError);
 			}
 		}
 	}
@@ -732,7 +732,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		}
 
 		String zipEntrySimpleName = getSimpleClassName(zipEntry.getName());
-		// LOGGER.info("Parsing.... " + zipEntryName);
+		// logger.info("Parsing.... " + zipEntryName);
 		if (listener.getSyntaxErrors().isEmpty()) {
 			Set<String> visitedRelationships = new HashSet<>();
 			try(Stream<String> lines = Files.lines(tempFile.toPath(), Charset.defaultCharset())) {
@@ -762,7 +762,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		} else {
 			wrongFiles.add(zipEntry.getName());
 			for (SyntaxError syntaxError : listener.getSyntaxErrors()) {
-				LOGGER.error("\tSYNTACTIC ERROR: " + syntaxError);
+				logger.error("\tSYNTACTIC ERROR: " + syntaxError);
 			}
 		}
 	}
@@ -774,7 +774,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 				IdentifierContext idContext = (IdentifierContext) subTree;
 				String name = idContext.IDENTIFIER() != null ? idContext.IDENTIFIER().getText() : idContext.getText();
 				callsToCallableUnits.add(name);
-				// LOGGER.info(name);
+				// logger.info(name);
 			}
 			getCallToCallableUnits(subTree);
 		}

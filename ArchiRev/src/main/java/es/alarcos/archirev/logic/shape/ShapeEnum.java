@@ -29,7 +29,7 @@ public enum ShapeEnum {
 	
 	// @formatter:on
 
-	static Logger LOGGER = LoggerFactory.getLogger(ShapeEnum.class);
+	static Logger logger = LoggerFactory.getLogger(ShapeEnum.class);
 
 	private Class<? extends ArchimateElement> modelElement;
 	private Class<? extends mxBasicShape> shape;
@@ -71,7 +71,7 @@ public enum ShapeEnum {
 			return constructor.newInstance();
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException
 				| IllegalArgumentException | InvocationTargetException e) {
-			LOGGER.error("The instance for " + shape.getSimpleName() + " cannot be created");
+			logger.error("The instance for " + shape.getSimpleName() + " cannot be created");
 			return new mxRectangleShape();
 		}
 	}

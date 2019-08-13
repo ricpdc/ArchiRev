@@ -29,7 +29,7 @@ public class SessionController extends AbstractController {
 
 	private static final long serialVersionUID = -3842898392480923141L;
 
-	static Logger LOGGER = LoggerFactory.getLogger(NewProjectDialogController.class);
+	static Logger logger = LoggerFactory.getLogger(NewProjectDialogController.class);
 
 	@Autowired
 	private ProjectDao projectDao;
@@ -73,7 +73,7 @@ public class SessionController extends AbstractController {
 	}
 
 	public void onTabChange(TabChangeEvent event) {
-		LOGGER.debug("Tab Changed", "Active Tab: " + event.getTab().getTitle());
+		logger.debug("Tab Changed", "Active Tab: " + event.getTab().getTitle());
 		switch (activeTab) {
 		case 0:
 			break;

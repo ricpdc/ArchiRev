@@ -107,7 +107,7 @@ class BusinessTest {
 
 	private static final String MAPPED_SUPERCLASS_ANNOTATION = "MappedSuperclass";
 
-	static Logger LOGGER = LoggerFactory.getLogger(BusinessTest.class);
+	static Logger logger = LoggerFactory.getLogger(BusinessTest.class);
 
 	//private final Decompiler decompiler = Decompiler.CFR;
 	//private final DecompilerSettings settings = new DecompilerSettings(decompiler);
@@ -292,10 +292,10 @@ class BusinessTest {
 
 			// for (Entry<Class, List<ArchimateElement>> entry : modelElements.entrySet()) {
 			// Class clazz = entry.getKey();
-			// LOGGER.info("");
-			// LOGGER.info(clazz.getName());
+			// logger.info("");
+			// logger.info(clazz.getName());
 			// for (ArchimateElement archimateElement : entry.getValue()) {
-			// LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + ": " +
+			// logger.info("\t" + archimateElement.getClass().getSimpleName() + ": " +
 			// archimateElement.getName());
 			// }
 			// }
@@ -356,7 +356,7 @@ class BusinessTest {
 			try {
 				javaClass = cp.parse();
 			} catch (ClassFormatException | IOException e) {
-				LOGGER.error(entry.getName() + " cannot be parsed");
+				logger.error(entry.getName() + " cannot be parsed");
 				javaClass = null;
 				continue;
 			}
@@ -365,7 +365,7 @@ class BusinessTest {
 			boolean mappedSuperclass = false;
 			for (AnnotationEntry annotationEntry : javaClass.getAnnotationEntries()) {
 				String annotationType = annotationEntry.getAnnotationType();
-				// LOGGER.debug(String.format("[%s]: @%s", javaClass.getClassName(),
+				// logger.debug(String.format("[%s]: @%s", javaClass.getClassName(),
 				// annotationType));
 				String annotation = annotationType.substring(annotationType.lastIndexOf("/") + 1,
 						annotationType.length() - 1);
@@ -437,7 +437,7 @@ class BusinessTest {
 			try {
 				javaClass = cp.parse();
 			} catch (ClassFormatException | IOException e) {
-				LOGGER.error(entry.getName() + " cannot be parsed");
+				logger.error(entry.getName() + " cannot be parsed");
 				javaClass = null;
 				continue;
 			}
@@ -452,7 +452,7 @@ class BusinessTest {
 					if (constant.getTag() == 7) {
 						String referencedClass = javaClass.getConstantPool().constantToString(constant);
 						if (modelElementsByClassName.containsKey(referencedClass)) {
-							// LOGGER.debug(String.format("[%s] --> %s", javaClass.getClassName(),
+							// logger.debug(String.format("[%s] --> %s", javaClass.getClassName(),
 							// referencedClass));
 
 							List<ArchimateElement> sourceElements = modelElementsByClassName
@@ -533,7 +533,7 @@ class BusinessTest {
 		File warFile = new File(warPath);
 
 		if (!warFile.exists()) {
-			LOGGER.error("War file " + warPath + " does not exist");
+			logger.error("War file " + warPath + " does not exist");
 		}
 
 		ZipFile zipFile = new ZipFile(warFile);
@@ -553,8 +553,8 @@ class BusinessTest {
 		try {
 			Map<ArchimateElement, Object> nodes = new HashMap<>();
 			for (Entry<String, List<ArchimateElement>> entry : modelElementsByClassName.entrySet()) {
-				// LOGGER.info("");
-				// LOGGER.info(entry.getKey());
+				// logger.info("");
+				// logger.info(entry.getKey());
 				Collections.sort(entry.getValue(), new Comparator<ArchimateElement>() {
 					@Override
 					public int compare(ArchimateElement o1, ArchimateElement o2) {
@@ -594,7 +594,7 @@ class BusinessTest {
 					nodes.put(archimateElement, componentNode != null ? componentNode : node);
 					// nodes.put(archimateElement, node);
 
-					// LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + " (\"" +
+					// logger.info("\t" + archimateElement.getClass().getSimpleName() + " (\"" +
 					// archimateElement.getName()
 					// + "\")");
 				}
@@ -604,8 +604,8 @@ class BusinessTest {
 			parent = graph.getDefaultParent();
 			List<String> visitedEdges = new ArrayList<>();
 			for (Entry<String, List<ArchimateRelationship>> entry : modelRelationshipsByClassName.entrySet()) {
-				LOGGER.info("");
-				LOGGER.info(entry.getKey());
+				logger.info("");
+				logger.info(entry.getKey());
 
 				for (ArchimateRelationship archimateRelationship : entry.getValue()) {
 
@@ -625,7 +625,7 @@ class BusinessTest {
 
 					visitedEdges.add(edgeId);
 
-					LOGGER.info("\t" + archimateRelationship.getId());
+					logger.info("\t" + archimateRelationship.getId());
 				}
 			}
 		} finally {
@@ -684,8 +684,8 @@ class BusinessTest {
 
 			Map<ArchimateElement, Object> nodes = new HashMap<>();
 			for (Entry<String, List<ArchimateElement>> entry : modelElementsByClassName.entrySet()) {
-				// LOGGER.info("");
-				// LOGGER.info(entry.getKey());
+				// logger.info("");
+				// logger.info(entry.getKey());
 				Collections.sort(entry.getValue(), new Comparator<ArchimateElement>() {
 					@Override
 					public int compare(ArchimateElement o1, ArchimateElement o2) {
@@ -724,7 +724,7 @@ class BusinessTest {
 
 					nodes.put(archimateElement, componentNode != null ? componentNode : node);
 
-					// LOGGER.info("\t" + archimateElement.getClass().getSimpleName() + " (\"" +
+					// logger.info("\t" + archimateElement.getClass().getSimpleName() + " (\"" +
 					// archimateElement.getName()
 					// + "\")");
 				}
@@ -736,8 +736,8 @@ class BusinessTest {
 
 			Map<ArchimateRelationship, Object> edges = new HashMap<>();
 			for (Entry<String, List<ArchimateRelationship>> entry : modelRelationshipsByClassName.entrySet()) {
-				LOGGER.info("");
-				LOGGER.info(entry.getKey());
+				logger.info("");
+				logger.info(entry.getKey());
 
 				for (ArchimateRelationship archimateRelationship : entry.getValue()) {
 
@@ -758,7 +758,7 @@ class BusinessTest {
 					visitedEdges.add(edgeId);
 					edges.put(archimateRelationship, edge);
 
-					LOGGER.info("\t" + archimateRelationship.getId());
+					logger.info("\t" + archimateRelationship.getId());
 				}
 			}
 
@@ -789,7 +789,7 @@ class BusinessTest {
 			String xmlFileName = "C:\\Users\\Alarcos\\git\\ArchiRev\\ArchiRev\\target\\diagrams\\" + name + ".xml";
 			xmlOutput.output(doc, new FileWriter(xmlFileName));
 
-			LOGGER.info("File saved and being validated...");
+			logger.info("File saved and being validated...");
 
 			return validateXmlFile(xmlFileName);
 
@@ -812,10 +812,10 @@ class BusinessTest {
 			Schema schema = schemaFactory.newSchema(schemaFile);
 			Validator validator = schema.newValidator();
 			validator.validate(xmlFile);
-			LOGGER.debug(xmlFile.getSystemId() + " is valid");
+			logger.debug(xmlFile.getSystemId() + " is valid");
 			return true;
 		} catch (SAXException e) {
-			LOGGER.error(xmlFile.getSystemId() + " is NOT valid reason:" + e);
+			logger.error(xmlFile.getSystemId() + " is NOT valid reason:" + e);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

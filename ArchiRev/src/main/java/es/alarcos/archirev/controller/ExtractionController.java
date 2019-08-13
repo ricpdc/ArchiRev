@@ -55,7 +55,7 @@ public class ExtractionController extends AbstractController {
 
 	private static final long serialVersionUID = -1637522119751630382L;
 
-	static Logger LOGGER = LoggerFactory.getLogger(ExtractionController.class);
+	static Logger logger = LoggerFactory.getLogger(ExtractionController.class);
 
 	private static final String DEFAULT_SETUP_PATH = "/json/default_setup.json";
 
@@ -129,7 +129,7 @@ public class ExtractionController extends AbstractController {
 			byte[] encoded = Files.readAllBytes(Paths.get(absoluteDiskPath));
 			setupText = new String(encoded, StandardCharsets.UTF_8);
 		} catch (IOException e) {
-			LOGGER.error("Error loading default setup for model extraction");
+			logger.error("Error loading default setup for model extraction");
 		}
 	}
 
@@ -283,7 +283,7 @@ public class ExtractionController extends AbstractController {
 			filePath = Files.createFile(Paths.get(folder.getAbsolutePath() + File.separator + "p_"
 					+ getProject().getId() + "_kdm_" + model.getExtraction().getName() + "_" + UUID.randomUUID() + ".kdm"));
 		} catch (IOException e) {
-			LOGGER.error(e.getMessage());
+			logger.error(e.getMessage());
 			return null;
 		}
 		return filePath.toString();

@@ -9,9 +9,9 @@ public abstract class AbstractController implements Serializable {
 
 	private static final long serialVersionUID = -6866990404513164660L;
 
-	static Logger LOGGER = LoggerFactory.getLogger(AbstractController.class);
+	static Logger logger = LoggerFactory.getLogger(AbstractController.class);
 
 	void init() {
-		LOGGER.info("Initializing... " + getClass().getSimpleName());
+		logger.info("Initializing... " + getClass().getSimpleName());
 	}
 }

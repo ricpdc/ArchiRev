@@ -16,7 +16,7 @@ import com.mxgraph.view.mxCellState;
 
 public abstract class AbstractArchiMateRectangleShape extends mxRectangleShape {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractArchiMateRectangleShape.class);
+	private static final Logger logger = LoggerFactory.getLogger(AbstractArchiMateRectangleShape.class);
 
 	@Override
 	public void paintShape(mxGraphics2DCanvas canvas, mxCellState state) {
@@ -30,7 +30,7 @@ public abstract class AbstractArchiMateRectangleShape extends mxRectangleShape {
 		try {
 			image = ImageIO.read(new File(getCornerImagePath()));
 		} catch (IOException e) {
-			LOGGER.error(e.getMessage());
+			logger.error(e.getMessage());
 		} finally {
 			g.drawImage(image, (int) (state.getX()+state.getWidth() - 20), (int) (state.getY() + 5), 15, 15,
 					canvas.getRendererPane());
