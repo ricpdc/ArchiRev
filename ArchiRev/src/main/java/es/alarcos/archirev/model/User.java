@@ -14,9 +14,6 @@ public class User extends AbstractEntity {
 
 	private static final long serialVersionUID = 3143558875585472176L;
 
-	@Column(name = "name")
-	private String name;
-
 	@Column(name = "password")
 	private String password;
 	

@@ -20,9 +20,6 @@ public class InputArtifact extends AbstractEntity {
 
 	private static final long serialVersionUID = -7335335746169001436L;
 
-	@Column(name = "name")
-	private String name;
-
 	@Column(name = "description")
 	private String description;
 	

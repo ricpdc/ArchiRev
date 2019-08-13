@@ -20,9 +20,6 @@ public class Scope extends AbstractEntity {
 
 	private static final long serialVersionUID = 4901676425961677103L;
 
-	@Column(name = "name")
-	private String name;
-
 	@Column(name = "description")
 	private String description;
 	

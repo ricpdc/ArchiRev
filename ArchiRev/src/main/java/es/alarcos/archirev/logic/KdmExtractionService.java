@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import javax.inject.Singleton;
 import javax.xml.XMLConstants;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -122,6 +123,8 @@ public class KdmExtractionService implements Serializable {
 		StreamSource kdmFile = new StreamSource(new File(kdmFileName));
 		try {
 			SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			schemaFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
+			schemaFactory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
 			
 			javax.xml.transform.Source[] schemas = new javax.xml.transform.Source[5];
 			schemas[0] = new StreamSource(new File(KDM_XSD_ROOT+"KDM.core.xsd"));

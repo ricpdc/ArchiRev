@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
@@ -95,9 +96,9 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		MultiValueMap<String, ArchimateElement> modelElementsByClassName = new LinkedMultiValueMap<>();
 
 		File tempZipFile = File.createTempFile("zipFile", ".tmp", null);
-		FileOutputStream fos = new FileOutputStream(tempZipFile);
-		fos.write(zipSource.getFile());
-		fos.close();
+		try(FileOutputStream fos = new FileOutputStream(tempZipFile)){
+			fos.write(zipSource.getFile());
+		}
 
 		ZipFile zipFile = getZipFile(tempZipFile);
 
@@ -153,9 +154,9 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		entriesToKdmElementMap = new HashMap<String, Element>();
 
 		File tempZipFile = File.createTempFile("zipFile", ".tmp", null);
-		FileOutputStream fos = new FileOutputStream(tempZipFile);
-		fos.write(zipSource.getFile());
-		fos.close();
+		try(FileOutputStream fos = new FileOutputStream(tempZipFile)){
+			fos.write(zipSource.getFile());
+		}
 
 		ZipFile zipFile = getZipFile(tempZipFile);
 
@@ -332,7 +333,9 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 				}
 			}
 
-			msg += (Files.lines(tempFile.toPath(), Charset.defaultCharset()).count() + ";");
+			try(Stream<String> lines = Files.lines(tempFile.toPath(), Charset.defaultCharset())) {
+				msg += (lines.count() + ";");
+			}
 			msg += ((System.nanoTime() - time) + ";");
 			time = System.nanoTime();
 
@@ -429,7 +432,9 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 				element.addContent(annotation);
 			}
 
-			msg += (Files.lines(tempFile.toPath(), Charset.defaultCharset()).count() + ";");
+			try(Stream<String> lines = Files.lines(tempFile.toPath(), Charset.defaultCharset())) {
+				msg += (lines.count() + ";");
+			}
 			msg += ((System.nanoTime() - time) + ";");
 			time = System.nanoTime();
 
@@ -460,13 +465,15 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 	
 	
 	private File getTempFileWithoutDirectives(final ZipFile zipFile, final ZipEntry zipEntry) throws IOException {
-		File tempFile = File.createTempFile(zipFile.getName(), "-withoutDirectives.tmp");
-		FileWriter fw = new FileWriter(tempFile);
+		File tempFile = null;
+		FileWriter fw = null;
 
 		InputStream is = null;
 		BufferedReader br = null;
 
 		try {
+			tempFile = File.createTempFile(zipFile.getName(), "-withoutDirectives.tmp");
+			fw = new FileWriter(tempFile);
 			is = zipFile.getInputStream(zipEntry);
 			br = new BufferedReader(new InputStreamReader(is));
 			String line = null;
@@ -482,6 +489,9 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			try {
 				if (br != null) {
 					br.close();
+				}
+				if (is != null) {
+					is.close();
 				}
 				if (fw != null) {
 					fw.close();
@@ -542,9 +552,9 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		wrongFiles = new HashSet<>();
 
 		File tempZipFile = File.createTempFile("zipFile", ".tmp", null);
-		FileOutputStream fos = new FileOutputStream(tempZipFile);
-		fos.write(zipSource.getFile());
-		fos.close();
+		try(FileOutputStream fos = new FileOutputStream(tempZipFile)) {
+			fos.write(zipSource.getFile());
+		}
 
 		ZipFile zipFile = getZipFile(tempZipFile);
 
@@ -595,9 +605,9 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		wrongFiles = new HashSet<>();
 
 		File tempZipFile = File.createTempFile("zipFile", ".tmp", null);
-		FileOutputStream fos = new FileOutputStream(tempZipFile);
-		fos.write(zipSource.getFile());
-		fos.close();
+		try(FileOutputStream fos = new FileOutputStream(tempZipFile)) {
+			fos.write(zipSource.getFile());
+		}
 
 		ZipFile zipFile = getZipFile(tempZipFile);
 
@@ -664,7 +674,9 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		String zipEntrySimpleName = getSimpleClassName(zipEntry.getName());
 		// LOGGER.info("Parsing.... " + zipEntryName);
 		if (listener.getSyntaxErrors().isEmpty()) {
-			msg += (Files.lines(tempFile.toPath(), Charset.defaultCharset()).count() + ";");
+			try(Stream<String> lines = Files.lines(tempFile.toPath(), Charset.defaultCharset())) {
+				msg += (lines.count() + ";");
+			}
 			msg += ((System.nanoTime() - time) + ";");
 			time = System.nanoTime();
 			String from = kdmElementsIds.get(zipEntrySimpleName);
@@ -723,7 +735,9 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		// LOGGER.info("Parsing.... " + zipEntryName);
 		if (listener.getSyntaxErrors().isEmpty()) {
 			Set<String> visitedRelationships = new HashSet<>();
-			msg += (Files.lines(tempFile.toPath(), Charset.defaultCharset()).count() + ";");
+			try(Stream<String> lines = Files.lines(tempFile.toPath(), Charset.defaultCharset())) {
+				msg += (lines.count() + ";");
+			}
 			msg += ((System.nanoTime() - time) + ";");
 			time = System.nanoTime();
 			for (String referencedClass : callsToCallableUnits) {

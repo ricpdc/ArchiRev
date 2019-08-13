@@ -20,9 +20,6 @@ public class Technique extends AbstractEntity {
 
 	private static final long serialVersionUID = 8114299468584843872L;
 
-	@Column(name = "name")
-	private String name;
-
 	@Column(name = "description")
 	private String description;
 	

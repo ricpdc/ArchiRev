@@ -567,9 +567,10 @@ public class ViewpointController extends AbstractController {
 		List<EvolutionResult<IntegerGene,Double>> evolution = bestPlanService.getEvolution();
 		File file = new File("C:\\Temp\\genetic\\genetic_stats_"+System.currentTimeMillis()+".csv");
 		
+		FileWriter csvWriter = null;
 		try{
 			file.createNewFile();
-			FileWriter csvWriter = new FileWriter(file);
+			csvWriter = new FileWriter(file);
 			String header = "#Gen;Fitness Avg.;Fitness Min;Fitness Max;Individuals;Altered;Killed;Invalids;Offspring Alter Time;Offspring Filter Time;"+
 					"Offspring Selection Time;Survivor Filter Time;Survivor Selection Time;Evaluation Time;Evolve Time\n";
 			csvWriter.append(header);
@@ -607,6 +608,15 @@ public class ViewpointController extends AbstractController {
 		}catch(IOException ioe) {
 			LOGGER.error("Error generating genetic stats");
 			ioe.printStackTrace();
+		}
+		finally {
+			try {
+				if(csvWriter!=null) {
+					csvWriter.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		

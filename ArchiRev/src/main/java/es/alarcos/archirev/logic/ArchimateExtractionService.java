@@ -30,6 +30,7 @@ import java.util.UUID;
 import javax.imageio.ImageIO;
 import javax.inject.Singleton;
 import javax.xml.XMLConstants;
+import javax.xml.stream.XMLInputFactory;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -903,6 +904,8 @@ public class ArchimateExtractionService implements Serializable {
 		StreamSource xmlFile = new StreamSource(new File(xmlFileName));
 		SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		try {
+			schemaFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
+			schemaFactory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
 			Schema schema = schemaFactory.newSchema(schemaFile);
 			Validator validator = schema.newValidator();
 			validator.validate(xmlFile);

@@ -81,13 +81,15 @@ public class KdmModelsController extends AbstractController {
 		if (selectedModel == null) {
 			exportedFile = null;
 		}
-		try {
-			xmlFileBytes = Files.readAllBytes(new File(selectedModel.getSanitizedExportedPath()).toPath());
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage());
+		else {
+			try {
+				xmlFileBytes = Files.readAllBytes(new File(selectedModel.getSanitizedExportedPath()).toPath());
+			} catch (IOException e) {
+				LOGGER.error(e.getMessage());
+			}
+			exportedFile = new DefaultStreamedContent(new ByteArrayInputStream(xmlFileBytes), "text/xml",
+					new File(selectedModel.getSanitizedExportedPath()).getName());
 		}
-		exportedFile = new DefaultStreamedContent(new ByteArrayInputStream(xmlFileBytes), "text/xml",
-				new File(selectedModel.getSanitizedExportedPath()).getName());
 	}
 
 	public void onSelectModel(SelectEvent event) {

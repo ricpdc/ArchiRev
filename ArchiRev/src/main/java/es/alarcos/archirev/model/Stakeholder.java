@@ -21,9 +21,6 @@ public class Stakeholder extends AbstractEntity {
 
 	private static final long serialVersionUID = 3521764823648498872L;
 
-	@Column(name = "name")
-	private String name;
-
 	@Column(name = "description")
 	private String description;
 

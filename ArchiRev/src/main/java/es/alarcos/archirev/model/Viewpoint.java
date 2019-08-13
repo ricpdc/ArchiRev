@@ -28,9 +28,6 @@ public class Viewpoint extends AbstractEntity {
 
 	private static final long serialVersionUID = 326421301169883035L;
 
-	@Column(name = "name")
-	private String name;
-
 	@Column(name = "explanation")
 	private String explanation;
 

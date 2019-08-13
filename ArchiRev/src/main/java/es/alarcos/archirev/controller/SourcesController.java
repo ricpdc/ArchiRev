@@ -191,10 +191,10 @@ public class SourcesController extends AbstractController {
 	@SuppressWarnings({ "resource", "unchecked" })
 	private void computeSourceRoot() {
 		sourceRoot = new DefaultTreeNode(new ZipEntry(selectedSource.getName()), null);
+		FileOutputStream fos = null;
 		try {
-
 			File tempWarFile = File.createTempFile("warFile", ".tmp", null);
-			FileOutputStream fos = new FileOutputStream(tempWarFile);
+			fos = new FileOutputStream(tempWarFile);
 			fos.write(selectedSource.getFile());
 			fos.close();
 			zipFile = new ZipFile(tempWarFile);
@@ -202,6 +202,15 @@ public class SourcesController extends AbstractController {
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());
 			return;
+		}
+		finally {
+			if(fos!=null) {
+				try {
+					fos.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 
 		directories = new Hashtable<String, TreeNode>();
@@ -262,11 +271,13 @@ public class SourcesController extends AbstractController {
 				break;
 			case "xhtml":
 				documentTextType = "htmlmixed";
+				break;
 			case "xml":
 				documentTextType = "xml";
 				break;
 			default:
 				documentTextType = "htmlmixed";
+				break;
 			}
 		} catch (IOException e) {
 			LOGGER.error(e.getMessage());

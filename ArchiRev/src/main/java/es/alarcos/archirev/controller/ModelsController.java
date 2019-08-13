@@ -113,13 +113,15 @@ public class ModelsController extends AbstractController {
 		if (selectedModel == null) {
 			exportedFile = null;
 		}
-		try {
-			xmlFileBytes = Files.readAllBytes(new File(selectedModel.getSanitizedExportedPath()).toPath());
-		} catch (IOException e) {
-			LOGGER.error(e.getMessage());
-		}
-		exportedFile = new DefaultStreamedContent(new ByteArrayInputStream(xmlFileBytes), "text/xml",
+		else {
+			try {
+				xmlFileBytes = Files.readAllBytes(new File(selectedModel.getSanitizedExportedPath()).toPath());
+			} catch (IOException e) {
+				LOGGER.error(e.getMessage());
+			}
+			exportedFile = new DefaultStreamedContent(new ByteArrayInputStream(xmlFileBytes), "text/xml",
 				selectedModel.getName() + ".xml");
+		}
 	}
 
 	public void openMetricsDialog() {
