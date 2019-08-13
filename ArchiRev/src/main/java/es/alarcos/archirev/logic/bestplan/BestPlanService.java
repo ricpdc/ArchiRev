@@ -49,11 +49,11 @@ import io.jenetics.util.Factory;
 @Service
 public class BestPlanService {
 
-	private static final int POPULATION_SIZE = 10;
-	private static final int MAX_GENERATIONS = 5;
+	private static final int POPULATION_SIZE = 50;
+	private static final int MAX_GENERATIONS = 20;
 	private static final int STEADY_FITNESS_LIMIT = 5;
-	private static final double MUTATOR_RATE = 0.115;
-	private static final double SINGLE_POINT_CROSSOVER = 0.16;
+	private static final double MUTATOR_RATE = 0.15;
+	private static final double SINGLE_POINT_CROSSOVER = 0.20;
 
 	static Logger LOGGER = LoggerFactory.getLogger(BestPlanService.class);
 

@@ -1,6 +1,8 @@
 package es.alarcos.archirev.controller;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
@@ -31,9 +33,8 @@ import org.primefaces.model.chart.AxisType;
 import org.primefaces.model.chart.BarChartModel;
 import org.primefaces.model.chart.ChartSeries;
 import org.primefaces.model.chart.HorizontalBarChartModel;
-import org.primefaces.model.chart.MeterGaugeChartModel;
 import org.primefaces.model.chart.LineChartModel;
-import org.primefaces.model.chart.OhlcChartSeries;
+import org.primefaces.model.chart.MeterGaugeChartModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,9 +57,8 @@ import es.alarcos.archirev.persistency.StakeholderDao;
 import es.alarcos.archirev.persistency.ViewpointDao;
 import es.alarcos.archirev.persistency.ViewpointElementDao;
 import io.jenetics.IntegerGene;
+import io.jenetics.engine.EvolutionDurations;
 import io.jenetics.engine.EvolutionResult;
-import io.jenetics.engine.EvolutionStatistics;
-import io.jenetics.stat.DoubleMomentStatistics;
 
 @ManagedBean(name = "viewpointController")
 @Controller
@@ -565,6 +565,49 @@ public class ViewpointController extends AbstractController {
 	private void generateEvolutionStats() {
 		// TODO generate a CSV or similar from evolution data
 		List<EvolutionResult<IntegerGene,Double>> evolution = bestPlanService.getEvolution();
+		File file = new File("C:\\Temp\\genetic\\genetic_stats_"+System.currentTimeMillis()+".csv");
+		
+		try{
+			file.createNewFile();
+			FileWriter csvWriter = new FileWriter(file);
+			String header = "#Gen;Fitness Avg.;Fitness Min;Fitness Max;Individuals;Altered;Killed;Invalids;Offspring Alter Time;Offspring Filter Time;"+
+					"Offspring Selection Time;Survivor Filter Time;Survivor Selection Time;Evaluation Time;Evolve Time\n";
+			csvWriter.append(header);
+			String line="";
+			for (int i = 0; i < evolution.size(); i++) {
+				EvolutionResult<IntegerGene, Double> generation = evolution.get(i);
+				
+				line = "" + generation.getGeneration();
+				
+				line += (";" + generation.getPopulation().stream().mapToDouble(g-> g.getFitness()).average().getAsDouble()).replace(".", ",");
+				line += (";" + generation.getPopulation().stream().mapToDouble(g-> g.getFitness()).min().getAsDouble()).replace(".", ",");
+				line += (";" + generation.getPopulation().stream().mapToDouble(g-> g.getFitness()).max().getAsDouble()).replace(".", ",");
+							
+				line += (";" + generation.getPopulation().size());
+	
+				line += (";" + generation.getAlterCount());
+				line += (";" + generation.getKillCount());
+				line += (";" + generation.getInvalidCount());
+				
+				final EvolutionDurations durations = generation.getDurations();
+				line += (";" + (durations.getOffspringAlterDuration().getSeconds() * 1000000000 + durations.getOffspringAlterDuration().getNano()));
+				line += (";" + (durations.getOffspringFilterDuration().getSeconds() * 1000000000 + durations.getOffspringFilterDuration().getNano()));
+				line += (";" + (durations.getOffspringSelectionDuration().getSeconds() * 1000000000 + durations.getOffspringSelectionDuration().getNano()));
+				line += (";" + (durations.getSurvivorFilterDuration().getSeconds() * 1000000000 + durations.getSurvivorFilterDuration().getNano()));
+				line += (";" + (durations.getSurvivorsSelectionDuration().getSeconds() * 1000000000 + durations.getSurvivorsSelectionDuration().getNano()));
+				line += (";" + (durations.getEvaluationDuration().getSeconds() * 1000000000 + durations.getEvaluationDuration().getNano())); // the duration needed for evaluating the fitness function of the new individuals
+				line += (";" + (durations.getEvolveDuration().getSeconds() * 1000000000 + durations.getEvolveDuration().getNano()));
+				
+				line += "\n";
+				
+				csvWriter.append(line);
+			}
+			csvWriter.flush();
+			csvWriter.close();
+		}catch(IOException ioe) {
+			LOGGER.error("Error generating genetic stats");
+			ioe.printStackTrace();
+		}
 		
 		
 	}
