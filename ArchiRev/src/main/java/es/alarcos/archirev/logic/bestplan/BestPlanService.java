@@ -388,12 +388,12 @@ public class BestPlanService {
 		if (PRIO_MANUAL.equals(priorityBestPlan) && MAX_PERFORMANCE.equals(maximizationBestPlan)) {
 			w2 = MODERATE;
 			w3 = LOW;
-			w4 = MODERATE;
-			w5 = LOW;
+			w4 = LOW;
+			w5 = MODERATE;
 		} else if (PRIO_MANUAL.equals(priorityBestPlan) && MAX_COMPLETED_VIEWPOINTS.equals(maximizationBestPlan)) {
 			w4 = MODERATE;
 			w5 = LOW;
-			w7 = MODERATE;
+			w8 = MODERATE;
 			w9 = LOW;
 		}
 		if (PRIO_BEST.equals(priorityBestPlan) && MAX_PERFORMANCE.equals(maximizationBestPlan)) {
