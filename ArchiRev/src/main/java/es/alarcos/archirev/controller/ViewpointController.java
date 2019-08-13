@@ -754,6 +754,13 @@ public class ViewpointController extends AbstractController {
 	private void loadDefaultSetup() {
 		priorityBestPlan = BestPlanService.PRIO_AUTOMATIC;
 		maximizationBestPlan = BestPlanService.MAX_PERFORMANCE;
+		
+		if(!artifactPickerList.getTarget().isEmpty() && stakeholderPickerList.getTarget().isEmpty()) {
+			priorityBestPlan = BestPlanService.PRIO_AUTOMATIC;
+		}
+		else if (artifactPickerList.getTarget().isEmpty() && !stakeholderPickerList.getTarget().isEmpty()) {
+			priorityBestPlan = BestPlanService.PRIO_MANUAL;
+		}
 	}
 
 	private void closeSetupDialog() {

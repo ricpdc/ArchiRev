@@ -8,7 +8,7 @@
 		header="Configuratio for computing the best plan for viewpoint generation"
 		id="setupBestPlanDialog" widgetVar="setupBestPlanDialog" modal="true"
 		height="240" width="670" closable="true" closeOnEscape="true">
-		<p:outputPanel id="stupBestPlanDialogPanel"
+		<p:outputPanel id="setupBestPlanDialogPanel"
 			style="paddign:0px;border:none;">
 
 			<h:panelGrid columns="1" style="margin-bottom:10px" cellpadding="5">
@@ -16,9 +16,9 @@
 					value="#{viewpointController.priorityBestPlan}" layout="grid"
 					columns="1">
 					<f:selectItem id="prioAutomatic" itemLabel="prioritize automatic"
-						itemValue="PRIO_AUTOMATIC" />
-					<f:selectItem itemLabel="prioritize manual" itemValue="PRIO_MANUAL" />
-					<f:selectItem itemLabel="best" itemValue="PRIO_BEST" />
+						itemValue="PRIO_AUTOMATIC" itemDisabled="#{empty viewpointController.artifactPickerList.target}"/>
+					<f:selectItem itemLabel="prioritize manual" itemValue="PRIO_MANUAL" itemDisabled="#{empty viewpointController.stakeholderPickerList.target}" />
+					<f:selectItem itemLabel="best" itemValue="PRIO_BEST"  itemDisabled="#{empty viewpointController.artifactPickerList.target or empty viewpointController.stakeholderPickerList.target}"/>
 				</p:selectOneRadio>
 			</h:panelGrid>
 

@@ -343,66 +343,31 @@ public class BestPlanService {
 		double percentageTotalArtifacts = 0;
 		double percentageMeanArtifacts = 0;
 		double percentageCompletedViewpointArtifacts = 0;
-		double percentageNotUsedArtefacts = !emptyArtifacts ? (totalArtifacts - includedArtifacts.size()) / totalArtifacts : 0;
+		double percentageNotUsedArtefacts = !emptyArtifacts ? (double) (totalArtifacts - includedArtifacts.size()) / totalArtifacts : 0;
 
 		int totalStakeholders = stakeholders.size();
 		double percentageTotalStakeholders = 0;
 		double percentageMeanStakeholders = 0;
 		double percentageCompletedViewpointStakeholders = 0;
-		double percentageNotUsedStakeholders = !emptyStakeholders ? (totalStakeholders - includedStakeholders.size()) / totalStakeholders : 0;
+		double percentageNotUsedStakeholders = !emptyStakeholders ? (double) (totalStakeholders - includedStakeholders.size()) / totalStakeholders : 0;
 
 		int totalCombined = totalArtifacts + totalStakeholders;
 		double percentageTotalCombined = 0;
 		double percentageMeanCombined = 0;
 		double percentageCompletedViewpointCombined = 0;
-		double percentageNotUsedCombined = (!emptyArtifacts && !emptyStakeholders) ? (totalCombined - includedArtifacts.size() - includedStakeholders.size())/ totalCombined : 0;
-
+		double percentageNotUsedCombined = (!emptyArtifacts && !emptyStakeholders) ? (double) (totalCombined - includedArtifacts.size() - includedStakeholders.size())/ totalCombined : 0;
 
 		// compute weigths
-		// weigths
-		double w1 = 0.0;
-		double w2 = 0.0;
-		double w3 = 0.0;
-		double w4 = 0.0;
-		double w5 = 0.0;
-		double w6 = 0.0;
-		double w7 = 0.0;
-		double w8 = 0.0;
-		double w9 = 0.0;
-
-		final double LOW = 0.15;
-		final double MODERATE = 0.35;
-		final double MEDIUM = 0.50;
-
-		if (PRIO_AUTOMATIC.equals(priorityBestPlan) && MAX_PERFORMANCE.equals(maximizationBestPlan)) {
-			w1 = MODERATE;
-			w3 = LOW;
-			w4 = LOW;
-			w5 = MODERATE;
-		} else if (PRIO_AUTOMATIC.equals(priorityBestPlan) && MAX_COMPLETED_VIEWPOINTS.equals(maximizationBestPlan)) {
-			w4 = LOW;
-			w5 = MODERATE;
-			w7 = MODERATE;
-			w9 = LOW;
-		}
-		if (PRIO_MANUAL.equals(priorityBestPlan) && MAX_PERFORMANCE.equals(maximizationBestPlan)) {
-			w2 = MODERATE;
-			w3 = LOW;
-			w4 = LOW;
-			w5 = MODERATE;
-		} else if (PRIO_MANUAL.equals(priorityBestPlan) && MAX_COMPLETED_VIEWPOINTS.equals(maximizationBestPlan)) {
-			w4 = MODERATE;
-			w5 = LOW;
-			w8 = MODERATE;
-			w9 = LOW;
-		}
-		if (PRIO_BEST.equals(priorityBestPlan) && MAX_PERFORMANCE.equals(maximizationBestPlan)) {
-			w3 = MEDIUM;
-			w6 = MEDIUM;
-		} else if (PRIO_BEST.equals(priorityBestPlan) && MAX_COMPLETED_VIEWPOINTS.equals(maximizationBestPlan)) {
-			w6 = MEDIUM;
-			w9 = MEDIUM;
-		}
+		double [] weights = computeWeights();
+		double w1 = weights[0];
+		double w2 = weights[1];
+		double w3 = weights[2];
+		double w4 = weights[3];
+		double w5 = weights[4];
+		double w6 = weights[5];
+		double w7 = weights[6];
+		double w8 = weights[7];
+		double w9 = weights[8];
 
 		// compute only automatic
 		Map<Viewpoint, Set<Integer>> elementsCoveredByViewpointArtifact = new HashMap<>();
@@ -423,7 +388,7 @@ public class BestPlanService {
 				}
 			}
 			percentageCompletedViewpointArtifacts = percentageCompletedViewpointArtifacts / selectedViewpoints.size();
-			percentageMeanArtifacts = percentageTotalArtifacts / includedArtifactTechniquePairs.size();
+			percentageMeanArtifacts = percentageTotalArtifacts / selectedViewpoints.size();
 		}
 
 		// compute only manual
@@ -445,7 +410,7 @@ public class BestPlanService {
 
 			percentageCompletedViewpointStakeholders = percentageCompletedViewpointStakeholders
 					/ selectedViewpoints.size();
-			percentageMeanStakeholders = percentageTotalStakeholders / includedStakeholders.size();
+			percentageMeanStakeholders = percentageTotalStakeholders / selectedViewpoints.size();
 		}
 
 		// compute for combined (automatic and then manual)
@@ -470,8 +435,7 @@ public class BestPlanService {
 			}
 
 			percentageCompletedViewpointCombined = percentageCompletedViewpointCombined / selectedViewpoints.size();
-			percentageMeanCombined = percentageTotalCombined
-					/ (includedArtifactTechniquePairs.size() + includedStakeholders.size());
+			percentageMeanCombined = percentageTotalCombined / selectedViewpoints.size();
 		}
 
 		// aggregate values into a single fitness value
@@ -487,6 +451,119 @@ public class BestPlanService {
 		return fitness;
 	}
 	
+	private double[] computeWeights() {
+		// weigths
+		double w1 = 0.0;
+		double w2 = 0.0;
+		double w3 = 0.0;
+		double w4 = 0.0;
+		double w5 = 0.0;
+		double w6 = 0.0;
+		double w7 = 0.0;
+		double w8 = 0.0;
+		double w9 = 0.0;
+
+		final double LOW = 0.15;
+		final double MODERATE = 0.35;
+		final double MEDIUM = 0.50;
+
+		if (!emptyArtifacts && !emptyStakeholders) {
+			if (PRIO_AUTOMATIC.equals(priorityBestPlan) && MAX_PERFORMANCE.equals(maximizationBestPlan)) {
+				w1 = MODERATE;
+				w3 = LOW;
+				w4 = LOW;
+				w5 = MODERATE;
+			} else if (PRIO_AUTOMATIC.equals(priorityBestPlan)
+					&& MAX_COMPLETED_VIEWPOINTS.equals(maximizationBestPlan)) {
+				w4 = LOW;
+				w5 = MODERATE;
+				w7 = MODERATE;
+				w9 = LOW;
+			}
+			if (PRIO_MANUAL.equals(priorityBestPlan) && MAX_PERFORMANCE.equals(maximizationBestPlan)) {
+				w2 = MODERATE;
+				w3 = LOW;
+				w4 = LOW;
+				w5 = MODERATE;
+			} else if (PRIO_MANUAL.equals(priorityBestPlan) && MAX_COMPLETED_VIEWPOINTS.equals(maximizationBestPlan)) {
+				w4 = MODERATE;
+				w5 = LOW;
+				w8 = MODERATE;
+				w9 = LOW;
+			}
+			if (PRIO_BEST.equals(priorityBestPlan) && MAX_PERFORMANCE.equals(maximizationBestPlan)) {
+				w3 = MEDIUM;
+				w6 = MEDIUM;
+			} else if (PRIO_BEST.equals(priorityBestPlan) && MAX_COMPLETED_VIEWPOINTS.equals(maximizationBestPlan)) {
+				w6 = MEDIUM;
+				w9 = MEDIUM;
+			}
+		}
+		
+		else if(!emptyArtifacts && emptyStakeholders) {
+			if (PRIO_AUTOMATIC.equals(priorityBestPlan) && MAX_PERFORMANCE.equals(maximizationBestPlan)) {
+				w1 = MEDIUM;
+				w4 = MEDIUM;
+			} else if (PRIO_AUTOMATIC.equals(priorityBestPlan)
+					&& MAX_COMPLETED_VIEWPOINTS.equals(maximizationBestPlan)) {
+				w4 = MEDIUM;
+				w7 = MEDIUM;
+			}
+			if (PRIO_MANUAL.equals(priorityBestPlan) && MAX_PERFORMANCE.equals(maximizationBestPlan)) {
+				w1 = MEDIUM;
+				w4 = MEDIUM;
+			} else if (PRIO_MANUAL.equals(priorityBestPlan) && MAX_COMPLETED_VIEWPOINTS.equals(maximizationBestPlan)) {
+				w4 = MEDIUM;
+				w7 = MEDIUM;
+			}
+			if (PRIO_BEST.equals(priorityBestPlan) && MAX_PERFORMANCE.equals(maximizationBestPlan)) {
+				w1 = MEDIUM;
+				w4 = MEDIUM;
+			} else if (PRIO_BEST.equals(priorityBestPlan) && MAX_COMPLETED_VIEWPOINTS.equals(maximizationBestPlan)) {
+				w4 = MEDIUM;
+				w7 = MEDIUM;
+			}
+		}
+		
+		else if(emptyArtifacts && !emptyStakeholders) {
+			if (PRIO_AUTOMATIC.equals(priorityBestPlan) && MAX_PERFORMANCE.equals(maximizationBestPlan)) {
+				w2 = MEDIUM;
+				w5 = MEDIUM;
+			} else if (PRIO_AUTOMATIC.equals(priorityBestPlan)
+					&& MAX_COMPLETED_VIEWPOINTS.equals(maximizationBestPlan)) {
+				w5 = MEDIUM;
+				w8 = MEDIUM;
+			}
+			if (PRIO_MANUAL.equals(priorityBestPlan) && MAX_PERFORMANCE.equals(maximizationBestPlan)) {
+				w2 = MEDIUM;
+				w5 = MEDIUM;
+			} else if (PRIO_MANUAL.equals(priorityBestPlan) && MAX_COMPLETED_VIEWPOINTS.equals(maximizationBestPlan)) {
+				w5 = MEDIUM;
+				w8 = MEDIUM;
+			}
+			if (PRIO_BEST.equals(priorityBestPlan) && MAX_PERFORMANCE.equals(maximizationBestPlan)) {
+				w2 = MEDIUM;
+				w5 = MEDIUM;
+			} else if (PRIO_BEST.equals(priorityBestPlan) && MAX_COMPLETED_VIEWPOINTS.equals(maximizationBestPlan)) {
+				w5 = MEDIUM;
+				w8 = MEDIUM;
+			}
+		}
+			
+		double[] weights = new double[9];
+		weights[0] = w1;
+		weights[1] = w2;
+		weights[2] = w3;
+		weights[3] = w4;
+		weights[4] = w5;
+		weights[5] = w6;
+		weights[6] = w7;
+		weights[7] = w8;
+		weights[8] = w9;
+		
+		return weights;
+	}
+
 	public void update (final EvolutionResult <IntegerGene, Double> result) {
 		if(bestPhenotype == null || bestPhenotype.compareTo(result.getBestPhenotype())<0) {
 			bestPhenotype = result.getBestPhenotype();

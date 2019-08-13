@@ -28,6 +28,7 @@
 							converter="entityConverter">
 							<f:facet name="sourceCaption">Available artifacts</f:facet>
 							<f:facet name="targetCaption">Input artifacts</f:facet>
+							<p:ajax event="transfer" listener="#{viewpointController.resetSetup()}"/>
 						</p:pickList>
 					</p:panelGrid>
 					<p:panelGrid style="padding:0px;">
@@ -40,6 +41,7 @@
 							filterMatchMode="contains" converter="entityConverter">
 							<f:facet name="sourceCaption">Available roles</f:facet>
 							<f:facet name="targetCaption">Involved roles</f:facet>
+							<p:ajax event="transfer" listener="#{viewpointController.resetSetup()}"/>
 						</p:pickList>
 					</p:panelGrid>
 					<p:panel header="Simulations" id="simulationButtonsPanel">
@@ -52,8 +54,8 @@
 								actionListener="#{viewpointController.simulateViewpointsByArtifactAndStakeholder}" update="mainForm:viewpointsTabs:viewpointMap"/>
 							<p:separator/>
 							<p:outputPanel id="bestPlanButtons" style="padding:0px;">
-								<p:commandButton id="setupBestPlanButton" value="" icon="ui-icon-gear" style="width: 11% !important; height: 33.5px !important; float:left"
-									onclick="PF('setupBestPlanDialog').show();"  />
+								<p:commandButton id="setupBestPlanButton" value="" icon="ui-icon-gear" style="width: 11% !important; height: 33.5px !important; float:left" actionListener="#{viewpointController.resetSetup()}"
+									oncomplete="PF('setupBestPlanDialog').show();" update="mainForm:setupBestPlanDialogPanel"  />
 								<p:commandButton value="Best Plan" style="width: 76% !important" async="true"
 									actionListener="#{viewpointController.computeBestPlan}" update="mainForm:viewpointsTabs:viewpointMap, mainForm:viewpointsTabs:lastBestPlanButton, mainForm:bestPlanDialog"
 									onclick="PF('progressDialog').show(); PF('progressBar').start(); PF('progressPoll').start();" oncomplete="PF('progressDialog').hide(); PF('progressBar').cancel(); PF('progressPoll').stop();  PF('bestPlanDialog').show();"  />
