@@ -93,15 +93,15 @@ public class ArchimateExtractionService implements Serializable {
 
 	private AbstractSourceCodeParser sourceCodeParser;
 
-	private MultiValueMap<String, ArchimateElement> modelElementsByClassName = new LinkedMultiValueMap<>();
-	private MultiValueMap<String, ArchimateRelationship> modelRelationshipsByClassName = new LinkedMultiValueMap<>();
+	private transient MultiValueMap<String, ArchimateElement> modelElementsByClassName = new LinkedMultiValueMap<>();
+	private transient MultiValueMap<String, ArchimateRelationship> modelRelationshipsByClassName = new LinkedMultiValueMap<>();
 	private File exportXmlFile;
 
-	private Map<View, mxGraph> viewGraph = new HashMap<View, mxGraph>();
+	private transient Map<View, mxGraph> viewGraph = new HashMap<View, mxGraph>();
 	private View defaultView;
 
-	private Map<ArchimateElement, Object> graphNodesMap;
-	private Map<ArchimateRelationship, Object> graphEdgesMap;
+	private transient Map<ArchimateElement, Object> graphNodesMap;
+	private transient Map<ArchimateRelationship, Object> graphEdgesMap;
 
 	public ArchimateExtractionService() {
 

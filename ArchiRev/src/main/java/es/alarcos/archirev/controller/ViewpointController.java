@@ -67,7 +67,7 @@ public class ViewpointController extends AbstractController {
 
 	private static final long serialVersionUID = -7943630748807472984L;
 
-	static Logger LOGGER = LoggerFactory.getLogger(ViewpointController.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(ViewpointController.class);
 
 	@Autowired
 	private SessionController sessionController;

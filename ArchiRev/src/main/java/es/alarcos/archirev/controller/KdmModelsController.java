@@ -43,7 +43,7 @@ public class KdmModelsController extends AbstractController {
 
 	private KdmModel selectedModel;
 
-	private StreamedContent exportedFile;
+	private transient StreamedContent exportedFile;
 
 	public KdmModelsController() {
 		super();

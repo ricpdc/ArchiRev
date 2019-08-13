@@ -1,5 +1,6 @@
 package es.alarcos.archirev.logic.bestplan;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -47,7 +48,8 @@ import io.jenetics.util.Factory;
 
 @Singleton
 @Service
-public class BestPlanService {
+public class BestPlanService implements Serializable {
+	private static final long serialVersionUID = 6004486475450092813L;
 
 	private static final int POPULATION_SIZE = 50;
 	private static final int MAX_GENERATIONS = 20;

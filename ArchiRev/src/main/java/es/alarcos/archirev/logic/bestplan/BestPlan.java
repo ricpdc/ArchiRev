@@ -1,5 +1,6 @@
 package es.alarcos.archirev.logic.bestplan;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,12 +11,14 @@ import es.alarcos.archirev.model.Stakeholder;
 import es.alarcos.archirev.model.Technique;
 import io.jenetics.engine.EvolutionStatistics;
 
-public class BestPlan {
+public class BestPlan implements Serializable {
+	private static final long serialVersionUID = 2661719728436420699L;
+	
 	private List<InputArtifact> artifacts;
 	private List<Stakeholder> stakeholders;
 	private List<Pair<InputArtifact, Technique>> artifactTechniques;
 	private String errorMessage;
-	private EvolutionStatistics<Double, ?> statistics;
+	private transient EvolutionStatistics<Double, ?> statistics;
 	private List<PlanStep> steps;
 
 	public BestPlan() {

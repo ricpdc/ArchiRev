@@ -71,9 +71,9 @@ public abstract class AbstractSourceCodeParser implements Serializable {
 	protected static final String NS_ACTION = "http://kdm.omg.org/action";
 	protected static final String NS_CODE = "http://kdm.omg.org/code";
 
-	protected MultiValueMap<String, ArchimateElementEnum> mapping = new LinkedMultiValueMap<>();
-	protected Set<String> exclusions = new HashSet<>();
-	protected Map<Class<? extends ArchimateElement>, Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>>> mapPrioritizedRelationship = new HashMap<>();
+	protected transient MultiValueMap<String, ArchimateElementEnum> mapping = new LinkedMultiValueMap<>();
+	protected transient Set<String> exclusions = new HashSet<>();
+	protected transient Map<Class<? extends ArchimateElement>, Map<Class<? extends ArchimateElement>, Class<? extends ArchimateRelationship>>> mapPrioritizedRelationship = new HashMap<>();
 
 	public AbstractSourceCodeParser(final String setup) {
 		loadSetup(setup);

@@ -54,7 +54,7 @@ public class ModelsController extends AbstractController {
 	private View selectedView;
 	private View selectedView2;
 
-	private StreamedContent exportedFile;
+	private transient StreamedContent exportedFile;
 
 	public ModelsController() {
 		super();

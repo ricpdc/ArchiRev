@@ -69,14 +69,14 @@ public class SourcesController extends AbstractController {
 	private String allowTypes="/(\\.|\\/)(zip|rar|7z)$/";
 
 	private Source selectedSource;
-	private ZipFile zipFile;
-	private TreeNode sourceRoot;
-	private ZipEntry selectedNode;
+	private transient ZipFile zipFile;
+	private transient TreeNode sourceRoot;
+	private transient ZipEntry selectedNode;
 	private String documentText;
 	private String documentTextType;
-	private Hashtable<String, TreeNode> directories = new Hashtable<>();
+	private transient Hashtable<String, TreeNode> directories = new Hashtable<>();
 
-	Map<SourceConcernEnum, Set<SourceEnum>> sourcesMap = Maps.newHashMap();
+	private transient Map<SourceConcernEnum, Set<SourceEnum>> sourcesMap = Maps.newHashMap();
 
 
 	public SourcesController() {

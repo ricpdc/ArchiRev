@@ -1,5 +1,6 @@
 package es.alarcos.archirev.logic.bestplan;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,8 +9,9 @@ import es.alarcos.archirev.model.Stakeholder;
 import es.alarcos.archirev.model.Technique;
 import es.alarcos.archirev.model.ViewpointElement;
 
-public class PlanStep implements Comparable<PlanStep> {
-
+public class PlanStep implements Comparable<PlanStep>, Serializable {
+	private static final long serialVersionUID = -7864039797888004350L;
+	
 	private int order;
 	private InputArtifact artifact;
 	private Technique technique;

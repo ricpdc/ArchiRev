@@ -35,7 +35,7 @@ public class SessionController extends AbstractController {
 	private ProjectDao projectDao;
 
 	@Autowired
-	private Environment env;
+	private transient Environment env;
 
 	@Autowired
 	private UserLoginController userLoginController;
