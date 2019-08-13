@@ -175,7 +175,7 @@ class BusinessTest {
 //			String contents = doClass(dcCommonState, bytes);
 //			FileUtils.write(new File(outPath), contents, "UTF-8", false);
 //		} catch (Exception e) {
-//			e.printStackTrace();
+//			logger.error(e.getMessage());
 //		}
 //	}
 //
@@ -226,7 +226,7 @@ class BusinessTest {
 			}
 
 		} catch (NoClassDefFoundError | ClassNotFoundException | MalformedURLException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -303,7 +303,7 @@ class BusinessTest {
 		} catch (NoClassDefFoundError | ClassNotFoundException |
 
 				MalformedURLException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -317,7 +317,7 @@ class BusinessTest {
 					modelElementsByClassName);
 			generateJgraphxDiagram(modelElementsByClassName, modelRelationshipsByClassName);
 		} catch (NoClassDefFoundError | IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -331,7 +331,7 @@ class BusinessTest {
 					modelElementsByClassName);
 			exportOpenExchangeFormat(modelElementsByClassName, modelRelationshipsByClassName, "testJgraphX");
 		} catch (NoClassDefFoundError | IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -663,7 +663,7 @@ class BusinessTest {
 			ImageIO.write(image, "PNG", file);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -817,7 +817,7 @@ class BusinessTest {
 		} catch (SAXException e) {
 			logger.error(xmlFile.getSystemId() + " is NOT valid reason:" + e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return false;
 	}
@@ -1061,7 +1061,7 @@ class BusinessTest {
 //				FileUtils.write(outPath.toFile(), contents, "UTF-8", false);
 //			}
 //		} catch (Exception e) {
-//			e.printStackTrace();
+//			logger.error(e.getMessage());
 //		}
 //	}
 

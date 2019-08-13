@@ -615,7 +615,7 @@ public class ViewpointController extends AbstractController {
 					csvWriter.close();
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 		

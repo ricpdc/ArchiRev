@@ -12,10 +12,17 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import es.alarcos.archirev.controller.SourcesController;
+
 @MappedSuperclass
 public abstract class Model extends AbstractEntity {
 
 	private static final long serialVersionUID = 8268751860712719602L;
+	
+	static Logger logger = LoggerFactory.getLogger(Model.class);
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "extraction_id")
@@ -63,7 +70,7 @@ public abstract class Model extends AbstractEntity {
 				return new File(exportedPath).getCanonicalPath();
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return null;
 	}

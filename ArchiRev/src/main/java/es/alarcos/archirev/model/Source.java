@@ -14,6 +14,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import es.alarcos.archirev.model.enums.SourceConcernEnum;
 import es.alarcos.archirev.model.enums.SourceEnum;
 
@@ -23,6 +26,8 @@ public class Source extends AbstractEntity {
 
 	private static final long serialVersionUID = -3796066622416230524L;
 
+	static Logger logger = LoggerFactory.getLogger(Source.class);
+	
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "concern")
 	private SourceConcernEnum concern;
@@ -97,7 +102,7 @@ public class Source extends AbstractEntity {
 		try {
 			return Files.readAllBytes(Paths.get(getFilePath()));
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			return null;
 		}
 	}

@@ -106,7 +106,7 @@ public class Prueba implements JavaParserConstants {
         {
                 this(System.in);
                 try { ReInit(new FileInputStream(new File(fileName))); }
-                catch(Exception e) { e.printStackTrace(); }
+                catch(Exception e) { logger.error(e.getMessage()); }
         }
 
 
@@ -173,13 +173,13 @@ public class Prueba implements JavaParserConstants {
                                 .println("Java Parser Version 1.1:  Java program parsed successfully.");
                         } catch (FileNotFoundException e) {
                                 // TODO Auto-generated catch block
-                                e.printStackTrace();
+                                logger.error(e.getMessage());
                         } catch (IOException e) {
                                 // TODO Auto-generated catch block
-                                e.printStackTrace();
+                                logger.error(e.getMessage());
                         } catch (Exception e) {
                                 // TODO Auto-generated catch block
-                                e.printStackTrace();
+                                logger.error(e.getMessage());
                         }
 
                 } catch (ParseException e) {

@@ -115,7 +115,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 					"path;name;linesOfCode;parsingTime;numberOfElements;elementsGeneratingTime\n".getBytes(),
 					StandardOpenOption.APPEND);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		while (entries.hasMoreElements()) {
@@ -172,7 +172,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 					"path;name;linesOfCode;parsingTime;numberOfElements;elementsGeneratingTime\n".getBytes(),
 					StandardOpenOption.APPEND);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		
 		Element model = document.getRootElement().getChild("model");
@@ -349,7 +349,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			try {
 				Files.write(elementsLog.toPath(), msg.getBytes(), StandardOpenOption.APPEND);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 
 		} else {
@@ -448,7 +448,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			try {
 				Files.write(elementsLog.toPath(), msg.getBytes(), StandardOpenOption.APPEND);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 
 		} else {
@@ -568,7 +568,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 					"path;name;linesOfCode;parsingTime;numberOfRelationships;relationshipsGeneratingTime\n".getBytes(),
 					StandardOpenOption.APPEND);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		@SuppressWarnings("unchecked")
@@ -621,7 +621,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 					"path;name;linesOfCode;parsingTime;numberOfRelationships;relationshipsGeneratingTime\n".getBytes(),
 					StandardOpenOption.APPEND);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 
 		@SuppressWarnings("unchecked")
@@ -695,7 +695,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			try {
 				Files.write(relationshipsLog.toPath(), msg.getBytes(), StandardOpenOption.APPEND);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		} else {
 			wrongFiles.add(zipEntry.getName());
@@ -757,7 +757,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			try {
 				Files.write(relationshipsLog.toPath(), msg.getBytes(), StandardOpenOption.APPEND);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		} else {
 			wrongFiles.add(zipEntry.getName());

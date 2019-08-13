@@ -197,7 +197,7 @@ public class ArchimateExtractionService implements Serializable {
 				}
 			}
 		} catch (NoClassDefFoundError | IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -326,7 +326,7 @@ public class ArchimateExtractionService implements Serializable {
 
 			return file;
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return null;
 	}
@@ -426,7 +426,7 @@ public class ArchimateExtractionService implements Serializable {
 
 			return file;
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return null;
 
@@ -541,7 +541,7 @@ public class ArchimateExtractionService implements Serializable {
 
 			return file;
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return null;
 	}
@@ -914,7 +914,7 @@ public class ArchimateExtractionService implements Serializable {
 		} catch (SAXException e) {
 			logger.error(xmlFile.getSystemId() + " is NOT valid reason:" + e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return false;
 	}

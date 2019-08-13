@@ -95,7 +95,7 @@ public class KdmExtractionService implements Serializable {
 			long time = System.nanoTime();
 			logger.info(">Time> " + ModelViewEnum.ALL.getLabel() + ": " + (System.nanoTime() - time));
 		} catch (NoClassDefFoundError | IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -141,7 +141,7 @@ public class KdmExtractionService implements Serializable {
 		} catch (SAXException e) {
 			logger.error(kdmFile.getSystemId() + " is NOT valid reason:" + e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return false;
 	}

@@ -18,6 +18,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import es.alarcos.archirev.model.enums.ModelViewEnum;
 
 @Entity
@@ -26,6 +29,8 @@ public class View extends AbstractEntity implements Serializable {
 
 	private static final long serialVersionUID = -7476543110947979418L;
 
+	static Logger logger = LoggerFactory.getLogger(View.class);
+	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "type")
 	private ModelViewEnum type;
@@ -55,7 +60,7 @@ public class View extends AbstractEntity implements Serializable {
 				return new File(imagePath).getCanonicalPath();
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return null;
 	}

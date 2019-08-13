@@ -155,7 +155,7 @@ public class KdmModelsController extends AbstractController {
 		try {
 			encoded = Files.readAllBytes(Paths.get(selectedModel.getExportedPath()));
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			logger.error("Error loading kdm file");
 		}
 		return encoded == null ? "" : new String(encoded, Charset.defaultCharset());
