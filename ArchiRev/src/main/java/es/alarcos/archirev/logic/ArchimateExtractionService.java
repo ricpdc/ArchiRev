@@ -97,7 +97,7 @@ public class ArchimateExtractionService implements Serializable {
 	private transient MultiValueMap<String, ArchimateRelationship> modelRelationshipsByClassName = new LinkedMultiValueMap<>();
 	private File exportXmlFile;
 
-	private transient Map<View, mxGraph> viewGraph = new HashMap<View, mxGraph>();
+	private transient Map<View, mxGraph> viewGraph = new HashMap<>();
 	private View defaultView;
 
 	private transient Map<ArchimateElement, Object> graphNodesMap;
@@ -388,7 +388,7 @@ public class ArchimateExtractionService implements Serializable {
 
 		loadShapeStyles(graph);
 
-		HashMap<mxCell, mxCell> nodeMap = new HashMap<mxCell, mxCell>();
+		HashMap<mxCell, mxCell> nodeMap = new HashMap<>();
 
 		try {
 			parent = graph.getDefaultParent();
@@ -923,7 +923,7 @@ public class ArchimateExtractionService implements Serializable {
 		for (ShapeEnum shapeEnum : ShapeEnum.values()) {
 			String shapeName = shapeEnum.getShape().getSimpleName();
 			mxGraphics2DCanvas.putShape(shapeName, shapeEnum.getShapeInstance());
-			Map<String, Object> style = new HashMap<String, Object>();
+			Map<String, Object> style = new HashMap<>();
 			style.put(mxConstants.STYLE_SHAPE, shapeName);
 			style.put(mxConstants.STYLE_FILLCOLOR, shapeEnum.getFillColor());
 			style.put(mxConstants.STYLE_STROKECOLOR, shapeEnum.getStrokeColor());
@@ -935,7 +935,7 @@ public class ArchimateExtractionService implements Serializable {
 		for (ConnectorEnum connectorEnum : ConnectorEnum.values()) {
 			String connectorName = connectorEnum.getModelRelationship().getSimpleName();
 			mxGraphics2DCanvas.putShape(connectorName, connectorEnum.getConnectorShapeInstance());
-			Map<String, Object> style = new HashMap<String, Object>();
+			Map<String, Object> style = new HashMap<>();
 			style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_CONNECTOR);
 
 			style.put(mxConstants.STYLE_ROUNDED, true);

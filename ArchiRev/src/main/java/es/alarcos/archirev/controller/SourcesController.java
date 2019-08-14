@@ -95,7 +95,7 @@ public class SourcesController extends AbstractController {
 		sourcesMap = Maps.newHashMap();
 		if (sourcesMap.isEmpty()) {
 			for (SourceConcernEnum concern : SourceConcernEnum.values()) {
-				Set<SourceEnum> types = new TreeSet<SourceEnum>();
+				Set<SourceEnum> types = new TreeSet<>();
 				for (SourceEnum type : SourceEnum.values()) {
 					if (type.getSourceConcern().equals(concern)) {
 						types.add(type);
@@ -109,12 +109,12 @@ public class SourcesController extends AbstractController {
 	public void onSelectSourceConcern(final AjaxBehaviorEvent event) {
 		sourceType = null;
 		SourceConcernEnum concern = (SourceConcernEnum) ((UIOutput) event.getSource()).getValue();
-		logger.info("Selected concern: {0}", concern);
+		logger.info(String.format("Selected concern: %s", concern));
 	}
 
 	public void onSelectSourceType(final AjaxBehaviorEvent event) {
 		SourceEnum type = (SourceEnum) ((UIOutput) event.getSource()).getValue();
-		logger.info("Selected type: {0}", type);
+		logger.info(String.format("Selected type: %s", type));
 		allowTypes = "/(\\.|\\/)("+StringUtils.join(type.getExtensions(), "|")+")$/";
 	}
 
@@ -184,7 +184,7 @@ public class SourcesController extends AbstractController {
 
 	public void onRowToggle(ToggleEvent event) {
 		selectedSource = (Source) event.getData();
-		logger.info("Source expanded: {0}", selectedSource);
+		logger.info(String.format("Source expanded: %s", selectedSource));
 		computeSourceRoot();
 	}
 
@@ -213,7 +213,7 @@ public class SourcesController extends AbstractController {
 			}
 		}
 
-		directories = new Hashtable<String, TreeNode>();
+		directories = new Hashtable<>();
 		Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zipFile.entries();
 		while (entries.hasMoreElements()) {
 			ZipEntry entry = entries.nextElement();

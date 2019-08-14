@@ -94,7 +94,7 @@ public class KdmModelsController extends AbstractController {
 
 	public void onSelectModel(SelectEvent event) {
 		KdmModel model = (KdmModel) event.getObject();
-		logger.info("Selected model: {0}", model);
+		logger.info(String.format("Selected model: %s", model));
 		selectedModel = model;
 	}
 

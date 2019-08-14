@@ -120,7 +120,7 @@ public class ViewpointController extends AbstractController {
 	private DualListModel<Stakeholder> stakeholderPickerList = new DualListModel<>(new ArrayList<Stakeholder>(),
 			new ArrayList<Stakeholder>());
 
-	private Map<String, QueriedViewpointDTO> queriedViewpointMap = new HashMap<String, QueriedViewpointDTO>();
+	private Map<String, QueriedViewpointDTO> queriedViewpointMap = new HashMap<>();
 
 	private ArrayList<Pair<String, Integer>> techniquesFromSelectedViewpoint;
 
@@ -167,7 +167,7 @@ public class ViewpointController extends AbstractController {
 			RequestContext.getCurrentInstance().update("mainForm:viewpointsTabs");
 
 			coloured = false;
-			queriedViewpointMap = new HashMap<String, QueriedViewpointDTO>();
+			queriedViewpointMap = new HashMap<>();
 			queriedElementIds = null;
 
 			loadDefaultSetup();
@@ -316,7 +316,7 @@ public class ViewpointController extends AbstractController {
 	}
 
 	public void showViewpointInfoAutomatic(String viewpointName) {
-		logger.info("Showing {0}",viewpointName);
+		logger.info(String.format("Showing %s}",viewpointName));
 		if (getPercentageAutomatic(viewpointName) == 0.0) {
 			return;
 		}
@@ -343,7 +343,7 @@ public class ViewpointController extends AbstractController {
 	}
 
 	public void showViewpointInfoManual(String viewpointName) {
-		logger.info("Showing {0}", viewpointName);
+		logger.info(String.format("Showing %s", viewpointName));
 		if (getPercentageManual(viewpointName) == 0.0) {
 			return;
 		}
@@ -398,7 +398,7 @@ public class ViewpointController extends AbstractController {
 	}
 
 	private List<Pair<String, Integer>> loadStakeholdersFromSelectedViewpointDTO() {
-		stakeholdersFromSelectedViewpoint = new ArrayList<Pair<String, Integer>>();
+		stakeholdersFromSelectedViewpoint = new ArrayList<>();
 		if (getSelectedViewpointDTO() == null) {
 			return stakeholdersFromSelectedViewpoint;
 		}
@@ -414,7 +414,7 @@ public class ViewpointController extends AbstractController {
 	}
 
 	private List<Pair<String, Integer>> loadTechniquesFromSelectedViewpointDTO() {
-		techniquesFromSelectedViewpoint = new ArrayList<Pair<String, Integer>>();
+		techniquesFromSelectedViewpoint = new ArrayList<>();
 		if (getSelectedViewpointDTO() == null) {
 			return techniquesFromSelectedViewpoint;
 		}
@@ -474,7 +474,7 @@ public class ViewpointController extends AbstractController {
 		simulationType = ViewpointSimulationEnum.AUTOMATIC;
 		List<QueriedViewpointDTO> listViewpointsByArtefacts = viewpointDao
 				.listViewpointsMaxPercentageByArtefacts(artifacts, selectedViewpoints);
-		queriedViewpointMap = new HashMap<String, QueriedViewpointDTO>();
+		queriedViewpointMap = new HashMap<>();
 		for (Viewpoint viewpoint : selectedViewpoints) {
 			for (QueriedViewpointDTO viewpointDTO : listViewpointsByArtefacts) {
 				if (viewpointDTO.getId().equals(viewpoint.getId())) {
@@ -495,7 +495,7 @@ public class ViewpointController extends AbstractController {
 		queriedElementIds = null;
 		List<QueriedViewpointDTO> listViewpointsByStakeholders = viewpointDao
 				.listViewpointsMaxPercentageByStakeholder(stakeholders, selectedViewpoints, null, null);
-		queriedViewpointMap = new HashMap<String, QueriedViewpointDTO>();
+		queriedViewpointMap = new HashMap<>();
 		for (Viewpoint viewpoint : selectedViewpoints) {
 			for (QueriedViewpointDTO viewpointDTO : listViewpointsByStakeholders) {
 				if (viewpointDTO.getId().equals(viewpoint.getId())) {
@@ -516,7 +516,7 @@ public class ViewpointController extends AbstractController {
 		simulationType = ViewpointSimulationEnum.HYBRID;
 		List<QueriedViewpointDTO> listViewpointsByArtefacts = viewpointDao
 				.listViewpointsMaxPercentageByArtefacts(artifacts, selectedViewpoints);
-		queriedViewpointMap = new HashMap<String, QueriedViewpointDTO>();
+		queriedViewpointMap = new HashMap<>();
 		for (Viewpoint viewpoint : selectedViewpoints) {
 			for (QueriedViewpointDTO viewpointDTO : listViewpointsByArtefacts) {
 				if (viewpointDTO.getId().equals(viewpoint.getId())) {
@@ -720,7 +720,7 @@ public class ViewpointController extends AbstractController {
 			maxPercentageElements = selectedViewpointDTO.getMaxPercentageElementsAutomatic() / 100;
 		}
 
-		List<Number> intervals = new ArrayList<Number>();
+		List<Number> intervals = new ArrayList<>();
 		intervals.add(Math.max((int) (totalElements * 0.15), 1));
 		intervals.add((int) (totalElements * 0.50));
 		intervals.add((int) (totalElements * 0.85));

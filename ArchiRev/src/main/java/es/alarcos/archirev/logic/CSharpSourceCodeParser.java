@@ -67,13 +67,13 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 	private static final String SYNTACTIC_ERROR = "\tSYNTACTIC ERROR: ";
 	private int numberOfCsharpFiles;
 	private Set<String> wrongFiles;
-	private Set<String> classes = new TreeSet<String>();
-	private Set<String> enums = new TreeSet<String>();
-	private Set<String> interfaces = new TreeSet<String>();
-	private Set<String> structs = new TreeSet<String>();
-	private Set<String> delegates = new TreeSet<String>();
-	private Set<String> delcaredTypeNames = new TreeSet<String>();
-	private Set<String> callsToCallableUnits = new TreeSet<String>();
+	private Set<String> classes = new TreeSet<>();
+	private Set<String> enums = new TreeSet<>();
+	private Set<String> interfaces = new TreeSet<>();
+	private Set<String> structs = new TreeSet<>();
+	private Set<String> delegates = new TreeSet<>();
+	private Set<String> delcaredTypeNames = new TreeSet<>();
+	private Set<String> callsToCallableUnits = new TreeSet<>();
 
 	private static File elementsLog;
 	private static File relationshipsLog;
@@ -158,8 +158,8 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		numberOfCsharpFiles = 0;
 		wrongFiles = new HashSet<>();
 		modelElementsByClassName = new LinkedMultiValueMap<>();
-		kdmElementsIds = new HashMap<String, String>();
-		entriesToKdmElementMap = new HashMap<String, Element>();
+		kdmElementsIds = new HashMap<>();
+		entriesToKdmElementMap = new HashMap<>();
 
 		File tempZipFile = File.createTempFile(ZIP_FILE, ".tmp", null);
 		try(FileOutputStream fos = new FileOutputStream(tempZipFile)){
@@ -190,7 +190,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		Element model = document.getRootElement().getChild("model");
 
 		
-		directories = new Hashtable<String, TreeNode>();
+		directories = new Hashtable<>();
 		treeRoot = new DefaultTreeNode(new ZipEntry(model.getAttributeValue("name")), null);
 		while (entries.hasMoreElements()) {
 			ZipEntry entry = entries.nextElement();
@@ -315,7 +315,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		SyntaxErrorListener listener = new SyntaxErrorListener();
 		parser.addErrorListener(listener);
 
-		delcaredTypeNames = new TreeSet<String>();
+		delcaredTypeNames = new TreeSet<>();
 
 		Compilation_unitContext compilation_unit = parser.compilation_unit();
 		for (int i = 0; i < compilation_unit.getChildCount(); i++) {
@@ -400,7 +400,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		SyntaxErrorListener listener = new SyntaxErrorListener();
 		parser.addErrorListener(listener);
 
-		delcaredTypeNames = new TreeSet<String>();
+		delcaredTypeNames = new TreeSet<>();
 
 		Compilation_unitContext compilation_unit = parser.compilation_unit();
 		for (int i = 0; i < compilation_unit.getChildCount(); i++) {
@@ -496,7 +496,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 				}
 			}
 		} catch (IOException ioe) {
-			logger.error("Exception while reading input " + ioe);
+			logger.error(String.format("Exception while reading input %s", ioe.getMessage()));
 		} finally {
 			// close the streams using close method
 			try {
@@ -684,7 +684,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		SyntaxErrorListener listener = new SyntaxErrorListener();
 		parser.addErrorListener(listener);
 
-		callsToCallableUnits = new TreeSet<String>();
+		callsToCallableUnits = new TreeSet<>();
 		Compilation_unitContext compilation_unit = parser.compilation_unit();
 		for (int i = 0; i < compilation_unit.getChildCount(); i++) {
 			ParseTree tree = compilation_unit.getChild(i);
@@ -744,7 +744,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		SyntaxErrorListener listener = new SyntaxErrorListener();
 		parser.addErrorListener(listener);
 
-		callsToCallableUnits = new TreeSet<String>();
+		callsToCallableUnits = new TreeSet<>();
 		Compilation_unitContext compilation_unit = parser.compilation_unit();
 		for (int i = 0; i < compilation_unit.getChildCount(); i++) {
 			ParseTree tree = compilation_unit.getChild(i);

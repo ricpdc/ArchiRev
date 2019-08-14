@@ -133,7 +133,7 @@ public class ModelsController extends AbstractController {
 	
 	public void onSelectModel(SelectEvent event) {
 		ArchimateModel model = (ArchimateModel) event.getObject();
-		logger.info("Selected model: {0}", model);
+		logger.info(String.format("Selected model: %s", model));
 		selectedModel = model;
 		if(selectedModel!=null) {
 			selectedView = selectedModel.getDefaultView();
@@ -142,7 +142,7 @@ public class ModelsController extends AbstractController {
 	
 	public void onSelectView(SelectEvent event) {
 		View view = (View) event.getObject();
-		logger.info("Selected view: {0}", view);
+		logger.info(String.format("Selected view: %s", view));
 		setSelectedView(view);
 	}
 
