@@ -57,10 +57,14 @@ import es.alarcos.archirev.parser.csharp.CSharpParser.Struct_definitionContext;
 @SuppressWarnings("deprecation")
 public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements Serializable {
 
+
+
 	private static final long serialVersionUID = 4197712088221134990L;
 
 	private static Logger logger = LoggerFactory.getLogger(CSharpSourceCodeParser.class);
 
+	private static final String ZIP_FILE = "zipFile";
+	private static final String SYNTACTIC_ERROR = "\tSYNTACTIC ERROR: ";
 	private int numberOfCsharpFiles;
 	private Set<String> wrongFiles;
 	private Set<String> classes = new TreeSet<String>();
@@ -95,7 +99,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		wrongFiles = new HashSet<>();
 		MultiValueMap<String, ArchimateElement> modelElementsByClassName = new LinkedMultiValueMap<>();
 
-		File tempZipFile = File.createTempFile("zipFile", ".tmp", null);
+		File tempZipFile = File.createTempFile(ZIP_FILE, ".tmp", null);
 		try(FileOutputStream fos = new FileOutputStream(tempZipFile)){
 			fos.write(zipSource.getFile());
 		}
@@ -157,7 +161,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		kdmElementsIds = new HashMap<String, String>();
 		entriesToKdmElementMap = new HashMap<String, Element>();
 
-		File tempZipFile = File.createTempFile("zipFile", ".tmp", null);
+		File tempZipFile = File.createTempFile(ZIP_FILE, ".tmp", null);
 		try(FileOutputStream fos = new FileOutputStream(tempZipFile)){
 			fos.write(zipSource.getFile());
 		}
@@ -319,7 +323,6 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			getDeclaredTypes(tree);
 		}
 
-		// logger.info("Parsing.... " + zipEntryName);
 		if (listener.getSyntaxErrors().isEmpty()) {
 			Set<ArchimateElementEnum> uniqueElements = new HashSet<>();
 			boolean mappedSuperclass = false;
@@ -363,7 +366,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		} else {
 			wrongFiles.add(zipEntryName);
 			for (SyntaxError syntaxError : listener.getSyntaxErrors()) {
-				logger.error("\tSYNTACTIC ERROR: " + syntaxError);
+				logger.error(SYNTACTIC_ERROR + syntaxError);
 			}
 		}
 
@@ -405,7 +408,6 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			getDeclaredTypes(tree);
 		}
 
-		// logger.info("Parsing.... " + zipEntryName);
 		if (listener.getSyntaxErrors().isEmpty()) {
 			Set<ArchimateElementEnum> uniqueElements = new HashSet<>();
 			boolean mappedSuperclass = false;
@@ -462,7 +464,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		} else {
 			wrongFiles.add(zipEntryName);
 			for (SyntaxError syntaxError : listener.getSyntaxErrors()) {
-				logger.error("\tSYNTACTIC ERROR: " + syntaxError);
+				logger.error(SYNTACTIC_ERROR + syntaxError);
 			}
 		}
 
@@ -562,7 +564,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		numberOfCsharpFiles = 0;
 		wrongFiles = new HashSet<>();
 
-		File tempZipFile = File.createTempFile("zipFile", ".tmp", null);
+		File tempZipFile = File.createTempFile(ZIP_FILE, ".tmp", null);
 		try(FileOutputStream fos = new FileOutputStream(tempZipFile)) {
 			fos.write(zipSource.getFile());
 		}
@@ -619,7 +621,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		numberOfCsharpFiles = 0;
 		wrongFiles = new HashSet<>();
 
-		File tempZipFile = File.createTempFile("zipFile", ".tmp", null);
+		File tempZipFile = File.createTempFile(ZIP_FILE, ".tmp", null);
 		try(FileOutputStream fos = new FileOutputStream(tempZipFile)) {
 			fos.write(zipSource.getFile());
 		}
@@ -691,7 +693,6 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		Namespace nsXsi = Namespace.getNamespace("xsi", NS_XSI);
 		
 		String zipEntrySimpleName = getSimpleClassName(zipEntry.getName());
-		// logger.info("Parsing.... " + zipEntryName);
 		if (listener.getSyntaxErrors().isEmpty()) {
 			try(Stream<String> lines = Files.lines(tempFile.toPath(), Charset.defaultCharset())) {
 				msg += (lines.count() + ";");
@@ -719,7 +720,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		} else {
 			wrongFiles.add(zipEntry.getName());
 			for (SyntaxError syntaxError : listener.getSyntaxErrors()) {
-				logger.error("\tSYNTACTIC ERROR: " + syntaxError);
+				logger.error(SYNTACTIC_ERROR + syntaxError);
 			}
 		}
 	}
@@ -751,7 +752,6 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		}
 
 		String zipEntrySimpleName = getSimpleClassName(zipEntry.getName());
-		// logger.info("Parsing.... " + zipEntryName);
 		if (listener.getSyntaxErrors().isEmpty()) {
 			Set<String> visitedRelationships = new HashSet<>();
 			try(Stream<String> lines = Files.lines(tempFile.toPath(), Charset.defaultCharset())) {
@@ -781,7 +781,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		} else {
 			wrongFiles.add(zipEntry.getName());
 			for (SyntaxError syntaxError : listener.getSyntaxErrors()) {
-				logger.error("\tSYNTACTIC ERROR: " + syntaxError);
+				logger.error(SYNTACTIC_ERROR + syntaxError);
 			}
 		}
 	}

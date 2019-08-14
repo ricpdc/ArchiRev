@@ -7,16 +7,18 @@ import javax.faces.context.FacesContext;
 @ManagedBean
 public class ToolbarController {
 
+	private static final String SUCCESS = "Success";
+
 	public void save() {
-		addMessage("Success", "Data saved");
+		addMessage(SUCCESS, "Data saved");
 	}
 
 	public void update() {
-		addMessage("Success", "Data updated");
+		addMessage(SUCCESS, "Data updated");
 	}
 
 	public void delete() {
-		addMessage("Success", "Data deleted");
+		addMessage(SUCCESS, "Data deleted");
 	}
 
 	public void addMessage(String summary, String detail) {

@@ -19,14 +19,12 @@ import com.mxgraph.util.mxConstants;
 public enum ShapeEnum {
 
 	// @formatter:off
-	DEFAULT(ArchimateElement.class, mxRectangleShape.class, "cce3ff" , "000f84", "000f84", true, mxConstants.ALIGN_MIDDLE), 
-	APPLICATION_FUNCTION(ApplicationFunction.class, ArchiMateApplicationFunctionShape.class, "cce3ff" , "000f84", "000f84", true, mxConstants.ALIGN_MIDDLE),
-	APPLICATION_SERVICE(ApplicationService.class, ArchiMateApplicationServiceShape.class, "cce3ff" , "000f84", "000f84", true, mxConstants.ALIGN_MIDDLE),
-	DATA_OBJECT(DataObject.class, ArchiMateDataObjectShape.class, "adfff8" , "000f84", "000f84", false, mxConstants.ALIGN_MIDDLE),
-	BUSINESS_OBJECT(BusinessObject.class, ArchiMateBusinessObjectShape.class, "ffff00" , "000f84", "000f84", false, mxConstants.ALIGN_MIDDLE),
-	APPLICATION_COMPONENT(ApplicationComponent.class, ArchiMateApplicationComponentShape.class, "cce3ff" , "000f84", "000f84", false, mxConstants.ALIGN_TOP);
-	
-	
+	DEFAULT(ArchimateElement.class, mxRectangleShape.class, "cce3ff" , "000f84", "000f84", true, mxConstants.ALIGN_MIDDLE), //NOSONAR
+	APPLICATION_FUNCTION(ApplicationFunction.class, ArchiMateApplicationFunctionShape.class, "cce3ff" , "000f84", "000f84", true, mxConstants.ALIGN_MIDDLE), //NOSONAR
+	APPLICATION_SERVICE(ApplicationService.class, ArchiMateApplicationServiceShape.class, "cce3ff" , "000f84", "000f84", true, mxConstants.ALIGN_MIDDLE), //NOSONAR
+	DATA_OBJECT(DataObject.class, ArchiMateDataObjectShape.class, "adfff8" , "000f84", "000f84", false, mxConstants.ALIGN_MIDDLE), //NOSONAR
+	BUSINESS_OBJECT(BusinessObject.class, ArchiMateBusinessObjectShape.class, "ffff00" , "000f84", "000f84", false, mxConstants.ALIGN_MIDDLE), //NOSONAR
+	APPLICATION_COMPONENT(ApplicationComponent.class, ArchiMateApplicationComponentShape.class, "cce3ff" , "000f84", "000f84", false, mxConstants.ALIGN_TOP); //NOSONAR
 	// @formatter:on
 
 	private static Logger logger = LoggerFactory.getLogger(ShapeEnum.class);

@@ -448,7 +448,7 @@ public class BestPlanService implements Serializable {
 
 		time = System.currentTimeMillis() - time;
 
-		logger.info("Fitness (in " + time + " ms): " + fitness);
+		logger.info("Fitness (in {0} ms): {1}" , time , fitness);
 
 		return fitness;
 	}

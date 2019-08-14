@@ -27,9 +27,27 @@ import es.alarcos.archirev.model.Viewpoint;
 @Component
 public class ViewpointDao extends AbstractDao<Viewpoint> {
 
+
+
+
+
+
+
+
+
+
 	private static final long serialVersionUID = -513674061420256678L;
 
 	private static Logger logger = LoggerFactory.getLogger(ViewpointDao.class);
+	private static final String VIEWPOINT_ID = "viewpointId";
+	private static final String ELEMENT_IDS = "elementIds";
+	private static final String ARTEFACTS_IDS = "artefactsIds";
+	private static final String ARTEFACT_ID = "artefactId";
+	private static final String STAKEHOLDER_IDS = "stakeholderIds";
+	private static final String STAKEHOLDER_ID = "stakeholderId";
+	private static final String FILTERED_VIEWPOINT_IDS = "filteredViewpointIds";
+	private static final String TECHNIQUE_ID = "techniqueId";
+	private static final String ID = "id";
 
 	public ViewpointDao() {
 		super();
@@ -41,7 +59,7 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 		String stringQuery = "select v.id as id, v.name as viewpoint from av_viewpoint as v where v.id=:id";
 
 		Query query = entityManager.createNativeQuery(stringQuery);
-		query.setParameter("id", 1);
+		query.setParameter(ID, 1);
 
 		List<Object[]> resultSet = query.getResultList();
 
@@ -81,7 +99,7 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 
 			List<Long> artefactsIds = artefacts.stream().map(InputArtifact::getId).collect(Collectors.toList());
 
-			query.setParameter("artefactsIds", artefactsIds);
+			query.setParameter(ARTEFACTS_IDS, artefactsIds);
 
 			List<Object[]> resultSet = query.getResultList();
 
@@ -122,10 +140,10 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 			Query query = entityManager.createNativeQuery(stringQuery);
 
 			List<Long> artefactsIds = artefacts.stream().map(InputArtifact::getId).collect(Collectors.toList());
-			query.setParameter("artefactsIds", artefactsIds);
+			query.setParameter(ARTEFACTS_IDS, artefactsIds);
 
 			List<Long> filteredViewpointIds = selectedViewpoints.stream().map(Viewpoint::getId).collect(Collectors.toList());
-			query.setParameter("filteredViewpointIds", filteredViewpointIds);
+			query.setParameter(FILTERED_VIEWPOINT_IDS, filteredViewpointIds);
 
 			List<Object[]> resultSet = query.getResultList();
 
@@ -162,7 +180,7 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 			Query query = entityManager.createNativeQuery(stringQuery);
 
 			List<Long> artefactsIds = artefacts.stream().map(InputArtifact::getId).collect(Collectors.toList());
-			query.setParameter("artefactsIds", artefactsIds);
+			query.setParameter(ARTEFACTS_IDS, artefactsIds);
 
 			elementIds = query.getResultList();
 
@@ -193,13 +211,13 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 		try {
 			Query query = entityManager.createNativeQuery(stringQuery);
 
-			query.setParameter("artefactId", artefactTechniquePair.getLeft().getId());
-			query.setParameter("techniqueId", artefactTechniquePair.getRight().getId());
+			query.setParameter(ARTEFACT_ID, artefactTechniquePair.getLeft().getId());
+			query.setParameter(TECHNIQUE_ID, artefactTechniquePair.getRight().getId());
 			if(viewpoint != null) {
-				query.setParameter("viewpointId", viewpoint.getId());
+				query.setParameter(VIEWPOINT_ID, viewpoint.getId());
 			}
 			if(alreadyCoveredElements != null && !alreadyCoveredElements.isEmpty()) {
-				query.setParameter("elementIds", alreadyCoveredElements);
+				query.setParameter(ELEMENT_IDS, alreadyCoveredElements);
 			}
 
 			elements = query.getResultList();
@@ -214,7 +232,7 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 	
 	public long getTotalElementsByViewpoint(final Viewpoint viewpoint) {
 		TypedQuery<Long> query = entityManager.createNamedQuery("Viewpoint.getTotalElements", Long.class);
-		query.setParameter("viewpointId", viewpoint.getId());
+		query.setParameter(VIEWPOINT_ID, viewpoint.getId());
 		return query.getSingleResult();
 	}
 		
@@ -237,12 +255,12 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 			Query query = entityManager.createNativeQuery(stringQuery);
 			
 			if(viewpoint!=null) {
-				query.setParameter("viewpointId", viewpoint.getId());
+				query.setParameter(VIEWPOINT_ID, viewpoint.getId());
 			}
 			if(alreadyCoveredElements != null && !alreadyCoveredElements.isEmpty()) {
-				query.setParameter("elementIds", alreadyCoveredElements);
+				query.setParameter(ELEMENT_IDS, alreadyCoveredElements);
 			}
-			query.setParameter("stakeholderId", stakeholder.getId());
+			query.setParameter(STAKEHOLDER_ID, stakeholder.getId());
 
 			elements = query.getResultList();
 				
@@ -271,14 +289,14 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 
 		try {
 			Query queryTotal = entityManager.createNativeQuery(stringQueryTotalElements);
-			queryTotal.setParameter("viewpointId", viewpointDTO.getId());
+			queryTotal.setParameter(VIEWPOINT_ID, viewpointDTO.getId());
 			viewpointDTO.setTotalElementsAutomatic(Integer.parseInt(queryTotal.getSingleResult().toString()));
 
 			Query query = entityManager.createNativeQuery(stringQuery);
 
 			List<Long> artefactsIds = artefacts.stream().map(InputArtifact::getId).collect(Collectors.toList());
-			query.setParameter("artefactsIds", artefactsIds);
-			query.setParameter("viewpointId", viewpointDTO.getId());
+			query.setParameter(ARTEFACTS_IDS, artefactsIds);
+			query.setParameter(VIEWPOINT_ID, viewpointDTO.getId());
 
 			List<Object[]> resultSet = query.getResultList();
 
@@ -314,13 +332,13 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 
 		try {
 			Query queryTotal = entityManager.createNativeQuery(stringQueryTotalElements);
-			queryTotal.setParameter("viewpointId", viewpoint.getId());
+			queryTotal.setParameter(VIEWPOINT_ID, viewpoint.getId());
 			double totalElements = Double.parseDouble(queryTotal.getSingleResult().toString());
 			
 			Query query = entityManager.createNativeQuery(stringQuery);
 
-			query.setParameter("artefactId", artefact.getId());
-			query.setParameter("viewpointId", viewpoint.getId());
+			query.setParameter(ARTEFACT_ID, artefact.getId());
+			query.setParameter(VIEWPOINT_ID, viewpoint.getId());
 
 			List<Object[]> resultSet = query.getResultList();
 
@@ -360,13 +378,13 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 			Query query = entityManager.createNativeQuery(stringQuery);
 
 			List<Long> stakeholderIds = stakeholders.stream().map(Stakeholder::getId).collect(Collectors.toList());
-			query.setParameter("stakeholderIds", stakeholderIds);
+			query.setParameter(STAKEHOLDER_IDS, stakeholderIds);
 			
 			List<Long> filteredViewpointIds = selectedViewpoints.stream().map(Viewpoint::getId).collect(Collectors.toList());
-			query.setParameter("filteredViewpointIds", filteredViewpointIds);
+			query.setParameter(FILTERED_VIEWPOINT_IDS, filteredViewpointIds);
 
 			if (elementIds != null && !elementIds.isEmpty()) {
-				query.setParameter("elementIds", elementIds);
+				query.setParameter(ELEMENT_IDS, elementIds);
 			}
 
 			List<Object[]> resultSet = query.getResultList();
@@ -411,16 +429,16 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 
 		try {
 			Query queryTotal = entityManager.createNativeQuery(stringQueryTotalElements);
-			queryTotal.setParameter("viewpointId", viewpointDTO.getId());
+			queryTotal.setParameter(VIEWPOINT_ID, viewpointDTO.getId());
 			viewpointDTO.setTotalElementsManual(Integer.parseInt(queryTotal.getSingleResult().toString()));
 
 			Query query = entityManager.createNativeQuery(stringQuery);
 
 			List<Long> stakeholderIds = stakeholder.stream().map(Stakeholder::getId).collect(Collectors.toList());
-			query.setParameter("stakeholderIds", stakeholderIds);
-			query.setParameter("viewpointId", viewpointDTO.getId());
+			query.setParameter(STAKEHOLDER_IDS, stakeholderIds);
+			query.setParameter(VIEWPOINT_ID, viewpointDTO.getId());
 			if (elementIds != null && !elementIds.isEmpty()) {
-				query.setParameter("elementIds", elementIds);
+				query.setParameter(ELEMENT_IDS, elementIds);
 			}
 
 			List<Object[]> resultSet = query.getResultList();

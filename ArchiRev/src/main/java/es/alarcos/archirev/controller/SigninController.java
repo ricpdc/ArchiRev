@@ -18,8 +18,11 @@ import es.alarcos.archirev.persistency.UserDao;
 @Controller
 public class SigninController implements Serializable {
 
+
 	private static final long serialVersionUID = 7590582575251355602L;
 	
+	private static final String SIGN_IN_ERROR = "Sign In Error";
+
 	private String username;
 	private String password;
 	private String repeatedPassword;
@@ -67,15 +70,15 @@ public class SigninController implements Serializable {
 				&& StringUtils.isNotBlank(repeatedPassword)) {
 			User findUser = getUserDao().getUserByUsername(username);
 			if (findUser != null) {
-				message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Sign In Error",
+				message = new FacesMessage(FacesMessage.SEVERITY_ERROR, SIGN_IN_ERROR,
 						"Username \"" + username + "\" already exist!");
 			}
 			else if(!password.equals(repeatedPassword)) {
-				message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Sign In Error",
+				message = new FacesMessage(FacesMessage.SEVERITY_ERROR, SIGN_IN_ERROR,
 						"Passwords do not match");
 			}
 			else if(password.length() < 6) {
-				message = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Sign In Error",
+				message = new FacesMessage(FacesMessage.SEVERITY_ERROR, SIGN_IN_ERROR,
 						"Password must be 6 digit length at least");
 			}
 			else {
@@ -89,7 +92,7 @@ public class SigninController implements Serializable {
 				message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Sign In Correct", "Welcome \"" + username + "\"");
 			}
 		} else {
-			message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Sign In Error", "Empty fields");
+			message = new FacesMessage(FacesMessage.SEVERITY_WARN, SIGN_IN_ERROR, "Empty fields");
 		}
 
 		FacesContext facesContext = FacesContext.getCurrentInstance();

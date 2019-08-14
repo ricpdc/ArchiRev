@@ -109,12 +109,12 @@ public class SourcesController extends AbstractController {
 	public void onSelectSourceConcern(final AjaxBehaviorEvent event) {
 		sourceType = null;
 		SourceConcernEnum concern = (SourceConcernEnum) ((UIOutput) event.getSource()).getValue();
-		logger.info("Selected concern: " + concern);
+		logger.info("Selected concern: {0}", concern);
 	}
 
 	public void onSelectSourceType(final AjaxBehaviorEvent event) {
 		SourceEnum type = (SourceEnum) ((UIOutput) event.getSource()).getValue();
-		logger.info("Selected type: " + type);
+		logger.info("Selected type: {0}", type);
 		allowTypes = "/(\\.|\\/)("+StringUtils.join(type.getExtensions(), "|")+")$/";
 	}
 
@@ -184,7 +184,7 @@ public class SourcesController extends AbstractController {
 
 	public void onRowToggle(ToggleEvent event) {
 		selectedSource = (Source) event.getData();
-		logger.info("Source expanded: " + selectedSource);
+		logger.info("Source expanded: {0}", selectedSource);
 		computeSourceRoot();
 	}
 

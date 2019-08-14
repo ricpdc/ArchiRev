@@ -12,6 +12,6 @@ public abstract class AbstractController implements Serializable {
 	private static Logger logger = LoggerFactory.getLogger(AbstractController.class);
 
 	void init() {
-		logger.info("Initializing... " + getClass().getSimpleName());
+		logger.info("Initializing... {0}", getClass().getSimpleName());
 	}
 }

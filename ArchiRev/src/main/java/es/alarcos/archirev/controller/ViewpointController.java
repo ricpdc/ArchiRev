@@ -316,7 +316,7 @@ public class ViewpointController extends AbstractController {
 	}
 
 	public void showViewpointInfoAutomatic(String viewpointName) {
-		logger.info("Showing " + viewpointName);
+		logger.info("Showing {0}",viewpointName);
 		if (getPercentageAutomatic(viewpointName) == 0.0) {
 			return;
 		}
@@ -343,7 +343,7 @@ public class ViewpointController extends AbstractController {
 	}
 
 	public void showViewpointInfoManual(String viewpointName) {
-		logger.info("Showing " + viewpointName);
+		logger.info("Showing {0}", viewpointName);
 		if (getPercentageManual(viewpointName) == 0.0) {
 			return;
 		}
