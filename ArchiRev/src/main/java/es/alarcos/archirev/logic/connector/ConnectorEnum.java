@@ -96,40 +96,20 @@ public enum ConnectorEnum {
 		return modelRelationship;
 	}
 
-	public void setModelRelationship(Class<? extends ArchimateRelationship> modelRelationship) {
-		this.modelRelationship = modelRelationship;
-	}
-
 	public String getStrokeColor() {
 		return strokeColor;
-	}
-
-	public void setStrokeColor(String strokeColor) {
-		this.strokeColor = strokeColor;
 	}
 
 	public String getStartArrow() {
 		return startArrow;
 	}
 
-	public void setStartArrow(String startArrow) {
-		this.startArrow = startArrow;
-	}
-
 	public String getEndArrow() {
 		return endArrow;
 	}
 
-	public void setEndArrow(String endArrow) {
-		this.endArrow = endArrow;
-	}
-
 	public String getStartFill() {
 		return isStartFill() ? "1" : "0";
-	}
-
-	public void setStartFill(boolean startFill) {
-		this.startFill = startFill;
 	}
 
 	public boolean isStartFill() {
@@ -140,10 +120,6 @@ public enum ConnectorEnum {
 		return isEndFill() ? "1" : "0";
 	}
 
-	public void setEndFill(boolean endFill) {
-		this.endFill = endFill;
-	}
-
 	public boolean isEndFill() {
 		return this.endFill;
 	}
@@ -152,24 +128,12 @@ public enum ConnectorEnum {
 		return startSize;
 	}
 
-	public void setStartSize(int startSize) {
-		this.startSize = startSize;
-	}
-
 	public int getEndSize() {
 		return endSize;
 	}
 
-	public void setEndSize(int endSize) {
-		this.endSize = endSize;
-	}
-
 	public boolean isDashed() {
 		return dashed;
-	}
-
-	public void setDashed(boolean dashed) {
-		this.dashed = dashed;
 	}
 
 	public String getDashed() {
@@ -178,10 +142,6 @@ public enum ConnectorEnum {
 
 	public Class<? extends mxConnectorShape> getConnectorShape() {
 		return connectorShape;
-	}
-
-	public void setConnectorShape(Class<? extends AbstractArchiMateConnector> connectorShape) {
-		this.connectorShape = connectorShape;
 	}
 
 }

@@ -88,24 +88,12 @@ public enum ShapeEnum {
 		return fillColor;
 	}
 
-	public void setFillColor(String fillColor) {
-		this.fillColor = fillColor;
-	}
-
 	public String getStrokeColor() {
 		return strokeColor;
 	}
 
-	public void setStrokeColor(String strokeColor) {
-		this.strokeColor = strokeColor;
-	}
-
 	public String getFontColor() {
 		return fontColor;
-	}
-
-	public void setFontColor(String fontColor) {
-		this.fontColor = fontColor;
 	}
 
 	public boolean isRounded() {
@@ -116,18 +104,8 @@ public enum ShapeEnum {
 		return isRounded() ? "1" : "0";
 	}
 
-	public void setRounded(boolean rounded) {
-		this.rounded = rounded;
-	}
-
 	public String getVerticalAlign() {
 		return verticalAlign;
 	}
-
-	public void setVerticalAlign(String verticalAlign) {
-		this.verticalAlign = verticalAlign;
-	}
-	
-	
 
 }
