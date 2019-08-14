@@ -83,14 +83,6 @@ public class Viewpoint extends AbstractEntity {
 		return name + " (" + explanation + ")";
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public String getExplanation() {
 		return explanation;
 	}
