@@ -18,7 +18,7 @@ public class Element extends AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 8422344555319120259L;
 
 	public Element() {
-		
+		super();
 	}
 	
 	public Element(ArchimateModel model, String elementId, String name, String documentation, String type) {

@@ -41,6 +41,7 @@ public class OpenProjectDialogController extends AbstractDialogController {
 	private List<Project> projects;
 
 	@PostConstruct
+	@Override
 	void init() {
 		super.init();
 	}

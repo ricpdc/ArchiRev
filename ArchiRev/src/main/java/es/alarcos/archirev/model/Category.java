@@ -24,7 +24,7 @@ public class Category extends AbstractEntity {
 	private Set<Viewpoint> viewpoints = new TreeSet<>();
 
 	public Category() {
-
+		super();
 	}
 
 	public String getDescription() {

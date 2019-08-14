@@ -35,7 +35,7 @@ public class ViewpointElement extends AbstractEntity {
 	private byte[] icon;
 
 	public ViewpointElement() {
-
+		super();
 	}
 
 	public List<Viewpoint> getViewpoints() {

@@ -27,7 +27,7 @@ public class Concern extends AbstractEntity {
 	private List<Viewpoint> viewpoints = new ArrayList<>();
 
 	public Concern() {
-
+		super();
 	}
 
 	public List<Viewpoint> getViewpoints() {

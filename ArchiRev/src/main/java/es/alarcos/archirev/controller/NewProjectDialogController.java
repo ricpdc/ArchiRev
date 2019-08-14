@@ -30,6 +30,7 @@ public class NewProjectDialogController extends AbstractDialogController {
 	private ProjectDao projectDao;
 
 	@PostConstruct
+	@Override
 	void init() {
 		super.init();
 	}

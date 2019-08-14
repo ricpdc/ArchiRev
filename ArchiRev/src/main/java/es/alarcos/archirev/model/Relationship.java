@@ -18,7 +18,7 @@ public class Relationship extends AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 8422344555319120259L;
 
 	public Relationship() {
-
+		super();
 	}
 
 	public Relationship(ArchimateModel model, String relationshipId, String name, String documentation, String type) {

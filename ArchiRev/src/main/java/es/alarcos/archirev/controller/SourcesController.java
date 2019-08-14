@@ -84,6 +84,7 @@ public class SourcesController extends AbstractController {
 	}
 
 	@PostConstruct
+	@Override
 	public void init() {
 		super.init();
 

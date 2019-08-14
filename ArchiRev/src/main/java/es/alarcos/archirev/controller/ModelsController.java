@@ -61,6 +61,7 @@ public class ModelsController extends AbstractController {
 	}
 
 	@PostConstruct
+	@Override
 	public void init() {
 		super.init();
 		reload();

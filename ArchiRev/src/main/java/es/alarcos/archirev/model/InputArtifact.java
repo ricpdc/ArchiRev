@@ -27,7 +27,7 @@ public class InputArtifact extends AbstractEntity {
 	private List<MiningPoint> miningPoints = new ArrayList<>();
 
 	public InputArtifact() {
-
+		super();
 	}
 
 	public String getDescription() {

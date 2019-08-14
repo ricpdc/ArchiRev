@@ -27,7 +27,7 @@ public class Purpose extends AbstractEntity {
 	private List<Viewpoint> viewpoints = new ArrayList<>();
 
 	public Purpose() {
-
+		super();
 	}
 
 	public List<Viewpoint> getViewpoints() {

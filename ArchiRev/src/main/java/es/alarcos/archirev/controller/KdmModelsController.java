@@ -50,6 +50,7 @@ public class KdmModelsController extends AbstractController {
 	}
 
 	@PostConstruct
+	@Override
 	public void init() {
 		super.init();
 		reload();

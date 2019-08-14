@@ -27,7 +27,7 @@ public class Technique extends AbstractEntity {
 	private List<MiningPoint> miningPoints = new ArrayList<>();
 
 	public Technique() {
-
+		super();
 	}
 
 	public String getDescription() {

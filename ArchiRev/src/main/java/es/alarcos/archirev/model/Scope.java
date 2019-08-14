@@ -28,7 +28,7 @@ public class Scope extends AbstractEntity {
 	private Set<Viewpoint> viewpoints = new TreeSet<>();
 
 	public Scope() {
-
+		super();
 	}
 
 	public String getDescription() {

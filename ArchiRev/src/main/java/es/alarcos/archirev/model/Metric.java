@@ -16,7 +16,7 @@ public class Metric extends AbstractEntity implements Serializable {
 	private static final long serialVersionUID = 4652729570226202557L;
 
 	public Metric() {
-
+		super();
 	}
 
 	public Metric(View view, String name, String value) {

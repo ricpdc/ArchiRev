@@ -31,7 +31,7 @@ public class Stakeholder extends AbstractEntity {
 	private List<Viewpoint> viewpoints = new ArrayList<>();
 
 	public Stakeholder() {
-
+		super();
 	}
 
 	public String getDescription() {
