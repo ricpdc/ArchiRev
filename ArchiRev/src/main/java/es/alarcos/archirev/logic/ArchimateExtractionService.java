@@ -907,7 +907,7 @@ public class ArchimateExtractionService implements Serializable {
 			schemaFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
 			schemaFactory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
 			Schema schema = schemaFactory.newSchema(schemaFile);
-			Validator validator = schema.newValidator();
+			Validator validator = schema.newValidator(); //NOSONAR
 			validator.validate(xmlFile);
 			logger.debug(xmlFile.getSystemId() + " is valid");
 			return true;
