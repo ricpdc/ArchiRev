@@ -31,14 +31,15 @@ import es.alarcos.archirev.persistency.TechniqueDao;
 import es.alarcos.archirev.persistency.ViewpointDao;
 import es.alarcos.archirev.persistency.ViewpointElementDao;
 import io.jenetics.Chromosome;
+import io.jenetics.EliteSelector;
 import io.jenetics.Genotype;
 import io.jenetics.IntegerChromosome;
 import io.jenetics.IntegerGene;
+import io.jenetics.LinearRankSelector;
 import io.jenetics.Mutator;
 import io.jenetics.Phenotype;
-import io.jenetics.RouletteWheelSelector;
-import io.jenetics.SinglePointCrossover;
 import io.jenetics.TournamentSelector;
+import io.jenetics.UniformCrossover;
 import io.jenetics.engine.Engine;
 import io.jenetics.engine.EvolutionResult;
 import io.jenetics.engine.EvolutionStatistics;
@@ -51,11 +52,11 @@ import io.jenetics.util.Factory;
 public class BestPlanService implements Serializable {
 	private static final long serialVersionUID = 6004486475450092813L;
 
-	private static final int POPULATION_SIZE = 50;
-	private static final int MAX_GENERATIONS = 20;
+	private static final int POPULATION_SIZE = 40;
+	private static final int MAX_GENERATIONS = 30;
 	private static final int STEADY_FITNESS_LIMIT = 5;
-	private static final double MUTATOR_RATE = 0.15;
-	private static final double SINGLE_POINT_CROSSOVER = 0.20;
+	private static final double MUTATOR_RATE = 0.5; // [0.5-1]
+	private static final double SINGLE_POINT_CROSSOVER = 0.05;
 
 	private static Logger logger = LoggerFactory.getLogger(BestPlanService.class);
 
@@ -137,17 +138,17 @@ public class BestPlanService implements Serializable {
 				return null;
 			}
 
-			Engine<IntegerGene, Double> engine = Engine.builder(this::fitness, gtf).populationSize(POPULATION_SIZE)
-					.survivorsSelector(new TournamentSelector<>(5)).offspringSelector(new RouletteWheelSelector<>())
-					.alterers(new Mutator<>(MUTATOR_RATE), new SinglePointCrossover<>(SINGLE_POINT_CROSSOVER)).maximizing().build();
+			Engine<IntegerGene, Double> engine = Engine.builder(this::fitness, gtf).populationSize(50)
+					.survivorsSelector(new LinearRankSelector<>()).offspringSelector(new EliteSelector(2, new TournamentSelector((int)(0.2*50)))).offspringFraction(0.75)
+					.alterers(new Mutator<>(0.03), new UniformCrossover<>(0.5, 0.4)).maximizing().build();
 
 			EvolutionStatistics<Double, DoubleMomentStatistics> statistics = EvolutionStatistics.ofNumber();
 
 			Genotype<IntegerGene> result = engine.stream()
-					.limit(Limits.bySteadyFitness(STEADY_FITNESS_LIMIT))
-					.limit(MAX_GENERATIONS)
+					.limit(Limits.bySteadyFitness(5))
+					.limit(100)
 					.peek(statistics)
-					.peek(er -> System.out.println("BEST>> " + er.getBestPhenotype()))
+					.peek(er -> logger.info(String.format("BEST>> %s", er.getBestPhenotype().toString())))
 					.peek(this::update)
 					.collect(EvolutionResult.toBestGenotype());
 
