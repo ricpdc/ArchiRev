@@ -468,7 +468,7 @@ public class ArchimateExtractionService implements Serializable {
 					ShapeEnum shapeEnum = ShapeEnum.getByModelElement(component.getClass());
 					if (filterInForView(viewType, component)) {
 						componentNode = graph.insertVertex(parent, component.getId(), component.getName(), 0, 0,
-								(double) component.getName().length() * 5 + 60 + 30, 40 + 35,
+								(double) component.getName().length() * 5 + 60 + 30, (double) 40 + 35,
 								shapeEnum.getShape().getSimpleName());
 						nodes.put(component, componentNode);
 						parent = componentNode;

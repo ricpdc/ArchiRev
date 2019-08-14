@@ -498,11 +498,11 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		} finally {
 			// close the streams using close method
 			try {
-				if (br != null) {
-					br.close();
-				}
 				if (fw != null) {
 					fw.close();
+				}
+				if (br != null) {
+					br.close();
 				}
 				if (is != null) {
 					is.close();

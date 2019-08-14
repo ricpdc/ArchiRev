@@ -100,7 +100,9 @@ public class Extraction extends AbstractEntity {
 		if (!sources.isEmpty()) {
 			Iterator<Source> iterator = sources.iterator();
 			displaySources = iterator.next().getName();
-			iterator.hasNext();
+			if(!iterator.hasNext()) {
+				return displaySources;
+			}
 
 			for (; iterator.hasNext();) {
 				displaySources += (", " + iterator.next().getName());
@@ -116,7 +118,9 @@ public class Extraction extends AbstractEntity {
 		if (!selectedViews.isEmpty()) {
 			Iterator<ModelViewEnum> iterator = selectedViews.iterator();
 			displayViews = iterator.next().getLabel();
-			iterator.hasNext();
+			if(!iterator.hasNext()) {
+				return displayViews;
+			}
 
 			for (; iterator.hasNext();) {
 				displayViews += (", " + iterator.next().getLabel());

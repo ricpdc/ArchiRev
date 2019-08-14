@@ -1,11 +1,7 @@
 package es.alarcos.archirev.model;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -18,10 +14,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 
 @Entity
 @Table(name = "av_element")
@@ -69,6 +61,16 @@ public class ViewpointElement extends AbstractEntity {
 		} else if (!id.equals(other.getId()))
 			return false;
 		return true;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((miningPoints == null) ? 0 : miningPoints.hashCode());
+		result = prime * result + ((viewpoints == null) ? 0 : viewpoints.hashCode());
+		return result;
 	}
 
 	public byte[] getIcon() {
