@@ -36,7 +36,7 @@ public class KdmModelsController extends AbstractController {
 
 	private static final long serialVersionUID = 1220451072138440791L;
 
-	static Logger logger = LoggerFactory.getLogger(KdmModelsController.class);
+	private static Logger logger = LoggerFactory.getLogger(KdmModelsController.class);
 
 	@Autowired
 	private SessionController sessionController;

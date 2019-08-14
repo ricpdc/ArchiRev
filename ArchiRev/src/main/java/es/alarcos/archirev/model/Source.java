@@ -26,7 +26,7 @@ public class Source extends AbstractEntity {
 
 	private static final long serialVersionUID = -3796066622416230524L;
 
-	static Logger logger = LoggerFactory.getLogger(Source.class);
+	private static Logger logger = LoggerFactory.getLogger(Source.class);
 	
 	@Enumerated(EnumType.ORDINAL)
 	@Column(name = "concern")

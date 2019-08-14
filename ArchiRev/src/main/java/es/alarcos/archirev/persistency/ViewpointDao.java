@@ -29,7 +29,7 @@ public class ViewpointDao extends AbstractDao<Viewpoint> {
 
 	private static final long serialVersionUID = -513674061420256678L;
 
-	static Logger logger = LoggerFactory.getLogger(ViewpointDao.class);
+	private static Logger logger = LoggerFactory.getLogger(ViewpointDao.class);
 
 	public ViewpointDao() {
 		super();

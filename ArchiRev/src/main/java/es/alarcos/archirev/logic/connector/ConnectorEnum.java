@@ -34,7 +34,7 @@ public enum ConnectorEnum {
 	
 	// @formatter:on
 
-	static Logger logger = LoggerFactory.getLogger(ConnectorEnum.class);
+	private static Logger logger = LoggerFactory.getLogger(ConnectorEnum.class);
 
 	private Class<? extends ArchimateRelationship> modelRelationship;
 	private Class<? extends AbstractArchiMateConnector> connectorShape;

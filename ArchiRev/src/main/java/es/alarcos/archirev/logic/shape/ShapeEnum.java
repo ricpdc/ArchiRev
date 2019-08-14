@@ -29,7 +29,7 @@ public enum ShapeEnum {
 	
 	// @formatter:on
 
-	static Logger logger = LoggerFactory.getLogger(ShapeEnum.class);
+	private static Logger logger = LoggerFactory.getLogger(ShapeEnum.class);
 
 	private Class<? extends ArchimateElement> modelElement;
 	private Class<? extends mxBasicShape> shape;

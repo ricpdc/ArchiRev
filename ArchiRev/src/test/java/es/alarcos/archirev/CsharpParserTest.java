@@ -15,6 +15,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import es.alarcos.archirev.logic.SyntaxError;
 import es.alarcos.archirev.logic.SyntaxErrorListener;
@@ -30,6 +32,8 @@ import es.alarcos.archirev.parser.csharp.CSharpParser.Struct_definitionContext;
 @SuppressWarnings("deprecation")
 class CsharpParserTest {
 
+	private static Logger logger = LoggerFactory.getLogger(CsharpParserTest.class);
+	
 	private static final String TEST_FOLDER = "D:\\Universidad\\CASOS DE ESTUDIO\\ArquiRev\\bari";
 	private int numberOfCsharpFiles;
 	private List<String> wrongFiles;
@@ -97,7 +101,7 @@ class CsharpParserTest {
 					parserCsharpFile(file);
 					numberOfCsharpFiles++;
 				} catch (Exception ex) {
-					ex.printStackTrace();
+					logger.error(ex.getMessage());
 				}
 			}
 		}

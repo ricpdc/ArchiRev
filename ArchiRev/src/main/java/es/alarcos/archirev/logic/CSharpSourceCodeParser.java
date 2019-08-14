@@ -291,7 +291,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		}
 
 		File tempFile = getTempFileWithoutDirectives(zipFile, zipEntry);
-		if (Files.readAllBytes(tempFile.toPath()).length == 0) {
+		if (tempFile == null || Files.readAllBytes(tempFile.toPath()).length == 0) {
 			return;
 		}
 
@@ -377,7 +377,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		}
 
 		File tempFile = getTempFileWithoutDirectives(zipFile, zipEntry);
-		if (Files.readAllBytes(tempFile.toPath()).length == 0) {
+		if (tempFile == null || Files.readAllBytes(tempFile.toPath()).length == 0) {
 			return;
 		}
 
@@ -473,6 +473,9 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 
 		try {
 			tempFile = File.createTempFile(zipFile.getName(), "-withoutDirectives.tmp");
+			if(tempFile == null) {
+				return null;
+			}
 			fw = new FileWriter(tempFile);
 			is = zipFile.getInputStream(zipEntry);
 			br = new BufferedReader(new InputStreamReader(is));
@@ -589,7 +592,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 				numberOfCsharpFiles++;
 			} catch (Exception ex) {
 				logger.error(zipEntry.getName() + " cannot be parsed");
-				ex.printStackTrace();
+				logger.error(ex.getMessage());
 			}
 
 		}
@@ -640,7 +643,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 				numberOfCsharpFiles++;
 			} catch (Exception ex) {
 				logger.error(zipEntry.getName() + " cannot be parsed");
-				ex.printStackTrace();
+				logger.error(ex.getMessage());
 			}
 		}
 		return kdmDocument;
@@ -651,7 +654,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		long time = System.nanoTime();
 		String msg = "" + zipEntry.getName() + ";" + getSimpleClassName(zipEntry.getName()) + ";";
 		File tempFile = getTempFileWithoutDirectives(zipFile, zipEntry);
-		if (Files.readAllBytes(tempFile.toPath()).length == 0) {
+		if (tempFile == null || Files.readAllBytes(tempFile.toPath()).length == 0) {
 			return;
 		}
 
@@ -712,7 +715,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		long time = System.nanoTime();
 		String msg = "" + zipEntry.getName() + ";" + getSimpleClassName(zipEntry.getName()) + ";";
 		File tempFile = getTempFileWithoutDirectives(zipFile, zipEntry);
-		if (Files.readAllBytes(tempFile.toPath()).length == 0) {
+		if (tempFile == null || Files.readAllBytes(tempFile.toPath()).length == 0) {
 			return;
 		}
 

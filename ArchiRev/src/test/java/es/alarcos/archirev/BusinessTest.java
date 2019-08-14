@@ -107,7 +107,7 @@ class BusinessTest {
 
 	private static final String MAPPED_SUPERCLASS_ANNOTATION = "MappedSuperclass";
 
-	static Logger logger = LoggerFactory.getLogger(BusinessTest.class);
+	private static Logger logger = LoggerFactory.getLogger(BusinessTest.class);
 
 	//private final Decompiler decompiler = Decompiler.CFR;
 	//private final DecompilerSettings settings = new DecompilerSettings(decompiler);
@@ -794,7 +794,7 @@ class BusinessTest {
 			return validateXmlFile(xmlFileName);
 
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage());
 		}
 		return false;
 

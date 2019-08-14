@@ -22,7 +22,7 @@ public abstract class Model extends AbstractEntity {
 
 	private static final long serialVersionUID = 8268751860712719602L;
 	
-	static Logger logger = LoggerFactory.getLogger(Model.class);
+	private static Logger logger = LoggerFactory.getLogger(Model.class);
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "extraction_id")

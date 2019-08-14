@@ -24,7 +24,7 @@ public class TechniqueDao extends AbstractDao<Technique> {
 
 	private static final long serialVersionUID = -672166759371530731L;
 	
-	static Logger logger = LoggerFactory.getLogger(TechniqueDao.class);
+	private static Logger logger = LoggerFactory.getLogger(TechniqueDao.class);
 
 	public TechniqueDao() {
 		super();

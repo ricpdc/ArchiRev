@@ -80,7 +80,7 @@ public class ArchimateExtractionService implements Serializable {
 
 	private static final long serialVersionUID = -4392305100176250199L;
 
-	static Logger logger = LoggerFactory.getLogger(ArchimateExtractionService.class);
+	private static Logger logger = LoggerFactory.getLogger(ArchimateExtractionService.class);
 
 	private static final String DEFAULT_LANG = "en";
 	private static final String SCHEMA_LOCATION = "http://www.opengroup.org/xsd/archimate/3.0/ http://www.opengroup.org/xsd/archimate/3.0/archimate3_Diagram.xsd http://purl.org/dc/elements/1.1/ http://dublincore.org/schemas/xmls/qdc/2008/02/11/dc.xsd";
@@ -241,7 +241,7 @@ public class ArchimateExtractionService implements Serializable {
 				if (component != null) {
 					ShapeEnum shapeEnum = ShapeEnum.getByModelElement(component.getClass());
 					componentNode = graph.insertVertex(parent, component.getId(), component.getName(), 0, 0,
-							component.getName().length() * 5 + 60 + 30, 40 + 35, shapeEnum.getShape().getSimpleName());
+							(double) component.getName().length() * 5 + 60 + 30, 40.0 + 35, shapeEnum.getShape().getSimpleName());
 					graphNodesMap.put(component, componentNode);
 					parent = componentNode;
 				}
@@ -254,7 +254,7 @@ public class ArchimateExtractionService implements Serializable {
 					}
 
 					Object node = graph.insertVertex(parent, archimateElement.getId(), archimateElement.getName(), 15,
-							20, archimateElement.getName().length() * 5 + 60, 40, shapeEnum.getShape().getSimpleName());
+							20, (double) archimateElement.getName().length() * 5 + 60, 40, shapeEnum.getShape().getSimpleName());
 					graphNodesMap.put(archimateElement, componentNode != null ? componentNode : node);
 					elements.add(new Element(model, archimateElement));
 					// nodes.put(archimateElement, node);
@@ -394,7 +394,7 @@ public class ArchimateExtractionService implements Serializable {
 			parent = graph.getDefaultParent();
 			for (mxCell node : component) {
 				mxCell insertedNode = (mxCell) graph.insertVertex(parent, node.getId(), node.getValue(), 15, 20,
-						node.getValue().toString().length() * 5 + 60, 40, node.getStyle());
+						(double) node.getValue().toString().length() * 5 + 60, 40, node.getStyle());
 				nodeMap.put(node, insertedNode);
 			}
 
@@ -468,7 +468,7 @@ public class ArchimateExtractionService implements Serializable {
 					ShapeEnum shapeEnum = ShapeEnum.getByModelElement(component.getClass());
 					if (filterInForView(viewType, component)) {
 						componentNode = graph.insertVertex(parent, component.getId(), component.getName(), 0, 0,
-								component.getName().length() * 5 + 60 + 30, 40 + 35,
+								(double) component.getName().length() * 5 + 60 + 30, 40 + 35,
 								shapeEnum.getShape().getSimpleName());
 						nodes.put(component, componentNode);
 						parent = componentNode;
@@ -485,7 +485,7 @@ public class ArchimateExtractionService implements Serializable {
 					if (filterInForView(viewType, archimateElement)) {
 
 						Object node = graph.insertVertex(parent, archimateElement.getId(), archimateElement.getName(),
-								15, 20, archimateElement.getName().length() * 5 + 60, 40,
+								15, 20, (double) archimateElement.getName().length() * 5 + 60, 40,
 								shapeEnum.getShape().getSimpleName());
 						nodes.put(archimateElement, componentNode != null ? componentNode : node);
 					}
@@ -718,7 +718,7 @@ public class ArchimateExtractionService implements Serializable {
 				return new File(model.getExportedPath());
 			}
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage());
 		}
 		return null;
 	}

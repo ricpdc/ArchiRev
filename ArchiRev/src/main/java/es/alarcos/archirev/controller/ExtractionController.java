@@ -55,7 +55,7 @@ public class ExtractionController extends AbstractController {
 
 	private static final long serialVersionUID = -1637522119751630382L;
 
-	static Logger logger = LoggerFactory.getLogger(ExtractionController.class);
+	private static Logger logger = LoggerFactory.getLogger(ExtractionController.class);
 
 	private static final String DEFAULT_SETUP_PATH = "/json/default_setup.json";
 

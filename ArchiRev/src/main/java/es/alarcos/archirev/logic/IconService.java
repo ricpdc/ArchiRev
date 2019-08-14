@@ -35,8 +35,6 @@ public class IconService implements Serializable {
 		String icon = "images/fav"; // default
 		String root = "images/archimate/";
 		if (archimateConcept.equals(ApplicationComponent.class.getSimpleName())) {
-			icon = root + "";
-		} else if (archimateConcept.equals(ApplicationComponent.class.getSimpleName())) {
 			icon = root + "application-component";
 		} else if (archimateConcept.equals(ApplicationService.class.getSimpleName())) {
 			icon = root + "application-service";

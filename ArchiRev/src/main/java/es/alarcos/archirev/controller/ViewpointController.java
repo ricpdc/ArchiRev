@@ -605,9 +605,8 @@ public class ViewpointController extends AbstractController {
 			}
 			csvWriter.flush();
 			csvWriter.close();
-		}catch(IOException ioe) {
-			logger.error("Error generating genetic stats");
-			ioe.printStackTrace();
+		}catch(IOException ex) {
+			logger.error("Error generating genetic stats: " + ex.getMessage());
 		}
 		finally {
 			try {

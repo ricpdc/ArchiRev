@@ -29,7 +29,7 @@ public class View extends AbstractEntity implements Serializable {
 
 	private static final long serialVersionUID = -7476543110947979418L;
 
-	static Logger logger = LoggerFactory.getLogger(View.class);
+	private static Logger logger = LoggerFactory.getLogger(View.class);
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "type")

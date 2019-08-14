@@ -35,7 +35,7 @@ public class KdmExtractionService implements Serializable {
 	
 	private static final long serialVersionUID = 8291390372516503166L;
 
-	static Logger logger = LoggerFactory.getLogger(KdmExtractionService.class);
+	private static Logger logger = LoggerFactory.getLogger(KdmExtractionService.class);
 	
 	private static final String KDM_XSD_ROOT = "target/ArchiRev/WEB-INF/classes/metamodels/";
 	
@@ -111,7 +111,7 @@ public class KdmExtractionService implements Serializable {
 				return new File(kdmModel.getExportedPath());
 			//}
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			logger.error(ex.getMessage());
 		}
 		return null;
 

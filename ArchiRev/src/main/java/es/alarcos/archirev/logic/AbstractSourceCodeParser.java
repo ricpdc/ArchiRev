@@ -232,19 +232,21 @@ public abstract class AbstractSourceCodeParser implements Serializable {
 			default:
 				break;
 			}
-			elementToBeAdded.setName(formattedName);
-			elementToBeAdded.setId("id-" + UUID.randomUUID());
-			boolean existent = false;
-			List<ArchimateElement> archimateElements = modelElementsByClassName.get(className);
-			for (int i = 0; archimateElements != null && i < archimateElements.size(); i++) {
-				if (archimateElements.get(i).getClass().equals(elementToBeAdded.getClass())) {
-					existent = true;
-					break;
+			if(elementToBeAdded != null) {
+				elementToBeAdded.setName(formattedName);
+				elementToBeAdded.setId("id-" + UUID.randomUUID());
+				boolean existent = false;
+				List<ArchimateElement> archimateElements = modelElementsByClassName.get(className);
+				for (int i = 0; archimateElements != null && i < archimateElements.size(); i++) {
+					if (archimateElements.get(i).getClass().equals(elementToBeAdded.getClass())) {
+						existent = true;
+						break;
+					}
+	
 				}
-
-			}
-			if (!existent) {
-				modelElementsByClassName.add(className, elementToBeAdded);
+				if (!existent) {
+					modelElementsByClassName.add(className, elementToBeAdded);
+				}
 			}
 		}
 	}

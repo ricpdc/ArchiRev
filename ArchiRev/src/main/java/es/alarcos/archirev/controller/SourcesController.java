@@ -59,7 +59,7 @@ public class SourcesController extends AbstractController {
 
 	private static final long serialVersionUID = -1637522119751630382L;
 
-	static Logger logger = LoggerFactory.getLogger(SourcesController.class);
+	private static Logger logger = LoggerFactory.getLogger(SourcesController.class);
 
 	@Autowired
 	private SessionController sessionController;

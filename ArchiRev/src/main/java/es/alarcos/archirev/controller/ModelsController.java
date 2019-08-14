@@ -42,7 +42,7 @@ public class ModelsController extends AbstractController {
 
 	private static final long serialVersionUID = 1220451072138440791L;
 
-	static Logger logger = LoggerFactory.getLogger(ModelsController.class);
+	private static Logger logger = LoggerFactory.getLogger(ModelsController.class);
 
 	@Autowired
 	private SessionController sessionController;

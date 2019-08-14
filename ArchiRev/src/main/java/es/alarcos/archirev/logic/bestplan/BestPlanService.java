@@ -57,7 +57,7 @@ public class BestPlanService implements Serializable {
 	private static final double MUTATOR_RATE = 0.15;
 	private static final double SINGLE_POINT_CROSSOVER = 0.20;
 
-	static Logger logger = LoggerFactory.getLogger(BestPlanService.class);
+	private static Logger logger = LoggerFactory.getLogger(BestPlanService.class);
 
 	public static final String PRIO_AUTOMATIC = "PRIO_AUTOMATIC";
 	public static final String PRIO_MANUAL = "PRIO_MANUAL";
