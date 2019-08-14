@@ -78,6 +78,9 @@ import es.alarcos.archirev.model.enums.ModelViewEnum;
 @Service
 public class ArchimateExtractionService implements Serializable {
 
+
+
+
 	private static final long serialVersionUID = -4392305100176250199L;
 
 	private static Logger logger = LoggerFactory.getLogger(ArchimateExtractionService.class);
@@ -90,6 +93,10 @@ public class ArchimateExtractionService implements Serializable {
 	private static final String NS_XSI = "http://www.w3.org/2001/XMLSchema-instance";
 
 	private static final int MIN_NUM_NODES_FOR_GRAPH_COMPONENT_VIEW = 2;
+
+	private static final String IDENTIFIER = "identifier";
+	private static final String TYPE = "type";
+	private static final String NAME = "name";
 
 	private AbstractSourceCodeParser sourceCodeParser;
 
@@ -735,7 +742,7 @@ public class ArchimateExtractionService implements Serializable {
 		eModel.setAttribute("schemaLocation", SCHEMA_LOCATION, nsXsi);
 		addIdentifier(eModel);
 
-		org.jdom2.Element eName = new org.jdom2.Element("name", nsArchimate).addContent(name);
+		org.jdom2.Element eName = new org.jdom2.Element(NAME, nsArchimate).addContent(name);
 		addLang(eName);
 		eModel.addContent(eName);
 
@@ -758,9 +765,9 @@ public class ArchimateExtractionService implements Serializable {
 		org.jdom2.Element eElements = new org.jdom2.Element("elements", nsArchimate);
 		for (ArchimateElement archimateElement : graphNodesMap.keySet()) {
 			org.jdom2.Element eElement = new org.jdom2.Element("element", nsArchimate);
-			eElement.setAttribute("identifier", archimateElement.getId());
-			eElement.setAttribute("type", archimateElement.getClass().getSimpleName(), nsXsi);
-			org.jdom2.Element eName = new org.jdom2.Element("name", nsArchimate).addContent(archimateElement.getName());
+			eElement.setAttribute(IDENTIFIER, archimateElement.getId());
+			eElement.setAttribute(TYPE, archimateElement.getClass().getSimpleName(), nsXsi);
+			org.jdom2.Element eName = new org.jdom2.Element(NAME, nsArchimate).addContent(archimateElement.getName());
 			addLang(eName);
 			eElement.addContent(eName);
 			eElements.addContent(eElement);
@@ -775,13 +782,13 @@ public class ArchimateExtractionService implements Serializable {
 
 		for (ArchimateRelationship archimateRelationship : graphEdgesMap.keySet()) {
 			org.jdom2.Element eRelationship = new org.jdom2.Element("relationship", nsArchimate);
-			eRelationship.setAttribute("identifier", archimateRelationship.getId());
+			eRelationship.setAttribute(IDENTIFIER, archimateRelationship.getId());
 			String simpleName = archimateRelationship.getClass().getSimpleName();
 			simpleName = simpleName.substring(0, simpleName.lastIndexOf("Relationship"));
-			eRelationship.setAttribute("type", simpleName, nsXsi);
+			eRelationship.setAttribute(TYPE, simpleName, nsXsi);
 			eRelationship.setAttribute("source", archimateRelationship.getSource().getId());
 			eRelationship.setAttribute("target", archimateRelationship.getTarget().getId());
-			org.jdom2.Element eName = new org.jdom2.Element("name", nsArchimate)
+			org.jdom2.Element eName = new org.jdom2.Element(NAME, nsArchimate)
 					.addContent(archimateRelationship.getName());
 			addLang(eName);
 			eRelationship.addContent(eName);
@@ -808,8 +815,8 @@ public class ArchimateExtractionService implements Serializable {
 
 		org.jdom2.Element eView = new org.jdom2.Element("view", nsArchimate);
 		addIdentifier(eView);
-		eView.setAttribute("type", "Diagram", nsXsi);
-		org.jdom2.Element eName = new org.jdom2.Element("name", nsArchimate).addContent(view.getName());
+		eView.setAttribute(TYPE, "Diagram", nsXsi);
+		org.jdom2.Element eName = new org.jdom2.Element(NAME, nsArchimate).addContent(view.getName());
 		addLang(eName);
 		eView.addContent(eName);
 
@@ -821,9 +828,9 @@ public class ArchimateExtractionService implements Serializable {
 			org.jdom2.Element eNode = new org.jdom2.Element("node", nsArchimate);
 			mxCell nodeCell = (mxCell) node;
 			addIdentifier(eNode);
-			viewNodeIds.put(nodeCell.getId(), eNode.getAttributeValue("identifier"));
+			viewNodeIds.put(nodeCell.getId(), eNode.getAttributeValue(IDENTIFIER));
 			eNode.setAttribute("elementRef", nodeCell.getId());
-			eNode.setAttribute("type", "Element", nsXsi);
+			eNode.setAttribute(TYPE, "Element", nsXsi);
 			mxCell cell = (mxCell) node;
 			addGeometry(eNode, cell);
 
@@ -857,7 +864,7 @@ public class ArchimateExtractionService implements Serializable {
 			addIdentifier(eConnection);
 
 			eConnection.setAttribute("relationshipRef", edgeCell.getId());
-			eConnection.setAttribute("type", "Relationship", nsXsi);
+			eConnection.setAttribute(TYPE, "Relationship", nsXsi);
 			eConnection.setAttribute("source", viewNodeIds.get(edgeCell.getSource().getId()));
 			eConnection.setAttribute("target", viewNodeIds.get(edgeCell.getTarget().getId()));
 			mxCell cell = (mxCell) edge;
@@ -883,7 +890,7 @@ public class ArchimateExtractionService implements Serializable {
 
 	private String addIdentifier(org.jdom2.Element element) {
 		String id = "id-" + UUID.randomUUID();
-		element.setAttribute("identifier", id);
+		element.setAttribute(IDENTIFIER, id);
 		return id;
 	}
 

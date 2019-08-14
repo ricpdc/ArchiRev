@@ -139,8 +139,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 				parseCsharpFile(zipFile, zipEntry, modelElementsByClassName);
 				numberOfCsharpFiles++;
 			} catch (Exception ex) {
-				logger.error(zipEntry.getName() + " cannot be parsed");
-				// wrongFiles.add(zipEntry.getName());
+				logger.error(String.format(" %s cannot be parsed", zipEntry.getName()));
 			}
 
 		}
@@ -605,8 +604,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 						modelRelationshipsByClassName);
 				numberOfCsharpFiles++;
 			} catch (Exception ex) {
-				logger.error(zipEntry.getName() + " cannot be parsed");
-				logger.error(ex.getMessage());
+				logger.error(String.format(" %s cannot be parsed", zipEntry.getName()));
 			}
 
 		}
@@ -660,8 +658,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 				processEntryToKdmRelationship(zipFile, zipEntry, kdmDocument, element);
 				numberOfCsharpFiles++;
 			} catch (Exception ex) {
-				logger.error(zipEntry.getName() + " cannot be parsed");
-				logger.error(ex.getMessage());
+				logger.error(String.format(" %s cannot be parsed", zipEntry.getName()));
 			}
 		}
 		return kdmDocument;
