@@ -107,9 +107,13 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 
 		elementsLog = new File("C:\\Temp\\elements.txt");
 		if (elementsLog.exists()) {
-			elementsLog.delete();
+			if(!elementsLog.delete()) {
+				logger.error("Error deleting element log");
+			}
 		}
-		elementsLog.createNewFile();
+		if(!elementsLog.createNewFile()) {
+			logger.error("Error creating element log");
+		}
 		try {
 			Files.write(elementsLog.toPath(),
 					"path;name;linesOfCode;parsingTime;numberOfElements;elementsGeneratingTime\n".getBytes(),
@@ -164,9 +168,13 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 
 		elementsLog = new File("C:\\Temp\\elements-kdm.txt");
 		if (elementsLog.exists()) {
-			elementsLog.delete();
+			if(!elementsLog.delete()) {
+				logger.error("Error deleting element log");
+			}
 		}
-		elementsLog.createNewFile();
+		if(!elementsLog.createNewFile()) {
+			logger.error("Error creating element log");
+		}
 		try {
 			Files.write(elementsLog.toPath(),
 					"path;name;linesOfCode;parsingTime;numberOfElements;elementsGeneratingTime\n".getBytes(),
@@ -563,9 +571,13 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 
 		relationshipsLog = new File("C:\\Temp\\relationships.txt");
 		if (relationshipsLog.exists()) {
-			relationshipsLog.delete();
+			if(!relationshipsLog.delete()) {
+				logger.error("Error deleting relationships Log");
+			}
 		}
-		relationshipsLog.createNewFile();
+		if(!relationshipsLog.createNewFile()) {
+			logger.error("Error creating relationships Log");
+		}
 		try {
 			Files.write(relationshipsLog.toPath(),
 					"path;name;linesOfCode;parsingTime;numberOfRelationships;relationshipsGeneratingTime\n".getBytes(),
@@ -616,9 +628,13 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 
 		relationshipsLog = new File("C:\\Temp\\relationships.txt");
 		if (relationshipsLog.exists()) {
-			relationshipsLog.delete();
+			if(!relationshipsLog.delete()) {
+				logger.error("Error deleting relationships Log");
+			}
 		}
-		relationshipsLog.createNewFile();
+		if(!relationshipsLog.createNewFile()) {
+			logger.error("Error creating relationships Log");
+		}
 		try {
 			Files.write(relationshipsLog.toPath(),
 					"path;name;linesOfCode;parsingTime;numberOfRelationships;relationshipsGeneratingTime\n".getBytes(),

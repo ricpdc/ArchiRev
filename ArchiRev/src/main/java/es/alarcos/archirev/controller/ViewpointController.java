@@ -569,7 +569,10 @@ public class ViewpointController extends AbstractController {
 		
 		FileWriter csvWriter = null;
 		try{
-			file.createNewFile();
+			if(!file.createNewFile()) {
+				logger.error("Error creating the stats file");
+				return;
+			}
 			csvWriter = new FileWriter(file);
 			String header = "#Gen;Fitness Avg.;Fitness Min;Fitness Max;Individuals;Altered;Killed;Invalids;Offspring Alter Time;Offspring Filter Time;"+
 					"Offspring Selection Time;Survivor Filter Time;Survivor Selection Time;Evaluation Time;Evolve Time\n";
