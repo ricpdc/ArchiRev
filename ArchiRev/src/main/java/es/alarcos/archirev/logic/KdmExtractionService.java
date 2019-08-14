@@ -134,7 +134,7 @@ public class KdmExtractionService implements Serializable {
 			schemas[4] = new StreamSource(new File(KDM_XSD_ROOT+"XMI.xsd"));
 			
 			Schema schema = schemaFactory.newSchema(schemas);
-			Validator validator = schema.newValidator();
+			Validator validator = schema.newValidator(); //NOSONAR
 			validator.validate(kdmFile);
 			logger.debug(kdmFile.getSystemId() + " is valid");
 			return true;
