@@ -58,8 +58,9 @@ public class ViewpointElement extends AbstractEntity {
 		if (id == null) {
 			if (other.getId() != null)
 				return false;
-		} else if (!id.equals(other.getId()))
+		} else if (!id.equals(other.getId())) {
 			return false;
+		}
 		return true;
 	}
 	

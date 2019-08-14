@@ -120,7 +120,7 @@ public class ViewpointController extends AbstractController {
 	private DualListModel<Stakeholder> stakeholderPickerList = new DualListModel<>(new ArrayList<Stakeholder>(),
 			new ArrayList<Stakeholder>());
 
-	private Map<String, QueriedViewpointDTO> queriedViewpointMap = new HashMap<>();
+	private transient Map<String, QueriedViewpointDTO> queriedViewpointMap = new HashMap<>();
 
 	private ArrayList<Pair<String, Integer>> techniquesFromSelectedViewpoint;
 

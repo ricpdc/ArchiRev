@@ -88,7 +88,7 @@ public class ExtractionController extends AbstractController {
 	private List<ModelViewEnum> possibleViews = new ArrayList<>();
 	private List<ModelViewEnum> selectedViews = new ArrayList<>();
 
-	Map<SourceConcernEnum, Set<SourceEnum>> sourcesMap = Maps.newHashMap();
+	private transient Map<SourceConcernEnum, Set<SourceEnum>> sourcesMap = Maps.newHashMap();
 
 	public ExtractionController() {
 		super();

@@ -59,12 +59,15 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 
 
 
+
 	private static final long serialVersionUID = 4197712088221134990L;
 
 	private static Logger logger = LoggerFactory.getLogger(CSharpSourceCodeParser.class);
 
 	private static final String ZIP_FILE = "zipFile";
 	private static final String SYNTACTIC_ERROR = "\tSYNTACTIC ERROR: ";
+	private static final String BR_TAG_LOG = "\n\n\n";
+
 	private int numberOfCsharpFiles;
 	private Set<String> wrongFiles;
 	private Set<String> classes = new TreeSet<>();
@@ -75,14 +78,14 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 	private Set<String> delcaredTypeNames = new TreeSet<>();
 	private Set<String> callsToCallableUnits = new TreeSet<>();
 
-	private static File elementsLog;
-	private static File relationshipsLog;
+	private File elementsLog;
+	private File relationshipsLog;
 	
 	
-	private Hashtable<String, TreeNode> directories = new Hashtable<>();
-	private TreeNode treeRoot;
+	private transient Hashtable<String, TreeNode> directories = new Hashtable<>();
+	private transient TreeNode treeRoot;
 
-	private MultiValueMap<String, ArchimateElement> modelElementsByClassName;
+	private transient MultiValueMap<String, ArchimateElement> modelElementsByClassName;
 	
 	private Map<String, String> kdmElementsIds;
 
@@ -251,27 +254,27 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			logger.info(fileName);
 		}
 
-		logger.info("\n\n\n" + classes.size() + " Different unique classes:\n");
+		logger.info(BR_TAG_LOG + classes.size() + " Different unique classes:\n");
 		for (String clazz : classes) {
 			logger.info(clazz);
 		}
 
-		logger.info("\n\n\n" + enums.size() + " Different unique enums:\n");
+		logger.info(BR_TAG_LOG + enums.size() + " Different unique enums:\n");
 		for (String en : enums) {
 			logger.info(en);
 		}
 
-		logger.info("\n\n\n" + interfaces.size() + " Different unique interfaces:\n");
+		logger.info(BR_TAG_LOG + interfaces.size() + " Different unique interfaces:\n");
 		for (String inter : interfaces) {
 			logger.info(inter);
 		}
 
-		logger.info("\n\n\n" + structs.size() + " Different unique structs:\n");
+		logger.info(BR_TAG_LOG + structs.size() + " Different unique structs:\n");
 		for (String st : structs) {
 			logger.info(st);
 		}
 
-		System.out.println("\n\n\n" + delegates.size() + " Different unique delegates:\n");
+		System.out.println(BR_TAG_LOG + delegates.size() + " Different unique delegates:\n");
 		for (String del : delegates) {
 			System.out.println(del);
 		}

@@ -22,7 +22,7 @@ public class AbstractDao<T extends AbstractEntity> implements Serializable {
 	private Class<T> clazz;
 
 	@PersistenceContext
-	protected EntityManager entityManager;
+	protected transient EntityManager entityManager;
 
 	public void setClazz(Class<T> clazzToSet) {
 		this.clazz = clazzToSet;

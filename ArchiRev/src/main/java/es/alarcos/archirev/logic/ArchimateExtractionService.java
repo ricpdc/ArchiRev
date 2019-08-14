@@ -81,6 +81,7 @@ public class ArchimateExtractionService implements Serializable {
 
 
 
+
 	private static final long serialVersionUID = -4392305100176250199L;
 
 	private static Logger logger = LoggerFactory.getLogger(ArchimateExtractionService.class);
@@ -97,6 +98,7 @@ public class ArchimateExtractionService implements Serializable {
 	private static final String IDENTIFIER = "identifier";
 	private static final String TYPE = "type";
 	private static final String NAME = "name";
+	private static final String TIME_TAG_LOG = ">Time> ";
 
 	private AbstractSourceCodeParser sourceCodeParser;
 
@@ -111,7 +113,7 @@ public class ArchimateExtractionService implements Serializable {
 	private transient Map<ArchimateRelationship, Object> graphEdgesMap;
 
 	public ArchimateExtractionService() {
-
+		//default constructor
 	}	
 
 	public void extractArchimateModel(ArchimateModel model) {
@@ -149,7 +151,7 @@ public class ArchimateExtractionService implements Serializable {
 			if (components.get(i).size() > MIN_NUM_NODES_FOR_GRAPH_COMPONENT_VIEW) {
 				long time = System.nanoTime();
 				generateModelViewForComponent(viewType, model, graph, components.get(i), "_" + (i + 1));
-				logger.info(">Time> " + viewType.getLabel() + "_" + (i+1) + ": " + (System.nanoTime() - time));
+				logger.info(TIME_TAG_LOG + viewType.getLabel() + "_" + (i+1) + ": " + (System.nanoTime() - time));
 			}
 		}
 	}
@@ -191,7 +193,7 @@ public class ArchimateExtractionService implements Serializable {
 					modelElementsByClassName);
 			long time = System.nanoTime();
 			generateModelAndDefaultView(model);
-			logger.info(">Time> " + ModelViewEnum.ALL.getLabel() + ": " + (System.nanoTime() - time));
+			logger.info(TIME_TAG_LOG + ModelViewEnum.ALL.getLabel() + ": " + (System.nanoTime() - time));
 			for (ModelViewEnum viewType : model.getExtraction().getSelectedViews()) {
 				if (viewType.equals(ModelViewEnum.ALL)) {
 					continue;
@@ -200,7 +202,7 @@ public class ArchimateExtractionService implements Serializable {
 				} else {
 					time = System.nanoTime();
 					generateModelView(viewType, model);
-					logger.info(">Time> " + viewType.getLabel() + ": " + (System.nanoTime() - time));
+					logger.info(TIME_TAG_LOG + viewType.getLabel() + ": " + (System.nanoTime() - time));
 				}
 			}
 		} catch (NoClassDefFoundError | IOException e) {
