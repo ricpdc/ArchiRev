@@ -109,22 +109,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		@SuppressWarnings("unchecked")
 		Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zipFile.entries();
 
-		elementsLog = new File("C:\\Temp\\elements.txt");
-		if (elementsLog.exists()) {
-			if(!elementsLog.delete()) {
-				logger.error("Error deleting element log");
-			}
-		}
-		if(!elementsLog.createNewFile()) {
-			logger.error("Error creating element log");
-		}
-		try {
-			Files.write(elementsLog.toPath(),
-					"path;name;linesOfCode;parsingTime;numberOfElements;elementsGeneratingTime\n".getBytes(),
-					StandardOpenOption.APPEND);
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-		}
+		elementsLog = getCleanLogFile("C:\\Temp\\elements.txt");
 
 		while (entries.hasMoreElements()) {
 			ZipEntry zipEntry = entries.nextElement();
@@ -148,6 +133,26 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 
 		return modelElementsByClassName;
 	}
+
+	private File getCleanLogFile(String fileName) throws IOException {
+		File logFile = new File(fileName);
+		if (logFile.exists()) {
+			if(!logFile.delete()) {
+				logger.error("Error deleting log file");
+			}
+		}
+		if(!logFile.createNewFile()) {
+			logger.error("Error creating log file");
+		}
+		try {
+			Files.write(logFile.toPath(),
+					"path;name;linesOfCode;parsingTime;numberOfItems;itemsGeneratingTime\n".getBytes(),
+					StandardOpenOption.APPEND);
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+		}
+		return logFile;
+	}
 	
 	
 	@SuppressWarnings("unchecked")
@@ -169,22 +174,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 
 		Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zipFile.entries();
 
-		elementsLog = new File("C:\\Temp\\elements-kdm.txt");
-		if (elementsLog.exists()) {
-			if(!elementsLog.delete()) {
-				logger.error("Error deleting element log");
-			}
-		}
-		if(!elementsLog.createNewFile()) {
-			logger.error("Error creating element log");
-		}
-		try {
-			Files.write(elementsLog.toPath(),
-					"path;name;linesOfCode;parsingTime;numberOfElements;elementsGeneratingTime\n".getBytes(),
-					StandardOpenOption.APPEND);
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-		}
+		elementsLog = getCleanLogFile("C:\\Temp\\kdm-elements.txt");
 		
 		Element model = document.getRootElement().getChild("model");
 
@@ -570,22 +560,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 
 		ZipFile zipFile = getZipFile(tempZipFile);
 
-		relationshipsLog = new File("C:\\Temp\\relationships.txt");
-		if (relationshipsLog.exists()) {
-			if(!relationshipsLog.delete()) {
-				logger.error("Error deleting relationships Log");
-			}
-		}
-		if(!relationshipsLog.createNewFile()) {
-			logger.error("Error creating relationships Log");
-		}
-		try {
-			Files.write(relationshipsLog.toPath(),
-					"path;name;linesOfCode;parsingTime;numberOfRelationships;relationshipsGeneratingTime\n".getBytes(),
-					StandardOpenOption.APPEND);
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-		}
+		relationshipsLog = getCleanLogFile("C:\\Temp\\relationships.txt");
 
 		@SuppressWarnings("unchecked")
 		Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zipFile.entries();
@@ -626,22 +601,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 
 		ZipFile zipFile = getZipFile(tempZipFile);
 
-		relationshipsLog = new File("C:\\Temp\\relationships.txt");
-		if (relationshipsLog.exists()) {
-			if(!relationshipsLog.delete()) {
-				logger.error("Error deleting relationships Log");
-			}
-		}
-		if(!relationshipsLog.createNewFile()) {
-			logger.error("Error creating relationships Log");
-		}
-		try {
-			Files.write(relationshipsLog.toPath(),
-					"path;name;linesOfCode;parsingTime;numberOfRelationships;relationshipsGeneratingTime\n".getBytes(),
-					StandardOpenOption.APPEND);
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-		}
+		relationshipsLog = getCleanLogFile("C:\\Temp\\kdm-relationships.txt");
 
 		@SuppressWarnings("unchecked")
 		Enumeration<ZipEntry> entries = (Enumeration<ZipEntry>) zipFile.entries();
