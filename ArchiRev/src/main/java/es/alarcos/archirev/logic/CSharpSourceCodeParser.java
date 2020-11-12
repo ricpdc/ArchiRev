@@ -226,7 +226,13 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			String id = addXmiIdentifier(compilationUnitE);
 			kdmElementsIds.put(getSimpleClassName(zipEntry.getName()), id);
 			entriesToKdmElementMap.put(zipEntry.getName(), compilationUnitE);
-			compilationUnitE.setAttribute("name", zipEntry.getName());
+			compilationUnitE.setAttribute("name", getSimpleClassName(zipEntry.getName()));
+			
+			Element pathAttribute = new Element("attribute");
+			pathAttribute.setAttribute("tag", "path");
+			pathAttribute.setAttribute("value", zipEntry.getName());
+			compilationUnitE.addContent(pathAttribute);
+			
 			element.addContent(compilationUnitE);
 			parseCsharpFileForKdmGeneration(zipFile, zipEntry, compilationUnitE, modelElementsByClassName);
 		}
