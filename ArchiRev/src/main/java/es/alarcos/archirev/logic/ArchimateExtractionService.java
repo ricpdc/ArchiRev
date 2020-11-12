@@ -45,6 +45,7 @@ import org.jdom2.output.XMLOutputter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.xml.sax.SAXException;
@@ -207,6 +208,7 @@ public class ArchimateExtractionService implements Serializable {
 			}
 		} catch (NoClassDefFoundError | IOException e) {
 			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -336,6 +338,7 @@ public class ArchimateExtractionService implements Serializable {
 			return file;
 		} catch (IOException e) {
 			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -436,6 +439,7 @@ public class ArchimateExtractionService implements Serializable {
 			return file;
 		} catch (IOException e) {
 			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
 		return null;
 
@@ -551,6 +555,7 @@ public class ArchimateExtractionService implements Serializable {
 			return file;
 		} catch (IOException e) {
 			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -728,6 +733,7 @@ public class ArchimateExtractionService implements Serializable {
 			}
 		} catch (IOException ex) {
 			logger.error(ex.getMessage());
+			ex.printStackTrace();
 		}
 		return null;
 	}
@@ -762,6 +768,7 @@ public class ArchimateExtractionService implements Serializable {
 	}
 
 	private org.jdom2.Element createXmlElements() {
+		Assert.isTrue(graphNodesMap!=null);
 		Namespace nsArchimate = Namespace.getNamespace(NS_ARCHIMATE);
 		Namespace nsXsi = Namespace.getNamespace("xsi", NS_XSI);
 		org.jdom2.Element eElements = new org.jdom2.Element("elements", nsArchimate);
@@ -924,6 +931,7 @@ public class ArchimateExtractionService implements Serializable {
 			logger.error(xmlFile.getSystemId() + " is NOT valid reason:" + e);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
 		return false;
 	}
@@ -976,6 +984,7 @@ public class ArchimateExtractionService implements Serializable {
 
 		} catch (IOException e) {
 			logger.error(e.getMessage());
+			e.printStackTrace();
 			return null;
 		}
 		return filePath.toString();
