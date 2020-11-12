@@ -44,7 +44,7 @@
 							<p:ajax event="transfer" listener="#{viewpointController.resetSetup()}"/>
 						</p:pickList>
 					</p:panelGrid>
-					<p:panel header="Simulations" id="simulationButtonsPanel">
+					<p:panel header="Actions" id="simulationButtonsPanel">
 						<p:panelGrid id="simulationButtonsTable" style="padding:0px;" columns="1">
 							<p:commandButton value="Automatic from Input Artifacts"
 								actionListener="#{viewpointController.simulateViewpointsByArtifact}" update="mainForm:viewpointsTabs:viewpointMap"/>	
