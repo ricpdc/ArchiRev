@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
 
 import es.alarcos.archirev.model.KdmModel;
 import es.alarcos.archirev.model.Source;
@@ -123,8 +124,12 @@ public class KdmExtractionService implements Serializable {
 		StreamSource kdmFile = new StreamSource(new File(kdmFileName));
 		try {
 			SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-			schemaFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
-			schemaFactory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+			try {
+				schemaFactory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
+				schemaFactory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+			} catch (SAXNotRecognizedException  e) {
+				logger.debug("problem setting property for SAX validator");
+			}
 			
 			javax.xml.transform.Source[] schemas = new javax.xml.transform.Source[5];
 			schemas[0] = new StreamSource(new File(KDM_XSD_ROOT+"KDM.core.xsd"));
