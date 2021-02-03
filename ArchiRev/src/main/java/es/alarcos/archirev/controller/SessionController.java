@@ -29,7 +29,7 @@ public class SessionController extends AbstractController {
 
 	private static final long serialVersionUID = -3842898392480923141L;
 
-	private static Logger logger = LoggerFactory.getLogger(NewProjectDialogController.class);
+	private static Logger logger = LoggerFactory.getLogger(SessionController.class);
 
 	@Autowired
 	private ProjectDao projectDao;

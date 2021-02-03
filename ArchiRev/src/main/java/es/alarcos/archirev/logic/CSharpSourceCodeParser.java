@@ -77,6 +77,8 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 	private Set<String> delegates = new TreeSet<>();
 	private Set<String> delcaredTypeNames = new TreeSet<>();
 	private Set<String> callsToCallableUnits = new TreeSet<>();
+	
+	private Map<String, Element> packageMap = new HashMap<>();
 
 	private File elementsLog;
 	private File relationshipsLog;
@@ -100,6 +102,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 			throws ZipException, IOException {
 		numberOfCsharpFiles = 0;
 		wrongFiles = new HashSet<>();
+		packageMap = new HashMap<>();
 		MultiValueMap<String, ArchimateElement> modelElementsByClassName = new LinkedMultiValueMap<>();
 
 		File tempZipFile = File.createTempFile(ZIP_FILE, ".tmp", null);
@@ -195,6 +198,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 		while (entries.hasMoreElements()) {
 			ZipEntry entry = entries.nextElement();
 			if (!entry.isDirectory() && entry.getName().endsWith(".cs")) {
+				numberOfCsharpFiles++;
 				new DefaultTreeNode(entry, getParentDirectory(entry));
 			}
 		}
@@ -205,21 +209,33 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 
 		return document;
 	}
+	
+	
 
 	private void processEntryToKdmCodeElement(TreeNode treeNode, Element element, ZipFile zipFile) throws IOException {
 		Namespace nsXsi = Namespace.getNamespace("xsi", NS_XSI);
 		ZipEntry zipEntry = (ZipEntry)treeNode.getData();
-		if(!treeNode.isLeaf()) {
+		if(!treeNode.isLeaf() && !zipEntry.getName().endsWith(".cs")) {
 			for (TreeNode childNode : treeNode.getChildren()) {
-				Element packageE = new Element("codeElement");
-				packageE.setAttribute("type", "code:Package", nsXsi);
-				addXmiIdentifier(packageE);
-				packageE.setAttribute("name", zipEntry.getName());
-				element.addContent(packageE);
+				
+				Element packageE = null;
+				if(packageMap.get(zipEntry.getName())!=null) {
+					packageE = packageMap.get(zipEntry.getName());
+				}
+				else {
+					packageE = new Element("codeElement");
+					packageE.setAttribute("type", "code:Package", nsXsi);
+					addXmiIdentifier(packageE);
+					packageE.setAttribute("name", zipEntry.getName());
+					element.addContent(packageE);
+					packageMap.put(zipEntry.getName(), packageE);
+				}
+				
 				processEntryToKdmCodeElement(childNode, packageE, zipFile);
 			}
 		}
 		else if(zipEntry.getName().endsWith(".cs")) {
+			
 			//process c# file
 			Element compilationUnitE = new Element("codeElement");
 			compilationUnitE.setAttribute("type", "code:CompilationUnit", nsXsi);
@@ -262,7 +278,7 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 
 		logger.info(BR_TAG_LOG + classes.size() + " Different unique classes:\n");
 		for (String clazz : classes) {
-			logger.info(clazz);
+			//logger.info(clazz);
 		}
 
 		logger.info(BR_TAG_LOG + enums.size() + " Different unique enums:\n");
@@ -282,8 +298,10 @@ public class CSharpSourceCodeParser extends AbstractSourceCodeParser implements 
 
 		System.out.println(BR_TAG_LOG + delegates.size() + " Different unique delegates:\n");
 		for (String del : delegates) {
-			System.out.println(del);
+			//System.out.println(del);
 		}
+		
+		logger.info("TOTAL FILES: " + (classes.size() + enums.size() + interfaces.size() + structs.size() + delegates.size()));
 	}
 
 	private void parseCsharpFile(final ZipFile zipFile, final ZipEntry zipEntry,
