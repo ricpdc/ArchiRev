@@ -1,19 +1,34 @@
 [{"name":"mapping","pairs":[
 	{"annotation":"ManagedBean","element":"APPLICATION"},
+	{"annotation":"Manager","element":"APPLICATION"},
 	{"annotation":"Controller","element":"APPLICATION"},
 	{"annotation":"Component","element":"APPLICATION"},
 	{"annotation":"Named","element":"APPLICATION"},
 	{"annotation":"Service","element":"APPLICATION"},
+	{"annotation":"Form","element":"APPLICATION"},
 	{"annotation":"Controller","element":"DATA_ENTITY"},
 	{"annotation":"Table","element":"DATA_ENTITY"},
+	{"annotation":"ViewModel","element":"DATA_ENTITY"},
+	{"annotation":"VM","element":"DATA_ENTITY"},
 	{"annotation":"MappedSuperclass","element":"DATA_ENTITY"},
+	{"annotation":"DTO","element":"DATA_ENTITY"},
+	{"annotation":"DAO","element":"DATA_ENTITY"},
+	{"annotation":"Type","element":"DATA_ENTITY"},
+	{"annotation":"Unit","element":"DATA_ENTITY"},
+	{"annotation":"Feature","element":"DATA_ENTITY"},
+	{"annotation":"Information","element":"DATA_ENTITY"},
+	{"annotation":"Data","element":"DATA_ENTITY"},
 	{"annotation":"Repository","element":"COMPONENT"},
-	{"annotation":"SpringBootApplication","element":"COMPONENT"}
+	{"annotation":"SpringBootApplication","element":"COMPONENT"},
+	{"annotation":"Model","element":"COMPONENT"},
+	{"annotation":"Module","element":"COMPONENT"}
 	]},
 {"name":"exclusions","exclusion_tags":[
 	{"tag":"Builder"},
 	{"tag":"Helper"},
-	{"tag":"Entity"}
+	{"tag":"Handler"},
+	{"tag":"Entity"},
+	{"tag":"Test"}
 	]},
 {"name":"prioritization","tuples":[
 	{"from":"ApplicationFunction","targets": [
