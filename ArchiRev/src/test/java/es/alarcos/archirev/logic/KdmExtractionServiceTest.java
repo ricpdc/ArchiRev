@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import es.alarcos.archirev.model.Extraction;
@@ -27,15 +26,15 @@ public class KdmExtractionServiceTest {
 
 	private KdmExtractionService kdmExtractionService = new KdmExtractionService();;
 
-	private List<String> projects = Arrays.asList("1_Asp.Net-Core-Inventory-Order-Management-System-master",
-			"2_HotelManagement-master", "3_Employee-Management-System-master",
-			"4_Clinic-Management-System-ASP.NET-master", "5_Flatmate-Management-System-master",
-			"6_OrderManagementSystem-master", "7_HotelManagement-master",
-			"8_Office-Management-System-master", "9_School-Management-System-master",
-			"10_Dental-Clinic-Management-System-master", "11_CafeteriaManagementSystem-master");
+	private List<String> projects = Arrays.asList("8_MyHome-master");
+			
+			
+//			"1_Asp.Net-Core-Inventory-Order-Management-System-master",
+//			"2_Flatmate-Management-System-master", "3_OrderManagementSystem-master", "4_cocoa-master",
+//			"5_ASP.NET-Identity-User-Management-master", "6_LibraryManagementSystem-master",
+//			"7_leave-management-master", "8_MyHome-master", "9_EmployeeManagement-master (1)");
 
-	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private KdmModel setInputProject(String projectName) {
 		KdmModel kdmModel = new KdmModel();
 
